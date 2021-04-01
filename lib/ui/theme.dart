@@ -78,6 +78,7 @@ class AppTheme {
           (Set<MaterialState> states) => _lightSeconderyColor,
         ),
       ),
+      unselectedWidgetColor: _lightSeconderyColor,
       textButtonTheme: TextButtonThemeData(
         style: ButtonStyle(
           foregroundColor: MaterialStateProperty.resolveWith<Color>(
@@ -175,6 +176,7 @@ class AppTheme {
           (Set<MaterialState> states) => _darkSeconderyColor,
         ),
       ),
+      unselectedWidgetColor: _darkSeconderyColor,
       iconTheme: IconThemeData(
         color: _iconColor,
       ),

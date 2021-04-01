@@ -39,9 +39,22 @@ class _ContentSelectState extends State<ContentSelect> {
       subTopic = "",
       duration;
   var _data;
-  static double _selectedIndex = 0;
-  _onSelected(double index) {
-    setState(() => _selectedIndex = index);
+  Color _backgroundColor = AppColors.tileColors[3];
+  Color subColor(int i) {
+    if (i % 3 == 0) {
+      return AppColors.tileColors[3];
+    } else if (i % 3 == 1) {
+      return AppColors.tileColors[2];
+    } else if (i % 3 == 2) {
+      return AppColors.tileColors[1];
+    }
+    return AppColors.tileColors[0];
+  }
+
+  _onSelected(int i) {
+    setState(() {
+      _backgroundColor = subColor(i);
+    });
   }
 
   Future _getSubjects() async {
@@ -76,26 +89,126 @@ class _ContentSelectState extends State<ContentSelect> {
         builder: (conext, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             return Material(
-              child: CustomScrollView(
-                slivers: <Widget>[
-                  SliverAppBar(
-                    title: Text('Content Selection'),
-                    elevation: 3,
-                    floating: true,
-                    expandedHeight: 70,
-                    centerTitle: true,
+              child: Stack(
+                children: [
+                  Positioned.fill(
+                    top: -Responsive.getPercent(
+                        100, ResponsiveSize.HEIGHT, context),
+                    left: -Responsive.getPercent(
+                        50, ResponsiveSize.WIDTH, context),
+                    right: -Responsive.getPercent(
+                        40, ResponsiveSize.WIDTH, context),
+                    child: Container(
+                      decoration: BoxDecoration(boxShadow: [
+                        BoxShadow(
+                            color: Colors.black12,
+                            blurRadius: 50,
+                            spreadRadius: 2,
+                            offset: Offset(20, 0)),
+                        BoxShadow(
+                            color: Colors.white12,
+                            blurRadius: 0,
+                            spreadRadius: -2,
+                            offset: Offset(0, 0)),
+                      ], shape: BoxShape.circle, color: _backgroundColor),
+                    ),
                   ),
-                  ontopFixed(
-                    _subjectSelect(),
+                  Container(
+                    height: Responsive.getPercent(
+                        35, ResponsiveSize.HEIGHT, context),
+                    child: Container(
+                      clipBehavior: Clip.antiAlias,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(50),
+                        bottomRight: Radius.circular(50),
+                      )),
+                      child: Stack(
+                        children: <Widget>[
+                          Positioned.fill(
+                            top: 50,
+                            left: 150,
+                            right: -100,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  boxShadow: [
+                                    BoxShadow(
+                                        color: Colors.black12,
+                                        blurRadius: 50,
+                                        spreadRadius: 2,
+                                        offset: Offset(20, 0)),
+                                    BoxShadow(
+                                        color: Colors.white12,
+                                        blurRadius: 0,
+                                        spreadRadius: -2,
+                                        offset: Offset(0, 0)),
+                                  ],
+                                  shape: BoxShape.circle,
+                                  color: _backgroundColor.withOpacity(0.2)),
+                            ),
+                          ),
+                          Positioned.fill(
+                            top: 50,
+                            bottom: 50,
+                            left: -300,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  boxShadow: [
+                                    BoxShadow(
+                                        color: Colors.black12,
+                                        blurRadius: 50,
+                                        spreadRadius: 1,
+                                        offset: Offset(20, 0)),
+                                    BoxShadow(
+                                        color: Colors.white12,
+                                        blurRadius: 0,
+                                        spreadRadius: -2,
+                                        offset: Offset(0, 0)),
+                                  ],
+                                  shape: BoxShape.circle,
+                                  color: _backgroundColor.withOpacity(0.2)),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
+                  Align(
+                    alignment: Alignment.topCenter,
+                    child: CustomScrollView(
+                      physics: BouncingScrollPhysics(),
+                      slivers: <Widget>[
+                        SliverAppBar(
+                          backgroundColor: Colors.transparent,
+                          title: Text(
+                            'Content Selection',
+                            style: TextStyle(
+                              color: whiteColor,
+                            ),
+                          ),
+                          elevation: 0,
+                          floating: true,
+                          expandedHeight: 200,
+                          centerTitle: true,
+                          brightness: Brightness.dark,
+                          flexibleSpace: _subjectSelect(),
+                          collapsedHeight: 100,
+                        ),
+                        // ontopFixed(
+                        //   _subjectSelect(),
+                        // ),
 
-                  SliverPadding(
-                    padding: const EdgeInsets.all(20),
-                    sliver: _unitGrids(),
-                  ),
-                  // _subUnits()
-                  // subUnits(),
-                  // thirdRow(),
+                        SliverPadding(
+                          padding: const EdgeInsets.all(20),
+                          sliver: _unitGrids(),
+                        ),
+
+                        // _subUnits()
+                        // subUnits(),
+                        // thirdRow(),
+                      ],
+                    ),
+                  )
                 ],
               ),
             );
@@ -117,41 +230,30 @@ class _ContentSelectState extends State<ContentSelect> {
         : Container(
             width: MediaQuery.of(context).size.width,
             child: ListView.builder(
-              padding: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+              padding: EdgeInsets.symmetric(vertical: 5, horizontal: 25),
               shrinkWrap: true,
               primary: false,
               scrollDirection: Axis.horizontal,
               itemCount: _subjects.length,
+              physics: BouncingScrollPhysics(),
               itemBuilder: (_, i) {
-                return Card(
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10)),
-                  clipBehavior: Clip.antiAlias,
-                  borderOnForeground: false,
-                  child: SizedBox(
-                    width: Responsive.getPercent(
-                        60, ResponsiveSize.WIDTH, context),
-                    child: Container(
-                      color: _randomColor(i),
-                      child: InkWell(
-                        onTap: () {
-                          setState(() {
-                            subject = _subjects[i].sno.toString();
-                            _units = _subjects[i].unitDtos;
-                          });
-                        },
-                        child: Material(
-                          color: Colors.transparent,
-                          child: Center(
-                            child: Text(
-                              _subjects[i].subjectName,
-                              style: TextStyle(
-                                  color: whiteColor,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        ),
+                return Padding(
+                  padding: const EdgeInsets.only(right: 60),
+                  child: Center(
+                    child: InkWell(
+                      onTap: () {
+                        setState(() {
+                          subject = _subjects[i].sno.toString();
+                          _units = _subjects[i].unitDtos;
+                          _onSelected(i);
+                        });
+                      },
+                      child: Text(
+                        _subjects[i].subjectName,
+                        style: TextStyle(
+                            color: whiteColor,
+                            fontSize: 50,
+                            fontWeight: FontWeight.bold),
                       ),
                     ),
                   ),
@@ -369,15 +471,11 @@ class _ContentSelectState extends State<ContentSelect> {
     return SliverPersistentHeader(
       pinned: true,
       delegate: _SliverAppBarDelegate(
-        minHeight: 90.0,
+        minHeight: 0,
         maxHeight: 100.0,
-        child: Card(
-          elevation: 3,
-          margin: EdgeInsets.zero,
-          child: Container(
-            margin: EdgeInsets.only(top: 25, bottom: 10),
-            child: Center(child: child),
-          ),
+        child: Container(
+          margin: EdgeInsets.only(top: 20, bottom: 20),
+          child: Center(child: child),
         ),
       ),
     );

@@ -1,4 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/services.dart';
 import 'package:lurnify/ui/constant/routes.dart';
 import 'package:lurnify/ui/home-page.dart';
 import 'package:lurnify/ui/library/flutter_overboard/onboarding/on-boarding.dart';
@@ -14,7 +15,10 @@ void main() {
   Firebase.initializeApp().whenComplete(() {
     print("completed");
   });
-  runApp(MyApp());
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
+      .then((_) {
+    runApp(MyApp());
+  });
 }
 
 class MyApp extends StatefulWidget {

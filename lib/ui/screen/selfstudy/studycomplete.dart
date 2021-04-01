@@ -57,9 +57,9 @@ class _StudyCompleteState extends State<StudyComplete> {
       this.chapter,
       this.topic,
       this.duration);
-
-  List<String> switchOptions = ["Studying", "Complete"];
-  String selectedSwitchOption = "Studying";
+  bool _isStudyCompleted = false;
+  // List<String> switchOptions = ["Studying", "Complete"];
+  // String selectedSwitchOption = "Studying";
   TextEditingController remarkSubject = new TextEditingController();
   TextEditingController remarkMessage = new TextEditingController();
   List<String> switchOptions2 = ["Min", "Hr"];
@@ -152,7 +152,7 @@ class _StudyCompleteState extends State<StudyComplete> {
                       children: <Widget>[
 //                SizedBox(height: 8,),
                         completionNotice(),
-                        secondRow(),
+                        completionTask(),
                         thirdRow(),
                         forthRow()
                       ],
@@ -185,7 +185,10 @@ class _StudyCompleteState extends State<StudyComplete> {
                 color: firstColor,
                 child: Text(
                   "Congratulation!",
-                  style: TextStyle(fontWeight: FontWeight.w500, fontSize: 24),
+                  style: TextStyle(
+                      color: whiteColor,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 24),
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -216,34 +219,28 @@ class _StudyCompleteState extends State<StudyComplete> {
     );
   }
 
-  Widget secondRow() {
-    return Padding(
+  Widget completionTask() {
+    return Container(
+      width: fullWidth,
       padding: EdgeInsets.all(5),
-      child: Container(
-        decoration: BoxDecoration(
-            color: Colors.orange,
-            borderRadius: BorderRadius.circular(5),
-            boxShadow: [
-              BoxShadow(
-                  color: Colors.grey.withOpacity(0.8),
-                  spreadRadius: 2,
-                  blurRadius: 2,
-                  offset: Offset(0, 2))
-            ]),
+      child: Card(
+        clipBehavior: Clip.antiAlias,
+        elevation: 5,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Container(
+              padding: EdgeInsets.symmetric(vertical: 5),
               width: MediaQuery.of(context).size.width,
               decoration: BoxDecoration(
+                color: firstColor,
                 borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(5), topRight: Radius.circular(5)),
-                color: Colors.amberAccent,
               ),
               child: Text(
                 "Topic-1",
                 style: TextStyle(
-                    color: Colors.white,
+                    color: whiteColor,
                     fontWeight: FontWeight.w600,
                     fontSize: 24),
                 textAlign: TextAlign.center,
@@ -253,46 +250,43 @@ class _StudyCompleteState extends State<StudyComplete> {
               height: 20,
             ),
             Padding(
-              padding: EdgeInsets.all(10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text(
-                    "Topic : ",
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w800),
+              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              child: Card(
+                child: SwitchListTile(
+                  contentPadding: EdgeInsets.only(left: 4, right: 4),
+                  title: Text(
+                    'Completed ? ',
+                    style: TextStyle(fontSize: 18),
                   ),
-                  Expanded(
-                    child: MaterialSwitch(
-                      selectedOption: selectedSwitchOption,
-                      options: switchOptions,
-                      selectedBackgroundColor: Colors.deepPurpleAccent,
-                      selectedTextColor: Colors.white,
-                      onSelect: (String selectedOption) {
-                        setState(() {
-                          selectedSwitchOption = selectedOption;
-                        });
-                      },
+                  subtitle: Text(
+                    'or Studying ?',
+                    style: TextStyle(fontSize: 14),
+                  ),
+                  secondary: IconButton(
+                    icon: Icon(
+                      Icons.comment,
+                      color: firstColor,
                     ),
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.comment),
                     onPressed: () {
                       remarkBox();
                     },
-                  )
-                ],
+                  ),
+                  value: _isStudyCompleted,
+                  activeColor: firstColor,
+                  onChanged: (complete) {
+                    setState(() {
+                      _isStudyCompleted = complete;
+                    });
+                  },
+                ),
               ),
             ),
             Padding(
               padding: EdgeInsets.all(10),
               child: Container(
                 padding: EdgeInsets.all(5),
-                decoration: BoxDecoration(
-                    color: Colors.amberAccent,
-                    borderRadius: BorderRadius.circular(10)),
+                decoration:
+                    BoxDecoration(borderRadius: BorderRadius.circular(10)),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -301,9 +295,7 @@ class _StudyCompleteState extends State<StudyComplete> {
                         child: Text(
                           "Studied : ",
                           style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w800),
+                              fontSize: 16, fontWeight: FontWeight.w800),
                         )),
                     Container(
                       width: MediaQuery.of(context).size.width,
@@ -313,9 +305,7 @@ class _StudyCompleteState extends State<StudyComplete> {
                           Text(
                             "Th",
                             style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 13,
-                                fontWeight: FontWeight.w800),
+                                fontSize: 13, fontWeight: FontWeight.w800),
                           ),
                           Container(
                             width: MediaQuery.of(context).size.width / 1.4,
@@ -360,9 +350,7 @@ class _StudyCompleteState extends State<StudyComplete> {
                           Text(
                             "Num",
                             style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 13,
-                                fontWeight: FontWeight.w800),
+                                fontSize: 13, fontWeight: FontWeight.w800),
                             textAlign: TextAlign.start,
                           ),
                         ],
@@ -611,6 +599,12 @@ class _StudyCompleteState extends State<StudyComplete> {
     String studentSno = sp.getString("studentSno");
     String newEndDate = startDate.split(" ")[0] + "23:59:59";
     String newStartDate = "00:00:00" + endDate.split(" ")[0];
+    String completionStatus = "";
+    if (_isStudyCompleted) {
+      completionStatus = "Complete";
+    } else {
+      completionStatus = "Studying";
+    }
     try {
       var url = baseUrl +
           "saveStudy?registrationSno=" +
@@ -623,14 +617,11 @@ class _StudyCompleteState extends State<StudyComplete> {
           totalTime +
           "&totalSecond=" +
           totalSecond +
-          ""
-              "&topicCompletionStatus=" +
-          selectedSwitchOption +
-          ""
-              "&theoryPercent=" +
+          "&topicCompletionStatus=" +
+          completionStatus +
+          "&theoryPercent=" +
           thOrNum +
-          ""
-              "&numericalPercent=" +
+          "&numericalPercent=" +
           (100 - theoryOrNum).toString() +
           ""
               "&effectivenessOfStudy=" +
@@ -666,7 +657,7 @@ class _StudyCompleteState extends State<StudyComplete> {
       Map<String, dynamic> mapResult = resbody;
       if (mapResult['saveResult'] == true) {
         toastMethod("Study Saved");
-        if (selectedSwitchOption == "Complete") {
+        if (completionStatus == "Complete") {
           _takeTestAlertBox(context);
         } else {
           Navigator.pop(context);

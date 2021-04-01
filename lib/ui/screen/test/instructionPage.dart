@@ -86,11 +86,8 @@ class _InstructionPageState extends State<InstructionPage> {
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
-        title: Row(
-          children: [
-            Text("Instructions"),
-          ],
-        ),
+        title: Text("Instructions"),
+        centerTitle: true,
       ),
       body: FutureBuilder(
         future: _data,
@@ -120,7 +117,6 @@ class _InstructionPageState extends State<InstructionPage> {
                                   child: Text(
                                     _instructionData[i]['instructions'],
                                     style: TextStyle(
-                                        color: Colors.black87,
                                         fontSize: 16,
                                         fontWeight: FontWeight.w500,
                                         letterSpacing: 0.6),

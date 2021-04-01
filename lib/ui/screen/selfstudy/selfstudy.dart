@@ -169,23 +169,35 @@ class _SelfStudySectionState extends State<SelfStudySection> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
-          _card("Start Self Study", Recent("1"), StartSelfStudyLearnMore(),
-              "Are you ready to", "START?"),
+          FadeAnimation(
+            1,
+            _card("Start Self Study", Recent("1"), StartSelfStudyLearnMore(),
+                "Are you ready to", "START?"),
+          ),
           SizedBox(
             height: 10,
           ),
-          _card("Sync Study Time", Recent("2"), SyncStudyTimeLearnMore(),
-              "Missed Out!", "Study Time Punching?"),
+          FadeAnimation(
+            1,
+            _card("Sync Study Time", Recent("2"), SyncStudyTimeLearnMore(),
+                "Missed Out!", "Study Time Punching?"),
+          ),
           SizedBox(
             height: 10,
           ),
-          _card("Statistics", null, StatisticsLearnMore(),
-              "Track your statistics", "HERE!!!"),
+          FadeAnimation(
+            1,
+            _card("Statistics", null, StatisticsLearnMore(),
+                "Track your statistics", "HERE!!!"),
+          ),
           SizedBox(
             height: 10,
           ),
-          _card("Goals", null, GolasLearnMore(), "See your achievements",
-              "HERE!!!"),
+          FadeAnimation(
+            1,
+            _card("Goals", null, GolasLearnMore(), "See your achievements",
+                "HERE!!!"),
+          ),
           SizedBox(
             height: 10,
           ),
@@ -225,19 +237,16 @@ class _SelfStudySectionState extends State<SelfStudySection> {
             SizedBox(
               height: 15,
             ),
-            FadeAnimation(
-              1,
-              SizedBox(
-                width: Responsive.getPercent(80, ResponsiveSize.WIDTH, context),
-                child: CustomButton(
-                  buttonText: text,
-                  onPressed: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => mainWidget,
-                    ));
-                  },
-                  verpad: EdgeInsets.symmetric(vertical: 15),
-                ),
+            SizedBox(
+              width: Responsive.getPercent(80, ResponsiveSize.WIDTH, context),
+              child: CustomButton(
+                buttonText: text,
+                onPressed: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => mainWidget,
+                  ));
+                },
+                verpad: EdgeInsets.symmetric(vertical: 15),
               ),
             ),
             SizedBox(

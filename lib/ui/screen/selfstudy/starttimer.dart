@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lurnify/ui/constant/ApiConstant.dart';
+import 'package:lurnify/ui/constant/constant.dart';
 import 'package:lurnify/ui/screen/selfstudy/studycomplete.dart';
 import 'package:lurnify/ui/theme.dart';
 import 'package:lurnify/widgets/componants/custom-button.dart';
@@ -192,6 +193,7 @@ class _StartTimerState extends State<StartTimer> {
     _height = MediaQuery.of(context).size.height;
     _width = MediaQuery.of(context).size.width;
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       theme: AppTheme.darkTheme,
       home: Scaffold(
           body: AnnotatedRegion<SystemUiOverlayStyle>(
@@ -249,68 +251,56 @@ class _StartTimerState extends State<StartTimer> {
                           child: Container(
                             child: Column(
                               children: [
-                                GestureDetector(
-                                  onTap: () {
-                                    showSubTopic(context);
-                                  },
+                                ElevatedButton(
+                                  onPressed: () => showSubTopic(context),
                                   child: Container(
-                                    child: Card(
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              "Studying Topic-1",
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .headline5,
-                                            ),
-                                            Spacer(),
-                                            Icon(
-                                              Icons.arrow_forward_ios_rounded,
-                                            ),
-                                          ],
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "Studying Topic-1",
+                                          style: TextStyle(fontSize: 18),
                                         ),
-                                      ),
+                                        Spacer(),
+                                        Icon(
+                                          Icons.arrow_forward_ios_rounded,
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ),
                                 Spacer(),
-                                Center(
-                                  child: Container(
-                                      height: 100,
-                                      width: _width,
-                                      decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(5)),
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          dateRow(),
-                                          Spacer(),
-                                          Center(
-                                              child: Text(
-                                            _pressDuration,
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .headline2,
-                                          )),
-                                        ],
+                                SizedBox(
+                                  width: _width,
+                                  height: _height / 4,
+                                  child: Card(
+                                      elevation: 5,
+                                      shadowColor: Colors.white12,
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            dateRow(),
+                                            Spacer(),
+                                            Center(
+                                                child: Text(
+                                              _pressDuration,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .headline2,
+                                            )),
+                                            Spacer(),
+                                          ],
+                                        ),
                                       )),
                                 ),
                                 Spacer(),
-                                GestureDetector(
-                                  onTap: () {
-                                    remainingAlertBox();
-                                  },
+                                ElevatedButton(
+                                  onPressed: () => remainingAlertBox(),
                                   child: Container(
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.only(
-                                            bottomLeft: Radius.circular(9),
-                                            bottomRight: Radius.circular(9))),
                                     child: Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.start,
@@ -486,7 +476,6 @@ class _StartTimerState extends State<StartTimer> {
             child: Opacity(
               opacity: a1.value,
               child: AlertDialog(
-                backgroundColor: Colors.orangeAccent,
                 shape: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16.0)),
                 title: Text(
@@ -573,7 +562,7 @@ class _StartTimerState extends State<StartTimer> {
 
   Widget dateRow() {
     return Container(
-      padding: EdgeInsets.all(3),
+      padding: EdgeInsets.all(5),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [Text("Day-$weekDay"), Spacer(), Text(leftDaysOrWeek)],

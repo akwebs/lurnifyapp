@@ -3,8 +3,10 @@ import 'dart:convert';
 import 'dart:math' as math;
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter/services.dart';
+import 'package:lurnify/ui/constant/constant.dart';
 import 'package:lurnify/ui/screen/test/testSummary.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -25,7 +27,7 @@ class _TestState extends State<Test> with TickerProviderStateMixin {
   bool reviewLater = false;
   int selectedOptionIndex;
   Timer _timer;
-  int _TEST_TIMER_INSECONDS = 1200;
+  int _TEST_TIMER_INSECONDS = 3000;
   int _questionTime = 0;
   String _FORMATTED_TEST_DURATION = "";
   int _noOFQuestions;
@@ -43,9 +45,9 @@ class _TestState extends State<Test> with TickerProviderStateMixin {
   List _testQuestions = [];
   Map<String, int> _questionTiming = Map();
   static const List<IconData> icons = const [
-    Icons.sms,
-    Icons.mail,
-    Icons.phone
+    Icons.check_circle_outline,
+    Icons.info_outline,
+    Icons.format_align_left_rounded,
   ];
   static const List<String> iconsText = const [
     "Submit",
@@ -126,7 +128,7 @@ class _TestState extends State<Test> with TickerProviderStateMixin {
     startTimer();
     _controllerFloat = new AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 500),
+      duration: const Duration(milliseconds: 300),
     );
     super.initState();
   }
@@ -141,8 +143,37 @@ class _TestState extends State<Test> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_toolBarName),
+        title: Text(
+          _toolBarName,
+          style: TextStyle(color: whiteColor),
+        ),
+        brightness: Brightness.dark,
+        centerTitle: true,
+        backgroundColor: firstColor,
+        automaticallyImplyLeading: false,
       ),
+      body: _testQuestions.isEmpty
+          ? Container(
+              alignment: Alignment.center,
+              child: Text(
+                "No Question",
+                style: TextStyle(
+                  fontSize: 40,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            )
+          : Container(
+              height: MediaQuery.of(context).size.height,
+              child: Column(
+                children: [
+                  headingRow(),
+                  questionRow(),
+                  Spacer(),
+                  buttonRow(),
+                ],
+              ),
+            ),
       floatingActionButton: new Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.end,
@@ -171,8 +202,7 @@ class _TestState extends State<Test> with TickerProviderStateMixin {
                       ),
                     ),
                     FloatingActionButton(
-                      heroTag: null,
-                      backgroundColor: Colors.deepPurpleAccent,
+                      backgroundColor: firstColor,
                       mini: true,
                       child: new Icon(icons[index], color: Colors.white),
                       onPressed: () {
@@ -189,7 +219,7 @@ class _TestState extends State<Test> with TickerProviderStateMixin {
               margin: EdgeInsets.only(bottom: 35),
               child: new FloatingActionButton(
                 heroTag: null,
-                backgroundColor: Colors.deepPurpleAccent,
+                backgroundColor: firstColor,
                 child: new AnimatedBuilder(
                   animation: _controllerFloat,
                   builder: (BuildContext context, Widget child) {
@@ -203,6 +233,7 @@ class _TestState extends State<Test> with TickerProviderStateMixin {
                     );
                   },
                 ),
+                foregroundColor: whiteColor,
                 onPressed: () {
                   if (_controllerFloat.isDismissed) {
                     _controllerFloat.forward();
@@ -214,91 +245,83 @@ class _TestState extends State<Test> with TickerProviderStateMixin {
             ),
           ),
       ),
-      body: _testQuestions.isEmpty
-          ? Container(
-              alignment: Alignment.center,
-              child: Text(
-                "No Question",
-                style: TextStyle(
-                    fontSize: 40,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.grey),
-              ),
-            )
-          : Container(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    headingRow(),
-                    questionRow(),
-                    questionNoRow(),
-                    buttonRow()
-                  ],
-                ),
-              ),
-            ),
     );
   }
 
   Widget headingRow() {
     return Container(
       decoration: BoxDecoration(
-          color: Colors.deepPurpleAccent.withOpacity(0.4),
-          boxShadow: [
-            BoxShadow(
-                color: Colors.grey.withOpacity(0.4),
-                spreadRadius: 1,
-                blurRadius: 1,
-                offset: Offset(0, 1))
-          ]),
-      padding: EdgeInsets.all(5),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
+        color: Colors.deepPurple[50],
+      ),
+      child: Column(
         children: [
-          Container(
-            width: MediaQuery.of(context).size.width * 5 / 10,
-            padding: EdgeInsets.all(5),
-            decoration: BoxDecoration(
-                border: Border.all(color: Colors.black87),
-                borderRadius: BorderRadius.circular(5)),
-            margin: EdgeInsets.only(left: 10),
-            child: DropdownButtonHideUnderline(
-              child: DropdownButton<String>(
-                value: _testName,
-                isDense: true,
-                dropdownColor: Colors.white,
-                style: TextStyle(
-                    color: Colors.black87, fontWeight: FontWeight.w600),
-                iconEnabledColor: Colors.black87,
-                items: <String>[_testName].map((String value) {
-                  return new DropdownMenuItem<String>(
-                    value: value,
-                    child: new Text(value),
-                  );
-                }).toList(),
-                onChanged: (value) {
-                  setState(() {
-                    _testName = value;
-                  });
-                },
-              ),
+          Padding(
+            padding: const EdgeInsets.all(5.0),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  width: MediaQuery.of(context).size.width * 5 / 10,
+                  padding: EdgeInsets.all(5),
+                  decoration: BoxDecoration(
+                      border: Border.all(color: firstColor),
+                      borderRadius: BorderRadius.circular(5)),
+                  margin: EdgeInsets.only(left: 10),
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<String>(
+                      value: _testName,
+                      iconEnabledColor: firstColor,
+                      isDense: true,
+                      style: TextStyle(
+                        color: firstColor,
+                        fontWeight: FontWeight.w600,
+                      ),
+                      items: <String>[_testName].map((String value) {
+                        return new DropdownMenuItem<String>(
+                          value: value,
+                          child: new Text(value),
+                        );
+                      }).toList(),
+                      onChanged: (value) {
+                        setState(() {
+                          _testName = value;
+                        });
+                      },
+                    ),
+                  ),
+                ),
+                Spacer(),
+                Container(
+                  padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(50),
+                    color: firstColor,
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.access_time_rounded,
+                        size: 15,
+                      ),
+                      SizedBox(
+                        width: 3,
+                      ),
+                      Text(
+                        _FORMATTED_TEST_DURATION,
+                        style: TextStyle(
+                          color: whiteColor,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
-          Spacer(),
-          Icon(Icons.timer),
-          SizedBox(
-            width: 3,
-          ),
-          Expanded(
-              child: Text(
-            _FORMATTED_TEST_DURATION,
-            style: TextStyle(
-              color: Colors.red,
-              fontSize: 15,
-              fontWeight: FontWeight.w600,
-            ),
-          ))
+          questionsNoList(),
         ],
       ),
     );
@@ -306,10 +329,11 @@ class _TestState extends State<Test> with TickerProviderStateMixin {
 
   Widget questionRow() {
     return Container(
-      height: MediaQuery.of(context).size.height * 6.6 / 10,
+      height: MediaQuery.of(context).size.height * 7 / 10,
       width: MediaQuery.of(context).size.width,
       padding: EdgeInsets.all(1),
       child: PageView.builder(
+        physics: BouncingScrollPhysics(),
         controller: _controller,
         scrollDirection: Axis.horizontal,
         itemCount: _noOFQuestions,
@@ -342,195 +366,229 @@ class _TestState extends State<Test> with TickerProviderStateMixin {
             transformHitTests: true,
             child: Padding(
               padding: EdgeInsets.all(5),
-              child: Container(
-                padding: EdgeInsets.only(left: 5, right: 5),
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(5),
-                    border: Border.all(color: Colors.white54),
-                    boxShadow: [
-                      BoxShadow(
-                          color: Colors.grey.withOpacity(0.4),
-                          blurRadius: 1,
-                          spreadRadius: 1,
-                          offset: Offset(0, 1))
-                    ]),
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        Container(
-                          padding: EdgeInsets.all(7),
-                          decoration: BoxDecoration(
-                            color: Colors.grey,
+              child: Card(
+                elevation: 10,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            height: 25,
+                            width: 25,
+                            decoration: BoxDecoration(
+                                color: firstColor,
+                                border: Border.all(color: firstColor)),
+                            child: Center(
+                                child: Text(
+                              (i + 1).toString(),
+                              style: TextStyle(
+                                  color: whiteColor,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500),
+                            )),
                           ),
-                          child: Center(
-                              child: Text(
-                            (i + 1).toString(),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Container(
+                            padding: EdgeInsets.all(4),
+                            decoration: BoxDecoration(
+                              color: Colors.green,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Center(
+                              child: Icon(
+                                Icons.check,
+                                size: 14,
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 3,
+                          ),
+                          Text(
+                            "4",
                             style: TextStyle(
-                                fontSize: 14, fontWeight: FontWeight.w500),
-                          )),
-                        ),
-                        SizedBox(
-                          width: 5,
-                        ),
-                        Icon(
-                          Icons.check,
-                          color: Colors.green,
-                          size: 18,
-                        ),
-                        SizedBox(
-                          width: 3,
-                        ),
-                        Text(
-                          "4",
-                          style: TextStyle(
-                              color: Colors.black54,
-                              fontWeight: FontWeight.w600),
-                        ),
-                        SizedBox(
-                          width: 5,
-                        ),
-                        Icon(
-                          Icons.cancel,
-                          color: Colors.red,
-                          size: 18,
-                        ),
-                        SizedBox(
-                          width: 3,
-                        ),
-                        Text(
-                          "1",
-                          style: TextStyle(
-                              color: Colors.black54,
-                              fontWeight: FontWeight.w600),
-                        ),
-                        Spacer(),
-                        Checkbox(
-                          checkColor: Colors.white,
-                          onChanged: (value) {
-                            setState(() {
-                              if (_bookmarkMap[_testQuestions[i]['sno']] ==
-                                  "true") {
-                                reviewLater = false;
-//                                  _bookmarkMap.update(_testData[i]['sno'], (value) => "false",ifAbsent: () => "false",);
-                                _bookmarkMap.remove(_testQuestions[i]['sno']);
-                              } else {
-                                reviewLater = true;
-                                _bookmarkMap.update(
-                                  _testQuestions[i]['sno'],
-                                  (value) => "true",
-                                  ifAbsent: () => "true",
-                                );
-                              }
-                              //
-                            });
-                          },
-                          value:
-                              _bookmarkMap[_testQuestions[i]['sno']] == "true"
-                                  ? true
-                                  : false,
-                        ),
-                        Text(
-                          "Review Later",
-                          style: TextStyle(
-                              color: Colors.black54,
-                              fontWeight: FontWeight.w600),
-                        ),
-                        SizedBox(
-                          width: 10,
-                        )
-                      ],
-                    ),
-                    Container(
-                      height: MediaQuery.of(context).size.height * 4.5 / 10,
-                      child: SingleChildScrollView(
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Image.memory(
-                                  base64.decode(
-                                      _testQuestions[i]['encodedImage'] == null
-                                          ? ""
-                                          : _testQuestions[i]['encodedImage']),
-                                  gaplessPlayback: true),
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Container(
-                      height: MediaQuery.of(context).size.height * 1 / 10,
-                      child: ListView.builder(
-                        itemCount: int.parse(_testQuestions[i]['noOfOptions']),
-                        scrollDirection: Axis.horizontal,
-                        shrinkWrap: true,
-                        primary: false,
-                        itemBuilder: (context, j) {
-                          return GestureDetector(
-                              onTap: () {
+                                color: Colors.black54,
+                                fontWeight: FontWeight.w600),
+                          ),
+                          SizedBox(
+                            width: 5,
+                          ),
+                          Container(
+                            padding: EdgeInsets.all(7),
+                            decoration: BoxDecoration(
+                              color: Colors.red,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Center(
+                                child: Text(
+                              'X',
+                              style: TextStyle(
+                                  color: whiteColor,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500),
+                            )),
+                          ),
+                          SizedBox(
+                            width: 3,
+                          ),
+                          Text(
+                            "1",
+                            style: TextStyle(
+                                color: Colors.black54,
+                                fontWeight: FontWeight.w600),
+                          ),
+                          Spacer(),
+                          Text(
+                            "Review Later",
+                            style: TextStyle(
+                                color: Colors.black87,
+                                fontWeight: FontWeight.w600),
+                          ),
+                          SizedBox(
+                            height: 25,
+                            width: 25,
+                            child: Checkbox(
+                              materialTapTargetSize:
+                                  MaterialTapTargetSize.shrinkWrap,
+                              activeColor: firstColor,
+                              checkColor: whiteColor,
+                              onChanged: (value) {
                                 setState(() {
-                                  _answerMap.update(
-                                    _testQuestions[i]['sno'],
-                                    (value) => j + 1,
-                                    ifAbsent: () => j + 1,
-                                  );
+                                  if (_bookmarkMap[_testQuestions[i]['sno']] ==
+                                      "true") {
+                                    reviewLater = false;
+//                                  _bookmarkMap.update(_testData[i]['sno'], (value) => "false",ifAbsent: () => "false",);
+                                    _bookmarkMap
+                                        .remove(_testQuestions[i]['sno']);
+                                  } else {
+                                    reviewLater = true;
+                                    _bookmarkMap.update(
+                                      _testQuestions[i]['sno'],
+                                      (value) => "true",
+                                      ifAbsent: () => "true",
+                                    );
+                                  }
+                                  //
                                 });
                               },
-                              child: Container(
-                                width:
-                                    MediaQuery.of(context).size.width * 2 / 10,
-                                color: Colors.white,
-                                child: Column(
-                                  children: [
-                                    Container(
-                                      padding: EdgeInsets.all(10),
-                                      decoration: BoxDecoration(
+                              value: _bookmarkMap[_testQuestions[i]['sno']] ==
+                                      "true"
+                                  ? true
+                                  : false,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Container(
+                        height: MediaQuery.of(context).size.height * 4.8 / 10,
+                        child: SingleChildScrollView(
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Image.memory(
+                                    base64.decode(_testQuestions[i]
+                                                ['encodedImage'] ==
+                                            null
+                                        ? ""
+                                        : _testQuestions[i]['encodedImage']),
+                                    gaplessPlayback: true),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: Center(
+                          child: ListView.builder(
+                            itemCount:
+                                int.parse(_testQuestions[i]['noOfOptions']),
+                            scrollDirection: Axis.horizontal,
+                            shrinkWrap: true,
+                            primary: false,
+                            itemBuilder: (context, j) {
+                              return GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    _answerMap.update(
+                                      _testQuestions[i]['sno'],
+                                      (value) => j + 1,
+                                      ifAbsent: () => j + 1,
+                                    );
+                                  });
+                                },
+                                child: Container(
+                                  width: MediaQuery.of(context).size.width *
+                                      2 /
+                                      10,
+                                  child: Column(
+                                    children: [
+                                      Container(
+                                        padding: EdgeInsets.all(10),
+                                        decoration: BoxDecoration(
                                           border: Border.all(
                                               color: _answerMap[
                                                           _testQuestions[i]
                                                               ['sno']] !=
                                                       j + 1
-                                                  ? Colors.white
-                                                  : Colors.green)),
-                                      child: Row(
-                                        children: [
-                                          SizedBox(
-                                            width: 5,
-                                          ),
-                                          CircleAvatar(
-                                            child: Text(
-                                              (j + 1).toString(),
-                                              style: TextStyle(
-                                                  color: Colors.white),
-                                            ),
-                                            radius: 15,
+                                                  ? Colors.transparent
+                                                  : Colors.green),
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: Container(
+                                          child: CircleAvatar(
+                                            radius: 30,
                                             backgroundColor: _answerMap[
                                                         _testQuestions[i]
                                                             ['sno']] !=
                                                     j + 1
-                                                ? Colors.grey
+                                                ? Colors.white
                                                 : Colors.green,
+                                            child: Text(
+                                              (j + 1).toString(),
+                                              style: TextStyle(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.bold,
+                                                color: _answerMap[
+                                                            _testQuestions[i]
+                                                                ['sno']] !=
+                                                        j + 1
+                                                    ? firstColor
+                                                    : whiteColor,
+                                              ),
+                                            ),
                                           ),
-                                          SizedBox(
-                                            width: 5,
+                                          decoration: new BoxDecoration(
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Colors.black
+                                                    .withOpacity(0.2),
+                                                offset: const Offset(
+                                                  0.0,
+                                                  5.0,
+                                                ),
+                                                blurRadius: 8.0,
+                                              )
+                                            ],
+                                            shape: BoxShape.circle,
                                           ),
-                                          Expanded(
-                                              child: Text((j + 1).toString()))
-                                        ],
+                                        ),
                                       ),
-                                    ),
 //                                    Divider(height: 1,color: _answerMap[_testData[i]['sno']]!=j+1?Colors.grey:Colors.green,thickness: 3,)
-                                  ],
+                                    ],
+                                  ),
                                 ),
-                              ));
-                        },
+                              );
+                            },
+                          ),
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -540,47 +598,89 @@ class _TestState extends State<Test> with TickerProviderStateMixin {
     );
   }
 
-  Widget questionNoRow() {
-    return Align(
-      alignment: Alignment.bottomLeft,
-      child: Container(
+  // Widget questionNoRow() {
+  //   return Container(
+  //     padding: EdgeInsets.all(5),
+  //     height: MediaQuery.of(context).size.height * 0.5 / 10,
+  //     width: MediaQuery.of(context).size.width,
+  //     child: PageView.builder(
+  //       controller: _controllerList,
+  //       scrollDirection: Axis.horizontal,
+  //       itemCount: _noOFQuestions,
+  //       dragStartBehavior: DragStartBehavior.start,
+  //       physics: BouncingScrollPhysics(),
+  //       itemBuilder: (context, i) {
+  //         return Padding(
+  //           padding: EdgeInsets.only(left: 10, top: 5),
+  //           child: GestureDetector(
+  //             onTap: () {
+  //               _controller.animateToPage(i,
+  //                   curve: Curves.decelerate,
+  //                   duration: Duration(milliseconds: 300));
+  //             },
+  //             child: Container(
+  //               decoration: BoxDecoration(
+  //                 color: _answerMap[_testQuestions[i]['sno']] == null
+  //                     ? _bookmarkMap.containsKey(_testQuestions[i]['sno'])
+  //                         ? Colors.blue
+  //                         : Colors.white
+  //                     : _bookmarkMap.containsKey(_testQuestions[i]['sno'])
+  //                         ? Colors.blue
+  //                         : Colors.green,
+  //                 border: Border.all(color: Colors.black54),
+  //                 borderRadius: BorderRadius.circular(3),
+  //               ),
+  //               child: Center(child: Text((i + 1).toString())),
+  //             ),
+  //           ),
+  //         );
+  //       },
+  //     ),
+  //   );
+  // }
+
+  Widget questionsNoList() {
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.5 / 10,
+      width: MediaQuery.of(context).size.width,
+      child: ListView.builder(
+        controller: _controllerList,
         padding: EdgeInsets.all(5),
-        height: MediaQuery.of(context).size.height * 0.9 / 10,
-        width: MediaQuery.of(context).size.width * 8 / 10,
-        child: PageView.builder(
-          controller: _controllerList,
-          allowImplicitScrolling: true,
-          pageSnapping: true,
-          scrollDirection: Axis.horizontal,
-          itemCount: _noOFQuestions,
-          dragStartBehavior: DragStartBehavior.start,
-          itemBuilder: (context, i) {
-            return Padding(
-              padding: EdgeInsets.only(left: 10),
-              child: GestureDetector(
-                onTap: () {
-                  _controller.animateToPage(i,
-                      curve: Curves.decelerate,
-                      duration: Duration(milliseconds: 300));
-                },
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: _answerMap[_testQuestions[i]['sno']] == null
-                        ? _bookmarkMap.containsKey(_testQuestions[i]['sno'])
-                            ? Colors.blue
-                            : Colors.white
-                        : _bookmarkMap.containsKey(_testQuestions[i]['sno'])
-                            ? Colors.blue
-                            : Colors.green,
-                    border: Border.all(color: Colors.black54),
-                    borderRadius: BorderRadius.circular(3),
-                  ),
-                  child: Center(child: Text((i + 1).toString())),
+        scrollDirection: Axis.horizontal,
+        itemCount: _noOFQuestions,
+        physics: BouncingScrollPhysics(),
+        itemBuilder: (context, i) {
+          return Padding(
+            padding: EdgeInsets.only(left: 5, top: 5),
+            child: GestureDetector(
+              onTap: () {
+                _controller.animateToPage(i,
+                    curve: Curves.decelerate,
+                    duration: Duration(milliseconds: 300));
+              },
+              child: Container(
+                height: 25,
+                width: 25,
+                decoration: BoxDecoration(
+                  color: _answerMap[_testQuestions[i]['sno']] == null
+                      ? _bookmarkMap.containsKey(_testQuestions[i]['sno'])
+                          ? Colors.blue
+                          : Colors.white
+                      : _bookmarkMap.containsKey(_testQuestions[i]['sno'])
+                          ? Colors.blue
+                          : Colors.green,
+                  border: Border.all(color: Colors.black54),
+                  borderRadius: BorderRadius.circular(3),
                 ),
+                child: Center(
+                    child: Text(
+                  (i + 1).toString(),
+                  style: TextStyle(color: Colors.black87),
+                )),
               ),
-            );
-          },
-        ),
+            ),
+          );
+        },
       ),
     );
   }
@@ -600,12 +700,13 @@ class _TestState extends State<Test> with TickerProviderStateMixin {
                 _controllerList.animateToPage(_index - 1,
                     curve: Curves.decelerate,
                     duration: Duration(milliseconds: 300));
+                print(_index);
               },
               child: Container(
                 decoration: BoxDecoration(
                     color: _isFirstQuestion
-                        ? Colors.deepPurpleAccent.withOpacity(0.6)
-                        : Colors.deepPurpleAccent),
+                        ? firstColor.withOpacity(0.6)
+                        : firstColor),
                 child: Center(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -644,8 +745,8 @@ class _TestState extends State<Test> with TickerProviderStateMixin {
               child: Container(
                 decoration: BoxDecoration(
                     color: _isLastQuestion
-                        ? Colors.deepPurpleAccent.withOpacity(0.6)
-                        : Colors.deepPurpleAccent),
+                        ? firstColor.withOpacity(0.6)
+                        : firstColor),
                 child: Center(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
