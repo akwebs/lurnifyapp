@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lurnify/config/data.dart';
+import 'package:lurnify/ui/screen/selfstudy/selfstudy.dart';
 
 class AppTiles extends StatelessWidget {
   final List pageKey;
@@ -28,8 +29,9 @@ class AppTiles extends StatelessWidget {
             clipBehavior: Clip.antiAlias,
             child: InkWell(
               onTap: () {
-                Navigator.of(context)
-                    .pushNamedAndRemoveUntil(pageKey[index], (route) => true);
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => SelfStudySection(),
+                ));
               },
               child: Material(
                 color: Colors.transparent,

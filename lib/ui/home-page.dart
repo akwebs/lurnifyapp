@@ -1,3 +1,4 @@
+import 'package:lurnify/ui/screen/selfstudy/recent.dart';
 import 'package:lurnify/widgets/CustomDrawer.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -126,6 +127,7 @@ class _HomePageState extends State<HomePage> {
         child: WillPopScope(
           onWillPop: _onWillPop,
           child: SingleChildScrollView(
+            physics: BouncingScrollPhysics(),
             child: Column(
               children: <Widget>[
                 CardWidget(),
@@ -138,7 +140,11 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => Recent('1'),
+          ));
+        },
         child: Icon(
           Icons.add,
           color: Colors.white,

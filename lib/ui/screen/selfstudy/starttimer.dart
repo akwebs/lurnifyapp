@@ -1,11 +1,13 @@
 import 'dart:async';
-
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:audioplayers/audio_cache.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:lurnify/ui/constant/ApiConstant.dart';
 import 'package:lurnify/ui/screen/selfstudy/studycomplete.dart';
+import 'package:lurnify/ui/theme.dart';
+import 'package:lurnify/widgets/componants/custom-button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -189,288 +191,230 @@ class _StartTimerState extends State<StartTimer> {
   Widget build(BuildContext context) {
     _height = MediaQuery.of(context).size.height;
     _width = MediaQuery.of(context).size.width;
-    return Scaffold(
-        body: FutureBuilder(
-      future: data,
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(
-            child: CircularProgressIndicator(),
-          );
-        } else {
-          return Material(
-            child: Container(
-              height: _height,
-              width: _width,
-              margin: EdgeInsets.only(top: 28, left: 0, right: 0, bottom: 0),
-              decoration: BoxDecoration(
-                  border: Border.all(color: Colors.blue[100]),
-                  color: Colors.black87),
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      width: _width,
-                      padding: EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        border: Border(
-                            bottom:
-                                BorderSide(width: 1, color: Colors.blue[100])),
-                      ),
-                      child: FadeAnimatedTextKit(
-                        onTap: () {},
-                        text: headingList.isEmpty ||
-                                headingList.length < 1 ||
-                                headingList == null
-                            ? ["Welcome To Lurnify"]
-                            : headingList,
-                        textStyle: TextStyle(
+    return MaterialApp(
+      theme: AppTheme.darkTheme,
+      home: Scaffold(
+          body: AnnotatedRegion<SystemUiOverlayStyle>(
+        value: SystemUiOverlayStyle.light,
+        child: FutureBuilder(
+          future: data,
+          builder: (BuildContext context, AsyncSnapshot snapshot) {
+            if (snapshot.connectionState == ConnectionState.done) {
+              return Container(
+                height: _height,
+                width: _width,
+                margin: EdgeInsets.only(top: 28, left: 0, right: 0, bottom: 0),
+                child: SingleChildScrollView(
+                  physics: BouncingScrollPhysics(),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        width: _width,
+                        padding: EdgeInsets.all(10),
+                        child: FadeAnimatedTextKit(
+                          onTap: () {},
+                          text: headingList.isEmpty ||
+                                  headingList.length < 1 ||
+                                  headingList == null
+                              ? ["Welcome To Lurnify"]
+                              : headingList,
+                          textStyle: TextStyle(
                             fontSize: 16.0,
-                            fontFamily: "Canterbury",
-                            color: Colors.white),
-                        textAlign: TextAlign.start,
-                        alignment: AlignmentDirectional.center,
-                        repeatForever: true,
-                        // or Alignment.topLeft
-                        duration: Duration(seconds: 3),
-                      ),
-                    ),
-                    SizedBox(
-                      height: _height / 22,
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        beatDistraction();
-                      },
-                      child: Container(
-                          height: 70,
-                          width: 140,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(30),
-                                topRight: Radius.circular(30)),
-                            border: Border.all(color: Colors.blue[100]),
                           ),
-                          child: Padding(
-                            padding: EdgeInsets.only(
-                                top: 7, left: 8, right: 8, bottom: 25),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(40),
-                                  border: Border.all(color: Colors.white),
-                                  color: Colors.green),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    "Beat",
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w800,
-                                        fontSize: 13),
-                                  ),
-                                  Text(
-                                    "Distraction",
-                                    style: TextStyle(
-                                        color: Colors.white, fontSize: 13),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          )),
-                    ),
-                    Container(
-                      height: _height / 2.2,
-                      child: Padding(
-                        padding: EdgeInsets.only(left: 20, right: 20),
-                        child: Container(
-                          decoration: BoxDecoration(
-                              border: Border.all(color: Colors.blue),
-                              borderRadius: BorderRadius.circular(10)),
-                          child: Column(
-                            children: [
-                              GestureDetector(
-                                onTap: () {
-                                  showSubTopic(context);
-                                },
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                      color: Colors.white54,
-                                      borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(9),
-                                          topRight: Radius.circular(9))),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      Icon(
-                                        Icons.arrow_drop_down,
-                                        size: 40,
+
+                          textAlign: TextAlign.start,
+                          alignment: AlignmentDirectional.center,
+                          repeatForever: true,
+                          // or Alignment.topLeft
+                          duration: Duration(seconds: 3),
+                        ),
+                      ),
+                      SizedBox(
+                        height: _height / 22,
+                      ),
+                      CustomButton(
+                        buttonText: 'Beat Distraction',
+                        onPressed: () => beatDistraction(),
+                        verpad: EdgeInsets.symmetric(vertical: 10),
+                      ),
+                      SizedBox(
+                        height: _height / 22,
+                      ),
+                      Container(
+                        height: _height / 2.2,
+                        child: Padding(
+                          padding: EdgeInsets.only(left: 20, right: 20),
+                          child: Container(
+                            child: Column(
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    showSubTopic(context);
+                                  },
+                                  child: Container(
+                                    child: Card(
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              "Studying Topic-1",
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .headline5,
+                                            ),
+                                            Spacer(),
+                                            Icon(
+                                              Icons.arrow_forward_ios_rounded,
+                                            ),
+                                          ],
+                                        ),
                                       ),
-                                      SizedBox(
-                                        width: 20,
-                                      ),
-                                      Text(
-                                        "Studying Topic-1",
-                                        style: TextStyle(
-                                            color: Colors.white54,
-                                            fontSize: 18),
-                                      )
-                                    ],
+                                    ),
                                   ),
                                 ),
-                              ),
-                              Spacer(),
-                              Center(
-                                child: Container(
-                                    height: 100,
-                                    width: _width / 1.5,
+                                Spacer(),
+                                Center(
+                                  child: Container(
+                                      height: 100,
+                                      width: _width,
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(5)),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          dateRow(),
+                                          Spacer(),
+                                          Center(
+                                              child: Text(
+                                            _pressDuration,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .headline2,
+                                          )),
+                                        ],
+                                      )),
+                                ),
+                                Spacer(),
+                                GestureDetector(
+                                  onTap: () {
+                                    remainingAlertBox();
+                                  },
+                                  child: Container(
                                     decoration: BoxDecoration(
-                                        color: Colors.cyan[100],
-                                        borderRadius: BorderRadius.circular(5)),
-                                    child: Column(
+                                        borderRadius: BorderRadius.only(
+                                            bottomLeft: Radius.circular(9),
+                                            bottomRight: Radius.circular(9))),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
                                       children: [
-                                        dateRow(),
-                                        Center(
-                                            child: Text(
-                                          _pressDuration,
-                                          style: TextStyle(fontSize: 50),
-                                        )),
-                                      ],
-                                    )),
-                              ),
-                              Spacer(),
-                              GestureDetector(
-                                onTap: () {
-                                  remainingAlertBox();
-                                },
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                      color: Colors.white54,
-                                      borderRadius: BorderRadius.only(
-                                          bottomLeft: Radius.circular(9),
-                                          bottomRight: Radius.circular(9))),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      Icon(
-                                        Icons.arrow_drop_up,
-                                        size: 40,
-                                      ),
-                                      SizedBox(
-                                        width: 20,
-                                      ),
-                                      Text(
-                                        remainingMessage,
-                                        style: TextStyle(
+                                        Text(
+                                          remainingMessage,
+                                          style: TextStyle(
                                             color: remainingDuration < 0
                                                 ? Colors.red
                                                 : Colors.white,
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.w800),
-                                      )
-                                    ],
+                                          ),
+                                        ),
+                                        Spacer(),
+                                        Icon(
+                                          Icons.arrow_forward_ios_rounded,
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    Container(
-                        height: 70,
-                        width: 140,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.only(
-                              bottomLeft: Radius.circular(30),
-                              bottomRight: Radius.circular(30)),
-                          border: Border.all(color: Colors.blue[100]),
-                        ),
-                        child: Padding(
-                          padding: EdgeInsets.only(
-                              top: 25, left: 10, right: 10, bottom: 7),
-                          child: GestureDetector(
-                            onTap: () {
-                              endSession();
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(40),
-                                  border: Border.all(color: Colors.white),
-                                  color: Colors.red),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    "END",
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w800,
-                                        fontSize: 25),
-                                  ),
-                                ],
-                              ),
-                            ),
+                      SizedBox(
+                        height: _height / 22,
+                      ),
+                      SizedBox(
+                        width: _width / 1.2,
+                        child: TextButton(
+                          child: Text(
+                            'END',
+                            style: Theme.of(context).textTheme.headline3,
                           ),
-                        )),
-                    SizedBox(
-                      height: _height / 8,
-                    ),
-                    Container(
-                        alignment: Alignment.bottomCenter,
-                        width: _width,
-                        padding: EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          border: Border(
-                              top: BorderSide(
-                                  width: 1, color: Colors.blue[100])),
-                        ),
-                        child: Row(
-                          children: [
-                            IconButton(
-                              icon: sound == "sound"
-                                  ? Icon(
-                                      Icons.volume_up,
-                                      color: Colors.white54,
-                                      size: 30,
-                                    )
-                                  : Icon(
-                                      Icons.volume_off,
-                                      color: Colors.white54,
-                                      size: 30,
-                                    ),
-                              onPressed: () {
-                                setState(() {
-                                  if (sound == "sound") {
-                                    sound = "mute";
-                                  } else {
-                                    sound = "sound";
-                                  }
-                                });
-                              },
+                          style: ButtonStyle(
+                            elevation:
+                                MaterialStateProperty.resolveWith<double>(
+                              (Set<MaterialState> states) => 3.0,
                             ),
-                            Spacer(),
-                            GestureDetector(
-                                onTap: () {
-                                  questionAlertBox(context);
+                            backgroundColor:
+                                MaterialStateProperty.resolveWith<Color>(
+                              (Set<MaterialState> states) => Colors.red,
+                            ),
+                            overlayColor:
+                                MaterialStateProperty.all(Colors.black26),
+                            shape: MaterialStateProperty.all(
+                                RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            )),
+                          ),
+                          onPressed: () => endSession(),
+                        ),
+                      ),
+                      SizedBox(
+                        height: _height / 10,
+                      ),
+                      Container(
+                          alignment: Alignment.bottomCenter,
+                          width: _width,
+                          padding: EdgeInsets.all(10),
+                          child: Row(
+                            children: [
+                              IconButton(
+                                icon: sound == "sound"
+                                    ? Icon(
+                                        Icons.volume_up,
+                                      )
+                                    : Icon(
+                                        Icons.volume_off,
+                                      ),
+                                onPressed: () {
+                                  setState(() {
+                                    if (sound == "sound") {
+                                      sound = "mute";
+                                    } else {
+                                      sound = "sound";
+                                    }
+                                  });
                                 },
-                                child: Icon(
-                                  Icons.help,
-                                  color: Colors.white54,
-                                  size: 30,
-                                ))
-                          ],
-                        )),
-                  ],
+                              ),
+                              Spacer(),
+                              GestureDetector(
+                                  onTap: () {
+                                    questionAlertBox(context);
+                                  },
+                                  child: Icon(
+                                    Icons.help,
+                                  ))
+                            ],
+                          )),
+                    ],
+                  ),
                 ),
-              ),
-            ),
-          );
-        }
-      },
-    ));
+              );
+            } else {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+          },
+        ),
+      )),
+    );
   }
 
   Future questionAlertBox(context) {
@@ -483,12 +427,10 @@ class _StartTimerState extends State<StartTimer> {
             child: Opacity(
               opacity: a1.value,
               child: AlertDialog(
-                backgroundColor: Colors.orangeAccent,
                 shape: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16.0)),
                 title: Text(
                   "Study Help",
-                  style: TextStyle(color: Colors.white),
                   textAlign: TextAlign.center,
                 ),
                 content: Container(
@@ -499,9 +441,7 @@ class _StartTimerState extends State<StartTimer> {
                         Text(
                           "Here will some subtopics and data for study help",
                           style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w800,
-                              fontSize: 24),
+                              fontWeight: FontWeight.w800, fontSize: 24),
                         )
                       ],
                     )),
@@ -551,7 +491,6 @@ class _StartTimerState extends State<StartTimer> {
                     borderRadius: BorderRadius.circular(16.0)),
                 title: Text(
                   "Study Help",
-                  style: TextStyle(color: Colors.white),
                   textAlign: TextAlign.center,
                 ),
                 content: Container(
@@ -562,7 +501,6 @@ class _StartTimerState extends State<StartTimer> {
                         Text(
                           message,
                           style: TextStyle(
-                              color: Colors.white,
                               fontWeight: FontWeight.w800,
                               fontSize: 16,
                               letterSpacing: 1),
@@ -604,12 +542,10 @@ class _StartTimerState extends State<StartTimer> {
             child: Opacity(
               opacity: a1.value,
               child: AlertDialog(
-                backgroundColor: Colors.orangeAccent,
                 shape: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16.0)),
                 title: Text(
                   "Your Sub-Topics",
-                  style: TextStyle(color: Colors.white),
                   textAlign: TextAlign.center,
                 ),
                 content: Container(
@@ -620,9 +556,7 @@ class _StartTimerState extends State<StartTimer> {
                         Text(
                           subtopic,
                           style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w800,
-                              fontSize: 14),
+                              fontWeight: FontWeight.w800, fontSize: 14),
                         )
                       ],
                     )),
@@ -657,12 +591,10 @@ class _StartTimerState extends State<StartTimer> {
             child: Opacity(
               opacity: a1.value,
               child: AlertDialog(
-                backgroundColor: Colors.orangeAccent,
                 shape: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16.0)),
                 title: Text(
                   "Dont Worry!",
-                  style: TextStyle(color: Colors.white),
                   textAlign: TextAlign.center,
                 ),
                 content: Container(
@@ -673,9 +605,7 @@ class _StartTimerState extends State<StartTimer> {
                         Text(
                           "Dont Worry if you taking more time. It is good to learn deep, not just completing the topic",
                           style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w800,
-                              fontSize: 14),
+                              fontWeight: FontWeight.w800, fontSize: 14),
                         )
                       ],
                     )),

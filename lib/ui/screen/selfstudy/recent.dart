@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:lurnify/ui/constant/ApiConstant.dart';
 import 'package:lurnify/ui/constant/constant.dart';
 import 'package:lurnify/ui/screen/selfstudy/contentselect.dart';
-import 'package:lurnify/ui/screen/selfstudy/contentselection.dart';
 import 'package:lurnify/ui/screen/selfstudy/starttimer.dart';
 import 'package:lurnify/ui/screen/selfstudy/syncyourtime.dart';
 import 'package:shared_preferences/shared_preferences.dart';

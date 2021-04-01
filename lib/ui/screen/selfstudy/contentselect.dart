@@ -30,7 +30,14 @@ class _ContentSelectState extends State<ContentSelect> {
   get cardPed => Responsive.getPercent(5, ResponsiveSize.WIDTH, context);
   _ContentSelectState(this.pageKey);
   List<Subject> _subjects = [];
-  List<UnitDtos> _units=[];
+  List<UnitDtos> _units = [];
+  String course = "",
+      subject = "",
+      unit = "",
+      chapter = "",
+      topic = "",
+      subTopic = "",
+      duration;
   var _data;
   static double _selectedIndex = 0;
   _onSelected(double index) {
@@ -41,6 +48,7 @@ class _ContentSelectState extends State<ContentSelect> {
     SharedPreferences sp = await SharedPreferences.getInstance();
     var url =
         baseUrl + "getSubjectsByCourse?courseSno=" + sp.getString("courseSno");
+    course = sp.getString("courseSno");
     http.Response response = await http.get(
       Uri.encodeFull(url),
     );
@@ -48,8 +56,9 @@ class _ContentSelectState extends State<ContentSelect> {
     _subjects = (jsonDecode(response.body) as List)
         .map((e) => Subject.fromJson(e))
         .toList();
-    if(_subjects.isNotEmpty){
-      _units=_subjects[0].unitDtos;
+    if (_subjects.isNotEmpty) {
+      _units = _subjects[0].unitDtos;
+      subject = _subjects[0].sno.toString();
     }
   }
 
@@ -127,7 +136,8 @@ class _ContentSelectState extends State<ContentSelect> {
                       child: InkWell(
                         onTap: () {
                           setState(() {
-                            _units=_subjects[i].unitDtos;
+                            subject = _subjects[i].sno.toString();
+                            _units = _subjects[i].unitDtos;
                           });
                         },
                         child: Material(
@@ -152,20 +162,22 @@ class _ContentSelectState extends State<ContentSelect> {
   }
 
   Widget _unitGrids() {
-    return _units.isEmpty?Container():SliverGrid(
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: 5,
-        mainAxisSpacing: 5,
-        childAspectRatio: 2 / 2.1,
-      ),
-      delegate: SliverChildBuilderDelegate(
-        (BuildContext ctx, i) {
-          return _unitSelect(i);
-        },
-        childCount: _units.length,
-      ),
-    );
+    return _units.isEmpty
+        ? Container()
+        : SliverGrid(
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: 5,
+              mainAxisSpacing: 5,
+              childAspectRatio: 2 / 2.1,
+            ),
+            delegate: SliverChildBuilderDelegate(
+              (BuildContext ctx, i) {
+                return _unitSelect(i);
+              },
+              childCount: _units.length,
+            ),
+          );
   }
 
   Widget _unitSelect(i) {
@@ -177,6 +189,7 @@ class _ContentSelectState extends State<ContentSelect> {
         clipBehavior: Clip.antiAlias,
         child: InkWell(
           onTap: () {
+            unit = _units[i].sno.toString();
             showModalBottomSheet<void>(
               context: context,
               builder: (BuildContext context) {
@@ -192,6 +205,7 @@ class _ContentSelectState extends State<ContentSelect> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
+                Spacer(),
                 Expanded(
                   flex: 5,
                   child: Container(
@@ -255,56 +269,89 @@ class _ContentSelectState extends State<ContentSelect> {
   }
 
   Widget _chapterGrids(List<ChapterDtos> _chapters) {
-    return GridView.builder (
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount:  1,
-        crossAxisSpacing: 5,
-        mainAxisSpacing: 5,
-        childAspectRatio: 5 / 1,
-      ),
+    return ListView.builder(
       itemCount: _chapters.length,
-      itemBuilder: (context,i){
-        return _chapters == null ? Container() : _chapterSelect(_chapters[i],i);
+      itemBuilder: (context, i) {
+        return _chapters == null
+            ? Container()
+            : _chapterSelect(_chapters[i], i);
       },
     );
   }
 
-  Widget _chapterSelect(ChapterDtos _chapter,i) {
-    List<Widget> list =[];
-    for(var TopicDtos in _chapter.topicDtos){
+  Widget _chapterSelect(ChapterDtos _chapter, i) {
+    List<Widget> list = [];
+    for (var TopicDtos in _chapter.topicDtos) {
       list.add(Container(
         child: ListTile(
           title: Text(TopicDtos.topicName),
+          onTap: () {
+            topic = TopicDtos.sno.toString();
+            if (TopicDtos.subTopic != null) {
+              subTopic = TopicDtos.subTopic;
+            }
+            if (TopicDtos.duration != null) {
+              duration = TopicDtos.duration;
+            }
+
+            _pageNavigation();
+          },
         ),
       ));
     }
-    return Container(
-      // height: 300,
-      child: InkWell(
-        onTap: () {
-          _onSelected(i.toDouble());
-        },
-        child: Material(
-          color: Colors.transparent,
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              Center(
-                child: ExpansionTile(
-                  title: Text(
-                    _chapter.chapterName,
-                    style: TextStyle(
-                      fontSize: 18,
-                    ),
-                  ),
-                  children: list,
-                ),
-              ),
-            ],
-          ),
+    return ExpansionTile(
+      title: Text(
+        _chapter.chapterName,
+        style: TextStyle(
+          fontSize: 18,
         ),
       ),
+      onExpansionChanged: (bool) {
+        chapter = _chapter.sno.toString();
+      },
+      children: list,
     );
+  }
+
+  void _pageNavigation() {
+    print("page Key----" + topic);
+    if (course.length < 1) {
+      _toastMethod("Please Select Course");
+    } else if (subject.length < 1) {
+      _toastMethod("Please Select Subject");
+    } else if (unit.length < 1) {
+      _toastMethod("Please Select Unit");
+    } else if (chapter.length < 1) {
+      _toastMethod("Please Select Chapter");
+    } else if (topic.length < 1) {
+      _toastMethod("Please Select Topic");
+    } else {
+      print(course);
+      if (pageKey == "1") {
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => StartTimer(course, subject, unit, chapter,
+                    topic, subTopic, duration)));
+      } else if (pageKey == "2") {
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => SyncYourTime(
+                    course, subject, unit, chapter, topic, duration)));
+      }
+    }
+  }
+
+  void _toastMethod(String message) {
+    Fluttertoast.showToast(
+        msg: message,
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 12.0);
   }
 
   Color _randomColor(int i) {
