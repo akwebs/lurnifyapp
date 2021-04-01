@@ -15,6 +15,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:math' as math;
 
+import '../../../model/units.dart';
+
 class ContentSelect extends StatefulWidget {
   final String pageKey;
 
@@ -28,7 +30,12 @@ class _ContentSelectState extends State<ContentSelect> {
   get cardPed => Responsive.getPercent(5, ResponsiveSize.WIDTH, context);
   _ContentSelectState(this.pageKey);
   List<Subject> _subjects = [];
+  List<UnitDtos> _units=[];
   var _data;
+  static double _selectedIndex = 0;
+  _onSelected(double index) {
+    setState(() => _selectedIndex = index);
+  }
 
   Future _getSubjects() async {
     SharedPreferences sp = await SharedPreferences.getInstance();
@@ -41,6 +48,9 @@ class _ContentSelectState extends State<ContentSelect> {
     _subjects = (jsonDecode(response.body) as List)
         .map((e) => Subject.fromJson(e))
         .toList();
+    if(_subjects.isNotEmpty){
+      _units=_subjects[0].unitDtos;
+    }
   }
 
   @override
@@ -70,10 +80,10 @@ class _ContentSelectState extends State<ContentSelect> {
                     _subjectSelect(),
                   ),
 
-                  // SliverPadding(
-                  //   padding: const EdgeInsets.all(20),
-                  //   sliver: _unitGrids(),
-                  // ),
+                  SliverPadding(
+                    padding: const EdgeInsets.all(20),
+                    sliver: _unitGrids(),
+                  ),
                   // _subUnits()
                   // subUnits(),
                   // thirdRow(),
@@ -116,7 +126,9 @@ class _ContentSelectState extends State<ContentSelect> {
                       color: _randomColor(i),
                       child: InkWell(
                         onTap: () {
-                          //_getUnit(_subjects[i].sno);
+                          setState(() {
+                            _units=_subjects[i].unitDtos;
+                          });
                         },
                         child: Material(
                           color: Colors.transparent,
@@ -139,8 +151,8 @@ class _ContentSelectState extends State<ContentSelect> {
           );
   }
 
-  Widget _unitGrids(section) {
-    return SliverGrid(
+  Widget _unitGrids() {
+    return _units.isEmpty?Container():SliverGrid(
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
         crossAxisSpacing: 5,
@@ -149,14 +161,14 @@ class _ContentSelectState extends State<ContentSelect> {
       ),
       delegate: SliverChildBuilderDelegate(
         (BuildContext ctx, i) {
-          return _unitSelect(section);
+          return _unitSelect(i);
         },
-        childCount: section.length,
+        childCount: _units.length,
       ),
     );
   }
 
-  Widget _unitSelect(section) {
+  Widget _unitSelect(i) {
     return Container(
       child: Card(
         margin: EdgeInsets.all(5),
@@ -165,16 +177,15 @@ class _ContentSelectState extends State<ContentSelect> {
         clipBehavior: Clip.antiAlias,
         child: InkWell(
           onTap: () {
-            // _getChapters(_section[i].sno);
-            // showModalBottomSheet<void>(
-            //   context: context,
-            //   builder: (BuildContext context) {
-            //     return Container(
-            //       padding: EdgeInsets.symmetric(vertical: 32),
-            //       child: _chapterGrids(),
-            //     );
-            //   },
-            // );
+            showModalBottomSheet<void>(
+              context: context,
+              builder: (BuildContext context) {
+                return Container(
+                  padding: EdgeInsets.symmetric(vertical: 32),
+                  child: _chapterGrids(_units[i].chapterDtos),
+                );
+              },
+            );
           },
           child: Material(
             color: Colors.transparent,
@@ -214,7 +225,7 @@ class _ContentSelectState extends State<ContentSelect> {
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 5),
                     child: Text(
-                      section.unitName,
+                      _units[i].unitName,
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 15,
@@ -231,12 +242,65 @@ class _ContentSelectState extends State<ContentSelect> {
                       lineHeight: 5,
                       percent: 0.5,
                       backgroundColor: Colors.grey,
-                      progressColor: Colors.red, //_randomColor(section),
+                      progressColor: _randomColor(i),
                     ),
                   ),
                 ),
               ],
             ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _chapterGrids(List<ChapterDtos> _chapters) {
+    return GridView.builder (
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount:  1,
+        crossAxisSpacing: 5,
+        mainAxisSpacing: 5,
+        childAspectRatio: 5 / 1,
+      ),
+      itemCount: _chapters.length,
+      itemBuilder: (context,i){
+        return _chapters == null ? Container() : _chapterSelect(_chapters[i],i);
+      },
+    );
+  }
+
+  Widget _chapterSelect(ChapterDtos _chapter,i) {
+    List<Widget> list =[];
+    for(var TopicDtos in _chapter.topicDtos){
+      list.add(Container(
+        child: ListTile(
+          title: Text(TopicDtos.topicName),
+        ),
+      ));
+    }
+    return Container(
+      // height: 300,
+      child: InkWell(
+        onTap: () {
+          _onSelected(i.toDouble());
+        },
+        child: Material(
+          color: Colors.transparent,
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              Center(
+                child: ExpansionTile(
+                  title: Text(
+                    _chapter.chapterName,
+                    style: TextStyle(
+                      fontSize: 18,
+                    ),
+                  ),
+                  children: list,
+                ),
+              ),
+            ],
           ),
         ),
       ),
