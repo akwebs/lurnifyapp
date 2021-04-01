@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "847214747834",
+    "project_id": "lurnify-8613c",
+    "storage_bucket": "lurnify-8613c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:847214747834:android:107ec28e0a9473238d2283",
+        "android_client_info": {
+          "package_name": "com.mahaadev.lurnify"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "847214747834-eddo0q30pl9des63hc4rhdjbra22dq7p.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCrBJ4F5raMWFWqjC5u8UHwcDSs3_e39jk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "847214747834-eddo0q30pl9des63hc4rhdjbra22dq7p.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
