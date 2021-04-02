@@ -3,7 +3,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lurnify/config/data.dart';
 import 'package:lurnify/model/chapters.dart';
 import 'package:lurnify/model/subject.dart';
-import 'package:lurnify/model/topics.dart';
 import 'package:lurnify/model/units.dart';
 import 'package:lurnify/ui/constant/ApiConstant.dart';
 import 'package:lurnify/ui/constant/constant.dart';
@@ -40,6 +39,7 @@ class _ContentSelectState extends State<ContentSelect> {
       duration;
   var _data;
   Color _backgroundColor = AppColors.tileColors[3];
+  double opacityLevel = 1.0;
   Color subColor(int i) {
     if (i % 3 == 0) {
       return AppColors.tileColors[3];
@@ -98,19 +98,23 @@ class _ContentSelectState extends State<ContentSelect> {
                         50, ResponsiveSize.WIDTH, context),
                     right: -Responsive.getPercent(
                         40, ResponsiveSize.WIDTH, context),
-                    child: Container(
-                      decoration: BoxDecoration(boxShadow: [
-                        BoxShadow(
-                            color: Colors.black12,
-                            blurRadius: 50,
-                            spreadRadius: 2,
-                            offset: Offset(20, 0)),
-                        BoxShadow(
-                            color: Colors.white12,
-                            blurRadius: 0,
-                            spreadRadius: -2,
-                            offset: Offset(0, 0)),
-                      ], shape: BoxShape.circle, color: _backgroundColor),
+                    child: AnimatedOpacity(
+                      duration: Duration(microseconds: 600),
+                      opacity: 1,
+                      child: Container(
+                        decoration: BoxDecoration(boxShadow: [
+                          BoxShadow(
+                              color: Colors.black12,
+                              blurRadius: 50,
+                              spreadRadius: 2,
+                              offset: Offset(20, 0)),
+                          BoxShadow(
+                              color: Colors.white12,
+                              blurRadius: 0,
+                              spreadRadius: -2,
+                              offset: Offset(0, 0)),
+                        ], shape: BoxShape.circle, color: _backgroundColor),
+                      ),
                     ),
                   ),
                   Container(
@@ -193,6 +197,7 @@ class _ContentSelectState extends State<ContentSelect> {
                           brightness: Brightness.dark,
                           flexibleSpace: _subjectSelect(),
                           collapsedHeight: 100,
+                          iconTheme: IconThemeData(color: whiteColor),
                         ),
                         // ontopFixed(
                         //   _subjectSelect(),
@@ -372,6 +377,7 @@ class _ContentSelectState extends State<ContentSelect> {
 
   Widget _chapterGrids(List<ChapterDtos> _chapters) {
     return ListView.builder(
+      physics: BouncingScrollPhysics(),
       itemCount: _chapters.length,
       itemBuilder: (context, i) {
         return _chapters == null
@@ -383,23 +389,26 @@ class _ContentSelectState extends State<ContentSelect> {
 
   Widget _chapterSelect(ChapterDtos _chapter, i) {
     List<Widget> list = [];
-    for (var TopicDtos in _chapter.topicDtos) {
-      list.add(Container(
-        child: ListTile(
-          title: Text(TopicDtos.topicName),
-          onTap: () {
-            topic = TopicDtos.sno.toString();
-            if (TopicDtos.subTopic != null) {
-              subTopic = TopicDtos.subTopic;
-            }
-            if (TopicDtos.duration != null) {
-              duration = TopicDtos.duration;
-            }
-
-            _pageNavigation();
-          },
-        ),
-      ));
+    if (_chapter.topicDtos != null) {
+      for (var TopicDtos in _chapter.topicDtos) {
+        list.add(Container(
+          child: ListTile(
+            title: Text(TopicDtos.topicName),
+            onTap: () {
+              topic = TopicDtos.sno.toString();
+              if (TopicDtos.subTopic != null) {
+                subTopic = TopicDtos.subTopic;
+              } else
+                print('no topics');
+              if (TopicDtos.duration != null) {
+                duration = TopicDtos.duration;
+              }
+              print('no topics duration');
+              _pageNavigation();
+            },
+          ),
+        ));
+      }
     }
     return ExpansionTile(
       title: Text(

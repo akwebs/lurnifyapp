@@ -129,42 +129,34 @@ class _LoginState extends State<Login> {
                             ),
                             child: Form(
                               key: _formKey,
-                              child: Theme(
-                                data: new ThemeData(
-                                  primaryColor: Colors.deepPurple,
-                                  primaryColorDark: Colors.black,
+                              child: TextFormField(
+                                cursorColor: firstColor,
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.digitsOnly
+                                ],
+                                style: TextStyle(
+                                  fontSize: 25,
                                 ),
-                                child: TextFormField(
-                                  cursorColor: firstColor,
-                                  inputFormatters: [
-                                    FilteringTextInputFormatter.digitsOnly
-                                  ],
-                                  style: TextStyle(
-                                    fontSize: 25,
+                                textAlign: TextAlign.center,
+                                controller: _mobile,
+                                decoration: InputDecoration(
+                                  border: new OutlineInputBorder(
+                                    borderRadius:
+                                        new BorderRadius.circular(25.0),
+                                    borderSide: BorderSide(),
                                   ),
-                                  textAlign: TextAlign.center,
-                                  controller: _mobile,
-                                  decoration: InputDecoration(
-                                    border: new OutlineInputBorder(
-                                      borderRadius:
-                                          new BorderRadius.circular(25.0),
-                                      borderSide: BorderSide(),
-                                    ),
-                                    floatingLabelBehavior:
-                                        FloatingLabelBehavior.auto,
-                                    labelText: 'Mobile Number',
-                                    labelStyle:
-                                        TextStyle(color: Colors.black54),
-                                  ),
-                                  validator: (val) {
-                                    if (val.length == 0) {
-                                      return "Mobile cannot be empty";
-                                    } else {
-                                      return null;
-                                    }
-                                  },
-                                  keyboardType: TextInputType.number,
+                                  floatingLabelBehavior:
+                                      FloatingLabelBehavior.auto,
+                                  labelText: 'Mobile Number',
                                 ),
+                                validator: (val) {
+                                  if (val.length == 0) {
+                                    return "Mobile cannot be empty";
+                                  } else {
+                                    return null;
+                                  }
+                                },
+                                keyboardType: TextInputType.number,
                               ),
                             )),
                       ),
