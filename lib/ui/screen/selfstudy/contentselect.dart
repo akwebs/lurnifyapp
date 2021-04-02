@@ -61,6 +61,7 @@ class _ContentSelectState extends State<ContentSelect> {
     SharedPreferences sp = await SharedPreferences.getInstance();
     var url =
         baseUrl + "getSubjectsByCourse?courseSno=" + sp.getString("courseSno");
+    print(url);
     course = sp.getString("courseSno");
     http.Response response = await http.get(
       Uri.encodeFull(url),
@@ -86,7 +87,7 @@ class _ContentSelectState extends State<ContentSelect> {
     return Scaffold(
       body: FutureBuilder(
         future: _data,
-        builder: (conext, snapshot) {
+        builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             return Material(
               child: Stack(
@@ -371,35 +372,40 @@ class _ContentSelectState extends State<ContentSelect> {
   }
 
   Widget _chapterGrids(List<ChapterDtos> _chapters) {
+    for(int i=0;i<_chapters.length;i++){
+      print(_chapters[i].chapterName);
+    }
+    print(_chapters.length);
     return ListView.builder(
       itemCount: _chapters.length,
       itemBuilder: (context, i) {
-        return _chapters == null
-            ? Container()
-            : _chapterSelect(_chapters[i], i);
+        return _chapterSelect(_chapters[i]);
       },
     );
   }
 
-  Widget _chapterSelect(ChapterDtos _chapter, i) {
+  Widget _chapterSelect(ChapterDtos _chapter) {
+    print(_chapter.chapterName);
     List<Widget> list = [];
-    for (var TopicDtos in _chapter.topicDtos) {
-      list.add(Container(
-        child: ListTile(
-          title: Text(TopicDtos.topicName),
-          onTap: () {
-            topic = TopicDtos.sno.toString();
-            if (TopicDtos.subTopic != null) {
-              subTopic = TopicDtos.subTopic;
-            }
-            if (TopicDtos.duration != null) {
-              duration = TopicDtos.duration;
-            }
+    if(_chapter.topicDtos!=null){
+      for (var TopicDtos in _chapter.topicDtos) {
+        list.add(Container(
+          child: ListTile(
+            title: Text(TopicDtos.topicName),
+            onTap: () {
+              topic = TopicDtos.sno.toString();
+              if (TopicDtos.subTopic != null) {
+                subTopic = TopicDtos.subTopic;
+              }
+              if (TopicDtos.duration != null) {
+                duration = TopicDtos.duration;
+              }
 
-            _pageNavigation();
-          },
-        ),
-      ));
+              _pageNavigation();
+            },
+          ),
+        ));
+      }
     }
     return ExpansionTile(
       title: Text(
