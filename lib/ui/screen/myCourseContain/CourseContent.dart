@@ -154,18 +154,47 @@ class _CourseContent extends State<CourseContent> {
         future: data,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
-            return Scaffold(
-              appBar: AppBar(
-                title: Text('Course Content'),
-                centerTitle: true,
-              ),
-              body: buildPageView(),
-              bottomNavigationBar: BottomNavigationBar(
-                currentIndex: bottomSelectedIndex,
-                onTap: (index) {
-                  bottomTapped(index);
-                },
-                items: _myList,
+            return DefaultTabController(
+              length: _myList.length,
+              child: Scaffold(
+                appBar: AppBar(
+                  title: Text('Course Content'),
+                  centerTitle: true,
+                ),
+                body: buildPageView(),
+                bottomNavigationBar: new Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    new AnimatedCrossFade(
+                      firstChild: new Material(
+                        color: Theme
+                            .of(context)
+                            .primaryColor,
+                        child: new TabBar(
+                          isScrollable: true,
+                          tabs: new List.generate(_subjects.length, (index) {
+                            return new Tab(text: _subjects[index]['subjectName'].toUpperCase());
+                          }),
+                        ),
+                      ),
+                      secondChild: new Container(),
+                      crossFadeState: bottomSelectedIndex == 0
+                          ? CrossFadeState.showFirst
+                          : CrossFadeState.showSecond,
+                      duration: const Duration(milliseconds: 300),
+                    ),
+                    new BottomNavigationBar(
+                      currentIndex: bottomSelectedIndex,
+                      onTap: (int index) {
+                        setState(() {
+                          bottomSelectedIndex = index;
+                        });
+                      },
+                      items: _myList
+                    ),
+                  ],
+                ),
               ),
             );
           } else {
