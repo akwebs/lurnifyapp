@@ -5,7 +5,6 @@ import 'package:http/http.dart' as http;
 import 'package:lurnify/ui/constant/ApiConstant.dart';
 import 'package:lurnify/ui/screen/myCourseContain/FlashCardImagePreview.dart';
 
-
 class FlashCard extends StatefulWidget {
   final sno, topicName, subtopic;
 
@@ -175,8 +174,10 @@ class _FlashCardState extends State<FlashCard> {
           return Row(
             children: [
               GestureDetector(
-                onTap: (){
-                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => FlashCardImagePreview(_flashCards,i),));
+                onTap: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => FlashCardImagePreview(_flashCards, i),
+                  ));
                 },
                 child: Container(
                   width: MediaQuery.of(context).size.width * 8 / 10,
@@ -189,15 +190,15 @@ class _FlashCardState extends State<FlashCard> {
                       Expanded(
                           child: Text(
                         _flashCards[i]['flashCardName'],
-                        style:
-                            TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.w800),
                       )),
                       FadeInImage(
                         image: NetworkImage(imageUrl +
                             _flashCards[i]['directory'] +
                             "/" +
                             _flashCards[i]['fileName']),
-                        placeholder: AssetImage(""),
+                        placeholder: AssetImage("assets/placeholder.jpg"),
                         height: MediaQuery.of(context).size.height * 3.6 / 10,
                       )
                     ],

@@ -6,7 +6,6 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
-
 class MicroVideoPlayer extends StatefulWidget {
   final url;
   MicroVideoPlayer(this.url);
@@ -15,25 +14,24 @@ class MicroVideoPlayer extends StatefulWidget {
 }
 
 class _MicroVideoPlayerState extends State<MicroVideoPlayer> {
-
   final url;
   _MicroVideoPlayerState(this.url);
 
-   YoutubePlayerController _controller;
-   TextEditingController _idController;
-   TextEditingController _seekToController;
+  YoutubePlayerController _controller;
+  TextEditingController _idController;
+  TextEditingController _seekToController;
 
-   PlayerState _playerState;
-   YoutubeMetaData _videoMetaData;
+  PlayerState _playerState;
+  YoutubeMetaData _videoMetaData;
   double _volume = 100;
   bool _muted = false;
   bool _isPlayerReady = false;
 
   @override
   void initState() {
-    String videoID="";
+    String videoID = "";
     try {
-      videoID= YoutubePlayer.convertUrlToId(url);
+      videoID = YoutubePlayer.convertUrlToId(url);
       print(videoID);
     } on Exception catch (exception) {
       print(exception);
@@ -42,7 +40,7 @@ class _MicroVideoPlayerState extends State<MicroVideoPlayer> {
     }
     super.initState();
     _controller = YoutubePlayerController(
-      initialVideoId:videoID,
+      initialVideoId: videoID,
       flags: const YoutubePlayerFlags(
         mute: false,
         autoPlay: true,
@@ -132,7 +130,7 @@ class _MicroVideoPlayerState extends State<MicroVideoPlayer> {
           leading: Padding(
             padding: const EdgeInsets.only(left: 12.0),
             child: Image.asset(
-              'assets/ypf.png',
+              'assets/placeholder.jpg',
               fit: BoxFit.fitWidth,
             ),
           ),
@@ -219,24 +217,24 @@ class _MicroVideoPlayerState extends State<MicroVideoPlayer> {
                         ),
                         onPressed: _isPlayerReady
                             ? () {
-                          _controller.value.isPlaying
-                              ? _controller.pause()
-                              : _controller.play();
-                          setState(() {});
-                        }
+                                _controller.value.isPlaying
+                                    ? _controller.pause()
+                                    : _controller.play();
+                                setState(() {});
+                              }
                             : null,
                       ),
                       IconButton(
                         icon: Icon(_muted ? Icons.volume_off : Icons.volume_up),
                         onPressed: _isPlayerReady
                             ? () {
-                          _muted
-                              ? _controller.unMute()
-                              : _controller.mute();
-                          setState(() {
-                            _muted = !_muted;
-                          });
-                        }
+                                _muted
+                                    ? _controller.unMute()
+                                    : _controller.mute();
+                                setState(() {
+                                  _muted = !_muted;
+                                });
+                              }
                             : null,
                       ),
                       FullScreenButton(
@@ -262,11 +260,11 @@ class _MicroVideoPlayerState extends State<MicroVideoPlayer> {
                           label: '${(_volume).round()}',
                           onChanged: _isPlayerReady
                               ? (value) {
-                            setState(() {
-                              _volume = value;
-                            });
-                            _controller.setVolume(_volume.round());
-                          }
+                                  setState(() {
+                                    _volume = value;
+                                  });
+                                  _controller.setVolume(_volume.round());
+                                }
                               : null,
                         ),
                       ),
@@ -348,18 +346,18 @@ class _MicroVideoPlayerState extends State<MicroVideoPlayer> {
         color: Colors.blueAccent,
         onPressed: _isPlayerReady
             ? () {
-          if (_idController.text.isNotEmpty) {
-            var id = YoutubePlayer.convertUrlToId(
-              _idController.text,
-            ) ??
-                '';
-            if (action == 'LOAD') _controller.load(id);
-            if (action == 'CUE') _controller.cue(id);
-            FocusScope.of(context).requestFocus(FocusNode());
-          } else {
-            _showSnackBar('Source can\'t be empty!');
-          }
-        }
+                if (_idController.text.isNotEmpty) {
+                  var id = YoutubePlayer.convertUrlToId(
+                        _idController.text,
+                      ) ??
+                      '';
+                  if (action == 'LOAD') _controller.load(id);
+                  if (action == 'CUE') _controller.cue(id);
+                  FocusScope.of(context).requestFocus(FocusNode());
+                } else {
+                  _showSnackBar('Source can\'t be empty!');
+                }
+              }
             : null,
         disabledColor: Colors.grey,
         disabledTextColor: Colors.black,

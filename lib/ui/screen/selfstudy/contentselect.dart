@@ -3,7 +3,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lurnify/config/data.dart';
 import 'package:lurnify/model/chapters.dart';
 import 'package:lurnify/model/subject.dart';
-import 'package:lurnify/model/topics.dart';
 import 'package:lurnify/model/units.dart';
 import 'package:lurnify/ui/constant/ApiConstant.dart';
 import 'package:lurnify/ui/constant/constant.dart';
