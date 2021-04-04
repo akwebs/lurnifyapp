@@ -124,7 +124,6 @@ class _CourseContent extends State<CourseContent> {
     return PageView(
       controller: pageController,
       onPageChanged: (index) {
-        print("1111111111111111111111111"+index.toString());
         pageChanged(index);
       },
       children: <Widget>[
@@ -162,7 +161,7 @@ class _CourseContent extends State<CourseContent> {
               ),
               body: buildPageView(),
               bottomNavigationBar: BottomNavigationBar(
-                currentIndex: 0,
+                currentIndex: bottomSelectedIndex,
                 onTap: (index) {
                   bottomTapped(index);
                 },
