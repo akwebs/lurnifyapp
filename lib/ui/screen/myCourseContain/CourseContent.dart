@@ -40,6 +40,10 @@ class _CourseContent extends State<CourseContent> {
     setState(() => _selectedIndex = index);
   }
 
+  int bottomSelectedIndex = 0;
+
+  List<BottomNavigationBarItem> _myList = [];
+
   ScrollController scrollController = ScrollController(
     initialScrollOffset: _selectedIndex, // or whatever offset you wish
     keepScrollOffset: true,
@@ -55,6 +59,12 @@ class _CourseContent extends State<CourseContent> {
     var resbody = jsonDecode(response.body);
     print(resbody);
     _subjects = resbody;
+    for (int i = 0; i < _subjects.length; i++) {
+      _myList.add(BottomNavigationBarItem(
+        icon: Icon(Icons.subject),
+        label: _subjects[i]['subjectName'],
+      ));
+    }
   }
 
   Future _getUnit(int sno) async {
@@ -102,20 +112,8 @@ class _CourseContent extends State<CourseContent> {
     super.initState();
   }
 
-  int bottomSelectedIndex = 0;
 
-  List<BottomNavigationBarItem> _myList = [];
 
-  List<BottomNavigationBarItem> buildBottomNavBarItems() {
-    print(_subjects);
-    for (int i = 0; i < _subjects.length; i++) {
-      _myList.add(BottomNavigationBarItem(
-        icon: Icon(Icons.subject),
-        label: _subjects[i]['subjectName'],
-      ));
-    }
-    return _myList;
-  }
 
   PageController pageController = PageController(
     initialPage: 0,
@@ -126,7 +124,7 @@ class _CourseContent extends State<CourseContent> {
     return PageView(
       controller: pageController,
       onPageChanged: (index) {
-        print(index);
+        print("1111111111111111111111111"+index.toString());
         pageChanged(index);
       },
       children: <Widget>[
@@ -164,11 +162,11 @@ class _CourseContent extends State<CourseContent> {
               ),
               body: buildPageView(),
               bottomNavigationBar: BottomNavigationBar(
-                currentIndex: bottomSelectedIndex,
+                currentIndex: 0,
                 onTap: (index) {
                   bottomTapped(index);
                 },
-                items: buildBottomNavBarItems(),
+                items: _myList,
               ),
             );
           } else {
