@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lurnify/config/data.dart';
 import 'package:lurnify/ui/screen/myCourseContain/CourseContent.dart';
 import 'package:lurnify/ui/screen/myCourseContain/MyCourseContain.dart';
+import 'package:lurnify/ui/screen/myCourseContain/NewCourseContent.dart';
 import 'package:lurnify/ui/screen/selfstudy/selfstudy.dart';
 
 class AppTiles extends StatelessWidget {
@@ -37,7 +38,7 @@ class AppTiles extends StatelessWidget {
                   ));
                 } else if (index == 3) {
                   Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => CourseContent(),
+                    builder: (context) => NewCourseContent(),
                   ));
                 }
               },
