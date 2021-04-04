@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lurnify/config/data.dart';
+import 'package:lurnify/ui/screen/myCourseContain/MyCourseContain.dart';
 import 'package:lurnify/ui/screen/selfstudy/selfstudy.dart';
 
 class AppTiles extends StatelessWidget {
@@ -29,9 +30,15 @@ class AppTiles extends StatelessWidget {
             clipBehavior: Clip.antiAlias,
             child: InkWell(
               onTap: () {
-                Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => SelfStudySection(),
-                ));
+                if(index==0){
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => SelfStudySection(),
+                  ));
+                }else if(index==3){
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => MyCourseContain(),
+                  ));
+                }
               },
               child: Material(
                 color: Colors.transparent,
