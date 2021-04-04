@@ -112,6 +112,9 @@ class _CourseContent extends State<CourseContent> {
     super.initState();
   }
 
+
+
+
   PageController pageController = PageController(
     initialPage: 0,
     keepPage: true,
@@ -165,13 +168,13 @@ class _CourseContent extends State<CourseContent> {
                   children: [
                     new AnimatedCrossFade(
                       firstChild: new Material(
-                        color: Theme.of(context).primaryColor,
+                        color: Theme
+                            .of(context)
+                            .primaryColor,
                         child: new TabBar(
                           isScrollable: true,
                           tabs: new List.generate(_subjects.length, (index) {
-                            return new Tab(
-                                text: _subjects[index]['subjectName']
-                                    .toUpperCase());
+                            return new Tab(text: _subjects[index]['subjectName'].toUpperCase());
                           }),
                         ),
                       ),
@@ -182,13 +185,14 @@ class _CourseContent extends State<CourseContent> {
                       duration: const Duration(milliseconds: 300),
                     ),
                     new BottomNavigationBar(
-                        currentIndex: bottomSelectedIndex,
-                        onTap: (int index) {
-                          setState(() {
-                            bottomSelectedIndex = index;
-                          });
-                        },
-                        items: _myList),
+                      currentIndex: bottomSelectedIndex,
+                      onTap: (int index) {
+                        setState(() {
+                          bottomSelectedIndex = index;
+                        });
+                      },
+                      items: _myList
+                    ),
                   ],
                 ),
               ),

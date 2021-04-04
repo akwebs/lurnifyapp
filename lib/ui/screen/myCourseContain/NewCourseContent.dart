@@ -22,6 +22,8 @@ class _NewCourseContentState extends State<NewCourseContent>
     with SingleTickerProviderStateMixin {
   List<Subject> _subjects = [];
   List<UnitDtos> _units = [];
+  TabController _controller;
+  int _selectedIndex = 0;
   String course = "",
       subject = "",
       unit = "",
@@ -64,15 +66,17 @@ class _NewCourseContentState extends State<NewCourseContent>
       _units = _subjects[0].unitDtos;
       subject = _subjects[0].sno.toString();
     }
+
+    print(_subjects.length);
+    _controller = TabController(length: _subjects.length, vsync: this);
   }
 
-  TabController _controller;
-  int _selectedIndex = 0;
+
   @override
   void initState() {
     _data = _getSubjects();
     super.initState();
-    _controller = TabController(length: _subjects.length, vsync: this);
+
   }
 
   @override
@@ -88,23 +92,21 @@ class _NewCourseContentState extends State<NewCourseContent>
           future: _data,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
-              return DefaultTabController(
-                length: _subjects.length,
-                child: Scaffold(
-                  body: TabBarView(
-                    children: List.generate(_subjects.length, (index) {
-                      return Center(
-                        child: Text(_subjects[index].subjectName.toUpperCase()),
-                      );
-                    }),
-                  ),
-                  bottomNavigationBar: TabBar(
-                    controller: _controller,
-                    tabs: List.generate(_subjects.length, (index) {
-                      return new Tab(
-                          text: _subjects[index].subjectName.toUpperCase());
-                    }),
-                  ),
+              return Scaffold(
+                body: TabBarView(
+                  controller: _controller,
+                  children: List.generate(_subjects.length, (index) {
+                    return Center(
+                      child: Text(_subjects[index].subjectName.toUpperCase()),
+                    );
+                  }),
+                ),
+                bottomNavigationBar: TabBar(
+                  controller: _controller,
+                  tabs: List.generate(_subjects.length, (index) {
+                    return new Tab(
+                        text: _subjects[index].subjectName.toUpperCase());
+                  }),
                 ),
               );
             } else {
