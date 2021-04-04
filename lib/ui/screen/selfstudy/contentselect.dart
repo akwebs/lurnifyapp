@@ -382,23 +382,25 @@ class _ContentSelectState extends State<ContentSelect> {
 
   Widget _chapterSelect(ChapterDtos _chapter, i) {
     List<Widget> list = [];
-    for (var TopicDtos in _chapter.topicDtos) {
-      list.add(Container(
-        child: ListTile(
-          title: Text(TopicDtos.topicName),
-          onTap: () {
-            topic = TopicDtos.sno.toString();
-            if (TopicDtos.subTopic != null) {
-              subTopic = TopicDtos.subTopic;
-            }
-            if (TopicDtos.duration != null) {
-              duration = TopicDtos.duration;
-            }
+    if (_chapter.topicDtos != null) {
+      for (var TopicDtos in _chapter.topicDtos) {
+        list.add(Container(
+          child: ListTile(
+            title: Text(TopicDtos.topicName),
+            onTap: () {
+              topic = TopicDtos.sno.toString();
+              if (TopicDtos.subTopic != null) {
+                subTopic = TopicDtos.subTopic;
+              }
+              if (TopicDtos.duration != null) {
+                duration = TopicDtos.duration;
+              }
 
-            _pageNavigation();
-          },
-        ),
-      ));
+              _pageNavigation();
+            },
+          ),
+        ));
+      }
     }
     return ExpansionTile(
       title: Text(

@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:lurnify/config/data.dart';
-import 'package:lurnify/ui/screen/myCourseContain/CourseContent.dart';
-import 'package:lurnify/ui/screen/myCourseContain/MyCourseContain.dart';
 import 'package:lurnify/ui/screen/myCourseContain/NewCourseContent.dart';
 import 'package:lurnify/ui/screen/selfstudy/selfstudy.dart';
 

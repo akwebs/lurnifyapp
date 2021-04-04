@@ -588,7 +588,7 @@ class _MyCourseContainState extends State<MyCourseContain> {
         child: Center(
           child: ButtonTheme(
             minWidth: 150,
-            child: RaisedButton(
+            child: ElevatedButton(
               child: Text(
                 "START",
                 style: TextStyle(
@@ -597,10 +597,6 @@ class _MyCourseContainState extends State<MyCourseContain> {
                   fontSize: 22,
                 ),
               ),
-              color: Colors.amberAccent,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(18),
-                  side: BorderSide(width: 1, color: Colors.deepPurpleAccent)),
               onPressed: () {
                 pageNavigation();
               },
