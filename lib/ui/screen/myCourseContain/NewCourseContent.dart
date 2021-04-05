@@ -23,6 +23,7 @@ class _NewCourseContentState extends State<NewCourseContent>
   List<Subject> _subjects = [];
   List<UnitDtos> _units = [];
   TabController _controller;
+  List<Widget> _myTabs=[];
   // ignore: unused_field
   int _selectedIndex = 0;
   String course = "",
@@ -70,6 +71,26 @@ class _NewCourseContentState extends State<NewCourseContent>
 
     print(_subjects.length);
     _controller = TabController(length: _subjects.length, vsync: this);
+    _controller.addListener(_handleTabSelection);
+    for(int i=0;i<_subjects.length;i++){
+      _myTabs.add(CustomScrollView(
+        physics: BouncingScrollPhysics(),
+        slivers: [
+          SliverPadding(
+            padding: const EdgeInsets.all(20),
+            sliver: _unitGrids(i),
+          ),
+        ],
+      ));
+    }
+  }
+
+  _handleTabSelection() {
+      setState(() {
+        _backgroundColor = subColor(_controller.index);
+        subject = _subjects[_controller.index].sno.toString();
+        _units = _subjects[_controller.index].unitDtos;
+      });
   }
 
   @override
@@ -179,17 +200,16 @@ class _NewCourseContentState extends State<NewCourseContent>
                     SafeArea(
                       child: TabBarView(
                         controller: _controller,
-                        children: List.generate(_subjects.length, (index) {
-                          return CustomScrollView(
-                            physics: BouncingScrollPhysics(),
-                            slivers: [
-                              SliverPadding(
-                                padding: const EdgeInsets.all(20),
-                                sliver: _unitGrids(index),
-                              ),
-                            ],
-                          );
-                        }),
+                        children: List.generate(_subjects.length, (i) =>
+                            CustomScrollView(
+                              physics: BouncingScrollPhysics(),
+                              slivers: [
+                                SliverPadding(
+                                  padding: const EdgeInsets.all(20),
+                                  sliver: _unitGrids(i),
+                                ),
+                              ],
+                            ))
                       ),
                     ),
                   ],
@@ -198,11 +218,11 @@ class _NewCourseContentState extends State<NewCourseContent>
                   labelColor: firstColor,
                   unselectedLabelColor: Colors.black26,
                   controller: _controller,
-                  onTap: (i) => setState(() {
-                    subject = _subjects[i].sno.toString();
-                    _units = _subjects[i].unitDtos;
-                    _onSelected(i);
-                  }),
+                  // onTap: (i) => setState(() {
+                  //   subject = _subjects[i].sno.toString();
+                  //   _units = _subjects[i].unitDtos;
+                  //   _onSelected(i);
+                  // }),
                   tabs: List.generate(_subjects.length, (i) {
                     return new Tab(
                       text: _subjects[i].subjectName.toUpperCase(),
