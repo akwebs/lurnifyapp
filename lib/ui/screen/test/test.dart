@@ -120,9 +120,13 @@ class _TestState extends State<Test> with TickerProviderStateMixin {
 
   @override
   void initState() {
-    _testQuestions = testData['test'];
+    if(testData['test']!=null){
+      _testQuestions = testData['test'];
+    }
     print(_testQuestions);
-    _noOFQuestions = _testQuestions.length;
+   if(_testQuestions!=null){
+     _noOFQuestions = _testQuestions.length;
+   }
     _toolBarName = testData['testName'];
     _testName = testData['testName'];
     startTimer();
@@ -144,7 +148,7 @@ class _TestState extends State<Test> with TickerProviderStateMixin {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          _toolBarName,
+          _toolBarName==null?"no tool bar":_toolBarName,
           style: TextStyle(color: whiteColor),
         ),
         brightness: Brightness.dark,
@@ -204,6 +208,7 @@ class _TestState extends State<Test> with TickerProviderStateMixin {
                     FloatingActionButton(
                       backgroundColor: firstColor,
                       mini: true,
+                      heroTag: null,
                       child: new Icon(icons[index], color: Colors.white),
                       onPressed: () {
                         _floatingButtonClick(index);

@@ -12,7 +12,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../../../model/units.dart';
-import 'PreciseTheory.dart';
 
 class NewCourseContent extends StatefulWidget {
   @override
@@ -24,7 +23,7 @@ class _NewCourseContentState extends State<NewCourseContent>
   List<Subject> _subjects = [];
   List<UnitDtos> _units = [];
   TabController _controller;
-  List<Widget> _myTabs = [];
+  List<Widget> _myTabs=[];
   // ignore: unused_field
   int _selectedIndex = 0;
   String course = "",
@@ -72,27 +71,27 @@ class _NewCourseContentState extends State<NewCourseContent>
 
     print(_subjects.length);
     _controller = TabController(length: _subjects.length, vsync: this);
-    // _controller.addListener(_handleTabSelection);
-    for (int i = 0; i < _subjects.length; i++) {
+    _controller.addListener(_handleTabSelection);
+    for(int i=0;i<_subjects.length;i++){
       _myTabs.add(CustomScrollView(
         physics: BouncingScrollPhysics(),
         slivers: [
           SliverPadding(
             padding: const EdgeInsets.all(20),
-            sliver: _unitGrids(_subjects[i].unitDtos),
+            sliver: _unitGrids(i),
           ),
         ],
       ));
     }
   }
 
-  // _handleTabSelection() {
-  //   setState(() {
-  //     _backgroundColor = subColor(_controller.index);
-  //     subject = _subjects[_controller.index].sno.toString();
-  //     _units = _subjects[_controller.index].unitDtos;
-  //   });
-  // }
+  _handleTabSelection() {
+      setState(() {
+        _backgroundColor = subColor(_controller.index);
+        subject = _subjects[_controller.index].sno.toString();
+        _units = _subjects[_controller.index].unitDtos;
+      });
+  }
 
   @override
   void initState() {
@@ -200,7 +199,18 @@ class _NewCourseContentState extends State<NewCourseContent>
                     ),
                     SafeArea(
                       child: TabBarView(
-                          controller: _controller, children: _myTabs),
+                        controller: _controller,
+                        children: List.generate(_subjects.length, (i) =>
+                            CustomScrollView(
+                              physics: BouncingScrollPhysics(),
+                              slivers: [
+                                SliverPadding(
+                                  padding: const EdgeInsets.all(20),
+                                  sliver: _unitGrids(i),
+                                ),
+                              ],
+                            ))
+                      ),
                     ),
                   ],
                 ),
@@ -229,8 +239,8 @@ class _NewCourseContentState extends State<NewCourseContent>
     );
   }
 
-  Widget _unitGrids(_unitDtos) {
-    return _unitDtos.isEmpty
+  Widget _unitGrids(i) {
+    return _units.isEmpty
         ? Container()
         : SliverGrid(
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -241,14 +251,14 @@ class _NewCourseContentState extends State<NewCourseContent>
             ),
             delegate: SliverChildBuilderDelegate(
               (BuildContext ctx, i) {
-                return _unitSelect(i, _unitDtos);
+                return _unitSelect(i);
               },
-              childCount: _unitDtos.length,
+              childCount: _units.length,
             ),
           );
   }
 
-  Widget _unitSelect(i, _unitDtos) {
+  Widget _unitSelect(i) {
     return Container(
       child: Card(
         margin: EdgeInsets.all(5),
@@ -257,13 +267,13 @@ class _NewCourseContentState extends State<NewCourseContent>
         clipBehavior: Clip.antiAlias,
         child: InkWell(
           onTap: () {
-            unit = _unitDtos[i].sno.toString();
+            unit = _units[i].sno.toString();
             showModalBottomSheet<void>(
               context: context,
               builder: (BuildContext context) {
                 return Container(
                   padding: EdgeInsets.symmetric(vertical: 32),
-                  child: _chapterGrids(_unitDtos[i].chapterDtos),
+                  child: _chapterGrids(_units[i].chapterDtos),
                 );
               },
             );
@@ -307,7 +317,7 @@ class _NewCourseContentState extends State<NewCourseContent>
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 5),
                     child: Text(
-                      _unitDtos[i].unitName,
+                      _units[i].unitName,
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 15,
@@ -363,7 +373,7 @@ class _NewCourseContentState extends State<NewCourseContent>
                 duration = TopicDtos.duration;
               }
 
-              _pageNavigation(TopicDtos);
+              _pageNavigation();
             },
           ),
         ));
@@ -383,7 +393,7 @@ class _NewCourseContentState extends State<NewCourseContent>
     );
   }
 
-  void _pageNavigation(topicDtos) {
+  void _pageNavigation() {
     print("page Key----" + topic);
     if (course.length < 1) {
       toastMethod("Please Select Course");
@@ -396,7 +406,7 @@ class _NewCourseContentState extends State<NewCourseContent>
     } else if (topic.length < 1) {
       toastMethod("Please Select Topic");
     } else {
-      _showPopup(context, topicDtos);
+      _showPopup(context);
 //      if (pageKey == "1") {
 //        Navigator.pushReplacement(context, MaterialPageRoute(
 //            builder: (context) =>
@@ -420,45 +430,69 @@ class _NewCourseContentState extends State<NewCourseContent>
         fontSize: 12.0);
   }
 
-  void _showPopup(BuildContext context, topicDtos) {
+  void _showPopup(BuildContext context) {
     showDialog(
         context: context,
         barrierDismissible: true,
         builder: (BuildContext context) {
           return SimpleDialog(
-            contentPadding: EdgeInsets.all(20),
+            title: Text('Set backup account'),
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: StCards("1", "Class Note", topicDtos),
-                  ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Expanded(
-                    child: StCards("2", "Precise Theory", topicDtos),
-                  ),
-                ],
+              SimpleDialogOption(
+                onPressed: () {
+                  Navigator.pop(context, 'user01@gmail.com');
+                  Fluttertoast.showToast(
+                      msg: 'user01@gmail.com', toastLength: Toast.LENGTH_SHORT);
+                },
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Icon(Icons.account_circle,
+                        size: 36.0, color: Colors.orange),
+                    Padding(
+                      padding: const EdgeInsetsDirectional.only(start: 16.0),
+                      child: Text('user01@gmail.com'),
+                    ),
+                  ],
+                ),
               ),
-              SizedBox(
-                height: 20,
+              SimpleDialogOption(
+                onPressed: () {
+                  Navigator.pop(context, 'user02@gmail.com');
+                  Fluttertoast.showToast(
+                      msg: 'user02@gmail.com', toastLength: Toast.LENGTH_SHORT);
+                },
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Icon(Icons.account_circle, size: 36.0, color: Colors.green),
+                    Padding(
+                      padding: const EdgeInsetsDirectional.only(start: 16.0),
+                      child: Text('user02@gmail.com'),
+                    ),
+                  ],
+                ),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: StCards("3", "Flash Card", topicDtos),
-                  ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Expanded(
-                    child: StCards("4", "Micro Video", topicDtos),
-                  ),
-                ],
-              ),
+              SimpleDialogOption(
+                onPressed: () {
+                  Navigator.pop(context, 'Add account');
+                  Fluttertoast.showToast(
+                      msg: 'Add account', toastLength: Toast.LENGTH_SHORT);
+                },
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Icon(Icons.account_circle, size: 36.0, color: Colors.grey),
+                    Padding(
+                      padding: const EdgeInsetsDirectional.only(start: 16.0),
+                      child: Text('Add account'),
+                    ),
+                  ],
+                ),
+              )
             ],
           );
         });
@@ -480,65 +514,5 @@ class _NewCourseContentState extends State<NewCourseContent>
       return AppColors.tileColors[1];
     }
     return AppColors.tileColors[0];
-  }
-}
-
-class StCards extends StatefulWidget {
-  final String serial;
-  final String cardName;
-  final topicDtos;
-  StCards(this.serial, this.cardName, this.topicDtos);
-
-  @override
-  _StCardsState createState() => _StCardsState(serial, cardName, topicDtos);
-}
-
-class _StCardsState extends State<StCards> {
-  final String serial;
-  final String cardName;
-  final topicDtos;
-  _StCardsState(this.serial, this.cardName, this.topicDtos);
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-      clipBehavior: Clip.antiAlias,
-      elevation: 5,
-      child: InkWell(
-        onTap: () {
-          _navigateToClass();
-        },
-        child: Material(
-          color: Colors.transparent,
-          child: AspectRatio(
-            aspectRatio: 1 / 1,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Icon(Icons.notes),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(widget.cardName),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  _navigateToClass() {
-    if (widget.serial == "1") {
-      Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) => PreciseTheory(
-            topicDtos.sno, topicDtos.topicName, topicDtos.subTopic),
-      ));
-    } else if (widget.serial == "2") {
-    } else if (widget.serial == "3") {
-    } else if (widget.serial == "4") {}
   }
 }

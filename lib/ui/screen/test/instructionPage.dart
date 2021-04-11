@@ -42,9 +42,15 @@ class _InstructionPageState extends State<InstructionPage> {
       print(response);
       var responseBody = jsonDecode(response.body);
       print(responseBody);
-      _instructions = responseBody['instruction'];
-      _instructionData = _instructions['instructionData'];
-      _testAttempt = responseBody['testAttempt'];
+      if (responseBody['instruction'] != null) {
+        _instructions = responseBody['instruction'];
+        _instructionData = _instructions['instructionData'];
+      }
+
+      if (responseBody['testAttempt'] != null) {
+        _testAttempt = responseBody['testAttempt'];
+      }
+
       _showDailyAppOpening();
     } catch (e) {
       print(e);
@@ -149,6 +155,7 @@ class _InstructionPageState extends State<InstructionPage> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         foregroundColor: Colors.white,
+        heroTag: null,
         onPressed: () {
           _startTest();
           print(sno);
@@ -162,6 +169,8 @@ class _InstructionPageState extends State<InstructionPage> {
   _startTest() {
     if (_testData.isEmpty) {
       toastMethod("Please wait a while. we are loading your test");
+    }else if(_testData==null){
+      toastMethod("Sorry no data");
     } else {
       Navigator.of(context).pushReplacement(MaterialPageRoute(
         builder: (context) => Test(_testData, "topicTest", sno),
