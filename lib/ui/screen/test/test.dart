@@ -122,13 +122,13 @@ class _TestState extends State<Test> with TickerProviderStateMixin {
   void initState() {
     if(testData['test']!=null){
       _testQuestions = testData['test'];
+      _toolBarName = testData['testName'];
+      _testName = testData['testName'];
     }
     print(_testQuestions);
    if(_testQuestions!=null){
      _noOFQuestions = _testQuestions.length;
    }
-    _toolBarName = testData['testName'];
-    _testName = testData['testName'];
     startTimer();
     _controllerFloat = new AnimationController(
       vsync: this,
