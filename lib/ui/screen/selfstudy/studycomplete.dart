@@ -6,7 +6,7 @@ import 'package:lurnify/ui/constant/ApiConstant.dart';
 import 'package:lurnify/ui/constant/constant.dart';
 import 'package:lurnify/ui/home-page.dart';
 import 'package:lurnify/ui/screen/test/instructionPage.dart';
-import 'package:material_switch/material_switch.dart';
+import 'package:lurnify/widgets/componants/custom-button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -132,37 +132,46 @@ class _StudyCompleteState extends State<StudyComplete> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text("Study Complete"),
-          centerTitle: true,
-        ),
-        body: FutureBuilder(
-          future: data,
-          builder: (BuildContext context, AsyncSnapshot snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(
-                child: CircularProgressIndicator(),
-              );
-            } else {
-              return Material(
-                child: Container(
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.vertical,
-                    child: Column(
-                      children: <Widget>[
+      appBar: AppBar(
+        title: Text("Study Complete"),
+        centerTitle: true,
+      ),
+      body: FutureBuilder(
+        future: data,
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          } else {
+            return Material(
+              child: Container(
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.vertical,
+                  child: Column(
+                    children: <Widget>[
 //                SizedBox(height: 8,),
-                        completionNotice(),
-                        completionTask(),
-                        thirdRow(),
-                        forthRow()
-                      ],
-                    ),
+                      completionNotice(),
+                      completionTask(),
+                      continueAfter(),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.1,
+                      ),
+                    ],
                   ),
                 ),
-              );
-            }
-          },
-        ));
+              ),
+            );
+          }
+        },
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        foregroundColor: Colors.white,
+        onPressed: () => _submitDone(),
+        icon: const Icon(Icons.add),
+        label: const Text('Submit'),
+      ),
+    );
   }
 
   Widget completionNotice() {
@@ -252,6 +261,7 @@ class _StudyCompleteState extends State<StudyComplete> {
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               child: Card(
+                elevation: 5,
                 child: SwitchListTile(
                   contentPadding: EdgeInsets.only(left: 4, right: 4),
                   title: Text(
@@ -283,165 +293,166 @@ class _StudyCompleteState extends State<StudyComplete> {
             ),
             Padding(
               padding: EdgeInsets.all(10),
-              child: Container(
-                padding: EdgeInsets.all(5),
-                decoration:
-                    BoxDecoration(borderRadius: BorderRadius.circular(10)),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                        padding: EdgeInsets.only(left: 10, top: 10),
-                        child: Text(
-                          "Studied : ",
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.w800),
-                        )),
-                    Container(
-                      width: MediaQuery.of(context).size.width,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Text(
-                            "Th",
+              child: Card(
+                elevation: 5,
+                child: Container(
+                  padding: EdgeInsets.all(5),
+                  decoration:
+                      BoxDecoration(borderRadius: BorderRadius.circular(10)),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                          padding: EdgeInsets.only(left: 10, top: 10),
+                          child: Text(
+                            "Studied : ",
                             style: TextStyle(
-                                fontSize: 13, fontWeight: FontWeight.w800),
-                          ),
-                          Container(
-                            width: MediaQuery.of(context).size.width / 1.4,
-                            child: SliderTheme(
-                              data: SliderTheme.of(context).copyWith(
-                                activeTrackColor: Colors.red[700],
-                                inactiveTrackColor: Colors.red[100],
-                                trackShape: RoundedRectSliderTrackShape(),
-                                trackHeight: 4.0,
-                                thumbShape: RoundSliderThumbShape(
-                                    enabledThumbRadius: 12.0),
-                                thumbColor: Colors.redAccent,
-                                overlayColor: Colors.red.withAlpha(32),
-                                overlayShape: RoundSliderOverlayShape(
-                                    overlayRadius: 28.0),
-                                tickMarkShape: RoundSliderTickMarkShape(),
-                                activeTickMarkColor: Colors.red[700],
-                                inactiveTickMarkColor: Colors.red[100],
-                                valueIndicatorShape:
-                                    PaddleSliderValueIndicatorShape(),
-                                valueIndicatorColor: Colors.redAccent,
-                                valueIndicatorTextStyle: TextStyle(
-                                  color: Colors.white,
+                                fontSize: 16, fontWeight: FontWeight.w800),
+                          )),
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Text(
+                              "Th",
+                              style: TextStyle(
+                                  fontSize: 13, fontWeight: FontWeight.w800),
+                            ),
+                            Container(
+                              width: MediaQuery.of(context).size.width * 0.65,
+                              child: SliderTheme(
+                                data: SliderTheme.of(context).copyWith(
+                                  activeTrackColor: firstColor,
+                                  inactiveTrackColor: firstColor,
+                                  trackShape: RoundedRectSliderTrackShape(),
+                                  trackHeight: 4.0,
+                                  thumbShape: RoundSliderThumbShape(
+                                      enabledThumbRadius: 12.0),
+                                  thumbColor: firstColor,
+                                  overlayColor: firstColor.withAlpha(80),
+                                  overlayShape: RoundSliderOverlayShape(
+                                      overlayRadius: 28.0),
+                                  tickMarkShape: RoundSliderTickMarkShape(),
+                                  activeTickMarkColor: firstColor,
+                                  inactiveTickMarkColor: firstColor,
+                                  valueIndicatorShape:
+                                      PaddleSliderValueIndicatorShape(),
+                                  valueIndicatorColor: firstColor,
+                                  valueIndicatorTextStyle: TextStyle(
+                                    color: whiteColor,
+                                  ),
+                                ),
+                                child: Slider(
+                                  value: theoryOrNum,
+                                  min: 0,
+                                  max: 100,
+                                  divisions: 20,
+                                  label: theoryOrNum.round().toString(),
+                                  onChanged: (value) {
+                                    setState(
+                                      () {
+                                        theoryOrNum = value;
+                                      },
+                                    );
+                                  },
                                 ),
                               ),
-                              child: Slider(
-                                value: theoryOrNum,
-                                min: 0,
-                                max: 100,
-                                divisions: 20,
-                                label: theoryOrNum.round().toString(),
-                                onChanged: (value) {
-                                  setState(
-                                    () {
-                                      theoryOrNum = value;
-                                    },
-                                  );
-                                },
-                              ),
                             ),
-                          ),
-                          Text(
-                            "Num",
-                            style: TextStyle(
-                                fontSize: 13, fontWeight: FontWeight.w800),
-                            textAlign: TextAlign.start,
-                          ),
-                        ],
+                            Text(
+                              "Num",
+                              style: TextStyle(
+                                  fontSize: 13, fontWeight: FontWeight.w800),
+                              textAlign: TextAlign.start,
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
             Padding(
               padding: EdgeInsets.all(10),
-              child: Container(
-                padding: EdgeInsets.all(5),
-                decoration: BoxDecoration(
-                    color: Colors.amberAccent,
-                    borderRadius: BorderRadius.circular(10)),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                        padding: EdgeInsets.only(left: 10, top: 10),
-                        child: Text(
-                          "Effectiveness Of Study : ",
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w800),
-                        )),
-                    Container(
-                      width: MediaQuery.of(context).size.width,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Text(
-                            "0%",
+              child: Card(
+                elevation: 5,
+                child: Container(
+                  padding: EdgeInsets.all(5),
+                  decoration:
+                      BoxDecoration(borderRadius: BorderRadius.circular(10)),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                          padding: EdgeInsets.only(left: 10, top: 10),
+                          child: Text(
+                            "Effectiveness Of Study : ",
                             style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w800),
-                          ),
-                          Container(
-                            width: MediaQuery.of(context).size.width / 1.4,
-                            child: SliderTheme(
-                              data: SliderTheme.of(context).copyWith(
-                                activeTrackColor: Colors.red[700],
-                                inactiveTrackColor: Colors.red[100],
-                                trackShape: RoundedRectSliderTrackShape(),
-                                trackHeight: 4.0,
-                                thumbShape: RoundSliderThumbShape(
-                                    enabledThumbRadius: 12.0),
-                                thumbColor: Colors.redAccent,
-                                overlayColor: Colors.red.withAlpha(32),
-                                overlayShape: RoundSliderOverlayShape(
-                                    overlayRadius: 28.0),
-                                tickMarkShape: RoundSliderTickMarkShape(),
-                                activeTickMarkColor: Colors.red[700],
-                                inactiveTickMarkColor: Colors.red[100],
-                                valueIndicatorShape:
-                                    PaddleSliderValueIndicatorShape(),
-                                valueIndicatorColor: Colors.redAccent,
-                                valueIndicatorTextStyle: TextStyle(
-                                  color: Colors.white,
+                                fontSize: 16, fontWeight: FontWeight.w800),
+                          )),
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Text(
+                              "0%",
+                              style: TextStyle(
+                                  fontSize: 13, fontWeight: FontWeight.w800),
+                            ),
+                            Container(
+                              width: MediaQuery.of(context).size.width * 0.65,
+                              child: SliderTheme(
+                                data: SliderTheme.of(context).copyWith(
+                                  activeTrackColor: firstColor,
+                                  inactiveTrackColor: firstColor,
+                                  trackShape: RoundedRectSliderTrackShape(),
+                                  trackHeight: 4.0,
+                                  thumbShape: RoundSliderThumbShape(
+                                      enabledThumbRadius: 12.0),
+                                  thumbColor: firstColor,
+                                  overlayColor: firstColor.withAlpha(80),
+                                  overlayShape: RoundSliderOverlayShape(
+                                      overlayRadius: 28.0),
+                                  tickMarkShape: RoundSliderTickMarkShape(),
+                                  activeTickMarkColor: firstColor,
+                                  inactiveTickMarkColor: firstColor,
+                                  valueIndicatorShape:
+                                      PaddleSliderValueIndicatorShape(),
+                                  valueIndicatorColor: firstColor,
+                                  valueIndicatorTextStyle: TextStyle(
+                                    color: whiteColor,
+                                  ),
+                                ),
+                                child: Slider(
+                                  value: effectivenessOfStudy,
+                                  min: 0,
+                                  max: 100,
+                                  divisions: 20,
+                                  label:
+                                      effectivenessOfStudy.round().toString(),
+                                  onChanged: (value) {
+                                    setState(
+                                      () {
+                                        effectivenessOfStudy = value;
+                                      },
+                                    );
+                                  },
                                 ),
                               ),
-                              child: Slider(
-                                value: effectivenessOfStudy,
-                                min: 0,
-                                max: 100,
-                                divisions: 20,
-                                label: effectivenessOfStudy.round().toString(),
-                                onChanged: (value) {
-                                  setState(
-                                    () {
-                                      effectivenessOfStudy = value;
-                                    },
-                                  );
-                                },
-                              ),
                             ),
-                          ),
-                          Text(
-                            "100%",
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w800),
-                          ),
-                        ],
+                            Text(
+                              "100%",
+                              style: TextStyle(
+                                  fontSize: 13, fontWeight: FontWeight.w800),
+                              textAlign: TextAlign.start,
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -454,67 +465,46 @@ class _StudyCompleteState extends State<StudyComplete> {
     );
   }
 
-  Widget thirdRow() {
+  Widget continueAfter() {
     return Padding(
       padding: EdgeInsets.all(5),
-      child: Container(
-        decoration: BoxDecoration(
-            color: Colors.orange,
-            borderRadius: BorderRadius.circular(5),
-            boxShadow: [
-              BoxShadow(
-                  color: Colors.grey.withOpacity(0.8),
-                  spreadRadius: 2,
-                  blurRadius: 2,
-                  offset: Offset(0, 2))
-            ]),
+      child: Card(
+        elevation: 5,
+        clipBehavior: Clip.antiAlias,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             Container(
+              padding: EdgeInsets.symmetric(vertical: 5),
               width: MediaQuery.of(context).size.width,
               decoration: BoxDecoration(
+                color: firstColor,
                 borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(5), topRight: Radius.circular(5)),
-                color: Colors.amberAccent,
               ),
               child: Text(
                 "Continue Study After:",
-                style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 24),
+                style: TextStyle(color: whiteColor, fontSize: 24),
                 textAlign: TextAlign.center,
               ),
             ),
             SizedBox(
               height: 20,
             ),
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(18),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.5),
-                  ),
-                  BoxShadow(
-                      color: Colors.grey,
-                      spreadRadius: 1.0,
-                      blurRadius: 1.0,
-                      offset: Offset(1, 0)),
-                ],
-              ),
-              child: Padding(
+            Card(
+              elevation: 5,
+              child: Container(
+                  width: MediaQuery.of(context).size.width - 50,
                   padding: EdgeInsets.all(10),
                   child: Column(
                     children: [
                       Text(
                         "I will start my study at ",
                         style: TextStyle(
-                            color: Colors.black87,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w800),
+                            fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(
+                        height: 5,
                       ),
 //                      Text("$printHr Hours $printMin mins", style: TextStyle(
 //                          fontSize: 14,
@@ -523,9 +513,8 @@ class _StudyCompleteState extends State<StudyComplete> {
                       Text(
                         startStudyAfter,
                         style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.purple),
+                          fontSize: 18,
+                        ),
                       ),
                     ],
                   )),
@@ -534,13 +523,9 @@ class _StudyCompleteState extends State<StudyComplete> {
               padding: EdgeInsets.all(10),
               child: Container(
                   padding: EdgeInsets.only(left: 10),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
-                      color: Colors.white),
                   height: MediaQuery.of(context).copyWith().size.height / 6,
                   child: CupertinoTimerPicker(
                       mode: CupertinoTimerPickerMode.hm,
-//                      backgroundColor: Colors.white,
                       alignment: Alignment.center,
                       onTimerDurationChanged: (Duration changedtimer) {
                         setState(() {
@@ -553,36 +538,6 @@ class _StudyCompleteState extends State<StudyComplete> {
               height: 20,
             ),
           ],
-        ),
-      ),
-    );
-  }
-
-  Widget forthRow() {
-    return Padding(
-      padding: EdgeInsets.only(top: 10),
-      child: Container(
-        child: Center(
-          child: ButtonTheme(
-            minWidth: 150,
-            child: RaisedButton(
-              child: Text(
-                "DONE",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w800,
-                  fontSize: 22,
-                ),
-              ),
-              color: Colors.amberAccent,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(18),
-                  side: BorderSide(width: 1, color: Colors.deepPurpleAccent)),
-              onPressed: () {
-                _submitDone();
-              },
-            ),
-          ),
         ),
       ),
     );
@@ -697,32 +652,20 @@ class _StudyCompleteState extends State<StudyComplete> {
             child: Opacity(
               opacity: a1.value,
               child: AlertDialog(
-                backgroundColor: Colors.white,
-                shape: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(16.0)),
-                contentPadding: EdgeInsets.all(0),
-                content: Container(
-                    child: Column(
+                contentPadding: EdgeInsets.all(5),
+                content: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
-                    Container(
-                      padding: EdgeInsets.all(5),
-                      alignment: Alignment.center,
-                      width: MediaQuery.of(context).size.width,
-                      height: 40,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(20),
-                              topRight: Radius.circular(20)),
-                          color: Colors.cyanAccent),
-                      child: Text(
-                        "Add Remark",
-                        style: TextStyle(
-                            fontWeight: FontWeight.w800, fontSize: 18),
-                      ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    Text(
+                      "Add Remark",
+                      style:
+                          TextStyle(fontWeight: FontWeight.w800, fontSize: 18),
                     ),
                     SizedBox(
-                      height: 2,
+                      height: 5,
                     ),
                     Text(
                       "Find Topics at someLocation",
@@ -732,54 +675,56 @@ class _StudyCompleteState extends State<StudyComplete> {
                           fontWeight: FontWeight.w600),
                     ),
                     SizedBox(
-                      height: 2,
+                      height: 5,
                     ),
                     Padding(
-                      padding: EdgeInsets.all(3),
-                      child: Container(
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(2),
-                            border: Border.all(color: Colors.blue[100])),
-                        padding: EdgeInsets.all(5),
-                        child: TextFormField(
-                          controller: remarkSubject,
-                          decoration: InputDecoration(
-                              hintText: "Subject :",
-                              isDense: true,
-                              border: InputBorder.none),
+                      padding: EdgeInsets.all(5),
+                      child: Card(
+                        elevation: 5,
+                        child: Padding(
+                          padding: EdgeInsets.all(5),
+                          child: TextFormField(
+                            controller: remarkSubject,
+                            decoration: InputDecoration(
+                                hintText: "Subject :",
+                                isDense: true,
+                                border: InputBorder.none),
+                          ),
                         ),
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsets.all(3),
-                      child: Container(
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(2),
-                            border: Border.all(color: Colors.blue[100])),
-                        padding: EdgeInsets.all(5),
-                        child: TextFormField(
-                          controller: remarkMessage,
-                          maxLines: 5,
-                          decoration: InputDecoration(
-                              hintText: "Message : ",
-                              isDense: true,
-                              border: InputBorder.none),
+                      padding: EdgeInsets.all(5),
+                      child: Card(
+                        elevation: 5,
+                        child: Padding(
+                          padding: const EdgeInsets.all(5.0),
+                          child: TextFormField(
+                            controller: remarkMessage,
+                            maxLines: 5,
+                            decoration: InputDecoration(
+                                hintText: "Message : ",
+                                isDense: true,
+                                border: InputBorder.none),
+                          ),
                         ),
                       ),
                     ),
-                    RaisedButton(
-                      color: Colors.cyanAccent,
-                      child: Text("Add"),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    CustomButton(
+                      buttonText: 'Add Remark',
                       onPressed: () {
                         _addRemark();
                       },
-                      splashColor: Colors.black54,
+                      verpad: EdgeInsets.symmetric(vertical: 10),
                     ),
                     SizedBox(
-                      height: 20,
+                      height: 10,
                     ),
                   ],
-                )),
+                ),
               ),
             ),
           );

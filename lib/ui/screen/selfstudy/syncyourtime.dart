@@ -66,7 +66,7 @@ class _SyncYourTime extends State<SyncYourTime> {
                         bottom: BorderSide(width: 1, color: Colors.blue[100])),
                   ),
                   child: Text(
-                    "StudySSS Simplifying Success",
+                    "Study Simplifying Success",
                     style: TextStyle(
                       color: Colors.white54,
                     ),

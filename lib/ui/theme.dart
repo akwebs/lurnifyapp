@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class AppTheme {
   AppTheme._();
 
-  static Color _iconColor = Colors.white;
+  static Color _iconColor = Colors.deepPurple;
   static Color _lightNavigationColor = Colors.black45;
   static Color _darkNavigationColor = Colors.white70;
 

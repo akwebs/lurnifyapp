@@ -149,7 +149,10 @@ class _InstructionPageState extends State<InstructionPage> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         foregroundColor: Colors.white,
-        onPressed: () => _startTest(),
+        onPressed: () {
+          _startTest();
+          print(sno);
+        },
         icon: const Icon(Icons.arrow_forward_ios_rounded),
         label: const Text('Start'),
       ),

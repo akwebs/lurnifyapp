@@ -169,35 +169,23 @@ class _SelfStudySectionState extends State<SelfStudySection> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
-          FadeAnimation(
-            1,
-            _card("Start Self Study", Recent("1"), StartSelfStudyLearnMore(),
-                "Are you ready to", "START?"),
-          ),
+          _card("Start Self Study", Recent("1"), StartSelfStudyLearnMore(),
+              "Are you ready to", "START?"),
           SizedBox(
             height: 10,
           ),
-          FadeAnimation(
-            1,
-            _card("Sync Study Time", Recent("2"), SyncStudyTimeLearnMore(),
-                "Missed Out!", "Study Time Punching?"),
-          ),
+          _card("Sync Study Time", Recent("2"), SyncStudyTimeLearnMore(),
+              "Missed Out!", "Study Time Punching?"),
           SizedBox(
             height: 10,
           ),
-          FadeAnimation(
-            1,
-            _card("Statistics", null, StatisticsLearnMore(),
-                "Track your statistics", "HERE!!!"),
-          ),
+          _card("Statistics", null, StatisticsLearnMore(),
+              "Track your statistics", "HERE!!!"),
           SizedBox(
             height: 10,
           ),
-          FadeAnimation(
-            1,
-            _card("Goals", null, GolasLearnMore(), "See your achievements",
-                "HERE!!!"),
-          ),
+          _card("Goals", null, GolasLearnMore(), "See your achievements",
+              "HERE!!!"),
           SizedBox(
             height: 10,
           ),

@@ -5,7 +5,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lurnify/ui/constant/ApiConstant.dart';
-import 'package:lurnify/ui/constant/constant.dart';
 import 'package:lurnify/ui/screen/selfstudy/studycomplete.dart';
 import 'package:lurnify/ui/theme.dart';
 import 'package:lurnify/widgets/componants/custom-button.dart';
