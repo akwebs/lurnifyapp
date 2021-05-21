@@ -4,6 +4,10 @@ import 'package:lurnify/config/data.dart';
 import 'package:lurnify/ui/constant/constant.dart';
 import 'package:lurnify/ui/screen/myCourseContain/NewCourseContent.dart';
 import 'package:lurnify/ui/screen/selfstudy/selfstudy.dart';
+import 'package:lurnify/ui/screen/myProgress/CourseProress.dart';
+import 'package:lurnify/ui/screen/revisionZone/RevisionZoneHome.dart';
+import 'package:lurnify/ui/screen/marketPlace/week-month.dart';
+
 
 class AppTiles extends StatelessWidget {
   final List pageKey;
@@ -38,6 +42,18 @@ class AppTiles extends StatelessWidget {
                 } else if (index == 3) {
                   Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) => NewCourseContent(),
+                  ));
+                } else if (index == 4) {
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => CourseProgress(),
+                  ));
+                }else if (index == 5) {
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => RevisionZone(),
+                  ));
+                }else if (index == 8) {
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => WeekMonth(),
                   ));
                 }
               },
