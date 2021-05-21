@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+import 'package:lottie/lottie.dart';
 import 'package:lurnify/Animation/FadeAnimation.dart';
 import 'package:lurnify/ui/constant/constant.dart';
 import 'package:lurnify/widgets/componants/custom-button.dart';
@@ -79,6 +80,7 @@ class _SelectThePaceState extends State<SelectThePace> {
                         width: Responsive.getPercent(
                             90, ResponsiveSize.WIDTH, context),
                         child: CustomButton(
+                          brdRds: 10,
                           buttonText: 'DONE',
                           onPressed: () {
                             submit();
@@ -96,7 +98,13 @@ class _SelectThePaceState extends State<SelectThePace> {
             );
           } else {
             return Center(
-              child: CircularProgressIndicator(),
+              child: SizedBox(
+                height: 150,
+                width: 150,
+                child: Lottie.asset(
+                  'assets/lottie/56446-walk.json',
+                ),
+              ),
             );
           }
         },

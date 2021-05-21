@@ -38,6 +38,7 @@ dependencies:
   material_switch: ^0.0.8
   analog_clock: ^0.0.1
   youtube_player_flutter: ^7.0.0+7
+  lottie: ^0.7.0
 #  date_format: ^2.0.2
 #  get: ^4.1.3
 #  flutter_vlc_player: ^5.0.0
@@ -117,6 +118,7 @@ flutter:
 
   assets:
     - assets/
+    - assets/lottie/
     - assets/images/
     - assets/images/sss/
     - assets/images/onboarding/

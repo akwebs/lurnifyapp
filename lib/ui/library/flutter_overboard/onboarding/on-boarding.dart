@@ -61,7 +61,9 @@ class _Onboarding1PageState extends State<Onboarding1Page> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle(statusBarIconBrightness: Brightness.dark),
+      value: SystemUiOverlayStyle(
+          statusBarIconBrightness: Brightness.dark,
+          statusBarColor: Colors.transparent),
       child: OverBoard(
         pages: _pageList,
         showBullets: true,

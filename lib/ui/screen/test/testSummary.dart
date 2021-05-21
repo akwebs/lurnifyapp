@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:lottie/lottie.dart';
 import 'package:lurnify/ui/constant/ApiConstant.dart';
 import 'package:lurnify/ui/screen/test/testResult.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -56,7 +57,13 @@ class _TestSummaryState extends State<TestSummary> {
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Center(
-                child: CircularProgressIndicator(),
+                child: SizedBox(
+                  height: 150,
+                  width: 150,
+                  child: Lottie.asset(
+                    'assets/lottie/56446-walk.json',
+                  ),
+                ),
               );
             } else {
               return Container(

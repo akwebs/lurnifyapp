@@ -12,7 +12,7 @@ class TestSlider extends StatefulWidget {
 class _TestSliderState extends State<TestSlider> {
   @override
   Widget build(BuildContext context) {
-    return Card(
+    return Container(
       margin: EdgeInsets.all(0),
       child: Container(
         height: Responsive.getPercent(20, ResponsiveSize.HEIGHT, context),

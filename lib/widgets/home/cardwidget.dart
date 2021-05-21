@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:lurnify/config/data.dart';
 import 'package:lurnify/config/size.dart';
 import 'package:lurnify/ui/constant/constant.dart';
 import 'package:percent_indicator/percent_indicator.dart';
+import 'dart:math';
 
 class CardWidget extends StatelessWidget {
   @override
@@ -23,8 +25,12 @@ class CardWidget extends StatelessWidget {
           return Container(
             width: width / 1.3,
             margin: EdgeInsets.symmetric(
-                horizontal: width / 55, vertical: height / 50),
+                horizontal:
+                    Responsive.getPercent(1, ResponsiveSize.WIDTH, context),
+                vertical:
+                    Responsive.getPercent(1, ResponsiveSize.HEIGHT, context)),
             child: Card(
+              clipBehavior: Clip.hardEdge,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(
                   Radius.circular(10),
@@ -54,7 +60,10 @@ class CardWidget extends StatelessWidget {
                     },
                     child: Container(
                       padding: EdgeInsets.symmetric(
-                          horizontal: width / 50, vertical: height / 50),
+                          horizontal: Responsive.getPercent(
+                              2, ResponsiveSize.WIDTH, context),
+                          vertical: Responsive.getPercent(
+                              1, ResponsiveSize.HEIGHT, context)),
                       child: Stack(
                         children: <Widget>[
                           Align(

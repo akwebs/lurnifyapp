@@ -36,7 +36,7 @@ class _TestState extends State<Test> with TickerProviderStateMixin {
   PageController _controller =
       PageController(viewportFraction: 1, keepPage: true);
   PageController _controllerList =
-      PageController(viewportFraction: 0.15, keepPage: true);
+      PageController(viewportFraction: 0.083, keepPage: true);
   AnimationController _controllerFloat;
   Map _answerMap = Map();
   Map _bookmarkMap = Map();
@@ -54,7 +54,19 @@ class _TestState extends State<Test> with TickerProviderStateMixin {
     "Current Section Instruction",
     "Test Instruction"
   ];
-
+  DateTime _currentBackPressTime;
+  Future<bool> _onWillPop() {
+    DateTime now = DateTime.now();
+    if (_currentBackPressTime == null ||
+        now.difference(_currentBackPressTime) > Duration(seconds: 2)) {
+      _currentBackPressTime = now;
+      Fluttertoast.showToast(
+          msg: 'Press BACK again to exit Test',
+          toastLength: Toast.LENGTH_SHORT);
+      return Future.value(false);
+    }
+    return Future.value(true);
+  }
   // Future _getTestData() async {
   //   SharedPreferences sp = await SharedPreferences.getInstance();
   //   var url = baseUrl + "getTestByTopic?topicSno="+sno+"&registerSno="+sp.getString("studentSno");
@@ -120,15 +132,15 @@ class _TestState extends State<Test> with TickerProviderStateMixin {
 
   @override
   void initState() {
-    if(testData['test']!=null){
+    if (testData['test'] != null) {
       _testQuestions = testData['test'];
       _toolBarName = testData['testName'];
       _testName = testData['testName'];
     }
     print(_testQuestions);
-   if(_testQuestions!=null){
-     _noOFQuestions = _testQuestions.length;
-   }
+    if (_testQuestions != null) {
+      _noOFQuestions = _testQuestions.length;
+    }
     startTimer();
     _controllerFloat = new AnimationController(
       vsync: this,
@@ -147,37 +159,38 @@ class _TestState extends State<Test> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        iconTheme: IconThemeData(color: whiteColor),
         title: Text(
-          _toolBarName==null?"no tool bar":_toolBarName,
+          _toolBarName == null ? "no tool bar" : _toolBarName,
           style: TextStyle(color: whiteColor),
         ),
         brightness: Brightness.dark,
         centerTitle: true,
         backgroundColor: firstColor,
-        automaticallyImplyLeading: false,
       ),
-      body: _testQuestions.isEmpty
-          ? Container(
-              alignment: Alignment.center,
-              child: Text(
-                "No Question",
-                style: TextStyle(
-                  fontSize: 40,
-                  fontWeight: FontWeight.w600,
+      body: WillPopScope(
+        onWillPop: _onWillPop,
+        child: _testQuestions.isEmpty
+            ? Container(
+                alignment: Alignment.center,
+                child: Text(
+                  "No Question",
+                  style: TextStyle(
+                    fontSize: 40,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              )
+            : SingleChildScrollView(
+                child: Column(
+                  children: [
+                    headingRow(),
+                    questionRow(),
+                  ],
                 ),
               ),
-            )
-          : Container(
-              height: MediaQuery.of(context).size.height,
-              child: Column(
-                children: [
-                  headingRow(),
-                  questionRow(),
-                  Spacer(),
-                  buttonRow(),
-                ],
-              ),
-            ),
+      ),
+      bottomNavigationBar: buttonRow(),
       floatingActionButton: new Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.end,
@@ -220,33 +233,29 @@ class _TestState extends State<Test> with TickerProviderStateMixin {
           return child;
         }).toList()
           ..add(
-            Container(
-              margin: EdgeInsets.only(bottom: 35),
-              child: new FloatingActionButton(
-                heroTag: null,
-                backgroundColor: firstColor,
-                child: new AnimatedBuilder(
-                  animation: _controllerFloat,
-                  builder: (BuildContext context, Widget child) {
-                    return new Transform(
-                      transform: new Matrix4.rotationZ(
-                          _controllerFloat.value * 0.5 * math.pi),
-                      alignment: FractionalOffset.center,
-                      child: new Icon(_controllerFloat.isDismissed
-                          ? Icons.add
-                          : Icons.close),
-                    );
-                  },
-                ),
-                foregroundColor: whiteColor,
-                onPressed: () {
-                  if (_controllerFloat.isDismissed) {
-                    _controllerFloat.forward();
-                  } else {
-                    _controllerFloat.reverse();
-                  }
+            new FloatingActionButton(
+              heroTag: null,
+              backgroundColor: firstColor,
+              child: new AnimatedBuilder(
+                animation: _controllerFloat,
+                builder: (BuildContext context, Widget child) {
+                  return new Transform(
+                    transform: new Matrix4.rotationZ(
+                        _controllerFloat.value * 0.5 * math.pi),
+                    alignment: FractionalOffset.center,
+                    child: new Icon(
+                        _controllerFloat.isDismissed ? Icons.add : Icons.close),
+                  );
                 },
               ),
+              foregroundColor: whiteColor,
+              onPressed: () {
+                if (_controllerFloat.isDismissed) {
+                  _controllerFloat.forward();
+                } else {
+                  _controllerFloat.reverse();
+                }
+              },
             ),
           ),
       ),
@@ -334,7 +343,7 @@ class _TestState extends State<Test> with TickerProviderStateMixin {
 
   Widget questionRow() {
     return Container(
-      height: MediaQuery.of(context).size.height * 7 / 10,
+      height: MediaQuery.of(context).size.height * 6.8 / 10,
       width: MediaQuery.of(context).size.width,
       padding: EdgeInsets.all(1),
       child: PageView.builder(
@@ -372,6 +381,7 @@ class _TestState extends State<Test> with TickerProviderStateMixin {
             child: Padding(
               padding: EdgeInsets.all(5),
               child: Card(
+                color: whiteColor,
                 elevation: 10,
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -490,7 +500,7 @@ class _TestState extends State<Test> with TickerProviderStateMixin {
                         ],
                       ),
                       Container(
-                        height: MediaQuery.of(context).size.height * 4.8 / 10,
+                        height: MediaQuery.of(context).size.height * 4.5 / 10,
                         child: SingleChildScrollView(
                           child: Row(
                             children: [
@@ -693,84 +703,158 @@ class _TestState extends State<Test> with TickerProviderStateMixin {
   Widget buttonRow() {
     return Container(
       width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height * 0.6 / 10,
+      height: MediaQuery.of(context).size.height * 0.7 / 10,
       child: Row(
         children: [
           Expanded(
-            child: GestureDetector(
-              onTap: () {
-                _controller.animateToPage(_index - 1,
-                    curve: Curves.decelerate,
-                    duration: Duration(milliseconds: 300));
-                _controllerList.animateToPage(_index - 1,
-                    curve: Curves.decelerate,
-                    duration: Duration(milliseconds: 300));
-                print(_index);
-              },
-              child: Container(
-                decoration: BoxDecoration(
-                    color: _isFirstQuestion
-                        ? firstColor.withOpacity(0.6)
-                        : firstColor),
-                child: Center(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.arrow_back,
-                        color: Colors.white,
-                      ),
-                      Text(
-                        "Previous",
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 0.8),
-                      ),
-                    ],
+            child: RaisedButton(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.arrow_back,
+                    color: Colors.white,
+                    size: 16,
                   ),
-                ),
+                  Text(
+                    "Previous",
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 0.8),
+                  ),
+                ],
               ),
+              onPressed: () {
+                if (_isFirstQuestion) {
+                } else {
+                  _controller.animateToPage(_index - 1,
+                      curve: Curves.decelerate,
+                      duration: Duration(milliseconds: 300));
+                  _controllerList.animateToPage(_index - 1,
+                      curve: Curves.decelerate,
+                      duration: Duration(milliseconds: 300));
+                }
+              },
+              padding: EdgeInsets.symmetric(vertical: 15),
+              color:
+                  _isFirstQuestion ? firstColor.withOpacity(0.6) : firstColor,
             ),
           ),
+          // child: GestureDetector(
+          //   onTap: () {
+          //     if (_isFirstQuestion) {
+          //     } else {
+          //       _controller.animateToPage(_index - 1,
+          //           curve: Curves.decelerate,
+          //           duration: Duration(milliseconds: 300));
+          //       _controllerList.animateToPage(_index - 1,
+          //           curve: Curves.decelerate,
+          //           duration: Duration(milliseconds: 300));
+          //     }
+          //   },
+          //   child: Container(
+          //     decoration: BoxDecoration(
+          //         color: _isFirstQuestion
+          //             ? firstColor.withOpacity(0.6)
+          //             : firstColor),
+          //     child: Center(
+          //       child: Row(
+          //         mainAxisAlignment: MainAxisAlignment.center,
+          //         children: [
+          //           Icon(
+          //             Icons.arrow_back,
+          //             color: Colors.white,
+          //           ),
+          //           Text(
+          //             "Previous",
+          //             style: TextStyle(
+          //                 color: Colors.white,
+          //                 fontSize: 16,
+          //                 fontWeight: FontWeight.bold,
+          //                 letterSpacing: 0.8),
+          //           ),
+          //         ],
+          //       ),
+          //     ),
+          //   ),
+          // ),
           Container(
             width: 1,
           ),
           Expanded(
-            child: GestureDetector(
-              onTap: () {
-                _controller.animateToPage(_index + 1,
-                    curve: Curves.decelerate,
-                    duration: Duration(milliseconds: 300));
-                _controllerList.animateToPage(_index + 1,
-                    curve: Curves.decelerate,
-                    duration: Duration(milliseconds: 300));
-              },
-              child: Container(
-                decoration: BoxDecoration(
-                    color: _isLastQuestion
-                        ? firstColor.withOpacity(0.6)
-                        : firstColor),
-                child: Center(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text("Next",
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: 0.8)),
-                      Icon(
-                        Icons.arrow_forward,
+            child: RaisedButton(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    "Next",
+                    style: TextStyle(
                         color: Colors.white,
-                      ),
-                    ],
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 0.8),
                   ),
-                ),
+                  Icon(
+                    Icons.arrow_forward,
+                    color: Colors.white,
+                    size: 16,
+                  ),
+                ],
               ),
+              onPressed: () {
+                if (_isLastQuestion) {
+                } else {
+                  _controller.animateToPage(_index + 1,
+                      curve: Curves.decelerate,
+                      duration: Duration(milliseconds: 300));
+                  _controllerList.animateToPage(_index + 1,
+                      curve: Curves.decelerate,
+                      duration: Duration(milliseconds: 300));
+                }
+              },
+              padding: EdgeInsets.symmetric(vertical: 15),
+              color: _isLastQuestion ? firstColor.withOpacity(0.6) : firstColor,
             ),
+            // child: GestureDetector(
+            //   onTap: () {
+            //     if (_isLastQuestion) {
+            //     } else {
+            //       _controller.animateToPage(_index + 1,
+            //           curve: Curves.decelerate,
+            //           duration: Duration(milliseconds: 300));
+            //       _controllerList.animateToPage(_index + 1,
+            //           curve: Curves.decelerate,
+            //           duration: Duration(milliseconds: 300));
+            //     }
+            //   },
+            //   child: Container(
+            //     decoration: BoxDecoration(
+            //         color: _isLastQuestion
+            //             ? firstColor.withOpacity(0.6)
+            //             : firstColor),
+            //     child: Center(
+            //       child: Row(
+            //         mainAxisAlignment: MainAxisAlignment.center,
+            //         children: [
+            //           Text("Next",
+            //               style: TextStyle(
+            //                   color: Colors.white,
+            //                   fontSize: 16,
+            //                   fontWeight: FontWeight.bold,
+            //                   letterSpacing: 0.8)),
+            //           Icon(
+            //             Icons.arrow_forward,
+            //             color: Colors.white,
+            //           ),
+            //         ],
+            //       ),
+            //     ),
+            //   ),
+            // ),
           ),
         ],
       ),

@@ -2,7 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:lurnify/Animation/FadeAnimation.dart';
+import 'package:lottie/lottie.dart';
 import 'package:lurnify/ui/constant/constant.dart';
 import 'package:lurnify/ui/constant/routes.dart';
 import 'package:lurnify/ui/screen/selfstudy/recent.dart';
@@ -39,11 +39,7 @@ class _SelfStudySectionState extends State<SelfStudySection> {
       body: FutureBuilder(
         future: getCourseDate(),
         builder: (BuildContext context, AsyncSnapshot s) {
-          if (s.connectionState == ConnectionState.waiting) {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          } else {
+          if (s.connectionState == ConnectionState.done) {
             return Material(
               child: Container(
                 height: MediaQuery.of(context).size.height,
@@ -58,6 +54,16 @@ class _SelfStudySectionState extends State<SelfStudySection> {
                       contentCards(context)
                     ],
                   ),
+                ),
+              ),
+            );
+          } else {
+            return Center(
+              child: SizedBox(
+                height: 150,
+                width: 150,
+                child: Lottie.asset(
+                  'assets/lottie/56446-walk.json',
                 ),
               ),
             );
@@ -78,6 +84,7 @@ class _SelfStudySectionState extends State<SelfStudySection> {
           child: Column(
             children: <Widget>[
               CustomButton(
+                brdRds: 10,
                 verpad: EdgeInsets.symmetric(vertical: 10),
                 buttonText: 'Select the Pace of Self-Study Program',
                 onPressed: () {
@@ -228,6 +235,7 @@ class _SelfStudySectionState extends State<SelfStudySection> {
             SizedBox(
               width: Responsive.getPercent(80, ResponsiveSize.WIDTH, context),
               child: CustomButton(
+                brdRds: 10,
                 buttonText: text,
                 onPressed: () {
                   Navigator.of(context).push(MaterialPageRoute(

@@ -7,6 +7,17 @@ class AppColors {
   // static Color primaryWhite = Colors.indigo[100];
 
   static List<Color> tileColors = [
+    Colors.indigo[50],
+    Colors.blue[50],
+    Colors.green[50],
+    Colors.amber[50],
+    Colors.purple[50],
+    Colors.brown[50],
+    Colors.green[50],
+    Colors.yellow[50],
+    Colors.pink[50],
+  ];
+  static List<Color> tileIconColors = [
     Colors.indigo,
     Colors.blue,
     Colors.green,
@@ -14,8 +25,8 @@ class AppColors {
     Colors.purple,
     Colors.brown,
     Colors.green,
-    Colors.amber,
-    Colors.purpleAccent,
+    Colors.yellow,
+    Colors.pink,
   ];
   static List<Color> cardHeader = [
     Colors.green[100],

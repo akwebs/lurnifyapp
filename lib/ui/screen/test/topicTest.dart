@@ -5,6 +5,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/services.dart';
+import 'package:lottie/lottie.dart';
 import 'package:lurnify/ui/constant/ApiConstant.dart';
 
 class TopicTest extends StatefulWidget {
@@ -117,7 +118,13 @@ class _TopicTestState extends State<TopicTest> {
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(
-              child: CircularProgressIndicator(),
+              child: SizedBox(
+                height: 150,
+                width: 150,
+                child: Lottie.asset(
+                  'assets/lottie/56446-walk.json',
+                ),
+              ),
             );
           } else {
             return Container(

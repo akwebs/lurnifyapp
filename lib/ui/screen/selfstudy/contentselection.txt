@@ -163,7 +163,13 @@ class _ContentSelectionState extends State<ContentSelection> {
             );
           } else {
             return Center(
-              child: CircularProgressIndicator(),
+              child: SizedBox(
+                height: 150,
+                width: 150,
+                child: Lottie.asset(
+                  'assets/lottie/56446-walk.json',
+                ),
+              ),
             );
           }
         },

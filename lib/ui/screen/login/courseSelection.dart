@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:lottie/lottie.dart';
 import 'package:lurnify/Animation/FadeAnimation.dart';
 import 'package:lurnify/ui/constant/ApiConstant.dart';
 import 'package:lurnify/ui/constant/constant.dart';
@@ -56,11 +57,7 @@ class _CourseSelectionState extends State<CourseSelection> {
       body: FutureBuilder(
         future: data,
         builder: (BuildContext context, AsyncSnapshot snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          } else {
+          if (snapshot.connectionState == ConnectionState.done) {
             return Container(
               child: RefreshIndicator(
                 onRefresh: () async {
@@ -120,6 +117,7 @@ class _CourseSelectionState extends State<CourseSelection> {
                           child: CustomButton(
                             verpad: EdgeInsets.symmetric(vertical: 20),
                             buttonText: 'Start',
+                            brdRds: 10,
                             onPressed: () {
                               _start();
                             },
@@ -128,6 +126,16 @@ class _CourseSelectionState extends State<CourseSelection> {
                       ),
                     ],
                   ),
+                ),
+              ),
+            );
+          } else {
+            return Center(
+              child: SizedBox(
+                height: 150,
+                width: 150,
+                child: Lottie.asset(
+                  'assets/lottie/56446-walk.json',
                 ),
               ),
             );

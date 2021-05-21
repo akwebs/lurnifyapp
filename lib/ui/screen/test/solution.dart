@@ -383,6 +383,7 @@ class _SolutionState extends State<Solution> {
                           children: [
                             CustomButton(
                               buttonText: 'Hint',
+                              brdRds: 10,
                               onPressed: () {
                                 _solutionAlertBox(i);
                               },

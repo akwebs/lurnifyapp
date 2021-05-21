@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 
+// ignore: must_be_immutable
 class CustomButton extends StatelessWidget {
   final String buttonText;
   final Function onPressed;
+  double brdRds = 10;
   final verpad;
-  CustomButton({this.buttonText, this.onPressed, this.verpad});
+  CustomButton({this.buttonText, this.onPressed, this.verpad, this.brdRds});
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +20,7 @@ class CustomButton extends StatelessWidget {
           ),
           overlayColor: MaterialStateProperty.all(Colors.black26),
           shape: MaterialStateProperty.all(RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(brdRds),
           )),
         ),
         onPressed: onPressed,

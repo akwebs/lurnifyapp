@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:lottie/lottie.dart';
 import 'package:lurnify/ui/constant/ApiConstant.dart';
 import 'package:lurnify/ui/screen/test/test.dart';
 import 'package:lurnify/widgets/componants/custom-button.dart';
@@ -137,6 +138,7 @@ class _InstructionPageState extends State<InstructionPage> {
                       //   height: 20,
                       // ),
                       // CustomButton(
+                      //  brdRds: 10,
                       //   buttonText: 'Start',
                       //   onPressed: () => _startTest(),
                       //   verpad: EdgeInsets.symmetric(vertical: 10),
@@ -148,28 +150,44 @@ class _InstructionPageState extends State<InstructionPage> {
             );
           } else {
             return Center(
-              child: CircularProgressIndicator(),
+              child: SizedBox(
+                height: 150,
+                width: 150,
+                child: Lottie.asset(
+                  'assets/lottie/56446-walk.json',
+                ),
+              ),
             );
           }
         },
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        foregroundColor: Colors.white,
-        heroTag: null,
-        onPressed: () {
-          _startTest();
-          print(sno);
-        },
-        icon: const Icon(Icons.arrow_forward_ios_rounded),
-        label: const Text('Start'),
+      bottomNavigationBar: Container(
+        child: CustomButton(
+          brdRds: 0,
+          buttonText: 'Start Test',
+          onPressed: () {
+            _startTest();
+          },
+          verpad: EdgeInsets.symmetric(vertical: 18),
+        ),
       ),
+      // floatingActionButton: FloatingActionButton.extended(
+      //   foregroundColor: Colors.white,
+      //   heroTag: null,
+      //   onPressed: () {
+      //     _startTest();
+      //     print(sno);
+      //   },
+      //   icon: const Icon(Icons.arrow_forward_ios_rounded),
+      //   label: const Text('Start'),
+      // ),
     );
   }
 
   _startTest() {
     if (_testData.isEmpty) {
       toastMethod("Please wait a while. we are loading your test");
-    }else if(_testData==null){
+    } else if (_testData == null) {
       toastMethod("Sorry no data");
     } else {
       Navigator.of(context).pushReplacement(MaterialPageRoute(

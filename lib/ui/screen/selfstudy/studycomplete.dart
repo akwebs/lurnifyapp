@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+import 'package:lottie/lottie.dart';
 import 'package:lurnify/ui/constant/ApiConstant.dart';
 import 'package:lurnify/ui/constant/constant.dart';
 import 'package:lurnify/ui/home-page.dart';
@@ -76,6 +77,19 @@ class _StudyCompleteState extends State<StudyComplete> {
   String leftStudyHour = "";
   String startStudyAfter = "";
   String totalDimeEarns = "";
+  DateTime _currentBackPressTime;
+  Future<bool> _onWillPop() {
+    DateTime now = DateTime.now();
+    if (_currentBackPressTime == null ||
+        now.difference(_currentBackPressTime) > Duration(seconds: 2)) {
+      _currentBackPressTime = now;
+      Fluttertoast.showToast(
+          msg: 'Do you want to exit without SUBMIT?',
+          toastLength: Toast.LENGTH_SHORT);
+      return Future.value(false);
+    }
+    return Future.value(true);
+  }
 
   get fullWidth => Responsive.getPercent(100, ResponsiveSize.WIDTH, context);
   Future _getTotalSecondByDate() async {
@@ -136,41 +150,57 @@ class _StudyCompleteState extends State<StudyComplete> {
         title: Text("Study Complete"),
         centerTitle: true,
       ),
-      body: FutureBuilder(
-        future: data,
-        builder: (BuildContext context, AsyncSnapshot snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          } else {
-            return Material(
-              child: Container(
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.vertical,
-                  child: Column(
-                    children: <Widget>[
+      body: WillPopScope(
+        onWillPop: _onWillPop,
+        child: FutureBuilder(
+          future: data,
+          builder: (BuildContext context, AsyncSnapshot snapshot) {
+            if (snapshot.connectionState == ConnectionState.done) {
+              return Material(
+                child: Container(
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.vertical,
+                    physics: ScrollPhysics(),
+                    child: Column(
+                      children: <Widget>[
 //                SizedBox(height: 8,),
-                      completionNotice(),
-                      completionTask(),
-                      continueAfter(),
-                      SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.1,
-                      ),
-                    ],
+                        completionNotice(),
+                        completionTask(),
+                        continueAfter(),
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.1,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            );
-          }
-        },
+              );
+            } else {
+              return Center(
+                child: SizedBox(
+                  height: 150,
+                  width: 150,
+                  child: Lottie.asset(
+                    'assets/lottie/56446-walk.json',
+                  ),
+                ),
+              );
+            }
+          },
+        ),
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        foregroundColor: Colors.white,
+      bottomNavigationBar: CustomButton(
+        buttonText: 'SUBMIT',
         onPressed: () => _submitDone(),
-        icon: const Icon(Icons.add),
-        label: const Text('Submit'),
+        verpad: EdgeInsets.symmetric(vertical: 18),
+        brdRds: 0,
       ),
+      // floatingActionButton: FloatingActionButton.extended(
+      //   foregroundColor: Colors.white,
+      //   onPressed: () => _submitDone(),
+      //   icon: const Icon(Icons.add),
+      //   label: const Text('Submit'),
+      // ),
     );
   }
 
@@ -522,17 +552,21 @@ class _StudyCompleteState extends State<StudyComplete> {
             Padding(
               padding: EdgeInsets.all(10),
               child: Container(
-                  padding: EdgeInsets.only(left: 10),
-                  height: MediaQuery.of(context).copyWith().size.height / 6,
-                  child: CupertinoTimerPicker(
-                      mode: CupertinoTimerPickerMode.hm,
-                      alignment: Alignment.center,
-                      onTimerDurationChanged: (Duration changedtimer) {
-                        setState(() {
-                          var formatter = DateFormat("hh:mm a");
-                          startStudyAfter = _printDuration(changedtimer);
-                        });
-                      })),
+                padding: EdgeInsets.only(left: 10),
+                height: MediaQuery.of(context).copyWith().size.height / 6,
+                child: CupertinoTimerPicker(
+                  mode: CupertinoTimerPickerMode.hm,
+                  alignment: Alignment.center,
+                  onTimerDurationChanged: (Duration changedtimer) {
+                    setState(
+                      () {
+                        var formatter = DateFormat("hh:mm a");
+                        startStudyAfter = _printDuration(changedtimer);
+                      },
+                    );
+                  },
+                ),
+              ),
             ),
             SizedBox(
               height: 20,
@@ -714,6 +748,7 @@ class _StudyCompleteState extends State<StudyComplete> {
                       height: 10,
                     ),
                     CustomButton(
+                      brdRds: 10,
                       buttonText: 'Add Remark',
                       onPressed: () {
                         _addRemark();

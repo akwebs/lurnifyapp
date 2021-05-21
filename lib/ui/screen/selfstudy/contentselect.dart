@@ -10,6 +10,7 @@ import 'package:lurnify/ui/screen/selfstudy/starttimer.dart';
 import 'package:lurnify/ui/screen/selfstudy/syncyourtime.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:lottie/lottie.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:math' as math;
@@ -38,16 +39,16 @@ class _ContentSelectState extends State<ContentSelect> {
       subTopic = "",
       duration;
   var _data;
-  Color _backgroundColor = AppColors.tileColors[3];
+  Color _backgroundColor = AppColors.tileIconColors[3];
   Color subColor(int i) {
     if (i % 3 == 0) {
-      return AppColors.tileColors[3];
+      return AppColors.tileIconColors[3];
     } else if (i % 3 == 1) {
-      return AppColors.tileColors[2];
+      return AppColors.tileIconColors[2];
     } else if (i % 3 == 2) {
-      return AppColors.tileColors[1];
+      return AppColors.tileIconColors[1];
     }
-    return AppColors.tileColors[0];
+    return AppColors.tileIconColors[0];
   }
 
   _onSelected(int i) {
@@ -174,38 +175,39 @@ class _ContentSelectState extends State<ContentSelect> {
                   ),
                   Align(
                     alignment: Alignment.topCenter,
-                    child: CustomScrollView(
-                      physics: BouncingScrollPhysics(),
-                      slivers: <Widget>[
-                        SliverAppBar(
-                          backgroundColor: Colors.transparent,
-                          title: Text(
-                            'Content Selection',
-                            style: TextStyle(
-                              color: whiteColor,
+                    child: SafeArea(
+                      child: CustomScrollView(
+                        physics: BouncingScrollPhysics(),
+                        slivers: <Widget>[
+                          SliverAppBar(
+                            iconTheme: IconThemeData(color: whiteColor),
+                            backgroundColor: Colors.transparent,
+                            title: Text(
+                              'Content Selection',
+                              style: TextStyle(color: whiteColor, fontSize: 20),
                             ),
+                            elevation: 0,
+                            floating: true,
+                            expandedHeight: 200,
+                            centerTitle: true,
+                            brightness: Brightness.dark,
+                            flexibleSpace: _subjectSelect(),
+                            collapsedHeight: 100,
                           ),
-                          elevation: 0,
-                          floating: true,
-                          expandedHeight: 200,
-                          centerTitle: true,
-                          brightness: Brightness.dark,
-                          flexibleSpace: _subjectSelect(),
-                          collapsedHeight: 100,
-                        ),
-                        // ontopFixed(
-                        //   _subjectSelect(),
-                        // ),
+                          // ontopFixed(
+                          //   _subjectSelect(),
+                          // ),
 
-                        SliverPadding(
-                          padding: const EdgeInsets.all(20),
-                          sliver: _unitGrids(),
-                        ),
+                          SliverPadding(
+                            padding: const EdgeInsets.all(20),
+                            sliver: _unitGrids(),
+                          ),
 
-                        // _subUnits()
-                        // subUnits(),
-                        // thirdRow(),
-                      ],
+                          // _subUnits()
+                          // subUnits(),
+                          // thirdRow(),
+                        ],
+                      ),
                     ),
                   )
                 ],
@@ -213,10 +215,24 @@ class _ContentSelectState extends State<ContentSelect> {
             );
           } else {
             return Center(
-              child: CircularProgressIndicator(),
+              child: SizedBox(
+                height: 150,
+                width: 150,
+                child: Lottie.asset(
+                  'assets/lottie/56446-walk.json',
+                ),
+              ),
             );
           }
         },
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
+        child: Icon(
+          Icons.help,
+          color: Colors.white,
+        ),
       ),
     );
   }
@@ -224,7 +240,7 @@ class _ContentSelectState extends State<ContentSelect> {
   Widget _subjectSelect() {
     return _subjects == null
         ? Container(
-            child: Text('No Course Select'),
+            child: Text('No Course Selected'),
           )
         : Container(
             width: MediaQuery.of(context).size.width,
@@ -409,6 +425,15 @@ class _ContentSelectState extends State<ContentSelect> {
           fontSize: 18,
         ),
       ),
+      leading: CircleAvatar(
+        backgroundColor: whiteColor,
+        foregroundColor: firstColor,
+        radius: 18,
+        child: ImageIcon(
+          AssetImage(AppTile.tileIcons[3]),
+          color: firstColor,
+        ),
+      ),
       onExpansionChanged: (bool) {
         chapter = _chapter.sno.toString();
       },
@@ -459,13 +484,13 @@ class _ContentSelectState extends State<ContentSelect> {
 
   Color _randomColor(int i) {
     if (i % 3 == 0) {
-      return AppColors.tileColors[3];
+      return AppColors.tileIconColors[3];
     } else if (i % 3 == 1) {
-      return AppColors.tileColors[2];
+      return AppColors.tileIconColors[2];
     } else if (i % 3 == 2) {
-      return AppColors.tileColors[1];
+      return AppColors.tileIconColors[1];
     }
-    return AppColors.tileColors[0];
+    return AppColors.tileIconColors[0];
   }
 
   SliverPersistentHeader ontopFixed(Widget child) {

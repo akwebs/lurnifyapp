@@ -4,12 +4,12 @@ Don't forget to add all images and sound used in this pages at the pubspec.yaml
  */
 
 import 'dart:async';
-import 'dart:io';
 
+import 'package:flutter/services.dart';
 import 'package:lurnify/ui/constant/routes.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:lottie/lottie.dart';
 
 class SplashScreenPage extends StatefulWidget {
   @override
@@ -18,7 +18,7 @@ class SplashScreenPage extends StatefulWidget {
 
 class _SplashScreenPageState extends State<SplashScreenPage> {
   Timer _timer;
-  int _second = 3; // set timer for 3 second and then direct to next page
+  int _second = 5; // set timer for 3 second and then direct to next page
   SharedPreferences sp;
   void _startTimer() {
     const period = const Duration(seconds: 1);
@@ -74,13 +74,18 @@ class _SplashScreenPageState extends State<SplashScreenPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: WillPopScope(
-      onWillPop: () {
-        return null;
-      },
-      child: Container(
-        child: Center(
-          child: Image.asset('assets/images/logo_light.png', height: 200),
+        body: AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle(
+          statusBarIconBrightness: Brightness.dark,
+          statusBarColor: Colors.transparent),
+      child: WillPopScope(
+        onWillPop: () {
+          return null;
+        },
+        child: Container(
+          child: Center(
+            child: Lottie.asset('assets/lottie/58305-guestlist.json'),
+          ),
         ),
       ),
     ));

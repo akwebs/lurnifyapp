@@ -2,11 +2,31 @@ import 'dart:ui';
 
 import 'package:lurnify/ui/constant/constant.dart';
 import 'package:flutter/material.dart';
+import 'package:lurnify/ui/screen/login/login.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class CustomDrawer extends StatelessWidget {
+class CustomDrawer extends StatefulWidget {
   const CustomDrawer({
     Key key,
   }) : super(key: key);
+
+  @override
+  _CustomDrawerState createState() => _CustomDrawerState();
+}
+
+class _CustomDrawerState extends State<CustomDrawer> {
+  logout() async {
+    SharedPreferences sp = await SharedPreferences.getInstance();
+    sp.remove("studentSno");
+    sp.remove("courseSno");
+    sp.remove("courseCompletionDate");
+    sp.remove("courseCompletionDateFormatted");
+    sp.remove("courseStartingDate");
+    sp.remove("totalWeeks");
+    sp.remove("totalStudyHour");
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (context) => Login()));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -76,7 +96,8 @@ class CustomDrawer extends StatelessWidget {
                   title: Text('Log Out'),
                   contentPadding: EdgeInsets.fromLTRB(20, 0, 0, 0),
                   onTap: () {
-                    Navigator.of(context).pop();
+                    Navigator.pop(context);
+                    logout();
                   },
                 ),
               ],

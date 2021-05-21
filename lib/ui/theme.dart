@@ -8,7 +8,7 @@ class AppTheme {
   static Color _darkNavigationColor = Colors.white70;
 
   static const Color _lightPrimaryColor = Colors.white;
-  static const Color _lightPrimaryVariantColor = Color(0XFFF5F5F5);
+  static const Color _lightPrimaryVariantColor = Color(0XFFFAFAFA);
   static const Color _lightSeconderyColor = Colors.deepPurple;
   static const Color _lightSeconderyVariantColor = Colors.deepPurpleAccent;
   static const Color _lightOnPrimaryColor = Colors.black54;
@@ -16,14 +16,14 @@ class AppTheme {
   static const Color _darkPrimaryVariantColor = Color(0XFF1C1C1C);
   static const Color _darkSeconderyColor = Colors.deepPurple;
   static const Color _darkSeconderyVariantColor = Colors.deepPurpleAccent;
-  static const Color _darkOnPrimaryColor = Colors.white70;
+  static const Color _darkOnPrimaryColor = Colors.white;
 
   static final ThemeData lightTheme = ThemeData(
       scaffoldBackgroundColor: _lightPrimaryVariantColor,
       accentColor: _lightSeconderyColor,
       primaryColor: _darkSeconderyColor,
       appBarTheme: AppBarTheme(
-        elevation: 0,
+        elevation: 2,
         color: _lightPrimaryColor,
         textTheme: TextTheme(
           headline6: TextStyle(
@@ -58,6 +58,10 @@ class AppTheme {
         elevation: 5,
         shadowColor: Colors.black38,
       ),
+      tabBarTheme: TabBarTheme(
+        labelColor: _lightSeconderyColor,
+        unselectedLabelColor: _lightOnPrimaryColor,
+      ),
       textTheme: _lightTextTheme,
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ButtonStyle(
@@ -73,6 +77,7 @@ class AppTheme {
           )),
         ),
       ),
+      canvasColor: _lightPrimaryColor,
       radioTheme: RadioThemeData(
         fillColor: MaterialStateProperty.resolveWith<Color>(
           (Set<MaterialState> states) => _lightSeconderyColor,
@@ -175,6 +180,11 @@ class AppTheme {
         fillColor: MaterialStateProperty.resolveWith<Color>(
           (Set<MaterialState> states) => _darkSeconderyColor,
         ),
+      ),
+      canvasColor: _darkPrimaryColor,
+      tabBarTheme: TabBarTheme(
+        labelColor: _darkSeconderyColor,
+        unselectedLabelColor: _darkOnPrimaryColor,
       ),
       unselectedWidgetColor: _darkSeconderyColor,
       iconTheme: IconThemeData(

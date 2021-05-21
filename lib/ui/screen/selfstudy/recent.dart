@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:lurnify/ui/constant/ApiConstant.dart';
 import 'package:lurnify/ui/constant/constant.dart';
 import 'package:lurnify/ui/screen/selfstudy/contentselect.dart';
 import 'package:lurnify/ui/screen/selfstudy/starttimer.dart';
 import 'package:lurnify/ui/screen/selfstudy/syncyourtime.dart';
+import 'package:lurnify/widgets/componants/custom-button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -49,20 +51,28 @@ class _RecentState extends State<Recent> {
 
   @override
   Widget build(BuildContext context) {
+    String _title;
+    String _fabText;
+    if (pageKey == "1") {
+      _title = 'Self Study Section';
+      _fabText = 'Start Study';
+    } else if (pageKey == "2") {
+      _title = 'Sync your Study';
+      _fabText = 'Sync Study';
+    } else if (pageKey == "3") {
+      _title = 'Goals';
+      _fabText = 'Sync Study';
+    }
     double _width = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: AppBar(
-        title: Text("Self Study Section"),
+        title: Text(_title),
         centerTitle: true,
       ),
       body: FutureBuilder(
         future: data,
         builder: (BuildContext context, AsyncSnapshot snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          } else {
+          if (snapshot.connectionState == ConnectionState.done) {
             return Material(
               child: Container(
                 child: SingleChildScrollView(
@@ -76,6 +86,7 @@ class _RecentState extends State<Recent> {
                       //   width: Responsive.getPercent(
                       //       80, ResponsiveSize.WIDTH, context),
                       //   child: CustomButton(
+                      //     brdRds: 10,
                       //     buttonText: 'Select New Study Topic',
                       //     onPressed: () {
                       //       Navigator.pushReplacement(
@@ -100,214 +111,43 @@ class _RecentState extends State<Recent> {
                 ),
               ),
             );
+          } else {
+            return Center(
+              child: SizedBox(
+                height: 150,
+                width: 150,
+                child: Lottie.asset(
+                  'assets/lottie/56446-walk.json',
+                ),
+              ),
+            );
           }
         },
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        foregroundColor: Colors.white,
+      bottomNavigationBar: CustomButton(
+        brdRds: 0,
+        buttonText: _fabText,
+        verpad: EdgeInsets.symmetric(vertical: 15),
         onPressed: () => Navigator.pushReplacement(
           context,
           MaterialPageRoute(
             builder: (context) => ContentSelect(pageKey),
           ),
         ),
-        icon: const Icon(Icons.arrow_forward_ios_rounded),
-        label: const Text('Start Study'),
-        tooltip: 'Select New Study Topic',
       ),
+      // floatingActionButton: FloatingActionButton.extended(
+      //   foregroundColor: Colors.white,
+      //   onPressed: () => Navigator.pushReplacement(
+      //     context,
+      //     MaterialPageRoute(
+      //       builder: (context) => ContentSelect(pageKey),
+      //     ),
+      //   ),
+      //   icon: Icon(Icons.arrow_forward_ios_rounded),
+      //   label: Text(_fabText),
+      // ),
     );
   }
-
-  // Widget studyHistory(context, _width) {
-  //   return recentData == null
-  //       ? Container()
-  //       : Container(
-  //           child: ListView.builder(
-  //             itemCount: recentData.length,
-  //             primary: false,
-  //             shrinkWrap: true,
-  //             physics: NeverScrollableScrollPhysics(),
-  //             itemBuilder: (context, i) {
-  //               return GestureDetector(
-  //                 onTap: () {
-  //                   String subjectSno = recentData[i]['subjectSno'].toString();
-  //                   String unitSno = recentData[i]['unitSno'].toString();
-  //                   String chapterSno = recentData[i]['chapterSno'].toString();
-  //                   String topicSno = recentData[i]['topicSno'].toString();
-  //                   String subTopic = recentData[i]['subTopic'].toString();
-  //                   String duration = recentData[i]['duration'].toString();
-  //                   print("---------------1" + duration);
-  //                   _goToNextScreen(subjectSno, unitSno, chapterSno, topicSno,
-  //                       subTopic, duration);
-  //                 },
-  //                 child: Padding(
-  //                   padding: EdgeInsets.all(10),
-  //                   child: Container(
-  //                     height: 170,
-  //                     decoration: BoxDecoration(
-  //                       borderRadius: BorderRadius.circular(5),
-  //                     ),
-  //                     child: Column(
-  //                       mainAxisAlignment: MainAxisAlignment.start,
-  //                       children: [
-  //                         Container(
-  //                           padding: EdgeInsets.all(5),
-  //                           decoration: BoxDecoration(
-  //                               borderRadius: BorderRadius.only(
-  //                                   topLeft: Radius.circular(5),
-  //                                   topRight: Radius.circular(5))),
-  //                           child: Row(
-  //                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //                             children: [
-  //                               Text(
-  //                                 recentData[i]['subjectName'],
-  //                                 style: TextStyle(
-  //                                     fontWeight: FontWeight.w800,
-  //                                     fontSize: 16),
-  //                                 textAlign: TextAlign.left,
-  //                               ),
-  //                               Text(
-  //                                 "Unit : " + recentData[i]['unitName'],
-  //                                 style: TextStyle(
-  //                                     fontWeight: FontWeight.w800,
-  //                                     fontSize: 14),
-  //                               ),
-  //                               Text(
-  //                                 recentData[i]['studyType'],
-  //                                 style: TextStyle(
-  //                                     color: firstColor,
-  //                                     fontSize: 12,
-  //                                     fontWeight: FontWeight.w600),
-  //                               ),
-  //                             ],
-  //                           ),
-  //                         ),
-  //                         Container(
-  //                           padding: EdgeInsets.all(8),
-  //                           child: Row(
-  //                             mainAxisAlignment: MainAxisAlignment.start,
-  //                             children: [
-  //                               Spacer(),
-  //                               Spacer(),
-  //                               Spacer(),
-  //                               Spacer(),
-  //                               recentData[i]['studyType'] != "Complete"
-  //                                   ? Spacer()
-  //                                   : GestureDetector(
-  //                                       onTap: () {
-  //                                         String subjectSno = recentData[i]
-  //                                                 ['subjectSno']
-  //                                             .toString();
-  //                                         String subjectName = recentData[i]
-  //                                                 ['subjectName']
-  //                                             .toString();
-  //                                         String unitSno = recentData[i]
-  //                                                 ['unitSno']
-  //                                             .toString();
-  //                                         String unitName = recentData[i]
-  //                                                 ['unitName']
-  //                                             .toString();
-  //                                         String chapterSno = recentData[i]
-  //                                                 ['chapterSno']
-  //                                             .toString();
-  //                                         String chapterName = recentData[i]
-  //                                                 ['chapterName']
-  //                                             .toString();
-  //                                         String topicSno = recentData[i]
-  //                                                 ['topicSno']
-  //                                             .toString();
-  //                                         _getNextTopic(
-  //                                             subjectSno,
-  //                                             subjectName,
-  //                                             unitSno,
-  //                                             unitName,
-  //                                             chapterSno,
-  //                                             chapterName,
-  //                                             topicSno);
-  //                                       },
-  //                                       child: Container(
-  //                                         padding: EdgeInsets.all(5),
-  //                                         decoration: BoxDecoration(
-  //                                             color: Colors.green,
-  //                                             borderRadius:
-  //                                                 BorderRadius.circular(10),
-  //                                             border: Border.all(
-  //                                                 color: Colors.white70)),
-  //                                         child: Text(
-  //                                           "Study Next Topic",
-  //                                           style: TextStyle(
-  //                                               color: Colors.black54,
-  //                                               fontSize: 10,
-  //                                               fontWeight: FontWeight.w600),
-  //                                         ),
-  //                                       ),
-  //                                     ),
-  //                             ],
-  //                           ),
-  //                         ),
-  //                         Container(
-  //                           padding: EdgeInsets.all(1),
-  //                           child: Text(
-  //                             "Chapter : " + recentData[i]['chapterName'],
-  //                             style: TextStyle(
-  //                                 color: Colors.black87,
-  //                                 fontWeight: FontWeight.w800,
-  //                                 fontSize: 14),
-  //                           ),
-  //                         ),
-  //                         Container(
-  //                           padding: EdgeInsets.all(10),
-  //                           child: Row(
-  //                             crossAxisAlignment: CrossAxisAlignment.start,
-  //                             children: [
-  //                               Text(
-  //                                 recentData[i]['topicName'] + ":  ",
-  //                                 style: TextStyle(
-  //                                     color: Colors.black87,
-  //                                     fontWeight: FontWeight.w800,
-  //                                     fontSize: 14),
-  //                               ),
-  //                               Expanded(
-  //                                   child: Text(
-  //                                 recentData[i]['subTopic'] == null
-  //                                     ? ""
-  //                                     : recentData[i]['subTopic'],
-  //                                 style: TextStyle(
-  //                                     color: Colors.black54,
-  //                                     fontWeight: FontWeight.w500,
-  //                                     fontSize: 12),
-  //                               )),
-  //                             ],
-  //                           ),
-  //                         ),
-  //                         Spacer(),
-  //                         Container(
-  //                           padding: EdgeInsets.only(top: 5, bottom: 5),
-  //                           decoration: BoxDecoration(
-  //                               color: Colors.grey.withOpacity(0.2),
-  //                               borderRadius: BorderRadius.only(
-  //                                   bottomLeft: Radius.circular(5),
-  //                                   bottomRight: Radius.circular(5))),
-  //                           child: Center(
-  //                             child: Text(
-  //                               "Last Studied : " +
-  //                                   recentData[i]['enteredDate'],
-  //                               style: TextStyle(
-  //                                   color: Colors.black54,
-  //                                   fontWeight: FontWeight.w800,
-  //                                   fontSize: 12),
-  //                             ),
-  //                           ),
-  //                         ),
-  //                       ],
-  //                     ),
-  //                   ),
-  //                 ),
-  //               );
-  //             },
-  //           ),
-  //         );
-  // }
 
   Widget sHistory(context, _width) {
     return recentData == null
@@ -353,6 +193,7 @@ class _RecentState extends State<Recent> {
                               ),
                               child: Text(
                                 recentData[i]['studyType'],
+                                style: TextStyle(color: Colors.black),
                               ),
                             )
                           ],
@@ -489,14 +330,14 @@ class _RecentState extends State<Recent> {
     String course = sp.getString("courseSno");
     print("---------------2" + duration);
     if (pageKey == "1") {
-      Navigator.pushReplacement(
+      Navigator.push(
           context,
           MaterialPageRoute(
               builder: (context) => StartTimer(course, subjectSno, unitSno,
                   chapterSno, topicSno, subTopic, duration)));
     } else if (pageKey == "2") {
       print("---------------3" + duration);
-      Navigator.pushReplacement(
+      Navigator.push(
           context,
           MaterialPageRoute(
               builder: (context) => SyncYourTime(course, subjectSno, unitSno,

@@ -3,8 +3,11 @@ import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:audioplayers/audio_cache.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter/services.dart';
+import 'package:lottie/lottie.dart';
 import 'package:lurnify/ui/constant/ApiConstant.dart';
+import 'package:lurnify/ui/constant/constant.dart';
 import 'package:lurnify/ui/screen/selfstudy/studycomplete.dart';
 import 'package:lurnify/ui/theme.dart';
 import 'package:lurnify/widgets/componants/custom-button.dart';
@@ -72,6 +75,20 @@ class _StartTimerState extends State<StartTimer> {
 
   calculateTimeInSeconds() {
     second = second + 1;
+  }
+
+  DateTime _currentBackPressTime;
+  Future<bool> _onWillPop() {
+    DateTime now = DateTime.now();
+    if (_currentBackPressTime == null ||
+        now.difference(_currentBackPressTime) > Duration(seconds: 2)) {
+      _currentBackPressTime = now;
+      Fluttertoast.showToast(
+          msg: 'Press Again if you want to EXIT',
+          toastLength: Toast.LENGTH_SHORT);
+      return Future.value(false);
+    }
+    return Future.value(true);
   }
 
   @override
@@ -191,68 +208,102 @@ class _StartTimerState extends State<StartTimer> {
   Widget build(BuildContext context) {
     _height = MediaQuery.of(context).size.height;
     _width = MediaQuery.of(context).size.width;
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme.darkTheme,
-      home: Scaffold(
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: AppTheme.darkTheme,
+        home: Scaffold(
+          appBar: AppBar(
+            // leading: IconButton(
+            //   icon: Icon(Icons.arrow_back),
+            //   onPressed: () => Navigator.pop(context),
+            // ),
+            title: Text('Study Timer'),
+            actions: [
+              IconButton(
+                icon: sound == "sound"
+                    ? Icon(
+                        Icons.volume_up,
+                      )
+                    : Icon(
+                        Icons.volume_off,
+                      ),
+                onPressed: () {
+                  setState(() {
+                    if (sound == "sound") {
+                      sound = "mute";
+                    } else {
+                      sound = "sound";
+                    }
+                  });
+                },
+              ),
+              IconButton(
+                icon: Icon(Icons.help),
+                onPressed: () {
+                  questionAlertBox(context);
+                },
+              ),
+            ],
+          ),
           body: AnnotatedRegion<SystemUiOverlayStyle>(
-        value: SystemUiOverlayStyle.light,
-        child: FutureBuilder(
-          future: data,
-          builder: (BuildContext context, AsyncSnapshot snapshot) {
-            if (snapshot.connectionState == ConnectionState.done) {
-              return Container(
-                height: _height,
-                width: _width,
-                margin: EdgeInsets.only(top: 28, left: 0, right: 0, bottom: 0),
-                child: SingleChildScrollView(
-                  physics: BouncingScrollPhysics(),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        width: _width,
-                        padding: EdgeInsets.all(10),
-                        child: FadeAnimatedTextKit(
-                          onTap: () {},
-                          text: headingList.isEmpty ||
-                                  headingList.length < 1 ||
-                                  headingList == null
-                              ? ["Welcome To Lurnify"]
-                              : headingList,
-                          textStyle: TextStyle(
-                            fontSize: 16.0,
+            value: SystemUiOverlayStyle.light,
+            child: FutureBuilder(
+              future: data,
+              builder: (BuildContext context, AsyncSnapshot snapshot) {
+                if (snapshot.connectionState == ConnectionState.done) {
+                  return Container(
+                    height: _height,
+                    width: _width,
+                    margin:
+                        EdgeInsets.only(top: 10, left: 0, right: 0, bottom: 0),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          width: _width,
+                          padding: EdgeInsets.all(10),
+                          child: FadeAnimatedTextKit(
+                            onTap: () {},
+                            text: headingList.isEmpty ||
+                                    headingList.length < 1 ||
+                                    headingList == null
+                                ? ["Welcome To Lurnify"]
+                                : headingList,
+                            textStyle: TextStyle(
+                              fontSize: 16.0,
+                            ),
+                            textAlign: TextAlign.center,
+                            alignment: AlignmentDirectional.center,
+                            repeatForever: true,
+                            // or Alignment.topLeft
+                            duration: Duration(seconds: 1),
                           ),
-
-                          textAlign: TextAlign.start,
-                          alignment: AlignmentDirectional.center,
-                          repeatForever: true,
-                          // or Alignment.topLeft
-                          duration: Duration(seconds: 3),
                         ),
-                      ),
-                      SizedBox(
-                        height: _height / 22,
-                      ),
-                      CustomButton(
-                        buttonText: 'Beat Distraction',
-                        onPressed: () => beatDistraction(),
-                        verpad: EdgeInsets.symmetric(vertical: 10),
-                      ),
-                      SizedBox(
-                        height: _height / 22,
-                      ),
-                      Container(
-                        height: _height / 2.2,
-                        child: Padding(
-                          padding: EdgeInsets.only(left: 20, right: 20),
-                          child: Container(
-                            child: Column(
-                              children: [
-                                ElevatedButton(
-                                  onPressed: () => showSubTopic(context),
-                                  child: Container(
+                        SizedBox(
+                          height: _height / 22,
+                        ),
+                        RaisedButton(
+                          child: Text('Beat Distraction'),
+                          onPressed: () => beatDistraction(),
+                          padding: EdgeInsets.symmetric(
+                              vertical: 10, horizontal: 15),
+                          color: Colors.green,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(18.0),
+                              side: BorderSide(color: Colors.red)),
+                        ),
+                        Container(
+                          height: _height / 2.2,
+                          child: Padding(
+                            padding: EdgeInsets.only(left: 20, right: 20),
+                            child: Container(
+                              child: Column(
+                                children: [
+                                  RaisedButton(
+                                    onPressed: () => showSubTopic(context),
                                     child: Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.start,
@@ -264,42 +315,48 @@ class _StartTimerState extends State<StartTimer> {
                                         Spacer(),
                                         Icon(
                                           Icons.arrow_forward_ios_rounded,
+                                          size: 18,
                                         ),
                                       ],
                                     ),
+                                    color: Colors.transparent,
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(18.0),
+                                        side: BorderSide(color: whiteColor)),
                                   ),
-                                ),
-                                Spacer(),
-                                SizedBox(
-                                  width: _width,
-                                  height: _height / 4,
-                                  child: Card(
-                                      elevation: 5,
-                                      shadowColor: Colors.white12,
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            dateRow(),
-                                            Spacer(),
-                                            Center(
-                                                child: Text(
-                                              _pressDuration,
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .headline2,
-                                            )),
-                                            Spacer(),
-                                          ],
+                                  SizedBox(
+                                    width: _width,
+                                    height: _height / 4,
+                                    child: Container(
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                              width: 2, color: firstColor),
+                                          borderRadius:
+                                              BorderRadius.circular(18.0),
                                         ),
-                                      )),
-                                ),
-                                Spacer(),
-                                ElevatedButton(
-                                  onPressed: () => remainingAlertBox(),
-                                  child: Container(
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              dateRow(),
+                                              Spacer(),
+                                              Center(
+                                                  child: Text(
+                                                _pressDuration,
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .headline2,
+                                              )),
+                                              Spacer(),
+                                            ],
+                                          ),
+                                        )),
+                                  ),
+                                  RaisedButton(
+                                    onPressed: () => remainingAlertBox(),
                                     child: Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.start,
@@ -310,99 +367,102 @@ class _StartTimerState extends State<StartTimer> {
                                             color: remainingDuration < 0
                                                 ? Colors.red
                                                 : Colors.white,
+                                            fontSize: 18,
                                           ),
                                         ),
                                         Spacer(),
                                         Icon(
                                           Icons.arrow_forward_ios_rounded,
+                                          size: 18,
+                                          color: Colors.red,
                                         ),
                                       ],
                                     ),
+                                    color: Colors.transparent,
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(18.0),
+                                        side: BorderSide(color: Colors.red)),
                                   ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        height: _height / 22,
-                      ),
-                      SizedBox(
-                        width: _width / 1.2,
-                        child: TextButton(
-                          child: Text(
-                            'END',
-                            style: Theme.of(context).textTheme.headline3,
-                          ),
-                          style: ButtonStyle(
-                            elevation:
-                                MaterialStateProperty.resolveWith<double>(
-                              (Set<MaterialState> states) => 3.0,
-                            ),
-                            backgroundColor:
-                                MaterialStateProperty.resolveWith<Color>(
-                              (Set<MaterialState> states) => Colors.red,
-                            ),
-                            overlayColor:
-                                MaterialStateProperty.all(Colors.black26),
-                            shape: MaterialStateProperty.all(
-                                RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            )),
-                          ),
-                          onPressed: () => endSession(),
-                        ),
-                      ),
-                      SizedBox(
-                        height: _height / 10,
-                      ),
-                      Container(
-                          alignment: Alignment.bottomCenter,
-                          width: _width,
-                          padding: EdgeInsets.all(10),
-                          child: Row(
-                            children: [
-                              IconButton(
-                                icon: sound == "sound"
-                                    ? Icon(
-                                        Icons.volume_up,
-                                      )
-                                    : Icon(
-                                        Icons.volume_off,
-                                      ),
-                                onPressed: () {
-                                  setState(() {
-                                    if (sound == "sound") {
-                                      sound = "mute";
-                                    } else {
-                                      sound = "sound";
-                                    }
-                                  });
-                                },
+                                ],
                               ),
-                              Spacer(),
-                              GestureDetector(
-                                  onTap: () {
-                                    questionAlertBox(context);
-                                  },
-                                  child: Icon(
-                                    Icons.help,
-                                  ))
-                            ],
-                          )),
-                    ],
-                  ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: _height / 10,
+                        ),
+                        // Container(
+                        //     alignment: Alignment.bottomCenter,
+                        //     width: _width,
+                        //     padding: EdgeInsets.all(10),
+                        //     child: Row(
+                        //       children: [
+                        //         IconButton(
+                        //           icon: sound == "sound"
+                        //               ? Icon(
+                        //                   Icons.volume_up,
+                        //                 )
+                        //               : Icon(
+                        //                   Icons.volume_off,
+                        //                 ),
+                        //           onPressed: () {
+                        //             setState(() {
+                        //               if (sound == "sound") {
+                        //                 sound = "mute";
+                        //               } else {
+                        //                 sound = "sound";
+                        //               }
+                        //             });
+                        //           },
+                        //         ),
+                        //         Spacer(),
+                        //         GestureDetector(
+                        //             onTap: () {
+                        //               questionAlertBox(context);
+                        //             },
+                        //             child: Icon(
+                        //               Icons.help,
+                        //             ))
+                        //       ],
+                        //     )),
+                      ],
+                    ),
+                  );
+                } else {
+                  return Center(
+                    child: SizedBox(
+                      height: 150,
+                      width: 150,
+                      child: Lottie.asset(
+                        'assets/lottie/56446-walk.json',
+                      ),
+                    ),
+                  );
+                }
+              },
+            ),
+          ),
+          bottomNavigationBar: Container(
+            child: TextButton(
+              child: Text(
+                'END',
+                style: TextStyle(fontSize: 30, color: whiteColor),
+              ),
+              style: ButtonStyle(
+                elevation: MaterialStateProperty.resolveWith<double>(
+                  (Set<MaterialState> states) => 3.0,
                 ),
-              );
-            } else {
-              return Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-          },
+                backgroundColor: MaterialStateProperty.resolveWith<Color>(
+                  (Set<MaterialState> states) => Colors.red,
+                ),
+                overlayColor: MaterialStateProperty.all(Colors.black26),
+              ),
+              onPressed: () => endSession(),
+            ),
+          ),
         ),
-      )),
+      ),
     );
   }
 
