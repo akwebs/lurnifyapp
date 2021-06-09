@@ -13,7 +13,6 @@ import 'package:http/http.dart' as http;
 import 'package:lurnify/ui/constant/ApiConstant.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 
-
 import 'dart:async';
 
 class HomePage extends StatefulWidget {
@@ -27,49 +26,44 @@ class _HomePageState extends State<HomePage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   DateTime _currentBackPressTime;
 
-
   var _data;
-  Map<String,dynamic> resbody=Map();
-  String _totalDimes="0";
-  bool isReferralCodeUsed=false;
-  bool _isPaymentDone=false;
+  Map<String, dynamic> resbody = Map();
+  String _totalDimes = "0";
+  bool isReferralCodeUsed = false;
+  bool _isPaymentDone = false;
 
-  _getHomePageData()async{
+  _getHomePageData() async {
     SharedPreferences sp = await SharedPreferences.getInstance();
-    var url=baseUrl+"getHomePageData?registerSno="+sp.getString("studentSno");
+    var url =
+        baseUrl + "getHomePageData?registerSno=" + sp.getString("studentSno");
     print(url);
     http.Response response = await http.post(
       Uri.encodeFull(url),
     );
     resbody = jsonDecode(response.body);
     setState(() {
-      _totalDimes=resbody['totalDimes'].toString();
+      _totalDimes = resbody['totalDimes'].toString();
       _signUpToast(_totalDimes);
     });
-    if(resbody['result']==true){
+    if (resbody['result'] == true) {
       _showChallenge();
-    }else{
+    } else {
       _showMyDialog();
     }
-    isReferralCodeUsed=resbody['isReferralCodeUsed'];
-    _isPaymentDone=resbody['isPaymentDone'];
+    isReferralCodeUsed = resbody['isReferralCodeUsed'];
+    _isPaymentDone = resbody['isPaymentDone'];
   }
 
   @override
   void initState() {
     super.initState();
-    _data=_getHomePageData();
+    _data = _getHomePageData();
   }
 
   @override
   void dispose() {
     super.dispose();
   }
-
-
-
-
-
 
   Future<bool> _onWillPop() {
     DateTime now = DateTime.now();
@@ -113,136 +107,125 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: _data,
-      builder: (context, snapshot) {
-        return Scaffold(
-          key: _scaffoldKey,
-          resizeToAvoidBottomInset: false,
-          appBar: AppBar(
-            title: Image.asset(
-              'assets/lurnify.png',
-              fit: BoxFit.contain,
-              height: 40,
-            ),
-            actions: <Widget>[
-              IconButton(
-                icon: const Icon(Icons.notifications_outlined),
-                onPressed: () {
-                  Navigator.push(context, MaterialPageRoute<void>(
-                    builder: (BuildContext context) {
-                      return Scaffold(
-                        appBar: AppBar(
-                          iconTheme: IconThemeData(color: Colors.deepPurple),
-                          backgroundColor: Colors.white,
-                          title: const Text(
-                            'Notifications',
-                            style: TextStyle(color: Colors.black),
+        future: _data,
+        builder: (context, snapshot) {
+          return Scaffold(
+            key: _scaffoldKey,
+            resizeToAvoidBottomInset: false,
+            appBar: AppBar(
+              title: Image.asset(
+                'assets/lurnify.png',
+                fit: BoxFit.contain,
+                height: 40,
+              ),
+              actions: <Widget>[
+                IconButton(
+                  icon: const Icon(Icons.notifications_outlined),
+                  onPressed: () {
+                    Navigator.push(context, MaterialPageRoute<void>(
+                      builder: (BuildContext context) {
+                        return Scaffold(
+                          appBar: AppBar(
+                            iconTheme: IconThemeData(color: Colors.deepPurple),
+                            backgroundColor: Colors.white,
+                            title: const Text(
+                              'Notifications',
+                              style: TextStyle(color: Colors.black),
+                            ),
                           ),
-                        ),
-                        body: const Center(
-                          child: Text(
-                            'This is the Notification Page',
-                            style: TextStyle(fontSize: 24),
+                          body: const Center(
+                            child: Text(
+                              'This is the Notification Page',
+                              style: TextStyle(fontSize: 24),
+                            ),
                           ),
-                        ),
+                        );
+                      },
+                    ));
+                  },
+                ),
+                IconButton(
+                  icon: const Icon(Icons.share),
+                  onPressed: () {},
+                ),
+                PopupMenuButton<String>(
+                  onSelected: handleClick,
+                  itemBuilder: (BuildContext context) {
+                    return {'Settings', 'Logout'}.map((String choice) {
+                      return PopupMenuItem<String>(
+                        value: choice,
+                        child: Text(choice),
                       );
-                    },
-                  ));
-                },
-              ),
-              IconButton(
-                icon: const Icon(Icons.share),
-                onPressed: () {},
-              ),
-              PopupMenuButton<String>(
-                onSelected: handleClick,
-                itemBuilder: (BuildContext context) {
-                  return {'Settings', 'Logout'}.map((String choice) {
-                    return PopupMenuItem<String>(
-                      value: choice,
-                      child: Text(choice),
-                    );
-                  }).toList();
-                },
-              ),
-            ],
-          ),
-          drawer: Theme(
-            data: Theme.of(context).copyWith(
-              canvasColor:
-                  Colors.white24, //This will change the drawer background to blue.
-              //other styles
+                    }).toList();
+                  },
+                ),
+              ],
             ),
-            child: Drawer(
-              elevation: 0,
-              child: CustomDrawer(_isPaymentDone),
+            drawer: Theme(
+              data: Theme.of(context).copyWith(
+                canvasColor: Colors
+                    .white24, //This will change the drawer background to blue.
+                //other styles
+              ),
+              child: Drawer(
+                elevation: 0,
+                child: CustomDrawer(_isPaymentDone),
+              ),
             ),
-          ),
-          body: Container(
-            child: WillPopScope(
-              onWillPop: _onWillPop,
-              child: SingleChildScrollView(
-                physics: BouncingScrollPhysics(),
-                child: Column(
-                  children: <Widget>[
-                    CardWidget(),
-                    AppTiles(pageKey),
-                    BottomSlider(pageKey),
-                    TestSlider(),
-                  ],
+            body: Container(
+              child: WillPopScope(
+                onWillPop: _onWillPop,
+                child: SingleChildScrollView(
+                  physics: BouncingScrollPhysics(),
+                  child: Column(
+                    children: <Widget>[
+                      CardWidget(),
+                      AppTiles(pageKey),
+                      BottomSlider(pageKey),
+                      TestSlider(),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-          floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-          floatingActionButton: FloatingActionButton(
-            onPressed: () {
-              Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => Recent('1'),
-              ));
-            },
-            child: Icon(
-              Icons.add,
-              color: Colors.white,
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.centerDocked,
+            floatingActionButton: FloatingActionButton(
+              onPressed: () {
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => Recent('1'),
+                ));
+              },
+              child: Icon(
+                Icons.add,
+                color: Colors.white,
+              ),
             ),
-          ),
-          bottomNavigationBar: BottomNavigationBar(
-            onTap: onTabTapped,
-            currentIndex: _currentIndex,
-            items: const <BottomNavigationBarItem>[
-              BottomNavigationBarItem(
-                icon: Icon(Icons.home),
-                label: 'Home',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.store),
-                label: 'Store',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.search),
-                label: 'Search',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.person),
-                label: 'Account',
-              ),
-            ],
-          ),
-        );
-      }
-    );
+            bottomNavigationBar: BottomNavigationBar(
+              onTap: onTabTapped,
+              currentIndex: _currentIndex,
+              items: const <BottomNavigationBarItem>[
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.home),
+                  label: 'Home',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.store),
+                  label: 'Store',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.search),
+                  label: 'Search',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.person),
+                  label: 'Account',
+                ),
+              ],
+            ),
+          );
+        });
   }
-
-
-
-
-
-
-
-
-
-
-
 
   void _signUpToast(String message) {
     Fluttertoast.showToast(
@@ -261,26 +244,27 @@ class _HomePageState extends State<HomePage> {
         dialogType: DialogType.INFO,
         animType: AnimType.BOTTOMSLIDE,
         title: 'Challenge',
-        desc: "You have given a challenge for next monday. Do you want to accept it and want to earn coin?",
+        desc:
+            "You have given a challenge for next monday. Do you want to accept it and want to earn coin?",
         dismissOnBackKeyPress: false,
         dismissOnTouchOutside: false,
         btnOkColor: Colors.black87,
         btnOkText: "Accept",
         btnOkOnPress: () {
           _updateChallengeStatus("accepted");
-          if(resbody['dailyReward']==true){
+          if (resbody['dailyReward'] == true) {
             _showDailyAppOpening();
           }
         },
         btnCancelText: "Cancel",
         btnCancelColor: Colors.black,
-        btnCancelOnPress: (){
+        btnCancelOnPress: () {
           _updateChallengeStatus("declined");
-          if(resbody['dailyReward']==true){
+          if (resbody['dailyReward'] == true) {
             _showDailyAppOpening();
           }
-        }
-    )..show();
+        })
+      ..show();
   }
 
   Future<void> _showMyDialog() async {
@@ -289,13 +273,14 @@ class _HomePageState extends State<HomePage> {
       dialogType: DialogType.INFO,
       animType: AnimType.BOTTOMSLIDE,
       title: 'Welcome to lurnify',
-      desc: "Study for only one hour this week and start earning real money.\n To know more about lurnify's digital coin please click on know more.",
+      desc:
+          "Study for only one hour this week and start earning real money.\n To know more about lurnify's digital coin please click on know more.",
       dismissOnBackKeyPress: false,
       dismissOnTouchOutside: false,
       btnOkColor: Colors.black87,
       btnOkText: "Know More",
       btnOkOnPress: () {
-        if(resbody['dailyReward']==true){
+        if (resbody['dailyReward'] == true) {
           _showDailyAppOpening();
         }
       },
@@ -308,33 +293,39 @@ class _HomePageState extends State<HomePage> {
       dialogType: DialogType.SUCCES,
       animType: AnimType.BOTTOMSLIDE,
       title: 'Congratulations',
-      desc: "You have earned "+resbody['dimes'].toString()+" dimes as daily reward",
+      desc: "You have earned " +
+          resbody['dimes'].toString() +
+          " dimes as daily reward",
       dismissOnBackKeyPress: false,
       dismissOnTouchOutside: false,
       btnOkColor: Colors.black87,
       btnOkText: "Great",
-      btnOkOnPress: () {
-
-      },
+      btnOkOnPress: () {},
     )..show();
   }
 
-  _updateChallengeStatus(status)async{
+  _updateChallengeStatus(status) async {
     SharedPreferences sp = await SharedPreferences.getInstance();
-    var url=baseUrl+"updateChallengeStatus?registerSno="+sp.getString("studentSno")+"&status="+status;
+    var url = baseUrl +
+        "updateChallengeStatus?registerSno=" +
+        sp.getString("studentSno") +
+        "&status=" +
+        status;
     print(url);
     http.Response response = await http.post(
       Uri.encodeFull(url),
     );
-    Map<String,dynamic> resbody = jsonDecode(response.body);
+    Map<String, dynamic> resbody = jsonDecode(response.body);
     print(resbody);
-    if(resbody['result']==true){
-      if(status=="accepted"){
-        _signUpToast("Congratulations, you have accepted the challenge. Start Study and earn real money");
-      }else{
-        _signUpToast("OOPS!!! you have declined the challenge. Don't worry! you can enroll in upcoming and challenges and still you can make money.");
+    if (resbody['result'] == true) {
+      if (status == "accepted") {
+        _signUpToast(
+            "Congratulations, you have accepted the challenge. Start Study and earn real money");
+      } else {
+        _signUpToast(
+            "OOPS!!! you have declined the challenge. Don't worry! you can enroll in upcoming and challenges and still you can make money.");
       }
-    }else{
+    } else {
       _signUpToast("OOPS!!! Something went wrong. Please try again later");
     }
   }

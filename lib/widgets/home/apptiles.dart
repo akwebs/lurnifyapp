@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:lurnify/config/data.dart';
 import 'package:lurnify/ui/constant/constant.dart';
+import 'package:lurnify/ui/screen/dareToDo/dareToDo.dart';
+import 'package:lurnify/ui/screen/marketPlace/marketPlace.dart';
 import 'package:lurnify/ui/screen/myCourseContain/NewCourseContent.dart';
 import 'package:lurnify/ui/screen/selfstudy/selfstudy.dart';
 import 'package:lurnify/ui/screen/myProgress/CourseProress.dart';
 import 'package:lurnify/ui/screen/revisionZone/RevisionZoneHome.dart';
 import 'package:lurnify/ui/screen/marketPlace/week-month.dart';
-
 
 class AppTiles extends StatelessWidget {
   final List pageKey;
@@ -29,9 +30,12 @@ class AppTiles extends StatelessWidget {
         itemCount: AppTile.tileIcons.length,
         itemBuilder: (BuildContext ctx, index) {
           return Card(
-            elevation: 5,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+            elevation: 0,
+            shape: RoundedRectangleBorder(
+                side: BorderSide(
+                    color: AppColors.tileIconColors[index].withOpacity(0.3),
+                    width: 1),
+                borderRadius: BorderRadius.circular(5)),
             clipBehavior: Clip.antiAlias,
             child: InkWell(
               onTap: () {
@@ -47,11 +51,15 @@ class AppTiles extends StatelessWidget {
                   Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) => CourseProgress(),
                   ));
-                }else if (index == 5) {
+                } else if (index == 5) {
                   Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) => RevisionZone(),
                   ));
-                }else if (index == 8) {
+                } else if (index == 6) {
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => DareToDo(),
+                  ));
+                } else if (index == 8) {
                   Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) => WeekMonth(),
                   ));

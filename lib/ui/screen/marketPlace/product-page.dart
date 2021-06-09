@@ -2,36 +2,46 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:lurnify/ui/constant/constant.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:http/http.dart' as http;
 import 'package:lurnify/ui/constant/ApiConstant.dart';
 import 'package:lurnify/ui/screen/widget/custom-alert.dart';
-import 'package:lurnify/ui/screen/widget/custom-button.dart';
+import 'package:lurnify/widgets/componants/custom-button.dart';
 
 class ProductPage extends StatefulWidget {
   final String weekOrMonthSno;
   final String weekOrMonth;
-  ProductPage(this.weekOrMonthSno,this.weekOrMonth);
+  ProductPage(this.weekOrMonthSno, this.weekOrMonth);
 
   @override
-  _ProductPageState createState() => _ProductPageState(weekOrMonthSno,weekOrMonth);
+  _ProductPageState createState() =>
+      _ProductPageState(weekOrMonthSno, weekOrMonth);
 }
 
 class _ProductPageState extends State<ProductPage> {
   final String weekOrMonthSno;
   final String weekOrMonth;
-  _ProductPageState(this.weekOrMonthSno,this.weekOrMonth);
+  _ProductPageState(this.weekOrMonthSno, this.weekOrMonth);
 
-  List _products=[];
-  _getProducts()async{
-    try{
+  List _products = [];
+  _getProducts() async {
+    try {
       SharedPreferences sp = await SharedPreferences.getInstance();
-      var url="";
-      if(weekOrMonth=="week"){
-        url=baseUrl+"getProductsByWeek?registerSno="+sp.getString("studentSno")+"&week="+weekOrMonthSno;
-      }else if(weekOrMonth=="month"){
-        url=baseUrl+"getProductsByMonth?registerSno="+sp.getString("studentSno")+"&month="+weekOrMonthSno;
+      var url = "";
+      if (weekOrMonth == "week") {
+        url = baseUrl +
+            "getProductsByWeek?registerSno=" +
+            sp.getString("studentSno") +
+            "&week=" +
+            weekOrMonthSno;
+      } else if (weekOrMonth == "month") {
+        url = baseUrl +
+            "getProductsByMonth?registerSno=" +
+            sp.getString("studentSno") +
+            "&month=" +
+            weekOrMonthSno;
       }
 
       print(url);
@@ -39,8 +49,8 @@ class _ProductPageState extends State<ProductPage> {
         Uri.encodeFull(url),
       );
       var resbody = jsonDecode(response.body);
-      _products=resbody;
-    }catch(e){
+      _products = resbody;
+    } catch (e) {
       print(e);
     }
   }
@@ -53,83 +63,175 @@ class _ProductPageState extends State<ProductPage> {
       ),
       body: FutureBuilder(
         future: _getProducts(),
-        builder: (BuildContext context, AsyncSnapshot snapshot){
-          if(snapshot.connectionState==ConnectionState.done){
-            return _products.isEmpty?Container(
-              alignment: Alignment.center,
-              child: Text("No Products",style: TextStyle(color: Colors.grey,fontSize: 40,fontWeight: FontWeight.w600),),
-            ):Container(
-              padding: EdgeInsets.all(10),
-              child: GridView.builder(
-                itemCount: _products.length,
-                shrinkWrap: true,
-                primary: false,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 5,
-                  mainAxisSpacing: 5,
-                  childAspectRatio: 0.70
-                ),
-                itemBuilder: (context,i){
-                  String imageUrl="";
-                  if(_products[i]['status']=="locked"){
-                    //HERE COULD BE THE MISTAKE. I CHNAGE IMAGEURL WITH BASE URL
-                    imageUrl=baseUrl+_products[i]['disableDirectory']+"/"+_products[i]['disableFileName'];
-                  }else if(_products[i]['status']=="active"){
-                    imageUrl=baseUrl+_products[i]['activeDirectory']+"/"+_products[i]['activeFileName'];
-                  }
-                  print(imageUrl);
-                  double price=_products[i]['price'];
-                  return Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          FadeInImage(
-                            placeholder: AssetImage("assets/images/dime.png"),
-                            image: NetworkImage(imageUrl),
-                            fit: BoxFit.fill,
-                            height: 100,
-                          ),
-                          SizedBox(height: 5,),
-                          Text(price.toStringAsFixed(0)+" Coins",style: TextStyle(fontWeight: FontWeight.w600,fontSize: 20),),
-                          SizedBox(height: 5,),
-                          Text(_products[i]['productName'].toString(),style: TextStyle(fontWeight: FontWeight.w600,fontSize: 18),),
-                          SizedBox(height: 5,),
-                          Text(_products[i]['description'].toString(),style: TextStyle(fontWeight: FontWeight.w500,),),
-                          SizedBox(height: 5,),
-                          _products[i]['status']=="locked" ?
-                              RaisedButton(
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(18.0),
-                                    side: BorderSide(color: Colors.grey)
-                                ),
-                                child:Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Icon(Icons.lock),
-                                    Text("Locked")
-                                  ],
-                                ),
-                                onPressed: (){
-                                  _alertBoxReceivePayment(i);
-                                },
-                              ):
-                          CustomButton(
-                            buttonText: "BUY",
-                            onPressed: (){
-                              _alertBoxReceivePayment(i);
-                            },
-                          )
-                        ],
-                      ),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            return _products.isEmpty
+                ? Container(
+                    alignment: Alignment.center,
+                    child: Text(
+                      "No Products",
+                      style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 40,
+                          fontWeight: FontWeight.w600),
                     ),
-                  );
-                },
-              )
-            );
-          }else{
+                  )
+                : Container(
+                    padding: EdgeInsets.all(10),
+                    child: GridView.builder(
+                      itemCount: _products.length,
+                      shrinkWrap: true,
+                      primary: false,
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 5,
+                          mainAxisSpacing: 5,
+                          childAspectRatio: 0.70),
+                      itemBuilder: (context, i) {
+                        String imageUrl = "";
+                        if (_products[i]['status'] == "locked") {
+                          //HERE COULD BE THE MISTAKE. I CHNAGE IMAGEURL WITH BASE URL
+                          imageUrl = baseUrl +
+                              _products[i]['disableDirectory'] +
+                              "/" +
+                              _products[i]['disableFileName'];
+                        } else if (_products[i]['status'] == "active") {
+                          imageUrl = baseUrl +
+                              _products[i]['activeDirectory'] +
+                              "/" +
+                              _products[i]['activeFileName'];
+                        } else {
+                          imageUrl = baseUrl +
+                              _products[i]['purchasedDirectory'] +
+                              "/" +
+                              _products[i]['purchasedFileName'];
+                        }
+                        print("------------------------------------------");
+                        print(imageUrl);
+                        double price = _products[i]['price'];
+                        return Card(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10)),
+                          clipBehavior: Clip.antiAlias,
+                          child: Container(
+                            height: MediaQuery.of(context).size.height * 3 / 10,
+                            child: Stack(children: [
+                              Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                    flex: 3,
+                                    child: Center(
+                                      child: FadeInImage(
+                                        placeholder: AssetImage(
+                                            "assets/images/dime.png"),
+                                        image: NetworkImage(imageUrl),
+                                        fit: BoxFit.fill,
+                                      ),
+                                    ),
+                                  ),
+                                  Spacer(),
+                                  Expanded(
+                                    flex: 3,
+                                    child: Column(
+                                      children: [
+                                        Text(
+                                          _products[i]['productName']
+                                              .toString()
+                                              .toUpperCase(),
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 18,
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          height: 5,
+                                        ),
+                                        Text(
+                                          _products[i]['description']
+                                              .toString(),
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  // Expanded(
+                                  //   flex: 1,
+                                  //   child:
+                                  //       //_products[i]['status'] == "locked"
+                                  //       //     ? RaisedButton(
+                                  //       //         child: Row(
+                                  //       //           mainAxisSize: MainAxisSize.min,
+                                  //       //           children: [
+                                  //       //             Icon(Icons.lock),
+                                  //       //             Text("Locked")
+                                  //       //           ],
+                                  //       //         ),
+                                  //       //         onPressed: () {
+                                  //       //           _alertBoxReceivePayment(i);
+                                  //       //         },
+                                  //       //       )
+                                  //       //     :
+                                  //       CustomButton(
+                                  //     brdRds: 5,
+                                  //     verpad: EdgeInsets.symmetric(
+                                  //         vertical: 5, horizontal: 15),
+                                  //     buttonText:
+                                  //         _products[i]['status'] == "locked"
+                                  //             ? "Locked"
+                                  //             : "BUY",
+                                  //     onPressed:
+                                  //         _products[i]['status'] == "locked"
+                                  //             ? null
+                                  //             : () {
+                                  //                 _alertBoxReceivePayment(i);
+                                  //               },
+                                  //   ),
+                                  // ),
+                                ],
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 5),
+                                child: Align(
+                                  alignment: Alignment.topRight,
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: 5, horizontal: 5),
+                                    decoration: BoxDecoration(
+                                      color: Colors.amber.withOpacity(0.5),
+                                      borderRadius: BorderRadius.circular(5),
+                                    ),
+                                    child: Text(
+                                      price.toStringAsFixed(0) + " Coins",
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Align(
+                                alignment: Alignment.bottomRight,
+                                child: IconButton(
+                                  color: _products[i]['status'] == "locked"
+                                      ? Colors.red
+                                      : firstColor,
+                                  icon: _products[i]['status'] == "locked"
+                                      ? Icon(Icons.lock_outline_rounded)
+                                      : Icon(Icons.shopping_cart_outlined),
+                                  onPressed: _products[i]['status'] == "locked"
+                                      ? null
+                                      : () {
+                                          _alertBoxReceivePayment(i);
+                                        },
+                                ),
+                              ),
+                            ]),
+                          ),
+                        );
+                      },
+                    ));
+          } else {
             return Center(
               child: CircularProgressIndicator(),
             );
@@ -139,8 +241,7 @@ class _ProductPageState extends State<ProductPage> {
     );
   }
 
-
-  _alertBoxReceivePayment(i)async{
+  _alertBoxReceivePayment(i) async {
     return await showDialog(
       context: context,
       builder: (context) {
@@ -153,7 +254,10 @@ class _ProductPageState extends State<ProductPage> {
                 Navigator.of(context, rootNavigator: true)
                     .pop(false); // dismisses only the dialog and returns false
               },
-              child: Text('No',style: TextStyle(color: Colors.black),),
+              child: Text(
+                'No',
+                style: TextStyle(color: Colors.black),
+              ),
             ),
             FlatButton(
               onPressed: () {
@@ -161,7 +265,10 @@ class _ProductPageState extends State<ProductPage> {
                     .pop(true); // dismisses only the dialog and returns true
                 _buyProduct(i);
               },
-              child: Text('Yes',style: TextStyle(color: Colors.black),),
+              child: Text(
+                'Yes',
+                style: TextStyle(color: Colors.black),
+              ),
             ),
           ],
         );
@@ -169,29 +276,34 @@ class _ProductPageState extends State<ProductPage> {
     );
   }
 
-  _buyProduct(i)async{
-    try{
+  _buyProduct(i) async {
+    try {
       _otpSentAlertBox(context);
       SharedPreferences sp = await SharedPreferences.getInstance();
-      var url=baseUrl+"buyProduct?registerSno="+sp.getString("studentSno")+"&productSno="
-          +_products[i]['sno'].toString()+"&price="+_products[i]['price'].toStringAsFixed(0)+"&productName="+_products[i]['productName'];
+      var url = baseUrl +
+          "buyProduct?registerSno=" +
+          sp.getString("studentSno") +
+          "&productSno=" +
+          _products[i]['sno'].toString() +
+          "&price=" +
+          _products[i]['price'].toStringAsFixed(0) +
+          "&productName=" +
+          _products[i]['productName'];
       print(url);
       http.Response response = await http.post(
         Uri.encodeFull(url),
       );
       var resbody = jsonDecode(response.body);
-      Map<String,dynamic> result=resbody;
-      if(result['result']=="true"){
+      Map<String, dynamic> result = resbody;
+      if (result['result'] == "true") {
         _toast("Congratulations! Your purchase confirmed");
-        setState(() {
-
-        });
-      }else if(result['result']=="lowBalance"){
+        setState(() {});
+      } else if (result['result'] == "lowBalance") {
         _toast("Your balance is low.");
-      }else{
+      } else {
         _toast("Failed. Please try again.");
       }
-    }catch(e){
+    } catch (e) {
       print(e);
     }
     Navigator.of(context).pop();

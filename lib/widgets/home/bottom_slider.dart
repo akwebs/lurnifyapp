@@ -20,7 +20,10 @@ class BottomSlider extends StatelessWidget {
               padding: EdgeInsets.only(left: 5),
               width: Responsive.getPercent(45, ResponsiveSize.WIDTH, context),
               child: Card(
+                elevation: 0,
                 shape: RoundedRectangleBorder(
+                    side: BorderSide(
+                        color: AppColors.cardHeader[index], width: 1),
                     borderRadius: BorderRadius.circular(10)),
                 clipBehavior: Clip.antiAlias,
                 margin: EdgeInsets.symmetric(horizontal: 5, vertical: 10),

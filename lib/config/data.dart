@@ -14,7 +14,7 @@ class AppColors {
     Colors.purple[50],
     Colors.brown[50],
     Colors.green[50],
-    Colors.yellow[50],
+    Colors.yellow[200],
     Colors.pink[50],
   ];
   static List<Color> tileIconColors = [
@@ -25,13 +25,20 @@ class AppColors {
     Colors.purple,
     Colors.brown,
     Colors.green,
-    Colors.yellow,
+    Colors.yellow[900],
     Colors.pink,
   ];
   static List<Color> cardHeader = [
-    Colors.green[100],
+    Colors.greenAccent[100],
     Colors.purple[100],
     Colors.deepOrange[100],
+    Colors.blue[100],
+  ];
+  static List<Color> cardTitle = [
+    Colors.greenAccent[400],
+    Colors.purple[400],
+    Colors.deepOrange[400],
+    Colors.blue[400],
   ];
   static List<BoxShadow> neumorpShadow = [
     BoxShadow(
@@ -91,6 +98,15 @@ class AppSlider {
     '02',
     '03',
     '04',
+  ];
+  static List weekDays = [
+    'M',
+    'T',
+    'W',
+    'T',
+    'F',
+    'S',
+    'S',
   ];
   static List text = [
     'Completed',

@@ -16,7 +16,7 @@ class CardWidget extends StatelessWidget {
     }
 
     return Container(
-      height: Responsive.getPercent(25, ResponsiveSize.HEIGHT, context),
+      height: Responsive.getPercent(22, ResponsiveSize.HEIGHT, context),
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         itemCount: 4,
@@ -30,8 +30,12 @@ class CardWidget extends StatelessWidget {
                 vertical:
                     Responsive.getPercent(1, ResponsiveSize.HEIGHT, context)),
             child: Card(
+              elevation: 0,
               clipBehavior: Clip.hardEdge,
               shape: RoundedRectangleBorder(
+                side: BorderSide(
+                    color: AppColors.tileIconColors[index].withOpacity(0.4),
+                    width: 1),
                 borderRadius: BorderRadius.all(
                   Radius.circular(10),
                 ),
@@ -88,6 +92,7 @@ class CardWidget extends StatelessWidget {
                                           color: Colors.white,
                                           fontSize: fontSize(60)),
                                     ),
+                                    Spacer(),
                                     Text(
                                       AppSlider.text[index],
                                       style: TextStyle(
