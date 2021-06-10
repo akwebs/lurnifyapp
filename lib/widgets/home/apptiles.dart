@@ -10,6 +10,8 @@ import 'package:lurnify/ui/screen/myProgress/CourseProress.dart';
 import 'package:lurnify/ui/screen/revisionZone/RevisionZoneHome.dart';
 import 'package:lurnify/ui/screen/marketPlace/week-month.dart';
 
+import '../../ui/screen/marketPlace/purchased-item.dart';
+
 class AppTiles extends StatelessWidget {
   final List pageKey;
   static Color overColor = Colors.black12;
@@ -59,7 +61,11 @@ class AppTiles extends StatelessWidget {
                   Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) => DareToDo(),
                   ));
-                } else if (index == 8) {
+                } else if(index==7){
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => PurchasedItem(),
+                  ));
+                }else if (index == 8) {
                   Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) => WeekMonth(),
                   ));

@@ -2,10 +2,15 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lurnify/config/data.dart';
-import 'package:lurnify/widgets/componants/bar-chart.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:intl/intl.dart';
+
+import '../../constant/ApiConstant.dart';
 
 class DareToDo extends StatefulWidget {
   @override
@@ -19,117 +24,236 @@ class _DareToDoState extends State<DareToDo> {
   List _montholyTask = [];
   double progressValue = 0;
   String taskText = '';
+  int _completedWeeks=0;
+  Map<String,dynamic> _weekData=Map();
+  List _dailyTaskList=[];
+  String _dailyTaskDetail="";
+  int _totalStudyTime=0,_totalTests=0,_completedStudyTime=0,_completedTests=0;
+  double _netPercent=0;
+  //week variables
+  int _completedWeekTests=0,_weekTotalTests=0;
+  int _totalStudyHourInWeek=0,_totalStudyHour=0;
+  int _minimumStudyDaysInWeek=0,_completedDays=0;
+
+  //Overall
+  double _overallPercent=0;
+
+
+  _getDareToDuo()async{
+   try{
+     _weekData=Map();
+     _dailyTaskList=[];
+     _dailyTaskDetail="";
+     SharedPreferences sp = await SharedPreferences.getInstance();
+     var url=baseUrl+"getDareToDo?regSno="+sp.getString("studentSno");
+     print(url);
+     var response = await http.post(Uri.encodeFull(url));
+     Map<String,dynamic> map = jsonDecode(response.body);
+     _completedWeeks=map['completedWeeks'];
+     _weekData=jsonDecode(map['week']);
+     _dailyTaskList=jsonDecode(map['daily']);
+
+     _dailyTaskList.forEach((element) {
+       if(element['taskType']=="study"){
+         String reward="";
+         if(element['certificate']!=0){
+           reward=reward+element['certificate'].toString()+" certificate\n";
+         }
+         if(element['cash']!=0){
+           reward=reward+element['cash'].toString()+" cash\n";
+         }
+
+         if(element['coins']!=0){
+           reward=reward+element['coins'].toString()+" coins\n";
+         }
+
+         if(element['noOfRefferalCoupons']!=0){
+           reward=reward+element['noOfRefferalCoupons'].toString()+" Referral Coupons\n";
+         }
+         _dailyTaskDetail=_dailyTaskDetail+"You need to study for "+element['taskUnit'].toString() +" minutes to complete daily challenge. And reward will be "+reward+"\n";
+         _totalStudyTime=_totalStudyTime+element['taskUnit'];
+       }
+       if(element['taskType']=="test"){
+         String reward="";
+         if(element['certificate']!=0){
+           reward=reward+element['certificate'].toString()+" certificate\n";
+         }
+         if(element['cash']!=0){
+           reward=reward+element['cash'].toString()+" cash\n";
+         }
+
+         if(element['coins']!=0){
+           reward=reward+element['coins'].toString()+" coins\n";
+         }
+
+         if(element['noOfRefferalCoupons']!=0){
+           reward=reward+element['noOfRefferalCoupons'].toString()+" Referral Coupons\n";
+         }
+         _dailyTaskDetail=_dailyTaskDetail+"You need to pass "+element['taskUnit'].toString() +" tests to complete daily challenge. And reward will be "+reward+"\n";
+         _totalTests=_totalTests+element['taskUnit'];
+       }
+       if(element['totalStudy']!=null){
+         _completedStudyTime=_completedStudyTime+element['totalStudy'];
+       }
+       if(element['totalTest']!=null){
+         _completedTests=_completedTests+element['totalTest'];
+       }
+
+     });
+     double percentStudyTime=_completedStudyTime/_totalStudyTime;
+     double percentTest=_completedTests/_totalTests;
+
+     _netPercent=(percentStudyTime+percentTest)/2;
+
+     // week data calculation
+     if(_weekData['completedTest']!=null){
+       _completedWeekTests=_weekData['completedTest'];
+     }
+
+     if(_weekData['totalNumberOfTest']!=null){
+       _weekTotalTests=_weekData['totalNumberOfTest'];
+     }
+
+     if(_weekData['totalStudyHourInWeek']!=null){
+       _totalStudyHourInWeek=_weekData['totalStudyHourInWeek'];
+     }
+
+     if(_weekData['totalStudyHour']!=null){
+       _totalStudyHour=_weekData['totalStudyHour'];
+     }
+
+     if(_weekData['minimumStudyDays']!=null){
+        _minimumStudyDaysInWeek=_weekData['minimumStudyDays'];
+     }
+
+     if(_weekData['completedDailyStudy']!=null){
+        _completedDays=_weekData['completedDailyStudy'];
+     }
+
+     _overallPercent=((_completedWeekTests/_weekTotalTests)+(_totalStudyHour/_totalStudyHourInWeek)+(_completedDays/_minimumStudyDaysInWeek))*100/3;
+      Fluttertoast.showToast(msg: "Week k liye coins ki ui banani hai. data ye rha"+_weekData['coins'].toString());
+   }catch(e){
+     print(e);
+   }
+  }
+
+
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      // initialIndex: 1,
-      length: 3,
-      child: Scaffold(
-        appBar: AppBar(
-          elevation: 0,
-          title: Text("Dare To Do"),
-          centerTitle: true,
-          bottom: PreferredSize(
-            preferredSize: Size.fromHeight(70),
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TabBar(
-                unselectedLabelColor: Colors.redAccent,
-                indicatorSize: TabBarIndicatorSize.tab,
-                indicator: BoxDecoration(
-                    gradient: LinearGradient(
-                        colors: [Colors.redAccent, Colors.orangeAccent]),
-                    borderRadius: BorderRadius.circular(50),
-                    color: Colors.redAccent),
-                tabs: [
-                  Tab(
-                    child: Align(
-                      alignment: Alignment.center,
-                      child: Text(
-                        "Daily",
+    return FutureBuilder(
+      future: _getDareToDuo(),
+      builder: (context, snapshot) {
+        return DefaultTabController(
+          // initialIndex: 1,
+          length: 3,
+          child: Scaffold(
+            appBar: AppBar(
+              elevation: 0,
+              title: Text("Dare To Do"),
+              centerTitle: true,
+              bottom: PreferredSize(
+                preferredSize: Size.fromHeight(70),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TabBar(
+                    unselectedLabelColor: Colors.redAccent,
+                    indicatorSize: TabBarIndicatorSize.tab,
+                    indicator: BoxDecoration(
+                        gradient: LinearGradient(
+                            colors: [Colors.redAccent, Colors.orangeAccent]),
+                        borderRadius: BorderRadius.circular(50),
+                        color: Colors.redAccent),
+                    tabs: [
+                      Tab(
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: Text(
+                            "Daily",
+                          ),
+                        ),
                       ),
-                    ),
+                      Tab(
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: Text("Weekly"),
+                        ),
+                      ),
+                      Tab(
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: Text("Monthly"),
+                        ),
+                      ),
+                    ],
                   ),
-                  Tab(
-                    child: Align(
-                      alignment: Alignment.center,
-                      child: Text("Weekly"),
-                    ),
+                ),
+              ),
+            ),
+            body: Container(
+              height: MediaQuery.of(context).size.height,
+              child: TabBarView(
+                children: <Widget>[
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      AspectRatio(
+                          aspectRatio: 4.5 / 3.0,
+                          child: ProgressBar(
+                              progressValue: _netPercent, taskText: 'Daily task Completed')),
+                      DailyTaskInfo(dailyTaskDetail: _dailyTaskDetail,),
+                      WeekDays(),
+                    ],
                   ),
-                  Tab(
-                    child: Align(
-                      alignment: Alignment.center,
-                      child: Text("Monthly"),
-                    ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      AspectRatio(
+                        aspectRatio: 3.0 / 1.4,
+                        child: ProgressBar(progressValue: _overallPercent, taskText: 'Overall'),
+                      ),
+                      AspectRatio(
+                        aspectRatio: 6.5 / 2,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            AspectRatio(
+                              aspectRatio: 1,
+                              child:
+                              ProgressBar(progressValue: _completedWeekTests*100/_weekTotalTests, taskText: 'TEST'),
+                            ),
+                            AspectRatio(
+                              aspectRatio: 1,
+                              child: ProgressBar(
+                                  progressValue: _totalStudyHour*100/_totalStudyHourInWeek, taskText: 'HOURS'),
+                            ),
+                            AspectRatio(
+                              aspectRatio: 1,
+                              child:
+                              ProgressBar(progressValue: _completedDays*100/_minimumStudyDaysInWeek, taskText: 'DAYS'),
+                            ),
+                          ],
+                        ),
+                      ),
+                      //BarChartSample1(),
+                      WeekTaskInfo(),
+                      WeekDays(),
+                    ],
                   ),
+                  Center(
+                    child: Text('Text with style'),
+                  )
                 ],
               ),
             ),
           ),
-        ),
-        body: Container(
-          height: MediaQuery.of(context).size.height,
-          child: TabBarView(
-            children: <Widget>[
-              Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  AspectRatio(
-                      aspectRatio: 4.5 / 3.0,
-                      child: _progressBar(
-                          progressValue: 45, taskText: 'Daily task Completed')),
-                  DailyTaskInfo(),
-                  WeekDays(),
-                ],
-              ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  AspectRatio(
-                    aspectRatio: 3.0 / 1.4,
-                    child: _progressBar(progressValue: 65, taskText: 'Overall'),
-                  ),
-                  AspectRatio(
-                    aspectRatio: 6.5 / 2,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        AspectRatio(
-                          aspectRatio: 1,
-                          child:
-                              _progressBar(progressValue: 25, taskText: 'TEST'),
-                        ),
-                        AspectRatio(
-                          aspectRatio: 1,
-                          child: _progressBar(
-                              progressValue: 49, taskText: 'HOURS'),
-                        ),
-                        AspectRatio(
-                          aspectRatio: 1,
-                          child:
-                              _progressBar(progressValue: 36, taskText: 'DAYS'),
-                        ),
-                      ],
-                    ),
-                  ),
-                  //BarChartSample1(),
-                  WeekTaskInfo(),
-                  WeekDays(),
-                ],
-              ),
-              Center(
-                child: Text('Text with style'),
-              )
-            ],
-          ),
-        ),
-      ),
+        );
+      }
     );
   }
 }
 
-class _progressBar extends StatelessWidget {
-  const _progressBar({
+class ProgressBar extends StatelessWidget {
+  const ProgressBar({
     Key key,
     @required this.progressValue,
     @required this.taskText,
@@ -234,6 +358,7 @@ class WeekDays extends StatelessWidget {
                     physics: BouncingScrollPhysics(),
                     scrollDirection: Axis.horizontal,
                     itemBuilder: (context, i) {
+                      String date=DateFormat('d').format(DateTime.now().subtract(Duration(days: DateTime.now().weekday-1)).add(Duration(days: i)));
                       return Padding(
                         padding: const EdgeInsets.all(2.0),
                         child: InkWell(
@@ -247,9 +372,9 @@ class WeekDays extends StatelessWidget {
                               aspectRatio: 1.0 / 1.0,
                               child: Center(
                                 child: Text(
-                                  AppSlider.weekDays[i],
+                                  AppSlider.weekDays[i]+" "+date,
                                   style: TextStyle(
-                                      fontSize: 15,
+                                      fontSize: 15,color: Colors.black45,
                                       fontWeight: FontWeight.bold),
                                 ),
                               ),
@@ -270,8 +395,10 @@ class WeekDays extends StatelessWidget {
 }
 
 class DailyTaskInfo extends StatelessWidget {
+  final String dailyTaskDetail;
   const DailyTaskInfo({
     Key key,
+    this.dailyTaskDetail
   }) : super(key: key);
 
   @override
@@ -300,7 +427,7 @@ class DailyTaskInfo extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
-                    'Details of task assigned and outcome reward like: coins, referral coupon,cash coupons, trophy with its type',
+                    dailyTaskDetail,
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     textAlign: TextAlign.center,
                   ),
@@ -368,7 +495,8 @@ class BarChartNew extends StatelessWidget {
           touchTooltipData: BarTouchTooltipData(
             tooltipBgColor: Colors.transparent,
             tooltipPadding: const EdgeInsets.all(5),
-            tooltipMargin: 8,
+            // tooltipMargin: 8,
+            tooltipBottomMargin: 8,
             getTooltipItem: (
               BarChartGroupData group,
               int groupIndex,

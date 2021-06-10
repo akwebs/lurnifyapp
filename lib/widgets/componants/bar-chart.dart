@@ -168,16 +168,16 @@ class BarChartSample1State extends State<BarChartSample1> {
                   fontWeight: FontWeight.bold,
                   fontSize: 18,
                 ),
-                children: <TextSpan>[
-                  TextSpan(
-                    text: (rod.y - 1).toString(),
-                    style: TextStyle(
-                      color: Colors.yellow,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
+                // children: <TextSpan>[
+                //   TextSpan(
+                //     text: (rod.y - 1).toString(),
+                //     style: TextStyle(
+                //       color: Colors.yellow,
+                //       fontSize: 16,
+                //       fontWeight: FontWeight.w500,
+                //     ),
+                //   ),
+                // ],
               );
             }),
         touchCallback: (barTouchResponse) {

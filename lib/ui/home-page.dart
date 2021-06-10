@@ -33,6 +33,7 @@ class _HomePageState extends State<HomePage> {
   bool _isPaymentDone = false;
 
   _getHomePageData() async {
+    // print(DateTime.now().subtract(Duration(days: DateTime.now().weekday-1)).toString().split(" ")[0]);
     SharedPreferences sp = await SharedPreferences.getInstance();
     var url =
         baseUrl + "getHomePageData?registerSno=" + sp.getString("studentSno");
@@ -52,6 +53,7 @@ class _HomePageState extends State<HomePage> {
     }
     isReferralCodeUsed = resbody['isReferralCodeUsed'];
     _isPaymentDone = resbody['isPaymentDone'];
+
   }
 
   @override
