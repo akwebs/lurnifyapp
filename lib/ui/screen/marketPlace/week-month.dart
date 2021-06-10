@@ -9,7 +9,6 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/services.dart';
 import 'package:lurnify/ui/constant/ApiConstant.dart';
 import 'package:lurnify/ui/screen/widget/custom-alert.dart';
-import 'package:lurnify/widgets/componants/custom-button.dart';
 import 'package:lurnify/ui/screen/marketPlace/product-page.dart';
 
 class WeekMonth extends StatefulWidget {
@@ -359,15 +358,22 @@ class _WeekMonthState extends State<WeekMonth> {
                       Align(
                         alignment: Alignment.bottomRight,
                         child: IconButton(
-                          color: isDark ? Colors.red : firstColor,
-                          icon: _products[i]['status'] == "locked"
+                          color: isDark ? Colors.white : firstColor,
+                          icon: (_products[i]['status'] == "locked")
                               ? Icon(Icons.lock_outline_rounded)
-                              : Icon(Icons.shopping_cart_outlined),
-                          onPressed: _products[i]['status'] == "locked"
+                              : (_products[i]['status'] == "purchased")
+                                  ? Icon(Icons.check_box_outlined)
+                                  : Icon(Icons.shopping_cart_outlined),
+                          // _products[i]['status'] == "locked"
+                          //     ? Icon(Icons.lock_outline_rounded)
+                          //     : Icon(Icons.shopping_cart_outlined),
+                          onPressed: (_products[i]['status'] == "locked")
                               ? null
-                              : () {
-                                  _alertBoxReceivePayment(i);
-                                },
+                              : (_products[i]['status'] == "purchased")
+                                  ? null
+                                  : () {
+                                      _alertBoxReceivePayment(i);
+                                    },
                         ),
                       ),
                       // Padding(

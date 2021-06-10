@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:lurnify/ui/screen/test/solution.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:share/share.dart';
 
 class TestResult extends StatefulWidget {
   final int _correctQuestion, _wrongAnswer, _resultNumber;
@@ -54,8 +55,6 @@ class _TestResultState extends State<TestResult>
       appBar: AppBar(
         title: Text("Result"),
         bottom: TabBar(
-          unselectedLabelColor: Colors.white,
-          labelColor: Colors.amber,
           tabs: [
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -212,10 +211,15 @@ class _TestResultState extends State<TestResult>
             SizedBox(
               height: 15,
             ),
-            RaisedButton(
-              onPressed: () {},
-              color: Colors.white70,
-              splashColor: Colors.black87,
+            TextButton(
+              onPressed: () {
+                Share.share(
+                  'Hey Check My Score in Lurnify Test ' +
+                      "$_resultNumber" +
+                      ' out of ' +
+                      (_testData.length * 4).toString(),
+                );
+              },
               child: Text("SHARE YOUR SCORE"),
             )
           ],

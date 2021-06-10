@@ -2,6 +2,8 @@ import 'dart:ui';
 
 import 'package:lurnify/ui/constant/constant.dart';
 import 'package:flutter/material.dart';
+import 'package:lurnify/ui/constant/routes.dart';
+import 'package:lurnify/ui/home-page.dart';
 import 'package:lurnify/ui/screen/login/login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:lurnify/ui/screen/payment/make-payment.dart';
@@ -70,20 +72,29 @@ class _CustomDrawerState extends State<CustomDrawer> {
                   contentPadding: EdgeInsets.fromLTRB(20, 0, 0, 0),
                   onTap: () {
                     Navigator.of(context).pop();
+                    Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => HomePage(),
+                    ));
                   },
                 ),
                 ListTile(
                   title: Text("Make Payment"),
                   leading: Icon(Icons.person),
                   onTap: () {
-                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => MakePayment(isPaymentDone),));
+                    Navigator.of(context).pop();
+                    Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => MakePayment(isPaymentDone),
+                    ));
                   },
                 ),
                 ListTile(
                   title: Text("Purchased Items"),
                   leading: Icon(Icons.person),
                   onTap: () {
-                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => PurchasedItem(),));
+                    Navigator.of(context).pop();
+                    Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => PurchasedItem(),
+                    ));
                   },
                 ),
                 ListTile(

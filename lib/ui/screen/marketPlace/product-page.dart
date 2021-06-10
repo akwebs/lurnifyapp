@@ -134,28 +134,33 @@ class _ProductPageState extends State<ProductPage> {
                                   Spacer(),
                                   Expanded(
                                     flex: 3,
-                                    child: Column(
-                                      children: [
-                                        Text(
-                                          _products[i]['productName']
-                                              .toString()
-                                              .toUpperCase(),
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 18,
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(5.0),
+                                      child: Column(
+                                        children: [
+                                          Text(
+                                            _products[i]['productName']
+                                                .toString()
+                                                .toUpperCase(),
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 18,
+                                            ),
                                           ),
-                                        ),
-                                        SizedBox(
-                                          height: 5,
-                                        ),
-                                        Text(
-                                          _products[i]['description']
-                                              .toString(),
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.w500,
+                                          SizedBox(
+                                            height: 5,
                                           ),
-                                        ),
-                                      ],
+                                          Text(
+                                            _products[i]['description']
+                                                .toString(),
+                                            maxLines: 2,
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
                                   // Expanded(
@@ -216,14 +221,19 @@ class _ProductPageState extends State<ProductPage> {
                                   color: _products[i]['status'] == "locked"
                                       ? Colors.red
                                       : firstColor,
-                                  icon: _products[i]['status'] == "locked"
+                                  icon: (_products[i]['status'] == "locked")
                                       ? Icon(Icons.lock_outline_rounded)
-                                      : Icon(Icons.shopping_cart_outlined),
-                                  onPressed: _products[i]['status'] == "locked"
+                                      : (_products[i]['status'] == "purchased")
+                                          ? Icon(Icons.check_box_outlined)
+                                          : Icon(Icons.shopping_cart_outlined),
+                                  onPressed: (_products[i]['status'] ==
+                                          "locked")
                                       ? null
-                                      : () {
-                                          _alertBoxReceivePayment(i);
-                                        },
+                                      : (_products[i]['status'] == "purchased")
+                                          ? null
+                                          : () {
+                                              _alertBoxReceivePayment(i);
+                                            },
                                 ),
                               ),
                             ]),

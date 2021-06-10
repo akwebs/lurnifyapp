@@ -188,8 +188,6 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
             ),
-            floatingActionButtonLocation:
-                FloatingActionButtonLocation.centerDocked,
             floatingActionButton: FloatingActionButton(
               onPressed: () {
                 Navigator.of(context).push(MaterialPageRoute(
@@ -270,7 +268,7 @@ class _HomePageState extends State<HomePage> {
   Future<void> _showMyDialog() async {
     return AwesomeDialog(
       context: context,
-      dialogType: DialogType.INFO,
+      dialogType: DialogType.SUCCES,
       animType: AnimType.BOTTOMSLIDE,
       title: 'Welcome to lurnify',
       desc:
