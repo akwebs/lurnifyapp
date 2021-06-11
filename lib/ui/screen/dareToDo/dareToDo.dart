@@ -24,231 +24,266 @@ class _DareToDoState extends State<DareToDo> {
   List _montholyTask = [];
   double progressValue = 0;
   String taskText = '';
-  int _completedWeeks=0;
-  Map<String,dynamic> _weekData=Map();
-  List _dailyTaskList=[];
-  String _dailyTaskDetail="";
-  int _totalStudyTime=0,_totalTests=0,_completedStudyTime=0,_completedTests=0;
-  double _netPercent=0;
+  int _completedWeeks = 0;
+  Map<String, dynamic> _weekData = Map();
+  List _dailyTaskList = [];
+  String _dailyTaskDetail = "";
+  int _totalStudyTime = 0,
+      _totalTests = 0,
+      _completedStudyTime = 0,
+      _completedTests = 0;
+  double _netPercent = 0;
   //week variables
-  int _completedWeekTests=0,_weekTotalTests=0;
-  int _totalStudyHourInWeek=0,_totalStudyHour=0;
-  int _minimumStudyDaysInWeek=0,_completedDays=0;
+  int _completedWeekTests = 0, _weekTotalTests = 0;
+  int _totalStudyHourInWeek = 0, _totalStudyHour = 0;
+  int _minimumStudyDaysInWeek = 0, _completedDays = 0;
 
   //Overall
-  double _overallPercent=0;
+  double _overallPercent = 0;
 
+  _getDareToDuo() async {
+    try {
+      _weekData = Map();
+      _dailyTaskList = [];
+      _dailyTaskDetail = "";
+      SharedPreferences sp = await SharedPreferences.getInstance();
+      var url = baseUrl + "getDareToDo?regSno=" + sp.getString("studentSno");
+      print(url);
+      var response = await http.post(Uri.encodeFull(url));
+      Map<String, dynamic> map = jsonDecode(response.body);
+      _completedWeeks = map['completedWeeks'];
+      _weekData = jsonDecode(map['week']);
+      _dailyTaskList = jsonDecode(map['daily']);
 
-  _getDareToDuo()async{
-   try{
-     _weekData=Map();
-     _dailyTaskList=[];
-     _dailyTaskDetail="";
-     SharedPreferences sp = await SharedPreferences.getInstance();
-     var url=baseUrl+"getDareToDo?regSno="+sp.getString("studentSno");
-     print(url);
-     var response = await http.post(Uri.encodeFull(url));
-     Map<String,dynamic> map = jsonDecode(response.body);
-     _completedWeeks=map['completedWeeks'];
-     _weekData=jsonDecode(map['week']);
-     _dailyTaskList=jsonDecode(map['daily']);
+      _dailyTaskList.forEach((element) {
+        if (element['taskType'] == "study") {
+          String reward = "";
+          if (element['certificate'] != 0) {
+            reward =
+                reward + element['certificate'].toString() + " certificate\n";
+          }
+          if (element['cash'] != 0) {
+            reward = reward + element['cash'].toString() + " cash\n";
+          }
 
-     _dailyTaskList.forEach((element) {
-       if(element['taskType']=="study"){
-         String reward="";
-         if(element['certificate']!=0){
-           reward=reward+element['certificate'].toString()+" certificate\n";
-         }
-         if(element['cash']!=0){
-           reward=reward+element['cash'].toString()+" cash\n";
-         }
+          if (element['coins'] != 0) {
+            reward = reward + element['coins'].toString() + " coins\n";
+          }
 
-         if(element['coins']!=0){
-           reward=reward+element['coins'].toString()+" coins\n";
-         }
+          if (element['noOfRefferalCoupons'] != 0) {
+            reward = reward +
+                element['noOfRefferalCoupons'].toString() +
+                " Referral Coupons\n";
+          }
+          _dailyTaskDetail = _dailyTaskDetail +
+              "You need to study for " +
+              element['taskUnit'].toString() +
+              " minutes to complete daily challenge. And reward will be " +
+              reward +
+              "\n";
+          _totalStudyTime = _totalStudyTime + element['taskUnit'];
+        }
+        if (element['taskType'] == "test") {
+          String reward = "";
+          if (element['certificate'] != 0) {
+            reward =
+                reward + element['certificate'].toString() + " certificate\n";
+          }
+          if (element['cash'] != 0) {
+            reward = reward + element['cash'].toString() + " cash\n";
+          }
 
-         if(element['noOfRefferalCoupons']!=0){
-           reward=reward+element['noOfRefferalCoupons'].toString()+" Referral Coupons\n";
-         }
-         _dailyTaskDetail=_dailyTaskDetail+"You need to study for "+element['taskUnit'].toString() +" minutes to complete daily challenge. And reward will be "+reward+"\n";
-         _totalStudyTime=_totalStudyTime+element['taskUnit'];
-       }
-       if(element['taskType']=="test"){
-         String reward="";
-         if(element['certificate']!=0){
-           reward=reward+element['certificate'].toString()+" certificate\n";
-         }
-         if(element['cash']!=0){
-           reward=reward+element['cash'].toString()+" cash\n";
-         }
+          if (element['coins'] != 0) {
+            reward = reward + element['coins'].toString() + " coins\n";
+          }
 
-         if(element['coins']!=0){
-           reward=reward+element['coins'].toString()+" coins\n";
-         }
+          if (element['noOfRefferalCoupons'] != 0) {
+            reward = reward +
+                element['noOfRefferalCoupons'].toString() +
+                " Referral Coupons\n";
+          }
+          _dailyTaskDetail = _dailyTaskDetail +
+              "You need to pass " +
+              element['taskUnit'].toString() +
+              " tests to complete daily challenge. And reward will be " +
+              reward +
+              "\n";
+          _totalTests = _totalTests + element['taskUnit'];
+        }
+        if (element['totalStudy'] != null) {
+          _completedStudyTime = _completedStudyTime + element['totalStudy'];
+        }
+        if (element['totalTest'] != null) {
+          _completedTests = _completedTests + element['totalTest'];
+        }
+      });
+      double percentStudyTime = _completedStudyTime / _totalStudyTime;
+      double percentTest = _completedTests / _totalTests;
 
-         if(element['noOfRefferalCoupons']!=0){
-           reward=reward+element['noOfRefferalCoupons'].toString()+" Referral Coupons\n";
-         }
-         _dailyTaskDetail=_dailyTaskDetail+"You need to pass "+element['taskUnit'].toString() +" tests to complete daily challenge. And reward will be "+reward+"\n";
-         _totalTests=_totalTests+element['taskUnit'];
-       }
-       if(element['totalStudy']!=null){
-         _completedStudyTime=_completedStudyTime+element['totalStudy'];
-       }
-       if(element['totalTest']!=null){
-         _completedTests=_completedTests+element['totalTest'];
-       }
+      _netPercent = (percentStudyTime + percentTest) / 2;
 
-     });
-     double percentStudyTime=_completedStudyTime/_totalStudyTime;
-     double percentTest=_completedTests/_totalTests;
+      // week data calculation
+      if (_weekData['completedTest'] != null) {
+        _completedWeekTests = _weekData['completedTest'];
+      }
 
-     _netPercent=(percentStudyTime+percentTest)/2;
+      if (_weekData['totalNumberOfTest'] != null) {
+        _weekTotalTests = _weekData['totalNumberOfTest'];
+      }
 
-     // week data calculation
-     if(_weekData['completedTest']!=null){
-       _completedWeekTests=_weekData['completedTest'];
-     }
+      if (_weekData['totalStudyHourInWeek'] != null) {
+        _totalStudyHourInWeek = _weekData['totalStudyHourInWeek'];
+      }
 
-     if(_weekData['totalNumberOfTest']!=null){
-       _weekTotalTests=_weekData['totalNumberOfTest'];
-     }
+      if (_weekData['totalStudyHour'] != null) {
+        _totalStudyHour = _weekData['totalStudyHour'];
+      }
 
-     if(_weekData['totalStudyHourInWeek']!=null){
-       _totalStudyHourInWeek=_weekData['totalStudyHourInWeek'];
-     }
+      if (_weekData['minimumStudyDays'] != null) {
+        _minimumStudyDaysInWeek = _weekData['minimumStudyDays'];
+      }
 
-     if(_weekData['totalStudyHour']!=null){
-       _totalStudyHour=_weekData['totalStudyHour'];
-     }
+      if (_weekData['completedDailyStudy'] != null) {
+        _completedDays = _weekData['completedDailyStudy'];
+      }
 
-     if(_weekData['minimumStudyDays']!=null){
-        _minimumStudyDaysInWeek=_weekData['minimumStudyDays'];
-     }
-
-     if(_weekData['completedDailyStudy']!=null){
-        _completedDays=_weekData['completedDailyStudy'];
-     }
-
-     _overallPercent=((_completedWeekTests/_weekTotalTests)+(_totalStudyHour/_totalStudyHourInWeek)+(_completedDays/_minimumStudyDaysInWeek))*100/3;
-      Fluttertoast.showToast(msg: "Week k liye coins ki ui banani hai. data ye rha"+_weekData['coins'].toString());
-   }catch(e){
-     print(e);
-   }
+      _overallPercent = ((_completedWeekTests / _weekTotalTests) +
+              (_totalStudyHour / _totalStudyHourInWeek) +
+              (_completedDays / _minimumStudyDaysInWeek)) *
+          100 /
+          3;
+      Fluttertoast.showToast(
+          msg: "Week k liye coins ki ui banani hai. data ye rha" +
+              _weekData['coins'].toString());
+    } catch (e) {
+      print(e);
+    }
   }
-
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: _getDareToDuo(),
-      builder: (context, snapshot) {
-        return DefaultTabController(
-          // initialIndex: 1,
-          length: 3,
-          child: Scaffold(
-            appBar: AppBar(
-              elevation: 0,
-              title: Text("Dare To Do"),
-              centerTitle: true,
-              bottom: PreferredSize(
-                preferredSize: Size.fromHeight(70),
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: TabBar(
-                    unselectedLabelColor: Colors.redAccent,
-                    indicatorSize: TabBarIndicatorSize.tab,
-                    indicator: BoxDecoration(
-                        gradient: LinearGradient(
-                            colors: [Colors.redAccent, Colors.orangeAccent]),
-                        borderRadius: BorderRadius.circular(50),
-                        color: Colors.redAccent),
-                    tabs: [
-                      Tab(
-                        child: Align(
-                          alignment: Alignment.center,
-                          child: Text(
-                            "Daily",
+        future: _getDareToDuo(),
+        builder: (context, snapshot) {
+          return DefaultTabController(
+            // initialIndex: 1,
+            length: 3,
+            child: Scaffold(
+              appBar: AppBar(
+                elevation: 0,
+                title: Text("Dare To Do"),
+                centerTitle: true,
+                bottom: PreferredSize(
+                  preferredSize: Size.fromHeight(70),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TabBar(
+                      unselectedLabelColor: Colors.redAccent,
+                      indicatorSize: TabBarIndicatorSize.tab,
+                      indicator: BoxDecoration(
+                          gradient: LinearGradient(
+                              colors: [Colors.redAccent, Colors.orangeAccent]),
+                          borderRadius: BorderRadius.circular(50),
+                          color: Colors.redAccent),
+                      tabs: [
+                        Tab(
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: Text(
+                              "Daily",
+                            ),
                           ),
                         ),
-                      ),
-                      Tab(
-                        child: Align(
-                          alignment: Alignment.center,
-                          child: Text("Weekly"),
+                        Tab(
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: Text("Weekly"),
+                          ),
                         ),
-                      ),
-                      Tab(
-                        child: Align(
-                          alignment: Alignment.center,
-                          child: Text("Monthly"),
+                        Tab(
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: Text("Monthly"),
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-            body: Container(
-              height: MediaQuery.of(context).size.height,
-              child: TabBarView(
-                children: <Widget>[
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      AspectRatio(
-                          aspectRatio: 4.5 / 3.0,
-                          child: ProgressBar(
-                              progressValue: _netPercent, taskText: 'Daily task Completed')),
-                      DailyTaskInfo(dailyTaskDetail: _dailyTaskDetail,),
-                      WeekDays(),
-                    ],
-                  ),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      AspectRatio(
-                        aspectRatio: 3.0 / 1.4,
-                        child: ProgressBar(progressValue: _overallPercent, taskText: 'Overall'),
-                      ),
-                      AspectRatio(
-                        aspectRatio: 6.5 / 2,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            AspectRatio(
-                              aspectRatio: 1,
-                              child:
-                              ProgressBar(progressValue: _completedWeekTests*100/_weekTotalTests, taskText: 'TEST'),
-                            ),
-                            AspectRatio(
-                              aspectRatio: 1,
-                              child: ProgressBar(
-                                  progressValue: _totalStudyHour*100/_totalStudyHourInWeek, taskText: 'HOURS'),
-                            ),
-                            AspectRatio(
-                              aspectRatio: 1,
-                              child:
-                              ProgressBar(progressValue: _completedDays*100/_minimumStudyDaysInWeek, taskText: 'DAYS'),
-                            ),
-                          ],
+              body: Container(
+                height: MediaQuery.of(context).size.height,
+                child: TabBarView(
+                  children: <Widget>[
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        AspectRatio(
+                            aspectRatio: 4.5 / 3.0,
+                            child: ProgressBar(
+                                progressValue: _netPercent,
+                                taskText: 'Daily task Completed')),
+                        DailyTaskInfo(
+                          dailyTaskDetail: _dailyTaskDetail,
                         ),
-                      ),
-                      //BarChartSample1(),
-                      WeekTaskInfo(),
-                      WeekDays(),
-                    ],
-                  ),
-                  Center(
-                    child: Text('Text with style'),
-                  )
-                ],
+                        WeekDays(),
+                      ],
+                    ),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        AspectRatio(
+                          aspectRatio: 3.0 / 1.4,
+                          child: ProgressBar(
+                              progressValue: _overallPercent,
+                              taskText: 'Overall'),
+                        ),
+                        AspectRatio(
+                          aspectRatio: 6.5 / 2,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              AspectRatio(
+                                aspectRatio: 1,
+                                child: ProgressBar(
+                                    progressValue: _completedWeekTests *
+                                        100 /
+                                        _weekTotalTests,
+                                    taskText: 'TEST'),
+                              ),
+                              AspectRatio(
+                                aspectRatio: 1,
+                                child: ProgressBar(
+                                    progressValue: _totalStudyHour *
+                                        100 /
+                                        _totalStudyHourInWeek,
+                                    taskText: 'HOURS'),
+                              ),
+                              AspectRatio(
+                                aspectRatio: 1,
+                                child: ProgressBar(
+                                    progressValue: _completedDays *
+                                        100 /
+                                        _minimumStudyDaysInWeek,
+                                    taskText: 'DAYS'),
+                              ),
+                            ],
+                          ),
+                        ),
+                        //BarChartSample1(),
+                        WeekTaskInfo(),
+                        WeekDays(),
+                      ],
+                    ),
+                    Center(
+                      child: Text('Text with style'),
+                    )
+                  ],
+                ),
               ),
             ),
-          ),
-        );
-      }
-    );
+          );
+        });
   }
 }
 
@@ -358,7 +393,9 @@ class WeekDays extends StatelessWidget {
                     physics: BouncingScrollPhysics(),
                     scrollDirection: Axis.horizontal,
                     itemBuilder: (context, i) {
-                      String date=DateFormat('d').format(DateTime.now().subtract(Duration(days: DateTime.now().weekday-1)).add(Duration(days: i)));
+                      String date = DateFormat('d').format(DateTime.now()
+                          .subtract(Duration(days: DateTime.now().weekday - 1))
+                          .add(Duration(days: i)));
                       return Padding(
                         padding: const EdgeInsets.all(2.0),
                         child: InkWell(
@@ -371,11 +408,19 @@ class WeekDays extends StatelessWidget {
                             child: AspectRatio(
                               aspectRatio: 1.0 / 1.0,
                               child: Center(
-                                child: Text(
-                                  AppSlider.weekDays[i]+" "+date,
-                                  style: TextStyle(
-                                      fontSize: 15,color: Colors.black45,
-                                      fontWeight: FontWeight.bold),
+                                child: Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    Text(
+                                      AppSlider.weekDays[i],
+                                      style: TextStyle(
+                                          fontSize: 8,
+                                          color: Colors.black45,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    Text(date),
+                                  ],
                                 ),
                               ),
                             ),
@@ -396,10 +441,7 @@ class WeekDays extends StatelessWidget {
 
 class DailyTaskInfo extends StatelessWidget {
   final String dailyTaskDetail;
-  const DailyTaskInfo({
-    Key key,
-    this.dailyTaskDetail
-  }) : super(key: key);
+  const DailyTaskInfo({Key key, this.dailyTaskDetail}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -489,9 +531,9 @@ class BarChartNew extends StatelessWidget {
     return BarChart(
       BarChartData(
         alignment: BarChartAlignment.spaceAround,
-        maxY: 20,
+        maxY: 10,
         barTouchData: BarTouchData(
-          enabled: false,
+          enabled: true,
           touchTooltipData: BarTouchTooltipData(
             tooltipBgColor: Colors.transparent,
             tooltipPadding: const EdgeInsets.all(5),
@@ -506,7 +548,7 @@ class BarChartNew extends StatelessWidget {
               return BarTooltipItem(
                 rod.y.round().toString(),
                 TextStyle(
-                  color: Colors.white,
+                  color: Colors.redAccent,
                   fontWeight: FontWeight.bold,
                 ),
               );
@@ -525,19 +567,19 @@ class BarChartNew extends StatelessWidget {
             getTitles: (double value) {
               switch (value.toInt()) {
                 case 0:
-                  return 'Mn';
+                  return 'Mon';
                 case 1:
-                  return 'Tu';
+                  return 'Tue';
                 case 2:
-                  return 'Wd';
+                  return 'Wed';
                 case 3:
-                  return 'Th';
+                  return 'Thu';
                 case 4:
-                  return 'Fr';
+                  return 'Fri';
                 case 5:
-                  return 'St';
+                  return 'Sat';
                 case 6:
-                  return 'Sn';
+                  return 'Sun';
                 default:
                   return '';
               }
@@ -561,7 +603,7 @@ class BarChartNew extends StatelessWidget {
             x: 1,
             barRods: [
               BarChartRodData(
-                  y: 10, colors: [Colors.lightBlueAccent, Colors.greenAccent])
+                  y: 5, colors: [Colors.lightBlueAccent, Colors.greenAccent])
             ],
             showingTooltipIndicators: [0],
           ),
@@ -569,7 +611,7 @@ class BarChartNew extends StatelessWidget {
             x: 2,
             barRods: [
               BarChartRodData(
-                  y: 14, colors: [Colors.lightBlueAccent, Colors.greenAccent])
+                  y: 7, colors: [Colors.lightBlueAccent, Colors.greenAccent])
             ],
             showingTooltipIndicators: [0],
           ),
@@ -577,7 +619,7 @@ class BarChartNew extends StatelessWidget {
             x: 3,
             barRods: [
               BarChartRodData(
-                  y: 15, colors: [Colors.purpleAccent, Colors.blueAccent])
+                  y: 3, colors: [Colors.purpleAccent, Colors.blueAccent])
             ],
             showingTooltipIndicators: [0],
           ),
@@ -585,7 +627,7 @@ class BarChartNew extends StatelessWidget {
             x: 3,
             barRods: [
               BarChartRodData(
-                  y: 13, colors: [Colors.lightBlueAccent, Colors.greenAccent])
+                  y: 9, colors: [Colors.lightBlueAccent, Colors.greenAccent])
             ],
             showingTooltipIndicators: [0],
           ),
@@ -593,7 +635,7 @@ class BarChartNew extends StatelessWidget {
             x: 3,
             barRods: [
               BarChartRodData(
-                  y: 10, colors: [Colors.yellowAccent, Colors.orangeAccent])
+                  y: 5, colors: [Colors.yellowAccent, Colors.orangeAccent])
             ],
             showingTooltipIndicators: [0],
           ),
