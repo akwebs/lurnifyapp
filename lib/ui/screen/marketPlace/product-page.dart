@@ -110,6 +110,7 @@ class _ProductPageState extends State<ProductPage> {
                         print(imageUrl);
                         double price = _products[i]['price'];
                         return Card(
+                          elevation: 0,
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10)),
                           clipBehavior: Clip.antiAlias,
@@ -206,7 +207,7 @@ class _ProductPageState extends State<ProductPage> {
                                     padding: EdgeInsets.symmetric(
                                         vertical: 5, horizontal: 5),
                                     decoration: BoxDecoration(
-                                      color: Colors.amber.withOpacity(0.5),
+                                      color: Colors.amber.withOpacity(0.8),
                                       borderRadius: BorderRadius.circular(5),
                                     ),
                                     child: Text(
@@ -228,7 +229,24 @@ class _ProductPageState extends State<ProductPage> {
                                           : Icon(Icons.shopping_cart_outlined),
                                   onPressed: (_products[i]['status'] ==
                                           "locked")
-                                      ? null
+                                      ? () => showDialog<String>(
+                                            context: context,
+                                            builder: (BuildContext context) =>
+                                                AlertDialog(
+                                              title: const Text(
+                                                  'Product Unavailable'),
+                                              content: const Text(
+                                                  'Please complete assigned tasks to get this product'),
+                                              actions: <Widget>[
+                                                TextButton(
+                                                  onPressed: () =>
+                                                      Navigator.pop(
+                                                          context, 'OK'),
+                                                  child: const Text('OK'),
+                                                ),
+                                              ],
+                                            ),
+                                          )
                                       : (_products[i]['status'] == "purchased")
                                           ? null
                                           : () {

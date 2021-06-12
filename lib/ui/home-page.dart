@@ -1,11 +1,14 @@
 import 'dart:convert';
 import 'dart:math';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
+import 'package:lurnify/ui/constant/constant.dart';
 import 'package:lurnify/ui/screen/selfstudy/recent.dart';
 import 'package:lurnify/widgets/CustomDrawer.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:lurnify/widgets/componants/custom-button.dart';
 import 'package:lurnify/widgets/home/apptiles.dart';
 import 'package:lurnify/widgets/home/bottom_slider.dart';
 import 'package:lurnify/widgets/home/cards_Slider.dart';
@@ -14,7 +17,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:lurnify/ui/constant/ApiConstant.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
-
 
 import 'dart:async';
 
@@ -29,37 +31,37 @@ class _HomePageState extends State<HomePage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   DateTime _currentBackPressTime;
 
-
   var _data;
-  Map<String,dynamic> resbody=Map();
-  String _totalDimes="0";
-  bool isReferralCodeUsed=false;
-  bool _isPaymentDone=false;
-  bool _isSpinned=false;
-  List _spinData=[];
+  Map<String, dynamic> resbody = Map();
+  String _totalDimes = "0";
+  bool isReferralCodeUsed = false;
+  bool _isPaymentDone = false;
+  bool _isSpinned = false;
+  List _spinData = [];
 
-  _getHomePageData()async{
+  _getHomePageData() async {
     SharedPreferences sp = await SharedPreferences.getInstance();
-    var url=baseUrl+"getHomePageData?registerSno="+sp.getString("studentSno");
+    var url =
+        baseUrl + "getHomePageData?registerSno=" + sp.getString("studentSno");
     print(url);
     http.Response response = await http.post(
       Uri.encodeFull(url),
     );
     resbody = jsonDecode(response.body);
     setState(() {
-      _totalDimes=resbody['totalDimes'].toString();
+      _totalDimes = resbody['totalDimes'].toString();
       _signUpToast(_totalDimes);
     });
-    if(resbody['result']==true){
+    if (resbody['result'] == true) {
       _showChallenge();
-    }else{
+    } else {
       _showMyDialog();
     }
-    isReferralCodeUsed=resbody['isReferralCodeUsed'];
-    _isPaymentDone=resbody['isPaymentDone'];
-    _isSpinned=resbody['isSpinned'];
-    if(resbody.containsKey("spinData")){
-      _spinData=jsonDecode(resbody['spinData']);
+    isReferralCodeUsed = resbody['isReferralCodeUsed'];
+    _isPaymentDone = resbody['isPaymentDone'];
+    _isSpinned = resbody['isSpinned'];
+    if (resbody.containsKey("spinData")) {
+      _spinData = jsonDecode(resbody['spinData']);
     }
     print(_spinData);
   }
@@ -67,7 +69,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    _data=_getHomePageData();
+    _data = _getHomePageData();
   }
 
   @override
@@ -96,14 +98,14 @@ class _HomePageState extends State<HomePage> {
 
   static List pageKey = [
     'self_study',
-    'self_study',
-    'self_study',
-    'self_study',
-    'self_study',
-    'self_study',
-    'self_study',
-    'self_study',
-    'self_study',
+    'rank_booster',
+    'my_report',
+    'course_content',
+    'syllbus_progress',
+    'revision_zone',
+    'dare_to_do',
+    'my_reward',
+    'money_matters',
   ];
   void handleClick(String value) {
     switch (value) {
@@ -173,8 +175,8 @@ class _HomePageState extends State<HomePage> {
             ),
             drawer: Theme(
               data: Theme.of(context).copyWith(
-                canvasColor:
-                Colors.white24, //This will change the drawer background to blue.
+                canvasColor: Colors
+                    .white24, //This will change the drawer background to blue.
                 //other styles
               ),
               child: Drawer(
@@ -198,7 +200,6 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
             ),
-            floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
             floatingActionButton: FloatingActionButton(
               onPressed: () {
                 Navigator.of(context).push(MaterialPageRoute(
@@ -233,20 +234,8 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
           );
-        }
-    );
+        });
   }
-
-
-
-
-
-
-
-
-
-
-
 
   void _signUpToast(String message) {
     Fluttertoast.showToast(
@@ -265,26 +254,27 @@ class _HomePageState extends State<HomePage> {
         dialogType: DialogType.INFO,
         animType: AnimType.BOTTOMSLIDE,
         title: 'Challenge',
-        desc: "You have given a challenge for next monday. Do you want to accept it and want to earn coin?",
+        desc:
+            "You have given a challenge for next monday. Do you want to accept it and want to earn coin?",
         dismissOnBackKeyPress: false,
         dismissOnTouchOutside: false,
         btnOkColor: Colors.black87,
         btnOkText: "Accept",
         btnOkOnPress: () {
           _updateChallengeStatus("accepted");
-          if(resbody['dailyReward']==true){
+          if (resbody['dailyReward'] == true) {
             _showDailyAppOpening();
           }
         },
         btnCancelText: "Cancel",
         btnCancelColor: Colors.black,
-        btnCancelOnPress: (){
+        btnCancelOnPress: () {
           _updateChallengeStatus("declined");
-          if(resbody['dailyReward']==true){
+          if (resbody['dailyReward'] == true) {
             _showDailyAppOpening();
           }
-        }
-    )..show();
+        })
+      ..show();
   }
 
   Future<void> _showMyDialog() async {
@@ -293,18 +283,19 @@ class _HomePageState extends State<HomePage> {
       dialogType: DialogType.INFO,
       animType: AnimType.BOTTOMSLIDE,
       title: 'Welcome to lurnify',
-      desc: "Study for only one hour this week and start earning real money.\n To know more about lurnify's digital coin please click on know more.",
+      desc:
+          "Study for only one hour this week and start earning real money.\n To know more about lurnify's digital coin please click on know more.",
       dismissOnBackKeyPress: false,
       dismissOnTouchOutside: false,
       btnOkColor: Colors.black87,
       btnOkText: "Know More",
       btnOkOnPress: () {
-        if(resbody['dailyReward']==true){
+        if (resbody['dailyReward'] == true) {
           _showDailyAppOpening();
-        }else{
-          if(_spinData.isNotEmpty){
+        } else {
+          if (_spinData.isNotEmpty) {
             _showSpinWheel();
-          }else{
+          } else {
             print("SPIN DATA EMPTY");
           }
         }
@@ -318,50 +309,53 @@ class _HomePageState extends State<HomePage> {
       dialogType: DialogType.SUCCES,
       animType: AnimType.BOTTOMSLIDE,
       title: 'Congratulations',
-      desc: "You have earned "+resbody['dimes'].toString()+" dimes as daily reward",
+      desc: "You have earned " +
+          resbody['dimes'].toString() +
+          " dimes as daily reward",
       dismissOnBackKeyPress: false,
       dismissOnTouchOutside: false,
       btnOkColor: Colors.black87,
       btnOkText: "Great",
       btnOkOnPress: () {
-        if(_spinData.isNotEmpty){
+        if (_spinData.isNotEmpty) {
           _showSpinWheel();
-        }else{
+        } else {
           print("SPIN DATA EMPTY");
         }
-
       },
     )..show();
   }
 
-  _showSpinWheel()async{
-    showModalBottomSheet(
+  _showSpinWheel() async {
+    showCupertinoModalPopup(
         context: context,
-        isDismissible: false,
-        isScrollControlled: true,
-        enableDrag: false,
-        builder: (builder){
+        builder: (builder) {
           return new SpinnerClass(_spinData);
-        }
-    );
+        });
   }
 
-  _updateChallengeStatus(status)async{
+  _updateChallengeStatus(status) async {
     SharedPreferences sp = await SharedPreferences.getInstance();
-    var url=baseUrl+"updateChallengeStatus?registerSno="+sp.getString("studentSno")+"&status="+status;
+    var url = baseUrl +
+        "updateChallengeStatus?registerSno=" +
+        sp.getString("studentSno") +
+        "&status=" +
+        status;
     print(url);
     http.Response response = await http.post(
       Uri.encodeFull(url),
     );
-    Map<String,dynamic> resbody = jsonDecode(response.body);
+    Map<String, dynamic> resbody = jsonDecode(response.body);
     print(resbody);
-    if(resbody['result']==true){
-      if(status=="accepted"){
-        _signUpToast("Congratulations, you have accepted the challenge. Start Study and earn real money");
-      }else{
-        _signUpToast("OOPS!!! you have declined the challenge. Don't worry! you can enroll in upcoming and challenges and still you can make money.");
+    if (resbody['result'] == true) {
+      if (status == "accepted") {
+        _signUpToast(
+            "Congratulations, you have accepted the challenge. Start Study and earn real money");
+      } else {
+        _signUpToast(
+            "OOPS!!! you have declined the challenge. Don't worry! you can enroll in upcoming and challenges and still you can make money.");
       }
-    }else{
+    } else {
       _signUpToast("OOPS!!! Something went wrong. Please try again later");
     }
   }
@@ -377,75 +371,108 @@ class SpinnerClass extends StatefulWidget {
 class _SpinnerClassState extends State<SpinnerClass> {
   final _spinData;
   _SpinnerClassState(this._spinData);
-  int _selected=0;
+  int _selected = 0;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        height: 350.0,
-        color: Colors.transparent, //could change this to Color(0xFF737373),
-        //so you don't have to change MaterialApp canvasColor
-        child: GestureDetector(
-          onTap: (){
-            try{
-              print(_selected);
-              var _random = new Random();
-              setState(() {
-                _selected= _random.nextInt(6);
-                print(_selected);
-              });
-            }catch(e){
-              print(e);
-            }
-          },
-          child: FortuneWheel(
-              physics: CircularPanPhysics(
-                duration: Duration(seconds: 1),
-                curve: Curves.decelerate,
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Card(
+          margin: EdgeInsets.all(20),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          clipBehavior: Clip.antiAlias,
+          child: Column(
+            children: [
+              Container(
+                padding: EdgeInsets.all(20),
+                height: 250.0,
+                color: Colors
+                    .transparent, //could change this to Color(0xFF737373),
+                //so you don't have to change MaterialApp canvasColor
+                child: FortuneWheel(
+                    physics: CircularPanPhysics(
+                      duration: Duration(seconds: 1),
+                      curve: Curves.decelerate,
+                    ),
+                    duration: Duration(seconds: 10),
+                    animateFirst: false,
+                    selected: _selected,
+                    onAnimationEnd: () {
+                      _updateDailyTask();
+                    },
+                    items: List.generate(_spinData.length, (index) {
+                      return FortuneItem(
+                          child: Text(_spinData[index]['taskName']));
+                    })),
               ),
-              duration: Duration(seconds: 10),
-              animateFirst: false,
-              selected: _selected,
-              onAnimationEnd: (){
-                _updateDailyTask();
-              },
-              items: List.generate(_spinData.length, (index) {
-                return FortuneItem(child: Text(_spinData[index]['taskName']));
-              })
+              Container(
+                width: Responsive.getPercent(60, ResponsiveSize.WIDTH, context),
+                child: CustomButton(
+                  onPressed: () {
+                    try {
+                      print(_selected);
+                      var _random = new Random();
+                      setState(() {
+                        _selected = _random.nextInt(6);
+                        print(_selected);
+                      });
+                    } catch (e) {
+                      print(e);
+                    }
+                  },
+                  brdRds: 10,
+                  verpad: EdgeInsets.symmetric(vertical: 10),
+                  buttonText: 'Spin',
+                ),
+              ),
+            ],
           ),
-        )
+        ),
+      ],
     );
   }
 
-  _updateDailyTask()async{
+  _updateDailyTask() async {
     SharedPreferences sp = await SharedPreferences.getInstance();
-    var url=baseUrl+"storeSpinData?registerSno="+sp.getString("studentSno")+
-        "&dailyTaskSno="+_spinData[_selected-1]['sno'].toString();
+    var url = baseUrl +
+        "storeSpinData?registerSno=" +
+        sp.getString("studentSno") +
+        "&dailyTaskSno=" +
+        _spinData[_selected - 1]['sno'].toString();
     print(url);
     http.Response response = await http.post(
       Uri.encodeFull(url),
     );
-    Map<String,dynamic> resbody = jsonDecode(response.body);
-    if(resbody['result']==true){
+    Map<String, dynamic> resbody = jsonDecode(response.body);
+    if (resbody['result'] == true) {
       Fluttertoast.showToast(msg: "Success");
 
       _showSpinTask();
-
-    }else{
+    } else {
       Fluttertoast.showToast(msg: "Failed");
     }
   }
 
   Future<void> _showSpinTask() async {
-    String result="";
-    List data=_spinData[_selected-1]['dailyTaskDatas'];
-    for(int i=0;i<data.length;i++){
-      result=result+"Your task type is"+data[i]['taskType']+
-          " and you have to complete "+data[i]['taskUnit'].toString()+
-          "test or study minute\nAnd you will be rewarded with "+data[i]['coins'].toString()+
-          " Coins or "+data[i]['cash'].toString()+
-          " cash or "+data[i]['certificate'].toString()+
-          " certificates or "+data[i]['noOfReferralCoupons'].toString()+" refferals coupons\n";
+    String result = "";
+    List data = _spinData[_selected - 1]['dailyTaskDatas'];
+    for (int i = 0; i < data.length; i++) {
+      result = result +
+          "Your task type is" +
+          data[i]['taskType'] +
+          " and you have to complete " +
+          data[i]['taskUnit'].toString() +
+          "test or study minute\nAnd you will be rewarded with " +
+          data[i]['coins'].toString() +
+          " Coins or " +
+          data[i]['cash'].toString() +
+          " cash or " +
+          data[i]['certificate'].toString() +
+          " certificates or " +
+          data[i]['noOfReferralCoupons'].toString() +
+          " refferals coupons\n";
     }
     return AwesomeDialog(
       context: context,
@@ -463,4 +490,3 @@ class _SpinnerClassState extends State<SpinnerClass> {
     )..show();
   }
 }
-

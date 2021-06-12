@@ -5,6 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lurnify/config/data.dart';
 import 'package:http/http.dart' as http;
+import 'package:lurnify/ui/constant/constant.dart';
+import 'package:lurnify/widgets/componants/progressBar.dart';
+import 'package:percent_indicator/percent_indicator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -16,6 +19,8 @@ class DareToDo extends StatefulWidget {
   @override
   _DareToDoState createState() => _DareToDoState();
 }
+
+List _weekDailyData = [];
 
 class _DareToDoState extends State<DareToDo> {
   Map<String, dynamic> _tasksMonths = Map();
@@ -155,6 +160,10 @@ class _DareToDoState extends State<DareToDo> {
       Fluttertoast.showToast(
           msg: "Week k liye coins ki ui banani hai. data ye rha" +
               _weekData['coins'].toString());
+
+      // print(_completedWeekTests);
+      //Week Daily Data
+      _weekDailyData = json.decode(map['weekDailyData']);
     } catch (e) {
       print(e);
     }
@@ -173,16 +182,43 @@ class _DareToDoState extends State<DareToDo> {
                 elevation: 0,
                 title: Text("Dare To Do"),
                 centerTitle: true,
+                actions: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Center(
+                        child: _weekData['coins'] != null
+                            ? Row(
+                                children: [
+                                  Text(
+                                    _weekData['coins'].toString(),
+                                    style: TextStyle(
+                                        color: firstColor,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  Icon(
+                                    Icons.monetization_on_rounded,
+                                    size: 18,
+                                  )
+                                ],
+                              )
+                            : Container()),
+                  ),
+                ],
                 bottom: PreferredSize(
                   preferredSize: Size.fromHeight(70),
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: TabBar(
-                      unselectedLabelColor: Colors.redAccent,
+                      labelColor: Colors.white,
+                      labelStyle: TextStyle(fontSize: 18),
+                      unselectedLabelColor: Colors.deepPurpleAccent,
                       indicatorSize: TabBarIndicatorSize.tab,
                       indicator: BoxDecoration(
-                          gradient: LinearGradient(
-                              colors: [Colors.redAccent, Colors.orangeAccent]),
+                          gradient: LinearGradient(colors: [
+                            Colors.deepPurpleAccent,
+                            Colors.deepPurple
+                          ]),
                           borderRadius: BorderRadius.circular(50),
                           color: Colors.redAccent),
                       tabs: [
@@ -216,67 +252,281 @@ class _DareToDoState extends State<DareToDo> {
                 child: TabBarView(
                   children: <Widget>[
                     Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         AspectRatio(
-                            aspectRatio: 4.5 / 3.0,
-                            child: ProgressBar(
-                                progressValue: _netPercent,
-                                taskText: 'Daily task Completed')),
-                        DailyTaskInfo(
-                          dailyTaskDetail: _dailyTaskDetail,
-                        ),
-                        WeekDays(),
-                      ],
-                    ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        AspectRatio(
-                          aspectRatio: 3.0 / 1.4,
-                          child: ProgressBar(
-                              progressValue: _overallPercent,
-                              taskText: 'Overall'),
-                        ),
-                        AspectRatio(
-                          aspectRatio: 6.5 / 2,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              AspectRatio(
-                                aspectRatio: 1,
-                                child: ProgressBar(
-                                    progressValue: _completedWeekTests *
-                                        100 /
-                                        _weekTotalTests,
-                                    taskText: 'TEST'),
-                              ),
-                              AspectRatio(
-                                aspectRatio: 1,
-                                child: ProgressBar(
-                                    progressValue: _totalStudyHour *
-                                        100 /
-                                        _totalStudyHourInWeek,
-                                    taskText: 'HOURS'),
-                              ),
-                              AspectRatio(
-                                aspectRatio: 1,
-                                child: ProgressBar(
-                                    progressValue: _completedDays *
-                                        100 /
-                                        _minimumStudyDaysInWeek,
-                                    taskText: 'DAYS'),
-                              ),
-                            ],
+                          aspectRatio: 4.5 / 2.9,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Card(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10)),
+                              clipBehavior: Clip.antiAlias,
+                              child: ProgressBar(
+                                  progressValue:
+                                      _netPercent.isNaN ? 0 : _netPercent,
+                                  taskText: 'Daily task Completed'),
+                            ),
                           ),
                         ),
-                        //BarChartSample1(),
-                        WeekTaskInfo(),
+                        DailyTaskInfo(
+                          dailyTaskDetail: _dailyTaskDetail == ''
+                              ? 'Please Spin the Spinner to Get Daily Task'
+                              : _dailyTaskDetail,
+                        ),
+                        Spacer(),
                         WeekDays(),
                       ],
                     ),
-                    Center(
-                      child: Text('Text with style'),
+                    SingleChildScrollView(
+                      physics: BouncingScrollPhysics(),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Card(
+                            margin: EdgeInsets.symmetric(
+                                vertical: 8, horizontal: 14),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10)),
+                            clipBehavior: Clip.antiAlias,
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                children: [
+                                  AspectRatio(
+                                    aspectRatio: 3.0 / 1.4,
+                                    child: ProgressBar(
+                                        progressValue: _overallPercent.isNaN
+                                            ? 0
+                                            : _overallPercent,
+                                        taskText: 'Overall'),
+                                  ),
+                                  AspectRatio(
+                                    aspectRatio: 7 / 2,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
+                                      children: [
+                                        AspectRatio(
+                                          aspectRatio: 1,
+                                          child: _ProgressBar(
+                                              progressValue:
+                                                  _completedWeekTests *
+                                                      100 /
+                                                      _weekTotalTests,
+                                              x: _completedWeekTests.toString(),
+                                              y: _weekTotalTests.toString(),
+                                              taskText: 'TEST'),
+                                        ),
+                                        AspectRatio(
+                                          aspectRatio: 1,
+                                          child: _ProgressBar(
+                                              progressValue: _totalStudyHour *
+                                                  100 /
+                                                  _totalStudyHourInWeek,
+                                              x: _totalStudyHour.toString(),
+                                              y: _totalStudyHourInWeek
+                                                  .toString(),
+                                              taskText: 'HOURS'),
+                                        ),
+                                        AspectRatio(
+                                          aspectRatio: 1,
+                                          child: _ProgressBar(
+                                              progressValue: _completedDays *
+                                                  100 /
+                                                  _minimumStudyDaysInWeek,
+                                              x: _completedDays.toString(),
+                                              y: _minimumStudyDaysInWeek
+                                                  .toString(),
+                                              taskText: 'DAYS'),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          //BarChartSample1(),
+                          WeekTaskInfo(),
+                          Weeks(),
+                        ],
+                      ),
+                    ),
+                    SingleChildScrollView(
+                      physics: BouncingScrollPhysics(),
+                      child: Column(
+                        children: [
+                          AspectRatio(
+                            aspectRatio: 4 / 2.5,
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Card(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10)),
+                                clipBehavior: Clip.antiAlias,
+                                child: Stack(
+                                  children: [
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        image: DecorationImage(
+                                            image: AssetImage(
+                                                'assets/bg/1-purple-bg.png'),
+                                            fit: BoxFit.cover),
+                                      ),
+                                    ),
+                                    Center(
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceEvenly,
+                                        children: [
+                                          Text(
+                                            'Complted Weeks',
+                                            style: TextStyle(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                          Text(
+                                            _completedWeeks.toString() +
+                                                '/' +
+                                                '4',
+                                            style: TextStyle(
+                                                color: firstColor,
+                                                fontSize: 100),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 8),
+                                            child: LinearPercentIndicator(
+                                              // leading: Padding(
+                                              //   padding:
+                                              //       const EdgeInsets.only(right:8.0),
+                                              //   child: Text(
+                                              //     '0',
+                                              //     style:
+                                              //         TextStyle(fontSize: 16),
+                                              //   ),
+                                              // ),
+                                              // trailing: Padding(
+                                              //   padding:
+                                              //       const EdgeInsets.only(left:8.0),
+                                              //   child: Text(
+                                              //     '4',
+                                              //     style:
+                                              //         TextStyle(fontSize: 16),
+                                              //   ),
+                                              // ),
+                                              padding: EdgeInsets.all(3),
+                                              lineHeight: 10,
+                                              percent:
+                                                  ((_completedDays * 10) / 4) /
+                                                      10,
+                                              backgroundColor: Colors.deepPurple
+                                                  .withOpacity(0.4),
+                                              progressColor:
+                                                  Colors.deepPurpleAccent,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                          AspectRatio(
+                            aspectRatio: 4 / 2,
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Card(
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10)),
+                                      clipBehavior: Clip.antiAlias,
+                                      child: Stack(
+                                        children: [
+                                          Container(
+                                            decoration: BoxDecoration(
+                                              image: DecorationImage(
+                                                  image: AssetImage(
+                                                      'assets/bg/1-blue-bg.png'),
+                                                  fit: BoxFit.cover),
+                                            ),
+                                          ),
+                                          Center(
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceEvenly,
+                                              children: [
+                                                Text(
+                                                  'Total Test',
+                                                  style:
+                                                      TextStyle(fontSize: 20),
+                                                ),
+                                                Text(
+                                                  _totalTests.toString(),
+                                                  style:
+                                                      TextStyle(fontSize: 28),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Card(
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10)),
+                                      clipBehavior: Clip.antiAlias,
+                                      child: Stack(
+                                        children: [
+                                          Container(
+                                            decoration: BoxDecoration(
+                                              image: DecorationImage(
+                                                  image: AssetImage(
+                                                      'assets/bg/1-blue-bg.png'),
+                                                  fit: BoxFit.cover),
+                                            ),
+                                          ),
+                                          Center(
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceEvenly,
+                                              children: [
+                                                Text(
+                                                  'Study Hours',
+                                                  style:
+                                                      TextStyle(fontSize: 20),
+                                                ),
+                                                Text(
+                                                  _completedStudyTime
+                                                      .toString(),
+                                                  style:
+                                                      TextStyle(fontSize: 28),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     )
                   ],
                 ),
@@ -287,15 +537,17 @@ class _DareToDoState extends State<DareToDo> {
   }
 }
 
-class ProgressBar extends StatelessWidget {
-  const ProgressBar({
-    Key key,
-    @required this.progressValue,
-    @required this.taskText,
-  }) : super(key: key);
+class _ProgressBar extends StatelessWidget {
+  const _ProgressBar(
+      {Key key,
+      @required this.progressValue,
+      @required this.taskText,
+      this.x,
+      this.y})
+      : super(key: key);
 
   final double progressValue;
-  final String taskText;
+  final String taskText, x, y;
 
   @override
   Widget build(BuildContext context) {
@@ -308,18 +560,31 @@ class ProgressBar extends StatelessWidget {
               widget: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    progressValue.toStringAsFixed(0) + '%',
-                    style: TextStyle(
-                      fontSize: 35,
-                      color: Colors.redAccent,
-                    ),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        progressValue.isNaN ? '0' : x + '/' + y,
+                        style: TextStyle(
+                          fontSize: 35,
+                          color: Colors.deepPurpleAccent,
+                        ),
+                      ),
+                      Text(
+                        x == null && y == null ? '%' : '',
+                        style: TextStyle(
+                          fontSize: 35,
+                          color: Colors.deepPurple,
+                        ),
+                      ),
+                    ],
                   ),
                   Text(
                     taskText,
                     style: TextStyle(
                       fontSize: 16,
-                      color: Colors.orangeAccent,
+                      color: Colors.deepPurpleAccent,
                     ),
                   ),
                 ],
@@ -332,22 +597,24 @@ class ProgressBar extends StatelessWidget {
         axisLineStyle: AxisLineStyle(
           thickness: 0.1,
           cornerStyle: CornerStyle.bothCurve,
-          color: Color.fromARGB(30, 251, 41, 7),
+          color: Color.fromARGB(30, 128, 112, 254),
           thicknessUnit: GaugeSizeUnit.factor,
         ),
         pointers: <GaugePointer>[
           RangePointer(
-              value: progressValue,
+              value: progressValue.isNaN ? 0 : progressValue,
               width: 0.1,
               sizeUnit: GaugeSizeUnit.factor,
               cornerStyle: CornerStyle.startCurve,
               gradient: const SweepGradient(
-                  colors: <Color>[Colors.redAccent, Colors.orangeAccent],
+                  colors: <Color>[Colors.deepPurpleAccent, Colors.deepPurple],
                   stops: <double>[0.25, 0.75])),
           MarkerPointer(
-            value: progressValue,
+            markerHeight: 5,
+            markerWidth: 5,
+            value: progressValue.isNaN ? 0 : progressValue,
             markerType: MarkerType.circle,
-            color: const Color(0xFFFF5252),
+            color: Colors.deepPurple,
           )
         ],
       )
@@ -362,6 +629,7 @@ class WeekDays extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String isToday = DateFormat('d').format(DateTime.now());
     return AspectRatio(
       aspectRatio: 7.0 / 2,
       child: Padding(
@@ -373,7 +641,7 @@ class WeekDays extends StatelessWidget {
           child: Stack(
             children: [
               Opacity(
-                opacity: 0.3,
+                opacity: 1,
                 child: Container(
                   decoration: BoxDecoration(
                       image: DecorationImage(
@@ -402,25 +670,108 @@ class WeekDays extends StatelessWidget {
                           onTap: () {},
                           child: Card(
                             shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10)),
+                                borderRadius: BorderRadius.circular(50)),
                             clipBehavior: Clip.antiAlias,
                             color: AppColors.tileColors[i],
                             child: AspectRatio(
-                              aspectRatio: 1.0 / 1.0,
+                              aspectRatio: 1.0,
                               child: Center(
                                 child: Column(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
+                                  mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Text(
                                       AppSlider.weekDays[i],
-                                      style: TextStyle(
-                                          fontSize: 8,
-                                          color: Colors.black45,
-                                          fontWeight: FontWeight.bold),
+                                      style: (isToday == date)
+                                          ? TextStyle(
+                                              fontSize: 12,
+                                              color: Colors.amber,
+                                              fontWeight: FontWeight.bold)
+                                          : TextStyle(fontSize: 10),
                                     ),
-                                    Text(date),
+                                    Text(
+                                      date,
+                                      style: (isToday == date)
+                                          ? TextStyle(
+                                              color: Colors.amber,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 18,
+                                            )
+                                          : TextStyle(),
+                                    ),
                                   ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class Weeks extends StatelessWidget {
+  const Weeks({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return AspectRatio(
+      aspectRatio: 7.0 / 2,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Card(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          clipBehavior: Clip.antiAlias,
+          child: Stack(
+            children: [
+              Opacity(
+                opacity: 1,
+                child: Container(
+                  decoration: BoxDecoration(
+                      image: DecorationImage(
+                          image: AssetImage('assets/bg/1-blue-bg.png'),
+                          fit: BoxFit.cover)),
+                ),
+              ),
+              Align(
+                alignment: Alignment.center,
+                child: Padding(
+                  padding: const EdgeInsets.all(5.0),
+                  child: ListView.builder(
+                    padding: EdgeInsets.all(5),
+                    itemCount: 4,
+                    shrinkWrap: true,
+                    primary: false,
+                    physics: BouncingScrollPhysics(),
+                    scrollDirection: Axis.horizontal,
+                    itemBuilder: (context, i) {
+                      return Padding(
+                        padding: const EdgeInsets.all(2.0),
+                        child: InkWell(
+                          onTap: () {},
+                          child: Card(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(50)),
+                            clipBehavior: Clip.antiAlias,
+                            color: AppColors.tileColors[i],
+                            child: AspectRatio(
+                              aspectRatio: 1.0,
+                              child: Center(
+                                child: Text(
+                                  AppSlider.weeks[i],
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold),
                                 ),
                               ),
                             ),
@@ -448,7 +799,7 @@ class DailyTaskInfo extends StatelessWidget {
     return AspectRatio(
       aspectRatio: 4.0 / 2.5,
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.only(bottom: 8, left: 8, right: 8),
         child: Card(
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -456,11 +807,11 @@ class DailyTaskInfo extends StatelessWidget {
           child: Stack(
             children: [
               Opacity(
-                opacity: 0.3,
+                opacity: 0.8,
                 child: Container(
                   decoration: BoxDecoration(
                       image: DecorationImage(
-                          image: AssetImage('assets/bg/1-orrange-bg.png'),
+                          image: AssetImage('assets/bg/14.png'),
                           fit: BoxFit.cover)),
                 ),
               ),
@@ -491,9 +842,9 @@ class WeekTaskInfo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AspectRatio(
-      aspectRatio: 4.0 / 2.5,
+      aspectRatio: 4.0 / 2.8,
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.only(bottom: 8, left: 8, right: 8),
         child: Card(
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -501,17 +852,20 @@ class WeekTaskInfo extends StatelessWidget {
           child: Stack(
             children: [
               Opacity(
-                opacity: 0.2,
+                opacity: 0.4,
                 child: Container(
                   decoration: BoxDecoration(
                       image: DecorationImage(
-                          image: AssetImage('assets/bg/1-orrange-bg.png'),
+                          image: AssetImage('assets/bg/14.png'),
                           fit: BoxFit.cover)),
                 ),
               ),
-              AspectRatio(
-                aspectRatio: 1.7,
-                child: BarChartNew(),
+              Padding(
+                padding: const EdgeInsets.only(top: 30.0),
+                child: AspectRatio(
+                  aspectRatio: 4.0 / 2.4,
+                  child: BarChartNew(),
+                ),
               ),
             ],
           ),
@@ -528,6 +882,9 @@ class BarChartNew extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Brightness brightnessValue =
+        MediaQuery.of(context).platformBrightness;
+    bool isDark = brightnessValue == Brightness.dark;
     return BarChart(
       BarChartData(
         alignment: BarChartAlignment.spaceAround,
@@ -536,9 +893,9 @@ class BarChartNew extends StatelessWidget {
           enabled: true,
           touchTooltipData: BarTouchTooltipData(
             tooltipBgColor: Colors.transparent,
-            tooltipPadding: const EdgeInsets.all(5),
+            tooltipPadding: const EdgeInsets.all(0),
             // tooltipMargin: 8,
-            tooltipBottomMargin: 8,
+            tooltipBottomMargin: 0,
             getTooltipItem: (
               BarChartGroupData group,
               int groupIndex,
@@ -546,9 +903,9 @@ class BarChartNew extends StatelessWidget {
               int rodIndex,
             ) {
               return BarTooltipItem(
-                rod.y.round().toString(),
+                rod.y.round() == 0 ? '' : rod.y.round().toString(),
                 TextStyle(
-                  color: Colors.redAccent,
+                  color: rod.y.round() >= 5 ? Colors.green : Colors.redAccent,
                   fontWeight: FontWeight.bold,
                 ),
               );
@@ -559,11 +916,9 @@ class BarChartNew extends StatelessWidget {
           show: true,
           bottomTitles: SideTitles(
             showTitles: true,
-            getTextStyles: (value) => const TextStyle(
-                color: Color(0xff7589a2),
-                fontWeight: FontWeight.bold,
-                fontSize: 14),
-            margin: 20,
+            getTextStyles: (value) => TextStyle(
+                color: isDark ? Colors.white : Colors.black87, fontSize: 14),
+            margin: 5,
             getTitles: (double value) {
               switch (value.toInt()) {
                 case 0:
@@ -585,61 +940,43 @@ class BarChartNew extends StatelessWidget {
               }
             },
           ),
-          leftTitles: SideTitles(showTitles: false),
+          leftTitles: SideTitles(
+            showTitles: true,
+            getTextStyles: (value) => TextStyle(
+                color: isDark ? Colors.white : Colors.black87, fontSize: 14),
+          ),
         ),
         borderData: FlBorderData(
           show: false,
         ),
-        barGroups: [
-          BarChartGroupData(
-            x: 0,
+        barGroups: List.generate(7, (i) {
+          double value = 0;
+          String date = DateFormat('yyyy-MM-dd').format(DateTime.now()
+              .subtract(Duration(days: DateTime.now().weekday - 1))
+              .add(Duration(days: i)));
+          _weekDailyData.forEach((element) {
+            if (element['date'] == date) {
+              value = element['totalHour'].toDouble();
+            }
+          });
+          return BarChartGroupData(
+            x: i,
             barRods: [
               BarChartRodData(
-                  y: 8, colors: [Colors.redAccent, Colors.orangeAccent])
+                y: value,
+                colors: [
+                  (value >= 5) ? Colors.green : Colors.green.withOpacity(0.6),
+                ],
+                backDrawRodData: BackgroundBarChartRodData(
+                  show: true,
+                  y: 10,
+                  colors: [Colors.deepPurple.withOpacity(0.2)],
+                ),
+              ),
             ],
             showingTooltipIndicators: [0],
-          ),
-          BarChartGroupData(
-            x: 1,
-            barRods: [
-              BarChartRodData(
-                  y: 5, colors: [Colors.lightBlueAccent, Colors.greenAccent])
-            ],
-            showingTooltipIndicators: [0],
-          ),
-          BarChartGroupData(
-            x: 2,
-            barRods: [
-              BarChartRodData(
-                  y: 7, colors: [Colors.lightBlueAccent, Colors.greenAccent])
-            ],
-            showingTooltipIndicators: [0],
-          ),
-          BarChartGroupData(
-            x: 3,
-            barRods: [
-              BarChartRodData(
-                  y: 3, colors: [Colors.purpleAccent, Colors.blueAccent])
-            ],
-            showingTooltipIndicators: [0],
-          ),
-          BarChartGroupData(
-            x: 3,
-            barRods: [
-              BarChartRodData(
-                  y: 9, colors: [Colors.lightBlueAccent, Colors.greenAccent])
-            ],
-            showingTooltipIndicators: [0],
-          ),
-          BarChartGroupData(
-            x: 3,
-            barRods: [
-              BarChartRodData(
-                  y: 5, colors: [Colors.yellowAccent, Colors.orangeAccent])
-            ],
-            showingTooltipIndicators: [0],
-          ),
-        ],
+          );
+        }),
       ),
     );
   }

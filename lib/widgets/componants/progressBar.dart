@@ -57,13 +57,14 @@ class ProgressBar extends StatelessWidget {
               sizeUnit: GaugeSizeUnit.factor,
               cornerStyle: CornerStyle.startCurve,
               gradient: const SweepGradient(
-                  colors: <Color>[Colors.purpleAccent, Colors.blueAccent],
+                  colors: <Color>[Colors.deepPurpleAccent, Colors.deepPurple],
                   stops: <double>[0.25, 0.75])),
           MarkerPointer(
-            value: progressValue,
-            markerType: MarkerType.circle,
-            color: const Color(0xFFFF5252),
-          )
+              value: progressValue,
+              markerType: MarkerType.circle,
+              color: Colors.deepPurple,
+              markerHeight: 15,
+              markerWidth: 15)
         ],
       )
     ]);

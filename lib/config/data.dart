@@ -99,14 +99,20 @@ class AppSlider {
     '03',
     '04',
   ];
+  static List weeks = [
+    'W1',
+    'W2',
+    'W3',
+    'W4',
+  ];
   static List weekDays = [
-    'M',
-    'T',
-    'W',
-    'T',
-    'F',
-    'S',
-    'S',
+    'Mon',
+    'Tue',
+    'Wed',
+    'Thu',
+    'Fri',
+    'Sat',
+    'Sun',
   ];
   static List text = [
     'Completed',
