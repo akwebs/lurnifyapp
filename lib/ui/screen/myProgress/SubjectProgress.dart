@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:lurnify/ui/constant/ApiConstant.dart';
 import 'package:lurnify/ui/screen/myProgress/UnitProgress.dart';
 import 'package:lurnify/widgets/componants/progressBar.dart';
-import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
@@ -63,7 +62,8 @@ class _SubjectProgressState extends State<SubjectProgress> {
                       100);
                   return GestureDetector(
                     onTap: () {
-                      _getUnits(_mySubjectProgress[i]['subjectSno']);
+                      _getUnits(_mySubjectProgress[i]['subjectSno'],
+                          _mySubjectProgress[i]['subjectName']);
                     },
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -126,9 +126,9 @@ class _SubjectProgressState extends State<SubjectProgress> {
     );
   }
 
-  _getUnits(sno) {
+  _getUnits(sno, sname) {
     Navigator.of(context).push(MaterialPageRoute(
-      builder: (context) => UnitProgress(sno),
+      builder: (context) => UnitProgress(sno, sname),
     ));
   }
 }

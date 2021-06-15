@@ -53,7 +53,6 @@ class BottomSlider extends StatelessWidget {
                             padding: const EdgeInsets.only(left: 8, right: 8),
                             child: Text(
                               AppSlider.cardtext[index],
-                              style: TextStyle(fontSize: 16),
                             ),
                           ),
                         )

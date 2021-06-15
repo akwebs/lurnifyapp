@@ -70,24 +70,11 @@ class _CourseProgressState extends State<CourseProgress> {
                                 AspectRatio(
                                   aspectRatio: 4.0 / 2.2,
                                   child: Container(
-                                    child: CircleAvatar(
-                                      backgroundColor:
-                                          Colors.white.withOpacity(0.9),
-                                      child: ProgressBar(
-                                        progressValue: _coursePercent,
-                                        taskText: 'Course',
-                                      ),
+                                    child: ProgressBar(
+                                      progressValue: _coursePercent,
+                                      taskText: 'Course',
+                                      taskText1: 'Overall',
                                     ),
-                                    decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.black12,
-                                            offset: const Offset(0.0, 0.0),
-                                            blurRadius: 10.0,
-                                            spreadRadius: 0.0,
-                                          )
-                                        ]),
                                   ),
                                 ),
                                 SizedBox(
@@ -104,9 +91,14 @@ class _CourseProgressState extends State<CourseProgress> {
                               ],
                             ),
                             decoration: BoxDecoration(
-                              image: DecorationImage(
-                                  image: AssetImage('assets/bg/14.png'),
-                                  fit: BoxFit.fill),
+                              gradient: LinearGradient(
+                                colors: [
+                                  Colors.lightBlue[100].withOpacity(0.1),
+                                  Colors.deepPurple[100].withOpacity(0.1)
+                                ],
+                                begin: Alignment.topRight,
+                                end: Alignment.bottomLeft,
+                              ),
                             ),
                           ),
                         ),
@@ -118,14 +110,12 @@ class _CourseProgressState extends State<CourseProgress> {
                           decoration: BoxDecoration(
                               color: Colors.grey.withOpacity(0.1),
                               borderRadius: BorderRadius.circular(10)),
-                          child: Row(
-                            children: [
-                              Text(
-                                "There will be some message related to course progress",
-                                style: TextStyle(
-                                    fontSize: 14, fontWeight: FontWeight.w600),
-                              )
-                            ],
+                          child: Center(
+                            child: Text(
+                              "There will be some message related to course progress",
+                              style: TextStyle(
+                                  fontSize: 14, fontWeight: FontWeight.w600),
+                            ),
                           ),
                         ),
                       )
@@ -148,46 +138,3 @@ class _CourseProgressState extends State<CourseProgress> {
     ));
   }
 }
-
-
-// CircularPercentIndicator(
-//   radius: 150.0,
-//   lineWidth: 8.0,
-//   percent: _coursePercent,
-//   animateFromLastPercent: true,
-//   center: Column(
-//     mainAxisAlignment: MainAxisAlignment.center,
-//     children: [
-//       Text((_coursePercent*100).toStringAsFixed(2),style: TextStyle(color: Colors.black87,fontWeight: FontWeight.w600,fontSize: 20),),
-//       SizedBox(height: 3,),
-//       Container(
-//         height: 1.5,
-//         width: 40,
-//         color: Colors.black54,
-//       ),
-//     ],
-//   ),
-//   progressColor: Colors.green,
-// ),
-// SizedBox(
-//   height: 10,
-// ),
-// Text(
-//   "Total Completed course %.",
-//   style: TextStyle(
-//       fontSize: 20,
-//       fontWeight: FontWeight.w800),
-// ),
-// SizedBox(
-//   height: 10,
-// ),
-// Container(
-//     padding: EdgeInsets.all(10),
-//     decoration: BoxDecoration(
-//         color: Colors.black54,
-//         borderRadius:
-//             BorderRadius.circular(5)),
-//     child: Text(
-//       "Click here for more detail",
-//       style: TextStyle(color: Colors.white),
-//     ))

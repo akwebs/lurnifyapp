@@ -3,12 +3,12 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
+import 'package:lurnify/config/data.dart';
 import 'package:lurnify/ui/constant/constant.dart';
 import 'package:lurnify/ui/screen/selfstudy/recent.dart';
 import 'package:lurnify/widgets/CustomDrawer.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:lurnify/widgets/componants/custom-button.dart';
 import 'package:lurnify/widgets/home/apptiles.dart';
 import 'package:lurnify/widgets/home/bottom_slider.dart';
 import 'package:lurnify/widgets/home/cards_Slider.dart';
@@ -175,9 +175,7 @@ class _HomePageState extends State<HomePage> {
             ),
             drawer: Theme(
               data: Theme.of(context).copyWith(
-                canvasColor: Colors
-                    .white24, //This will change the drawer background to blue.
-                //other styles
+                canvasColor: Colors.white24,
               ),
               child: Drawer(
                 elevation: 0,
@@ -197,6 +195,16 @@ class _HomePageState extends State<HomePage> {
                       TestSlider(),
                     ],
                   ),
+                ),
+              ),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    Colors.purple[100].withOpacity(0.1),
+                    Colors.deepPurple[100].withOpacity(0.1)
+                  ],
+                  begin: Alignment.topRight,
+                  end: Alignment.bottomLeft,
                 ),
               ),
             ),
@@ -375,62 +383,106 @@ class _SpinnerClassState extends State<SpinnerClass> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Card(
-          margin: EdgeInsets.all(20),
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-          clipBehavior: Clip.antiAlias,
-          child: Column(
-            children: [
-              Container(
-                padding: EdgeInsets.all(20),
-                height: 250.0,
-                color: Colors
-                    .transparent, //could change this to Color(0xFF737373),
-                //so you don't have to change MaterialApp canvasColor
-                child: FortuneWheel(
-                    physics: CircularPanPhysics(
-                      duration: Duration(seconds: 1),
-                      curve: Curves.decelerate,
+    return Container(
+      color: Colors.black.withOpacity(0.7),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Card(
+            margin: EdgeInsets.all(20),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            clipBehavior: Clip.antiAlias,
+            child: Container(
+              child: Column(
+                children: [
+                  Container(
+                    width: Responsive.getPercent(
+                        100, ResponsiveSize.WIDTH, context),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 20),
+                      child: Text(
+                        'Spin to Win',
+                        style: TextStyle(fontSize: 22, color: whiteColor),
+                        textAlign: TextAlign.center,
+                      ),
                     ),
-                    duration: Duration(seconds: 10),
-                    animateFirst: false,
-                    selected: _selected,
-                    onAnimationEnd: () {
-                      _updateDailyTask();
-                    },
-                    items: List.generate(_spinData.length, (index) {
-                      return FortuneItem(
-                          child: Text(_spinData[index]['taskName']));
-                    })),
+                    decoration:
+                        BoxDecoration(color: Colors.black.withOpacity(0.1)),
+                  ),
+                  Container(
+                    padding: EdgeInsets.all(20),
+                    height: 250.0,
+                    color: Colors.transparent,
+                    child: FortuneWheel(
+                      indicators: [
+                        FortuneIndicator(
+                            child: TriangleIndicator(
+                              color: Colors.white,
+                            ),
+                            alignment: Alignment.bottomCenter)
+                      ],
+                      physics: CircularPanPhysics(
+                        duration: Duration(seconds: 1),
+                        curve: Curves.decelerate,
+                      ),
+                      duration: Duration(seconds: 10),
+                      animateFirst: false,
+                      selected: _selected,
+                      onAnimationEnd: () {
+                        _updateDailyTask();
+                      },
+                      items: List.generate(
+                        _spinData.length,
+                        (index) {
+                          return FortuneItem(
+                              child: Text(_spinData[index]['taskName']));
+                        },
+                      ),
+                    ),
+                  ),
+                  Container(
+                    padding: EdgeInsets.all(10),
+                    child: TextButton(
+                      onPressed: () {
+                        try {
+                          print(_selected);
+                          var _random = new Random();
+                          setState(() {
+                            _selected = _random.nextInt(6);
+                            print(_selected);
+                          });
+                        } catch (e) {
+                          print(e);
+                        }
+                      },
+                      child: Container(
+                        padding: EdgeInsets.all(30),
+                        child: Text(
+                          'SPIN',
+                          style: TextStyle(fontSize: 22, color: whiteColor),
+                          textAlign: TextAlign.center,
+                        ),
+                        decoration: BoxDecoration(
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.5),
+                              offset: Offset(0, 0),
+                              blurRadius: 10,
+                            ),
+                          ],
+                          shape: BoxShape.circle,
+                          gradient: AppSlider.gradient[3],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              Container(
-                width: Responsive.getPercent(60, ResponsiveSize.WIDTH, context),
-                child: CustomButton(
-                  onPressed: () {
-                    try {
-                      print(_selected);
-                      var _random = new Random();
-                      setState(() {
-                        _selected = _random.nextInt(6);
-                        print(_selected);
-                      });
-                    } catch (e) {
-                      print(e);
-                    }
-                  },
-                  brdRds: 10,
-                  verpad: EdgeInsets.symmetric(vertical: 10),
-                  buttonText: 'Spin',
-                ),
-              ),
-            ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 

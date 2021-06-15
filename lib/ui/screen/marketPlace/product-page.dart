@@ -110,7 +110,7 @@ class _ProductPageState extends State<ProductPage> {
                         print(imageUrl);
                         double price = _products[i]['price'];
                         return Card(
-                          elevation: 0,
+                          elevation: 6,
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10)),
                           clipBehavior: Clip.antiAlias,
@@ -145,7 +145,7 @@ class _ProductPageState extends State<ProductPage> {
                                                 .toUpperCase(),
                                             style: TextStyle(
                                               fontWeight: FontWeight.w600,
-                                              fontSize: 18,
+                                              fontSize: 16,
                                             ),
                                           ),
                                           SizedBox(
@@ -156,9 +156,6 @@ class _ProductPageState extends State<ProductPage> {
                                                 .toString(),
                                             maxLines: 2,
                                             textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.w500,
-                                            ),
                                           ),
                                         ],
                                       ),
@@ -255,6 +252,16 @@ class _ProductPageState extends State<ProductPage> {
                                 ),
                               ),
                             ]),
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [
+                                  Colors.blue[300].withOpacity(0.2),
+                                  Colors.deepPurple[200].withOpacity(0.2)
+                                ],
+                                begin: Alignment.topRight,
+                                end: Alignment.bottomLeft,
+                              ),
+                            ),
                           ),
                         );
                       },

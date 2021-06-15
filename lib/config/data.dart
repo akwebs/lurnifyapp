@@ -14,7 +14,7 @@ class AppColors {
     Colors.purple[50],
     Colors.brown[50],
     Colors.green[50],
-    Colors.yellow[200],
+    Colors.yellow[50],
     Colors.pink[50],
   ];
   static List<Color> tileIconColors = [
@@ -25,7 +25,7 @@ class AppColors {
     Colors.purple,
     Colors.brown,
     Colors.green,
-    Colors.yellow[900],
+    Colors.yellow[400],
     Colors.pink,
   ];
   static List<Color> cardHeader = [
@@ -128,13 +128,13 @@ class AppSlider {
   ];
   static List cardtext = [
     'Introduction To Biology',
-    'Further Mathematics',
     'Fundamentals of Chemisty',
+    'Further Mathematics',
   ];
   static List cardimage = [
     'assets/icons/bio.png',
-    'assets/icons/maths.png',
     'assets/icons/chem.png',
+    'assets/icons/maths.png',
   ];
   static List subName = [
     'Organic Chemistry',

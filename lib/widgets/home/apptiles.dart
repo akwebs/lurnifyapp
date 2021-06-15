@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:lottie/lottie.dart';
 import 'package:lurnify/config/data.dart';
-import 'package:lurnify/ui/constant/constant.dart';
 import 'package:lurnify/ui/screen/dareToDo/dareToDo.dart';
-import 'package:lurnify/ui/screen/marketPlace/marketPlace.dart';
 import 'package:lurnify/ui/screen/myCourseContain/NewCourseContent.dart';
+import 'package:lurnify/ui/screen/myProgress/myProgress.dart';
 import 'package:lurnify/ui/screen/selfstudy/selfstudy.dart';
 import 'package:lurnify/ui/screen/myProgress/CourseProress.dart';
 import 'package:lurnify/ui/screen/revisionZone/RevisionZoneHome.dart';
@@ -32,11 +30,10 @@ class AppTiles extends StatelessWidget {
         itemCount: AppTile.tileIcons.length,
         itemBuilder: (BuildContext ctx, index) {
           return Card(
-            elevation: 0,
             shape: RoundedRectangleBorder(
-                side: BorderSide(
-                    color: AppColors.tileIconColors[index].withOpacity(0.3),
-                    width: 1),
+                // side: BorderSide(
+                //     color: AppColors.tileIconColors[index].withOpacity(0.3),
+                //     width: 1),
                 borderRadius: BorderRadius.circular(5)),
             clipBehavior: Clip.antiAlias,
             child: InkWell(
@@ -51,7 +48,7 @@ class AppTiles extends StatelessWidget {
                   ));
                 } else if (index == 4) {
                   Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => CourseProgress(),
+                    builder: (context) => MyProgress(),
                   ));
                 } else if (index == 5) {
                   Navigator.of(context).push(MaterialPageRoute(
@@ -61,54 +58,78 @@ class AppTiles extends StatelessWidget {
                   Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) => DareToDo(),
                   ));
-                } else if(index==7){
+                } else if (index == 7) {
                   Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) => PurchasedItem(),
                   ));
-                }else if (index == 8) {
+                } else if (index == 8) {
                   Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) => WeekMonth(),
                   ));
                 }
               },
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  Material(
-                    color: Colors.transparent,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          flex: 5,
-                          child: CircleAvatar(
-                            radius: 30,
-                            backgroundColor: AppColors.tileColors[index],
-                            child: ImageIcon(
-                              AssetImage(AppTile.tileIcons[index]),
-                              color: AppColors.tileIconColors[index],
-                              size: 32,
-                            ),
-                          ),
-                        ),
-                        Spacer(),
-                        Expanded(
-                          flex: 3,
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 5),
-                            child: Text(
-                              AppTile.tileText[index],
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 14,
+              child: Container(
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Material(
+                      color: Colors.transparent,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            flex: 5,
+                            child: Container(
+                              child: CircleAvatar(
+                                radius: 30,
+                                backgroundColor: AppColors.tileColors[index],
+                                child: ImageIcon(
+                                  AssetImage(AppTile.tileIcons[index]),
+                                  color: AppColors.tileIconColors[index],
+                                  size: 32,
+                                ),
+                              ),
+                              decoration: new BoxDecoration(
+                                // boxShadow: NewappColors.neumorpShadow,
+                                shape: BoxShape.circle,
+                                border: new Border.all(
+                                  color: AppColors.tileIconColors[index]
+                                      .withOpacity(0.2),
+                                  width: 1.0,
+                                ),
                               ),
                             ),
                           ),
-                        )
-                      ],
+                          Spacer(),
+                          Expanded(
+                            flex: 3,
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 5),
+                              child: Text(
+                                AppTile.tileText[index],
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
+                // decoration: BoxDecoration(
+                //   gradient: LinearGradient(
+                //     colors: [
+                //       Colors.blue[200].withOpacity(0.1),
+                //       Colors.deepPurple[100].withOpacity(0.1)
+                //     ],
+                //     begin: Alignment.topRight,
+                //     end: Alignment.bottomLeft,
+                //   ),
+                // ),
               ),
             ),
           );

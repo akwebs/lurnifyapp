@@ -19,7 +19,7 @@ class AppTheme {
   static const Color _darkOnPrimaryColor = Colors.white;
 
   static final ThemeData lightTheme = ThemeData(
-      scaffoldBackgroundColor: _lightPrimaryVariantColor,
+      scaffoldBackgroundColor: _lightPrimaryColor,
       accentColor: _lightSeconderyColor,
       primaryColor: _darkSeconderyColor,
       appBarTheme: AppBarTheme(
@@ -55,7 +55,7 @@ class AppTheme {
       ),
       cardTheme: CardTheme(
         color: _lightPrimaryColor,
-        elevation: 5,
+        elevation: 3,
         shadowColor: Colors.black38,
       ),
       tabBarTheme: TabBarTheme(
@@ -118,7 +118,7 @@ class AppTheme {
   );
 
   static final TextStyle _lightScreenHeadingTextStyle = TextStyle(
-    fontFamily: 'Poppins',
+    fontFamily: 'Montserrat',
     color: _lightOnPrimaryColor,
     fontSize: 14,
   );
@@ -218,7 +218,9 @@ class AppTheme {
   );
 
   static final TextStyle _darkScreenHeadingTextStyle = TextStyle(
+    fontFamily: 'Montserrat',
     color: _darkOnPrimaryColor,
+    fontSize: 14,
   );
   static final TextStyle _darkbuttonTextStyle = TextStyle(
     color: _darkSeconderyColor,

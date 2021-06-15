@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lurnify/ui/constant/constant.dart';
+import 'package:lurnify/ui/screen/marketPlace/week-month.dart';
 import 'package:lurnify/widgets/componants/custom-button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
@@ -19,6 +20,10 @@ class PurchasedItem extends StatefulWidget {
 class _PurchasedItemState extends State<PurchasedItem> {
   List _purchasedItems = [];
 
+  var _data;
+  Map<String, dynamic> resbody = Map();
+  String _totalDimes = "0";
+
   _getPurchasedItems() async {
     SharedPreferences sp = await SharedPreferences.getInstance();
     var url =
@@ -28,6 +33,16 @@ class _PurchasedItemState extends State<PurchasedItem> {
       Uri.encodeFull(url),
     );
     _purchasedItems = jsonDecode(response.body);
+    var url1 =
+        baseUrl + "getHomePageData?registerSno=" + sp.getString("studentSno");
+    print(url1);
+    http.Response response1 = await http.post(
+      Uri.encodeFull(url1),
+    );
+    resbody = jsonDecode(response1.body);
+
+    _totalDimes = resbody['totalDimes'].toString();
+    print(_totalDimes);
   }
 
   @override
@@ -36,10 +51,48 @@ class _PurchasedItemState extends State<PurchasedItem> {
         MediaQuery.of(context).platformBrightness;
     bool isDark = brightnessValue == Brightness.dark;
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        title: Text("Purchased Items"),
-        centerTitle: true,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(70),
+        child: Container(
+          child: AppBar(
+            elevation: 0,
+            backgroundColor: Colors.transparent,
+            title: Text("My Rewars & Purchased Items"),
+            centerTitle: true,
+            actions: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Center(
+                  child: Row(
+                    children: [
+                      Text(
+                        _totalDimes,
+                        style: TextStyle(
+                            color: firstColor,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      Icon(
+                        Icons.monetization_on_rounded,
+                        size: 18,
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                Colors.lightBlue[100].withOpacity(0.1),
+                Colors.deepPurple[100].withOpacity(0.1)
+              ],
+              begin: Alignment.topRight,
+              end: Alignment.bottomLeft,
+            ),
+          ),
+        ),
       ),
       body: FutureBuilder(
         future: _getPurchasedItems(),
@@ -47,13 +100,29 @@ class _PurchasedItemState extends State<PurchasedItem> {
           if (snapshot.connectionState == ConnectionState.done) {
             return _purchasedItems.isEmpty
                 ? Container(
+                    padding: EdgeInsets.all(10),
                     child: Center(
-                      child: Text(
-                        "No Data",
-                        style: TextStyle(
-                            fontSize: 50,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.grey),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            "You did not purchach any product yet.",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.grey),
+                          ),
+                          TextButton(
+                              onPressed: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                      builder: (context) => WeekMonth()),
+                                );
+                              },
+                              child: Text('Purchase Now'))
+                        ],
                       ),
                     ),
                   )

@@ -178,71 +178,85 @@ class _DareToDoState extends State<DareToDo> {
             // initialIndex: 1,
             length: 3,
             child: Scaffold(
-              appBar: AppBar(
-                elevation: 0,
-                title: Text("Dare To Do"),
-                centerTitle: true,
-                actions: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Center(
-                        child: _weekData['coins'] != null
-                            ? Row(
-                                children: [
-                                  Text(
-                                    _weekData['coins'].toString(),
-                                    style: TextStyle(
-                                        color: firstColor,
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  Icon(
-                                    Icons.monetization_on_rounded,
-                                    size: 18,
+              appBar: PreferredSize(
+                preferredSize: Size.fromHeight(120),
+                child: Container(
+                  child: AppBar(
+                    backgroundColor: Colors.transparent,
+                    elevation: 0,
+                    title: Text("Dare To Do"),
+                    centerTitle: true,
+                    actions: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Center(
+                            child: _weekData['coins'] != null
+                                ? Row(
+                                    children: [
+                                      Text(
+                                        _weekData['coins'].toString(),
+                                        style: TextStyle(
+                                            color: firstColor,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      Icon(
+                                        Icons.monetization_on_rounded,
+                                        size: 18,
+                                      )
+                                    ],
                                   )
-                                ],
-                              )
-                            : Container()),
-                  ),
-                ],
-                bottom: PreferredSize(
-                  preferredSize: Size.fromHeight(70),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: TabBar(
-                      labelColor: Colors.white,
-                      labelStyle: TextStyle(fontSize: 18),
-                      unselectedLabelColor: Colors.deepPurpleAccent,
-                      indicatorSize: TabBarIndicatorSize.tab,
-                      indicator: BoxDecoration(
-                          gradient: LinearGradient(colors: [
-                            Colors.deepPurpleAccent,
-                            Colors.deepPurple
-                          ]),
-                          borderRadius: BorderRadius.circular(50),
-                          color: Colors.redAccent),
-                      tabs: [
-                        Tab(
-                          child: Align(
-                            alignment: Alignment.center,
-                            child: Text(
-                              "Daily",
+                                : Container()),
+                      ),
+                    ],
+                    bottom: PreferredSize(
+                      preferredSize: Size.fromHeight(50),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: TabBar(
+                          labelColor: Colors.white,
+                          unselectedLabelColor: Colors.deepPurpleAccent,
+                          indicatorSize: TabBarIndicatorSize.tab,
+                          indicator: BoxDecoration(
+                              gradient: LinearGradient(colors: [
+                                Colors.deepPurpleAccent,
+                                Colors.deepPurple
+                              ]),
+                              borderRadius: BorderRadius.circular(50),
+                              color: Colors.redAccent),
+                          tabs: [
+                            Tab(
+                              child: Align(
+                                alignment: Alignment.center,
+                                child: Text(
+                                  "Daily",
+                                ),
+                              ),
                             ),
-                          ),
+                            Tab(
+                              child: Align(
+                                alignment: Alignment.center,
+                                child: Text("Weekly"),
+                              ),
+                            ),
+                            Tab(
+                              child: Align(
+                                alignment: Alignment.center,
+                                child: Text("Monthly"),
+                              ),
+                            ),
+                          ],
                         ),
-                        Tab(
-                          child: Align(
-                            alignment: Alignment.center,
-                            child: Text("Weekly"),
-                          ),
-                        ),
-                        Tab(
-                          child: Align(
-                            alignment: Alignment.center,
-                            child: Text("Monthly"),
-                          ),
-                        ),
+                      ),
+                    ),
+                  ),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        Colors.cyan[200].withOpacity(0.1),
+                        Colors.purple[200].withOpacity(0.1)
                       ],
+                      begin: Alignment.topRight,
+                      end: Alignment.bottomLeft,
                     ),
                   ),
                 ),
@@ -255,17 +269,33 @@ class _DareToDoState extends State<DareToDo> {
                       // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         AspectRatio(
-                          aspectRatio: 4.5 / 2.9,
+                          aspectRatio: 4.5 / 2.5,
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Card(
+                              elevation: 0,
+                              clipBehavior: Clip.antiAlias,
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10)),
-                              clipBehavior: Clip.antiAlias,
-                              child: ProgressBar(
-                                  progressValue:
-                                      _netPercent.isNaN ? 0 : _netPercent,
-                                  taskText: 'Daily task Completed'),
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                    vertical: 8, horizontal: 20),
+                                child: ProgressBar(
+                                    taskText: 'Daily Tasks',
+                                    progressValue:
+                                        _netPercent.isNaN ? 0 : _netPercent,
+                                    taskText1: 'Overall Completed'),
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      Colors.cyan[200].withOpacity(0.1),
+                                      Colors.purple[200].withOpacity(0.1)
+                                    ],
+                                    begin: Alignment.topRight,
+                                    end: Alignment.bottomLeft,
+                                  ),
+                                ),
+                              ),
                             ),
                           ),
                         ),
@@ -284,22 +314,24 @@ class _DareToDoState extends State<DareToDo> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Card(
+                            elevation: 0,
                             margin: EdgeInsets.symmetric(
                                 vertical: 8, horizontal: 14),
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10)),
                             clipBehavior: Clip.antiAlias,
-                            child: Padding(
+                            child: Container(
                               padding: const EdgeInsets.all(8.0),
                               child: Column(
                                 children: [
                                   AspectRatio(
                                     aspectRatio: 3.0 / 1.4,
                                     child: ProgressBar(
+                                        taskText: 'Weekly Tasks',
                                         progressValue: _overallPercent.isNaN
                                             ? 0
                                             : _overallPercent,
-                                        taskText: 'Overall'),
+                                        taskText1: 'Overall Completed'),
                                   ),
                                   AspectRatio(
                                     aspectRatio: 7 / 2,
@@ -310,13 +342,13 @@ class _DareToDoState extends State<DareToDo> {
                                         AspectRatio(
                                           aspectRatio: 1,
                                           child: _ProgressBar(
-                                              progressValue:
-                                                  _completedWeekTests *
-                                                      100 /
-                                                      _weekTotalTests,
-                                              x: _completedWeekTests.toString(),
-                                              y: _weekTotalTests.toString(),
-                                              taskText: 'TEST'),
+                                            progressValue: _completedWeekTests *
+                                                100 /
+                                                _weekTotalTests,
+                                            x: _completedWeekTests.toString(),
+                                            y: _weekTotalTests.toString(),
+                                            taskText: 'TEST',
+                                          ),
                                         ),
                                         AspectRatio(
                                           aspectRatio: 1,
@@ -345,6 +377,16 @@ class _DareToDoState extends State<DareToDo> {
                                   ),
                                 ],
                               ),
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [
+                                    Colors.cyan[200].withOpacity(0.1),
+                                    Colors.purple[200].withOpacity(0.1)
+                                  ],
+                                  begin: Alignment.topRight,
+                                  end: Alignment.bottomLeft,
+                                ),
+                              ),
                             ),
                           ),
                           //BarChartSample1(),
@@ -362,6 +404,7 @@ class _DareToDoState extends State<DareToDo> {
                             child: Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Card(
+                                elevation: 0,
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(10)),
                                 clipBehavior: Clip.antiAlias,
@@ -369,22 +412,30 @@ class _DareToDoState extends State<DareToDo> {
                                   children: [
                                     Container(
                                       decoration: BoxDecoration(
-                                        image: DecorationImage(
-                                            image: AssetImage(
-                                                'assets/bg/1-purple-bg.png'),
-                                            fit: BoxFit.cover),
+                                        gradient: LinearGradient(
+                                          colors: [
+                                            Colors.limeAccent[200]
+                                                .withOpacity(0.1),
+                                            Colors.teal[200].withOpacity(0.1)
+                                          ],
+                                          begin: Alignment.topRight,
+                                          end: Alignment.bottomLeft,
+                                        ),
                                       ),
                                     ),
-                                    Center(
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
                                       child: Column(
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceEvenly,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
                                           Text(
                                             'Complted Weeks',
                                             style: TextStyle(
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.bold),
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w500),
                                           ),
                                           Text(
                                             _completedWeeks.toString() +
@@ -392,30 +443,12 @@ class _DareToDoState extends State<DareToDo> {
                                                 '4',
                                             style: TextStyle(
                                                 color: firstColor,
-                                                fontSize: 100),
+                                                fontSize: 50),
                                           ),
                                           Padding(
                                             padding: const EdgeInsets.symmetric(
                                                 horizontal: 8),
                                             child: LinearPercentIndicator(
-                                              // leading: Padding(
-                                              //   padding:
-                                              //       const EdgeInsets.only(right:8.0),
-                                              //   child: Text(
-                                              //     '0',
-                                              //     style:
-                                              //         TextStyle(fontSize: 16),
-                                              //   ),
-                                              // ),
-                                              // trailing: Padding(
-                                              //   padding:
-                                              //       const EdgeInsets.only(left:8.0),
-                                              //   child: Text(
-                                              //     '4',
-                                              //     style:
-                                              //         TextStyle(fontSize: 16),
-                                              //   ),
-                                              // ),
                                               padding: EdgeInsets.all(3),
                                               lineHeight: 10,
                                               percent:
@@ -436,13 +469,14 @@ class _DareToDoState extends State<DareToDo> {
                             ),
                           ),
                           AspectRatio(
-                            aspectRatio: 4 / 2,
+                            aspectRatio: 3 / 1,
                             child: Row(
                               children: [
                                 Expanded(
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Card(
+                                      elevation: 0,
                                       shape: RoundedRectangleBorder(
                                           borderRadius:
                                               BorderRadius.circular(10)),
@@ -451,11 +485,19 @@ class _DareToDoState extends State<DareToDo> {
                                         children: [
                                           Container(
                                             decoration: BoxDecoration(
-                                              image: DecorationImage(
-                                                  image: AssetImage(
-                                                      'assets/bg/1-blue-bg.png'),
-                                                  fit: BoxFit.cover),
-                                            ),
+                                                color: Colors.lightBlue[200]
+                                                    .withOpacity(0.1)
+                                                // gradient: LinearGradient(
+                                                //   colors: [
+                                                //     Colors.cyan[200]
+                                                //         .withOpacity(0.2),
+                                                //     Colors.purple[200]
+                                                //         .withOpacity(0.2)
+                                                //   ],
+                                                //   begin: Alignment.topRight,
+                                                //   end: Alignment.bottomLeft,
+                                                // ),
+                                                ),
                                           ),
                                           Center(
                                             child: Column(
@@ -465,12 +507,12 @@ class _DareToDoState extends State<DareToDo> {
                                                 Text(
                                                   'Total Test',
                                                   style:
-                                                      TextStyle(fontSize: 20),
+                                                      TextStyle(fontSize: 16),
                                                 ),
                                                 Text(
                                                   _totalTests.toString(),
                                                   style:
-                                                      TextStyle(fontSize: 28),
+                                                      TextStyle(fontSize: 24),
                                                 ),
                                               ],
                                             ),
@@ -484,6 +526,7 @@ class _DareToDoState extends State<DareToDo> {
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Card(
+                                      elevation: 0,
                                       shape: RoundedRectangleBorder(
                                           borderRadius:
                                               BorderRadius.circular(10)),
@@ -492,11 +535,19 @@ class _DareToDoState extends State<DareToDo> {
                                         children: [
                                           Container(
                                             decoration: BoxDecoration(
-                                              image: DecorationImage(
-                                                  image: AssetImage(
-                                                      'assets/bg/1-blue-bg.png'),
-                                                  fit: BoxFit.cover),
-                                            ),
+                                                color: Colors.lightBlue[200]
+                                                    .withOpacity(0.1)
+                                                // gradient: LinearGradient(
+                                                //   colors: [
+                                                //     Colors.lightBlue[200]
+                                                //         .withOpacity(0.2),
+                                                //     Colors.lightGreen[200]
+                                                //         .withOpacity(0.2)
+                                                //   ],
+                                                //   begin: Alignment.topRight,
+                                                //   end: Alignment.bottomLeft,
+                                                // ),
+                                                ),
                                           ),
                                           Center(
                                             child: Column(
@@ -506,13 +557,13 @@ class _DareToDoState extends State<DareToDo> {
                                                 Text(
                                                   'Study Hours',
                                                   style:
-                                                      TextStyle(fontSize: 20),
+                                                      TextStyle(fontSize: 16),
                                                 ),
                                                 Text(
                                                   _completedStudyTime
                                                       .toString(),
                                                   style:
-                                                      TextStyle(fontSize: 28),
+                                                      TextStyle(fontSize: 24),
                                                 ),
                                               ],
                                             ),
@@ -529,6 +580,16 @@ class _DareToDoState extends State<DareToDo> {
                       ),
                     )
                   ],
+                ),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Colors.deepPurple[200].withOpacity(0.2),
+                      Colors.lightBlue[200].withOpacity(0.1)
+                    ],
+                    begin: Alignment.topRight,
+                    end: Alignment.bottomLeft,
+                  ),
                 ),
               ),
             ),
@@ -567,15 +628,14 @@ class _ProgressBar extends StatelessWidget {
                       Text(
                         progressValue.isNaN ? '0' : x + '/' + y,
                         style: TextStyle(
-                          fontSize: 35,
-                          color: Colors.deepPurpleAccent,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                       Text(
                         x == null && y == null ? '%' : '',
                         style: TextStyle(
-                          fontSize: 35,
-                          color: Colors.deepPurple,
+                          fontSize: 20,
                         ),
                       ),
                     ],
@@ -583,8 +643,7 @@ class _ProgressBar extends StatelessWidget {
                   Text(
                     taskText,
                     style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.deepPurpleAccent,
+                      fontSize: 12,
                     ),
                   ),
                 ],
@@ -644,9 +703,11 @@ class WeekDays extends StatelessWidget {
                 opacity: 1,
                 child: Container(
                   decoration: BoxDecoration(
-                      image: DecorationImage(
-                          image: AssetImage('assets/bg/1-blue-bg.png'),
-                          fit: BoxFit.cover)),
+                    //color: AppColors.tileColors[1],
+                    image: DecorationImage(
+                        image: AssetImage('assets/bg/1-blue-bg.png'),
+                        fit: BoxFit.cover),
+                  ),
                 ),
               ),
               Align(
@@ -756,7 +817,8 @@ class Weeks extends StatelessWidget {
                     scrollDirection: Axis.horizontal,
                     itemBuilder: (context, i) {
                       return Padding(
-                        padding: const EdgeInsets.all(2.0),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 2, horizontal: 10),
                         child: InkWell(
                           onTap: () {},
                           child: Card(
@@ -770,8 +832,8 @@ class Weeks extends StatelessWidget {
                                 child: Text(
                                   AppSlider.weeks[i],
                                   style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold),
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600),
                                 ),
                               ),
                             ),
@@ -801,32 +863,31 @@ class DailyTaskInfo extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.only(bottom: 8, left: 8, right: 8),
         child: Card(
+          elevation: 0,
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           clipBehavior: Clip.antiAlias,
-          child: Stack(
-            children: [
-              Opacity(
-                opacity: 0.8,
-                child: Container(
-                  decoration: BoxDecoration(
-                      image: DecorationImage(
-                          image: AssetImage('assets/bg/14.png'),
-                          fit: BoxFit.cover)),
+          child: Container(
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Text(
+                  dailyTaskDetail,
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                  textAlign: TextAlign.center,
                 ),
               ),
-              Align(
-                alignment: Alignment.center,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    dailyTaskDetail,
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
+            ),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Colors.purple[200].withOpacity(0.1),
+                  Colors.cyan[200].withOpacity(0.1)
+                ],
+                begin: Alignment.topRight,
+                end: Alignment.bottomLeft,
               ),
-            ],
+            ),
           ),
         ),
       ),
@@ -846,28 +907,26 @@ class WeekTaskInfo extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.only(bottom: 8, left: 8, right: 8),
         child: Card(
+          elevation: 0,
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           clipBehavior: Clip.antiAlias,
-          child: Stack(
-            children: [
-              Opacity(
-                opacity: 0.4,
-                child: Container(
-                  decoration: BoxDecoration(
-                      image: DecorationImage(
-                          image: AssetImage('assets/bg/14.png'),
-                          fit: BoxFit.cover)),
-                ),
+          child: Container(
+            padding: const EdgeInsets.only(top: 30.0),
+            child: AspectRatio(
+              aspectRatio: 4.0 / 2.4,
+              child: BarChartNew(),
+            ),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Colors.cyan[200].withOpacity(0.1),
+                  Colors.purple[200].withOpacity(0.1)
+                ],
+                begin: Alignment.topRight,
+                end: Alignment.bottomLeft,
               ),
-              Padding(
-                padding: const EdgeInsets.only(top: 30.0),
-                child: AspectRatio(
-                  aspectRatio: 4.0 / 2.4,
-                  child: BarChartNew(),
-                ),
-              ),
-            ],
+            ),
           ),
         ),
       ),
