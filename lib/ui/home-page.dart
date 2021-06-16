@@ -383,89 +383,63 @@ class _SpinnerClassState extends State<SpinnerClass> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.black.withOpacity(0.7),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Card(
-            margin: EdgeInsets.all(20),
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-            clipBehavior: Clip.antiAlias,
-            child: Container(
-              child: Column(
-                children: [
-                  Container(
-                    width: Responsive.getPercent(
-                        100, ResponsiveSize.WIDTH, context),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 20),
-                      child: Text(
-                        'Spin to Win',
-                        style: TextStyle(fontSize: 22),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
+    return Scaffold(
+      body: Container(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              child: GestureDetector(
+                onTap: () {
+                  try {
+                    print(_selected);
+                    var _random = new Random();
+                    setState(() {
+                      _selected = _random.nextInt(6);
+                      print(_selected);
+                    });
+                  } catch (e) {
+                    print(e);
+                  }
+                },
+                child: FortuneWheel(
+                  indicators: [
+                    FortuneIndicator(
+                        child: Image.asset(
+                          'assets/icons/spineer.png',
+                          fit: BoxFit.contain,
+                          height: 50,
+                        ),
+                        alignment: Alignment.center)
+                  ],
+                  physics: CircularPanPhysics(
+                    duration: Duration(seconds: 1),
+                    curve: Curves.decelerate,
                   ),
-                  Container(
-                    padding: EdgeInsets.all(20),
-                    height: 250.0,
-                    color: Colors.transparent,
-                    child: GestureDetector(
-                      onTap: () {
-                        try {
-                          print(_selected);
-                          var _random = new Random();
-                          setState(() {
-                            _selected = _random.nextInt(6);
-                            print(_selected);
-                          });
-                        } catch (e) {
-                          print(e);
-                        }
-                      },
-                      child: FortuneWheel(
-                        indicators: [
-                          FortuneIndicator(
-                              child: Image.asset(
-                                'assets/icons/spineer.png',
-                                fit: BoxFit.contain,
-                                height: 50,
+                  duration: Duration(seconds: 10),
+                  animateFirst: false,
+                  selected: _selected,
+                  onAnimationEnd: () {
+                    _updateDailyTask();
+                  },
+                  items: List.generate(
+                    _spinData.length,
+                    (index) {
+                      return FortuneItem(
+                          style: FortuneItemStyle(
+                              color: AppColors.tileIconColors[index],
+                              textStyle: TextStyle(
+                                color: Colors.white,
                               ),
-                              alignment: Alignment.center)
-                        ],
-                        physics: CircularPanPhysics(
-                          duration: Duration(seconds: 1),
-                          curve: Curves.decelerate,
-                        ),
-                        duration: Duration(seconds: 10),
-                        animateFirst: false,
-                        selected: _selected,
-                        onAnimationEnd: () {
-                          _updateDailyTask();
-                        },
-                        items: List.generate(
-                          _spinData.length,
-                          (index) {
-                            return FortuneItem(
-                                style: FortuneItemStyle(
-                                    color: AppColors.tileIconColors[index],
-                                    textStyle: TextStyle(
-                                      color: Colors.white,
-                                    ),
-                                    textAlign: TextAlign.center),
-                                child: Text(_spinData[index]['taskName']));
-                          },
-                        ),
-                      ),
-                    ),
+                              textAlign: TextAlign.center),
+                          child: Text(_spinData[index]['taskName']));
+                    },
                   ),
-                ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

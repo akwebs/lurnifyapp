@@ -128,7 +128,7 @@ class _TopicProgressState extends State<TopicProgress> {
     return Padding(
       padding: EdgeInsets.all(8),
       child: AspectRatio(
-        aspectRatio: 4 / 3,
+        aspectRatio: 4 / 2,
         child: Card(
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -145,143 +145,103 @@ class _TopicProgressState extends State<TopicProgress> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Text(_topicList[i]['topicName']),
-                        SmoothStarRating(
-                          rating: _topicList[i]['topicRating'],
-                          size: 16,
-                          starCount: 5,
-                          allowHalfRating: true,
-                          color: Colors.amber,
-                          isReadOnly: true,
-                          // defaultIconData: Icons.blur_off,
-                          borderColor: Colors.amber,
+                        Expanded(
+                          child: SmoothStarRating(
+                            rating: _topicList[i]['topicRating'],
+                            size: 16,
+                            starCount: 5,
+                            allowHalfRating: true,
+                            color: Colors.amber,
+                            isReadOnly: true,
+                            // defaultIconData: Icons.blur_off,
+                            borderColor: Colors.amber,
+                          ),
+                        ),
+                        Expanded(
+                          child: Text(
+                            _topicList[i]['topicName'],
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.w600),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                        Expanded(
+                          child: Align(
+                            alignment: Alignment.centerRight,
+                            child: Icon(Icons.play_arrow_rounded),
+                          ),
                         ),
                       ],
                     ),
                     Divider(
-                      height: 10,
+                      height: 5,
                       thickness: 1,
                     ),
                   ],
                 ),
+                decoration: BoxDecoration(color: Colors.grey[100]),
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Column(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.only(top: 10, bottom: 20),
-                      child: Row(
+                    Expanded(
+                      flex: 1,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Expanded(
-                            child: Row(
-                              children: [
-                                Expanded(
-                                    flex: 1,
-                                    child: Icon(Icons.fact_check_outlined)),
-                                Expanded(
-                                  flex: 2,
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text('Studied'),
-                                      SizedBox(height: 10),
-                                      Text(
-                                        _topicList[i]['isStudied'],
-                                        style: TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Expanded(
-                            child: Row(
-                              children: [
-                                Expanded(
-                                    flex: 1, child: Icon(Icons.score_outlined)),
-                                Expanded(
-                                  flex: 2,
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text('Test Scrore'),
-                                      SizedBox(height: 10),
-                                      Text(
-                                        _topicList[i]['testScore'] + "%",
-                                        style: TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
+                          Text('Studied'),
+                          SizedBox(height: 10),
+                          Text(
+                            _topicList[i]['isStudied'],
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.w600),
+                          )
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      flex: 1,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text('Test Scrore'),
+                          SizedBox(height: 10),
+                          Text(
+                            _topicList[i]['testScore'] + "%",
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.w600),
                           ),
                         ],
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 10),
-                      child: Row(
+                    Expanded(
+                      flex: 1,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Expanded(
-                            child: Row(
-                              children: [
-                                Expanded(flex: 1, child: Icon(Icons.restore)),
-                                Expanded(
-                                  flex: 2,
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text('Revision'),
-                                      SizedBox(height: 10),
-                                      Text(
-                                        _topicList[i]['revision'],
-                                        style: TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Expanded(
-                            child: Row(
-                              children: [
-                                Expanded(
-                                    flex: 1,
-                                    child: Icon(Icons.more_time_outlined)),
-                                Expanded(
-                                  flex: 2,
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text('Last Studied'),
-                                      SizedBox(height: 10),
-                                      Text(
-                                        _topicList[i]['lastStudied']
-                                            .round()
-                                            .toString(),
-                                        style: TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
+                          Text('Revision'),
+                          SizedBox(height: 10),
+                          Text(
+                            _topicList[i]['revision'],
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.w600),
+                          )
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      flex: 1,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text('Last Studied'),
+                          SizedBox(height: 10),
+                          Text(
+                            _topicList[i]['lastStudied'].round().toString(),
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.w600),
                           )
                         ],
                       ),

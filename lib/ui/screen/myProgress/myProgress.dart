@@ -137,134 +137,128 @@ class _MyProgressState extends State<MyProgress> {
                       ),
                     ),
                   ),
-                  SafeArea(
-                    child: Stack(
-                      children: [
-                        PreferredSize(
-                          preferredSize: Size.fromHeight(70),
-                          child: Container(
-                            child: AppBar(
-                              backgroundColor: Colors.transparent,
-                              elevation: 0,
-                              title: Text('Progress'),
-                              centerTitle: true,
-                            ),
-                            // decoration: BoxDecoration(
-                            //   gradient: LinearGradient(
-                            //     colors: [Colors.amber, Colors.yellow],
-                            //     begin: Alignment.topRight,
-                            //     end: Alignment.bottomLeft,
-                            //   ),
-                            // ),
+                  Stack(
+                    children: [
+                      PreferredSize(
+                        preferredSize: Size.fromHeight(70),
+                        child: Container(
+                          child: AppBar(
+                            backgroundColor: Colors.transparent,
+                            elevation: 0,
+                            title: Text('Progress'),
+                            centerTitle: true,
                           ),
+                          // decoration: BoxDecoration(
+                          //   gradient: LinearGradient(
+                          //     colors: [Colors.amber, Colors.yellow],
+                          //     begin: Alignment.topRight,
+                          //     end: Alignment.bottomLeft,
+                          //   ),
+                          // ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 90),
-                          child: TabBarView(
-                            children:
-                                List.generate(_mySubjectProgress.length, (i) {
-                              return SingleChildScrollView(
-                                child: ListView.builder(
-                                  itemCount: _mySubjectProgress.length,
-                                  shrinkWrap: true,
-                                  primary: false,
-                                  scrollDirection: Axis.vertical,
-                                  itemBuilder: (context, i) {
-                                    double subjectPercent =
-                                        (_mySubjectProgress[i]
-                                                ['userCompletedTopics'] /
-                                            _mySubjectProgress[i]
-                                                ['totalTopics'] *
-                                            100);
-                                    return Padding(
-                                      padding: const EdgeInsets.only(
-                                          top: 8, right: 8, left: 8),
-                                      child: AspectRatio(
-                                        aspectRatio: 4 / 1,
-                                        child: InkWell(
-                                          onTap: () {
-                                            _getUnits(
-                                                _mySubjectProgress[i]
-                                                    ['subjectSno'],
-                                                _mySubjectProgress[i]
-                                                    ['subjectName']);
-                                          },
-                                          child: Card(
-                                            margin: EdgeInsets.only(bottom: 8),
-                                            shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(10)),
-                                            clipBehavior: Clip.antiAlias,
-                                            child: Container(
-                                              padding: EdgeInsets.all(10),
-                                              child: Stack(
-                                                children: [
-                                                  Align(
-                                                    alignment:
-                                                        Alignment.centerLeft,
-                                                    child: Image.asset(
-                                                      AppSlider.cardimage[i],
-                                                      fit: BoxFit.contain,
-                                                      height: 50,
-                                                    ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 90),
+                        child: TabBarView(
+                          children:
+                              List.generate(_mySubjectProgress.length, (i) {
+                            return SingleChildScrollView(
+                              child: ListView.builder(
+                                itemCount: _mySubjectProgress.length,
+                                shrinkWrap: true,
+                                primary: false,
+                                scrollDirection: Axis.vertical,
+                                itemBuilder: (context, i) {
+                                  double subjectPercent = (_mySubjectProgress[i]
+                                          ['userCompletedTopics'] /
+                                      _mySubjectProgress[i]['totalTopics'] *
+                                      100);
+                                  return Padding(
+                                    padding: const EdgeInsets.only(
+                                        top: 8, right: 8, left: 8),
+                                    child: AspectRatio(
+                                      aspectRatio: 4 / 1,
+                                      child: InkWell(
+                                        onTap: () {
+                                          _getUnits(
+                                              _mySubjectProgress[i]
+                                                  ['subjectSno'],
+                                              _mySubjectProgress[i]
+                                                  ['subjectName']);
+                                        },
+                                        child: Card(
+                                          margin: EdgeInsets.only(bottom: 8),
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10)),
+                                          clipBehavior: Clip.antiAlias,
+                                          child: Container(
+                                            padding: EdgeInsets.all(10),
+                                            child: Stack(
+                                              children: [
+                                                Align(
+                                                  alignment:
+                                                      Alignment.centerLeft,
+                                                  child: Image.asset(
+                                                    AppSlider.cardimage[i],
+                                                    fit: BoxFit.contain,
+                                                    height: 50,
                                                   ),
-                                                  Align(
-                                                    alignment: Alignment.center,
-                                                    child: Text(
-                                                      _mySubjectProgress[i]
-                                                          ['subjectName'],
+                                                ),
+                                                Align(
+                                                  alignment: Alignment.center,
+                                                  child: Text(
+                                                    _mySubjectProgress[i]
+                                                        ['subjectName'],
+                                                    style: TextStyle(
+                                                        color: whiteColor),
+                                                  ),
+                                                ),
+                                                Align(
+                                                  alignment:
+                                                      Alignment.centerRight,
+                                                  child:
+                                                      CircularPercentIndicator(
+                                                    radius: 50,
+                                                    lineWidth: 5.0,
+                                                    animation: true,
+                                                    percent:
+                                                        subjectPercent / 100,
+                                                    center: Text(
+                                                      subjectPercent
+                                                              .toStringAsFixed(
+                                                                  0) +
+                                                          "%",
                                                       style: TextStyle(
-                                                          color: whiteColor),
-                                                    ),
-                                                  ),
-                                                  Align(
-                                                    alignment:
-                                                        Alignment.centerRight,
-                                                    child:
-                                                        CircularPercentIndicator(
-                                                      radius: 50,
-                                                      lineWidth: 5.0,
-                                                      animation: true,
-                                                      percent:
-                                                          subjectPercent / 100,
-                                                      center: Text(
-                                                        subjectPercent
-                                                                .toStringAsFixed(
-                                                                    0) +
-                                                            "%",
-                                                        style: TextStyle(
-                                                          color: whiteColor,
-                                                        ),
+                                                        color: whiteColor,
                                                       ),
-                                                      backgroundColor:
-                                                          Color.fromARGB(30,
-                                                              255, 255, 255),
-                                                      circularStrokeCap:
-                                                          CircularStrokeCap
-                                                              .round,
-                                                      progressColor:
-                                                          Colors.white,
                                                     ),
+                                                    backgroundColor:
+                                                        Color.fromARGB(
+                                                            30, 255, 255, 255),
+                                                    circularStrokeCap:
+                                                        CircularStrokeCap.round,
+                                                    progressColor: Colors.white,
                                                   ),
-                                                ],
-                                              ),
-                                              decoration: BoxDecoration(
-                                                gradient:
-                                                    AppSlider.sliderGradient[i],
-                                              ),
+                                                ),
+                                              ],
+                                            ),
+                                            decoration: BoxDecoration(
+                                              gradient:
+                                                  AppSlider.sliderGradient[i],
                                             ),
                                           ),
                                         ),
                                       ),
-                                    );
-                                  },
-                                ),
-                              );
-                            }),
-                          ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            );
+                          }),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ],
               ),
