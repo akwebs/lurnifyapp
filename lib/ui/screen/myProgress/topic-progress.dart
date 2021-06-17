@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:lurnify/config/data.dart';
 import 'package:lurnify/ui/constant/ApiConstant.dart';
 import 'package:lurnify/ui/constant/constant.dart';
+import 'package:lurnify/ui/screen/selfstudy/starttimer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:http/http.dart' as http;
@@ -12,30 +13,34 @@ import 'package:smooth_star_rating/smooth_star_rating.dart';
 class TopicProgress extends StatefulWidget {
   final chapterSno;
   final String cname;
-  TopicProgress(this.chapterSno, this.cname);
+  final List topics;
+  TopicProgress(this.chapterSno, this.cname, this.topics);
   @override
-  _TopicProgressState createState() => _TopicProgressState(chapterSno, cname);
+  _TopicProgressState createState() =>
+      _TopicProgressState(chapterSno, cname, topics);
 }
 
 class _TopicProgressState extends State<TopicProgress> {
   final chapterSno;
   final String cname;
-  _TopicProgressState(this.chapterSno, this.cname);
-  List _topicList = [];
+  final List topics;
+  _TopicProgressState(this.chapterSno, this.cname, this.topics);
+  // List topics = [];
 
   Future _getTopicsByChapter() async {
-    SharedPreferences sp = await SharedPreferences.getInstance();
-    var url = baseUrl +
-        "getTopicProgressByChapter?chapterSno=" +
-        chapterSno.toString() +
-        "&regSno=" +
-        sp.getString("studentSno").toString();
-    print(url);
-    http.Response response = await http.get(
-      Uri.encodeFull(url),
-    );
-    var resbody = jsonDecode(response.body);
-    _topicList = resbody;
+    print(topics);
+    // SharedPreferences sp = await SharedPreferences.getInstance();
+    // var url = baseUrl +
+    //     "getTopicProgressByChapter?chapterSno=" +
+    //     chapterSno.toString() +
+    //     "&regSno=" +
+    //     sp.getString("studentSno").toString();
+    // print(url);
+    // http.Response response = await http.get(
+    //   Uri.encodeFull(url),
+    // );
+    // var resbody = jsonDecode(response.body);
+    // topics = resbody;
   }
 
   @override
@@ -66,7 +71,7 @@ class _TopicProgressState extends State<TopicProgress> {
             body: Container(
               child: SingleChildScrollView(
                 child: ListView.builder(
-                  itemCount: _topicList.length,
+                  itemCount: topics.length,
                   shrinkWrap: true,
                   primary: false,
                   scrollDirection: Axis.vertical,
@@ -120,7 +125,7 @@ class _TopicProgressState extends State<TopicProgress> {
                     children: [
                       Expanded(
                         child: SmoothStarRating(
-                          rating: _topicList[i]['topicRating'],
+                          rating: topics[i]['topicImp'],
                           size: 16,
                           starCount: 5,
                           allowHalfRating: true,
@@ -132,7 +137,7 @@ class _TopicProgressState extends State<TopicProgress> {
                       ),
                       Expanded(
                         child: Text(
-                          _topicList[i]['topicName'],
+                          topics[i]['topicName'],
                           style: TextStyle(
                               fontSize: 16, fontWeight: FontWeight.w600),
                           textAlign: TextAlign.center,
@@ -141,7 +146,22 @@ class _TopicProgressState extends State<TopicProgress> {
                       Expanded(
                         child: Align(
                           alignment: Alignment.centerRight,
-                          child: Icon(Icons.play_arrow_rounded),
+                          child: IconButton(
+                            icon: Icon(Icons.add_circle_outline_rounded),
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => StartTimer(
+                                          topics[i]['courseSno'],
+                                          topics[i]['subjectSno'],
+                                          topics[i]['unitSno'],
+                                          topics[i]['chapterSno'],
+                                          topics[i]['topicSno'],
+                                          topics[i]['subtopic'],
+                                          topics[i]['duration'])));
+                            },
+                          ),
                         ),
                       ),
                     ],
@@ -171,7 +191,7 @@ class _TopicProgressState extends State<TopicProgress> {
                   Expanded(
                     flex: 3,
                     child: Text(
-                      _topicList[i]['subTopic'],
+                      topics[i]['subtopic'],
                       style: TextStyle(
                         fontSize: 12,
                       ),
@@ -192,8 +212,11 @@ class _TopicProgressState extends State<TopicProgress> {
                   Expanded(
                     flex: 1,
                     child: Container(
-                      child:
-                          topicInfo(i, 'Studied', _topicList[i]['isStudied']),
+                      child: topicInfo(
+                        i,
+                        'Studied',
+                        topics[i]['isUserStudied'] == 0 ? "No" : "Yes",
+                      ),
                       decoration: BoxDecoration(
                         border: Border(
                             right: BorderSide(
@@ -205,7 +228,14 @@ class _TopicProgressState extends State<TopicProgress> {
                     flex: 1,
                     child: Container(
                       child: topicInfo(
-                          i, 'Test Score', _topicList[i]['testScore'] + "%"),
+                        i,
+                        'Test Score',
+                        topics[i]['lastTestScore'] == null
+                            ? "0"
+                            : topics[i]['lastTestScore'].toString() == "Nan"
+                                ? "0"
+                                : topics[i]['lastTestScore'].toString() + "%",
+                      ),
                       decoration: BoxDecoration(
                         border: Border(
                             right: BorderSide(
@@ -219,7 +249,9 @@ class _TopicProgressState extends State<TopicProgress> {
                       child: topicInfo(
                         i,
                         'Revision',
-                        _topicList[i]['revision'],
+                        topics[i]['revision'] == null
+                            ? "0"
+                            : topics[i]['revision'].toString(),
                       ),
                       decoration: BoxDecoration(
                         border: Border(
@@ -234,8 +266,10 @@ class _TopicProgressState extends State<TopicProgress> {
                         child: topicInfo(
                             i,
                             'Last Studied',
-                            _topicList[i]['lastStudied'].round().toString() +
-                                ' days ago')),
+                            topics[i]['lastStudied'] == null
+                                ? "Not studied yet"
+                                : topics[i]['lastStudied'].toString() +
+                                    ' days ago')),
                   ),
                 ],
               ),

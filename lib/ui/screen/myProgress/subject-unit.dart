@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:lurnify/config/data.dart';
 import 'package:lurnify/ui/constant/ApiConstant.dart';
 import 'package:lurnify/ui/constant/constant.dart';
-import 'package:lurnify/ui/screen/myProgress/UnitProgress.dart';
+import 'package:lurnify/ui/screen/myProgress/chapter-progress.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -18,28 +18,57 @@ class MyProgress extends StatefulWidget {
 Color _backgroundColor = AppColors.tileIconColors[3];
 
 class _MyProgressState extends State<MyProgress> {
-  List _mySubjectProgress;
+  List result = [];
   Future _getMySubjectProgress() async {
-    SharedPreferences sp = await SharedPreferences.getInstance();
-    String registrationSno = sp.getString("studentSno");
-    String courseSno = sp.getString("courseSno");
-    var url = baseUrl +
-        "getSubjectProgressByCourse?registrationSno=" +
-        registrationSno +
-        "&courseSno=" +
-        courseSno;
-    print(url);
-    http.Response response = await http.get(
-      Uri.encodeFull(url),
-    );
-    var resbody = jsonDecode(response.body);
-    _mySubjectProgress = resbody;
-    print(_mySubjectProgress);
+    try {
+      SharedPreferences sp = await SharedPreferences.getInstance();
+      String registrationSno = sp.getString("studentSno");
+      String courseSno = sp.getString("courseSno");
+      var url = baseUrl +
+          "getSubjectProgressByCourse?registrationSno=" +
+          registrationSno +
+          "&courseSno=" +
+          courseSno;
+      print(url);
+      http.Response response = await http.get(
+        Uri.encodeFull(url),
+      );
+      var resbody = jsonDecode(response.body);
+      List _mySubjectProgress = resbody;
+
+      List<SubjectModel> list = [];
+      _mySubjectProgress.forEach((element) {
+        SubjectModel model = new SubjectModel();
+        model.sno = element['subjectSno'];
+        model.subjectName = element['subjectName'];
+        model.completedTopicByUser = element['completedTopicByUser'];
+        model.totalSubjectTopic = element['totalSubjectTopic'];
+        list.add(model);
+      });
+
+      // convert each item to a string by using JSON encoding
+      final jsonList = list.map((item) => jsonEncode(item)).toList();
+
+      // using toSet - toList strategy
+      final uniqueJsonList = jsonList.toSet().toList();
+
+      // convert each item back to the original form using JSON decoding
+      result = uniqueJsonList.map((item) => jsonDecode(item)).toList();
+
+      result.forEach((el) {
+        var a = _mySubjectProgress
+            .where((element) => element['subjectSno'] == el['sno'])
+            .toList();
+        el['unit'] = a;
+      });
+    } catch (e) {
+      print(e);
+    }
   }
 
   @override
   void initState() {
-    _mySubjectProgress = List();
+    result = [];
     super.initState();
   }
 
@@ -160,18 +189,17 @@ class _MyProgressState extends State<MyProgress> {
                       Padding(
                         padding: const EdgeInsets.only(top: 90),
                         child: TabBarView(
-                          children:
-                              List.generate(_mySubjectProgress.length, (i) {
+                          children: List.generate(result.length, (i) {
                             return SingleChildScrollView(
                               child: ListView.builder(
-                                itemCount: _mySubjectProgress.length,
+                                itemCount: result[i]['unit'].length,
                                 shrinkWrap: true,
                                 primary: false,
                                 scrollDirection: Axis.vertical,
-                                itemBuilder: (context, i) {
-                                  double subjectPercent = (_mySubjectProgress[i]
-                                          ['userCompletedTopics'] /
-                                      _mySubjectProgress[i]['totalTopics'] *
+                                itemBuilder: (context, j) {
+                                  double unitPercent = (result[i]['unit'][j]
+                                          ['completedUnitTopicByUser'] /
+                                      result[i]['unit'][j]['totalUnitTopic'] *
                                       100);
                                   return Padding(
                                     padding: const EdgeInsets.only(
@@ -181,10 +209,8 @@ class _MyProgressState extends State<MyProgress> {
                                       child: InkWell(
                                         onTap: () {
                                           _getUnits(
-                                              _mySubjectProgress[i]
-                                                  ['subjectSno'],
-                                              _mySubjectProgress[i]
-                                                  ['subjectName']);
+                                              result[i]['unit'][j]['unitSno'],
+                                              result[i]['unit'][j]['unitName']);
                                         },
                                         child: Card(
                                           margin: EdgeInsets.only(bottom: 8),
@@ -208,8 +234,8 @@ class _MyProgressState extends State<MyProgress> {
                                                 Align(
                                                   alignment: Alignment.center,
                                                   child: Text(
-                                                    _mySubjectProgress[i]
-                                                        ['subjectName'],
+                                                    result[i]['unit'][j]
+                                                        ['unitName'],
                                                     style: TextStyle(
                                                         color: whiteColor),
                                                   ),
@@ -222,13 +248,14 @@ class _MyProgressState extends State<MyProgress> {
                                                     radius: 50,
                                                     lineWidth: 5.0,
                                                     animation: true,
-                                                    percent:
-                                                        subjectPercent / 100,
+                                                    percent: unitPercent / 100,
                                                     center: Text(
-                                                      subjectPercent
-                                                              .toStringAsFixed(
-                                                                  0) +
-                                                          "%",
+                                                      unitPercent.isNaN
+                                                          ? "0%"
+                                                          : unitPercent
+                                                                  .toStringAsFixed(
+                                                                      0) +
+                                                              "%",
                                                       style: TextStyle(
                                                         color: whiteColor,
                                                       ),
@@ -274,7 +301,7 @@ class _MyProgressState extends State<MyProgress> {
                         gradient: AppSlider.gradient[0],
                         borderRadius: BorderRadius.circular(10),
                         color: Colors.redAccent),
-                    tabs: List.generate(_mySubjectProgress.length, (i) {
+                    tabs: List.generate(result.length, (i) {
                       return new Tab(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -283,14 +310,13 @@ class _MyProgressState extends State<MyProgress> {
                             LinearPercentIndicator(
                               padding: EdgeInsets.all(3),
                               lineHeight: 5,
-                              percent: _mySubjectProgress[i]
-                                      ['userCompletedTopics'] /
-                                  _mySubjectProgress[i]['totalTopics'],
+                              percent: result[i]['completedTopicByUser'] /
+                                  result[i]['totalSubjectTopic'],
                               backgroundColor: Colors.white.withOpacity(0.4),
                               progressColor: Colors.deepPurpleAccent,
                             ),
                             Text(
-                              _mySubjectProgress[i]['subjectName'],
+                              result[i]['subjectName'],
                             ),
                           ],
                         ),
@@ -319,7 +345,6 @@ class _MyProgressState extends State<MyProgress> {
   }
 }
 
-
 // ListView.builder(
 // itemCount: _mySubjectProgress.length,
 // shrinkWrap: true,
@@ -336,7 +361,6 @@ class _MyProgressState extends State<MyProgress> {
 //       child: Text(_mySubjectProgress[i]['subjectName']));
 // },
 // ),
-
 
 //Padding(
 //   padding: const EdgeInsets.all(8.0),
@@ -386,3 +410,41 @@ class _MyProgressState extends State<MyProgress> {
 //     ),
 //   ),
 // ),
+
+class SubjectModel {
+  String sno;
+  String subjectName;
+  int totalSubjectTopic;
+  int completedTopicByUser;
+  List<UnitModel> units;
+
+  SubjectModel(
+      {this.sno,
+      this.subjectName,
+      this.units,
+      this.completedTopicByUser,
+      this.totalSubjectTopic});
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['sno'] = this.sno;
+    data['subjectName'] = this.subjectName;
+    data['totalSubjectTopic'] = this.totalSubjectTopic;
+    data['completedTopicByUser'] = this.completedTopicByUser;
+    return data;
+  }
+
+  SubjectModel.fromJson(Map<String, dynamic> json) {
+    sno = json['sno'];
+    subjectName = json['subjectName'];
+    totalSubjectTopic = json['totalSubjectTopic'];
+    completedTopicByUser = json['completedTopicByUser'];
+  }
+}
+
+class UnitModel {
+  String sno;
+  String unitName;
+
+  UnitModel({this.sno, this.unitName});
+}

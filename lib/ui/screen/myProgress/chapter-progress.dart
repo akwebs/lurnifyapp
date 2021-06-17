@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:lurnify/config/data.dart';
 import 'package:lurnify/ui/constant/constant.dart';
-import 'package:lurnify/ui/screen/myProgress/ChapterProgress.dart';
+import 'package:lurnify/ui/screen/myProgress/topic-progress.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
@@ -23,29 +23,52 @@ class _UnitProgressState extends State<UnitProgress> {
   final sno;
   final String sname;
   _UnitProgressState(this.sno, this.sname);
-  List _myUnitProgress;
+  List result = [];
 
   Future _getMyUnitProgress() async {
     SharedPreferences sp = await SharedPreferences.getInstance();
     String registrationSno = sp.getString("studentSno");
     var url = baseUrl +
-        "getUnitProgressBySubject?registrationSno=" +
+        "getChapterProgressByUnit?registrationSno=" +
         registrationSno +
-        "&subjectSno=" +
+        "&unitSno=" +
         sno.toString();
     print(url);
     http.Response response = await http.get(
       Uri.encodeFull(url),
     );
     var resbody = jsonDecode(response.body);
-    print(resbody);
-    _myUnitProgress = resbody;
-    print(_myUnitProgress);
+    List _myUnitProgress = resbody;
+
+    List<ChapterModel> list = [];
+    _myUnitProgress.forEach((element) {
+      ChapterModel model = new ChapterModel();
+      model.sno = element['chapterSno'];
+      model.chapterName = element['chapterName'];
+      model.completedTopicByUser = element['completedTopicByUser'];
+      model.totalChapterTopic = element['totalChapterTopic'];
+      list.add(model);
+    });
+
+    // convert each item to a string by using JSON encoding
+    final jsonList = list.map((item) => jsonEncode(item)).toList();
+
+    // using toSet - toList strategy
+    final uniqueJsonList = jsonList.toSet().toList();
+
+    // convert each item back to the original form using JSON decoding
+    result = uniqueJsonList.map((item) => jsonDecode(item)).toList();
+
+    result.forEach((el) {
+      var a = _myUnitProgress
+          .where((element) => element['chapterSno'] == el['sno'])
+          .toList();
+      el['topic'] = a;
+    });
   }
 
   @override
   void initState() {
-    _myUnitProgress = List();
     super.initState();
   }
 
@@ -157,17 +180,16 @@ class _UnitProgressState extends State<UnitProgress> {
                       padding: const EdgeInsets.only(top: 90),
                       child: SingleChildScrollView(
                         child: ListView.builder(
-                          itemCount: _myUnitProgress.length,
+                          itemCount: result.length,
                           shrinkWrap: true,
                           primary: false,
                           scrollDirection: Axis.vertical,
                           itemBuilder: (context, i) {
-                            double percent = _myUnitProgress[i]
-                                    ['userCompletedTopics'] /
-                                _myUnitProgress[i]['totalTopics'];
-                            double completedUnit = (_myUnitProgress[i]
-                                    ['userCompletedTopics'] /
-                                _myUnitProgress[i]['totalTopics'] *
+                            double percent = result[i]['completedTopicByUser'] /
+                                result[i]['totalChapterTopic'];
+                            double completedUnit = (result[i]
+                                    ['completedTopicByUser'] /
+                                result[i]['totalChapterTopic'] *
                                 100);
                             return Padding(
                               padding: const EdgeInsets.only(
@@ -176,8 +198,10 @@ class _UnitProgressState extends State<UnitProgress> {
                                 aspectRatio: 4 / 1,
                                 child: InkWell(
                                   onTap: () {
-                                    _getChapters(_myUnitProgress[i]['unitSno'],
-                                        _myUnitProgress[i]['unitName']);
+                                    _getChapters(
+                                        result[i]['chapterSno'],
+                                        result[i]['chapterName'],
+                                        result[i]['topic']);
                                   },
                                   child: Card(
                                     margin: EdgeInsets.only(bottom: 8),
@@ -200,7 +224,7 @@ class _UnitProgressState extends State<UnitProgress> {
                                           Align(
                                             alignment: Alignment.center,
                                             child: Text(
-                                              _myUnitProgress[i]['unitName'],
+                                              result[i]['chapterName'],
                                               style:
                                                   TextStyle(color: whiteColor),
                                             ),
@@ -271,9 +295,40 @@ class _UnitProgressState extends State<UnitProgress> {
     return AppSlider.sliderGradient[1];
   }
 
-  _getChapters(sno, uname) {
+  _getChapters(sno, uname, topic) {
     Navigator.of(context).push(MaterialPageRoute(
-      builder: (context) => ChapterProgress(sno, uname),
+      builder: (context) => TopicProgress(sno, uname, topic),
     ));
+  }
+}
+
+class ChapterModel {
+  String sno;
+  String chapterName;
+  List topics;
+  int totalChapterTopic;
+  int completedTopicByUser;
+
+  ChapterModel(
+      {this.sno,
+      this.chapterName,
+      this.topics,
+      this.completedTopicByUser,
+      this.totalChapterTopic});
+
+  ChapterModel.fromJson(Map<String, dynamic> json) {
+    sno = json['sno'];
+    chapterName = json['chapterName'];
+    totalChapterTopic = json['totalChapterTopic'];
+    completedTopicByUser = json['completedTopicByUser'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['sno'] = this.sno;
+    data['chapterName'] = this.chapterName;
+    data['totalChapterTopic'] = this.totalChapterTopic;
+    data['completedTopicByUser'] = this.completedTopicByUser;
+    return data;
   }
 }

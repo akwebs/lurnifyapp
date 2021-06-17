@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lurnify/config/data.dart';
 import 'package:lurnify/ui/screen/dareToDo/dareToDo.dart';
 import 'package:lurnify/ui/screen/myCourseContain/NewCourseContent.dart';
-import 'package:lurnify/ui/screen/myProgress/myProgress.dart';
+import 'package:lurnify/ui/screen/myProgress/subject-unit.dart';
 import 'package:lurnify/ui/screen/selfstudy/selfstudy.dart';
 import 'package:lurnify/ui/screen/revisionZone/myRevision.dart';
 import 'package:lurnify/ui/screen/marketPlace/week-month.dart';
