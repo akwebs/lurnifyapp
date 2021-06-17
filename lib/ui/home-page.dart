@@ -389,53 +389,62 @@ class _SpinnerClassState extends State<SpinnerClass> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              child: GestureDetector(
-                onTap: () {
-                  try {
-                    print(_selected);
-                    var _random = new Random();
-                    setState(() {
-                      _selected = _random.nextInt(6);
-                      print(_selected);
-                    });
-                  } catch (e) {
-                    print(e);
-                  }
-                },
-                child: FortuneWheel(
-                  indicators: [
-                    FortuneIndicator(
-                        child: Image.asset(
-                          'assets/icons/spineer.png',
-                          fit: BoxFit.contain,
-                          height: 50,
-                        ),
-                        alignment: Alignment.center)
-                  ],
-                  physics: CircularPanPhysics(
-                    duration: Duration(seconds: 1),
-                    curve: Curves.decelerate,
-                  ),
-                  duration: Duration(seconds: 10),
-                  animateFirst: false,
-                  selected: _selected,
-                  onAnimationEnd: () {
-                    _updateDailyTask();
-                  },
-                  items: List.generate(
-                    _spinData.length,
-                    (index) {
-                      return FortuneItem(
-                          style: FortuneItemStyle(
-                              color: AppColors.tileIconColors[index],
-                              textStyle: TextStyle(
-                                color: Colors.white,
+              child: Column(
+                children: [
+                  Container(
+                    padding: EdgeInsets.all(20),
+                    height: 300.0,
+                    color: Colors.transparent,
+                    child: GestureDetector(
+                      onTap: () {
+                        try {
+                          print(_selected);
+                          var _random = new Random();
+                          setState(() {
+                            _selected = _random.nextInt(6);
+                            print(_selected);
+                          });
+                        } catch (e) {
+                          print(e);
+                        }
+                      },
+                      child: FortuneWheel(
+                        indicators: [
+                          FortuneIndicator(
+                              child: Image.asset(
+                                'assets/icons/spineer.png',
+                                fit: BoxFit.contain,
+                                height: 50,
                               ),
-                              textAlign: TextAlign.center),
-                          child: Text(_spinData[index]['taskName']));
-                    },
+                              alignment: Alignment.center)
+                        ],
+                        physics: CircularPanPhysics(
+                          duration: Duration(seconds: 1),
+                          curve: Curves.decelerate,
+                        ),
+                        duration: Duration(seconds: 10),
+                        animateFirst: false,
+                        selected: _selected,
+                        onAnimationEnd: () {
+                          _updateDailyTask();
+                        },
+                        items: List.generate(
+                          _spinData.length,
+                          (index) {
+                            return FortuneItem(
+                                style: FortuneItemStyle(
+                                    color: AppColors.tileIconColors[index],
+                                    textStyle: TextStyle(
+                                      color: Colors.white,
+                                    ),
+                                    textAlign: TextAlign.center),
+                                child: Text(_spinData[index]['taskName']));
+                          },
+                        ),
+                      ),
+                    ),
                   ),
-                ),
+                ],
               ),
             ),
           ],

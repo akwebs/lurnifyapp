@@ -1,7 +1,9 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:lurnify/config/data.dart';
 import 'package:lurnify/ui/constant/ApiConstant.dart';
+import 'package:lurnify/ui/constant/constant.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:http/http.dart' as http;
@@ -96,182 +98,184 @@ class _TopicProgressState extends State<TopicProgress> {
     );
   }
 
-  // Widget topicCard(int i) {
-  //   return Container(
-  //     child: ExpansionTile(
-  //       title: Text(_topicList[i]['topicName']),
-  //       leading: SmoothStarRating(
-  //         rating: _topicList[i]['topicRating'],
-  //         size: 20,
-  //         starCount: 5,
-  //         allowHalfRating: true,
-  //         color: Colors.amber,
-  //         isReadOnly: true,
-  //         // defaultIconData: Icons.blur_off,
-  //         borderColor: Colors.amber,
-  //       ),
-  //       children: [
-  //         Align(),
-  //       ],
-  //     ),
-  //   );
-  // }
-
-// _topicList[i]['topicName']
-//  _topicList[i]['subTopic']
-// _topicList[i]['isStudied']
-// _topicList[i]['testScore'] + "%"
-// _topicList[i]['revision']
-// _topicList[i]['lastStudied'].round().toString()
-
   Widget cards(int i) {
     return Padding(
       padding: EdgeInsets.all(8),
-      child: AspectRatio(
-        aspectRatio: 4 / 2,
-        child: Card(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-          clipBehavior: Clip.antiAlias,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Container(
-                padding: EdgeInsets.all(10),
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Expanded(
-                          child: SmoothStarRating(
-                            rating: _topicList[i]['topicRating'],
-                            size: 16,
-                            starCount: 5,
-                            allowHalfRating: true,
-                            color: Colors.amber,
-                            isReadOnly: true,
-                            // defaultIconData: Icons.blur_off,
-                            borderColor: Colors.amber,
-                          ),
+      child: Card(
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(5),
+            side: BorderSide(width: 1, color: firstColor)),
+        clipBehavior: Clip.antiAlias,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Container(
+              padding: EdgeInsets.all(5),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: SmoothStarRating(
+                          rating: _topicList[i]['topicRating'],
+                          size: 16,
+                          starCount: 5,
+                          allowHalfRating: true,
+                          color: Colors.amber,
+                          isReadOnly: true,
+                          // defaultIconData: Icons.blur_off,
+                          borderColor: Colors.amber,
                         ),
-                        Expanded(
-                          child: Text(
-                            _topicList[i]['topicName'],
-                            style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.w600),
-                            textAlign: TextAlign.center,
-                          ),
+                      ),
+                      Expanded(
+                        child: Text(
+                          _topicList[i]['topicName'],
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.w600),
+                          textAlign: TextAlign.center,
                         ),
-                        Expanded(
-                          child: Align(
-                            alignment: Alignment.centerRight,
-                            child: Icon(Icons.play_arrow_rounded),
-                          ),
+                      ),
+                      Expanded(
+                        child: Align(
+                          alignment: Alignment.centerRight,
+                          child: Icon(Icons.play_arrow_rounded),
                         ),
-                      ],
-                    ),
-                    Divider(
-                      height: 5,
-                      thickness: 1,
-                    ),
-                  ],
-                ),
-                decoration: BoxDecoration(color: Colors.grey[100]),
+                      ),
+                    ],
+                  ),
+                ],
               ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Expanded(
-                      flex: 1,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text('Studied'),
-                          SizedBox(height: 10),
-                          Text(
-                            _topicList[i]['isStudied'],
-                            style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.w600),
-                          )
-                        ],
+              decoration: BoxDecoration(
+                  color: _randomColor(i),
+                  border: Border(
+                      bottom: BorderSide(width: 0.5, color: firstColor))),
+            ),
+            Padding(
+              padding: EdgeInsets.all(8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    flex: 1,
+                    child: Text(
+                      'Sub Topics :',
+                      style: TextStyle(
+                        fontSize: 12,
                       ),
                     ),
-                    Expanded(
-                      flex: 1,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text('Test Scrore'),
-                          SizedBox(height: 10),
-                          Text(
-                            _topicList[i]['testScore'] + "%",
-                            style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.w600),
-                          ),
-                        ],
+                  ),
+                  Expanded(
+                    flex: 3,
+                    child: Text(
+                      _topicList[i]['subTopic'],
+                      style: TextStyle(
+                        fontSize: 12,
                       ),
                     ),
-                    Expanded(
-                      flex: 1,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text('Revision'),
-                          SizedBox(height: 10),
-                          Text(
-                            _topicList[i]['revision'],
-                            style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.w600),
-                          )
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      flex: 1,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text('Last Studied'),
-                          SizedBox(height: 10),
-                          Text(
-                            _topicList[i]['lastStudied'].round().toString(),
-                            style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.w600),
-                          )
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-              Container(
-                padding: EdgeInsets.all(10),
-                child: Column(
-                  children: [
-                    Divider(
-                      height: 10,
-                      thickness: 1,
+            ),
+            Divider(
+              height: 5,
+              thickness: 1,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Expanded(
+                    flex: 1,
+                    child: Container(
+                      child:
+                          topicInfo(i, 'Studied', _topicList[i]['isStudied']),
+                      decoration: BoxDecoration(
+                        border: Border(
+                            right: BorderSide(
+                                width: 0.5, color: Colors.grey[500])),
+                      ),
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Text('Start Study'),
-                        Icon(Icons.arrow_forward_ios, size: 16),
-                      ],
+                  ),
+                  Expanded(
+                    flex: 1,
+                    child: Container(
+                      child: topicInfo(
+                          i, 'Test Score', _topicList[i]['testScore'] + "%"),
+                      decoration: BoxDecoration(
+                        border: Border(
+                            right: BorderSide(
+                                width: 0.5, color: Colors.grey[500])),
+                      ),
                     ),
-                  ],
-                ),
+                  ),
+                  Expanded(
+                    flex: 1,
+                    child: Container(
+                      child: topicInfo(
+                        i,
+                        'Revision',
+                        _topicList[i]['revision'],
+                      ),
+                      decoration: BoxDecoration(
+                        border: Border(
+                            right: BorderSide(
+                                width: 0.5, color: Colors.grey[500])),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    flex: 1,
+                    child: Container(
+                        child: topicInfo(
+                            i,
+                            'Last Studied',
+                            _topicList[i]['lastStudied'].round().toString() +
+                                ' days ago')),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
   }
+}
+
+Column topicInfo(int i, String heading, String detail) {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.center,
+    children: [
+      Text(
+        heading,
+        style: TextStyle(
+          fontSize: 12,
+        ),
+      ),
+      SizedBox(height: 10),
+      Text(
+        detail,
+        style: TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    ],
+  );
+}
+
+Color _randomColor(int i) {
+  if (i % 3 == 0) {
+    return AppColors.tileColors[3];
+  } else if (i % 3 == 1) {
+    return AppColors.tileColors[2];
+  } else if (i % 3 == 2) {
+    return AppColors.tileColors[1];
+  }
+  return AppColors.tileColors[0];
 }

@@ -4,8 +4,7 @@ import 'package:lurnify/ui/screen/dareToDo/dareToDo.dart';
 import 'package:lurnify/ui/screen/myCourseContain/NewCourseContent.dart';
 import 'package:lurnify/ui/screen/myProgress/myProgress.dart';
 import 'package:lurnify/ui/screen/selfstudy/selfstudy.dart';
-import 'package:lurnify/ui/screen/myProgress/CourseProress.dart';
-import 'package:lurnify/ui/screen/revisionZone/RevisionZoneHome.dart';
+import 'package:lurnify/ui/screen/revisionZone/myRevision.dart';
 import 'package:lurnify/ui/screen/marketPlace/week-month.dart';
 
 import '../../ui/screen/marketPlace/purchased-item.dart';
