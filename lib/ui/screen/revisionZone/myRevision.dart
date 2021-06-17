@@ -34,7 +34,9 @@ class _RevisionZoneState extends State<RevisionZone> {
     '60 Days',
     '90 Days',
   ];
+  List<bool> _isSelected = List.generate(rDays.length, (i) => false);
   int _currentIndex = 0;
+
   void onTabTapped(int index) {
     setState(() {
       _currentIndex = index;
@@ -162,7 +164,13 @@ class _RevisionZoneState extends State<RevisionZone> {
                           padding: EdgeInsets.symmetric(vertical: 14),
                           color: firstColor,
                           textColor: whiteColor,
-                          onPressed: () {},
+                          onPressed: () {
+                            setState(() {
+                              _isSelected[i] = !_isSelected[i];
+                              print(_isSelected[i]);
+                              print(rDays[i]);
+                            });
+                          },
                           child: Text(rDays[i]),
                         ),
                       ),
