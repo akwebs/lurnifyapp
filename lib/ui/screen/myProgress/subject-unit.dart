@@ -294,13 +294,13 @@ class _MyProgressState extends State<MyProgress> {
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: TabBar(
-                    labelColor: Colors.white,
+                    // labelColor: Colors.white,
                     unselectedLabelColor: Colors.deepPurpleAccent,
                     indicatorSize: TabBarIndicatorSize.tab,
-                    indicator: BoxDecoration(
-                        gradient: AppSlider.gradient[0],
-                        borderRadius: BorderRadius.circular(10),
-                        color: Colors.redAccent),
+                    // indicator: BoxDecoration(
+                    //     gradient: AppSlider.gradient[0],
+                    //     borderRadius: BorderRadius.circular(10),
+                    //     color: Colors.redAccent),
                     tabs: List.generate(result.length, (i) {
                       return new Tab(
                         child: Column(
@@ -312,7 +312,7 @@ class _MyProgressState extends State<MyProgress> {
                               lineHeight: 5,
                               percent: result[i]['completedTopicByUser'] /
                                   result[i]['totalSubjectTopic'],
-                              backgroundColor: Colors.white.withOpacity(0.4),
+                              backgroundColor: Colors.black.withOpacity(0.4),
                               progressColor: Colors.deepPurpleAccent,
                             ),
                             Text(

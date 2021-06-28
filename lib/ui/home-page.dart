@@ -4,8 +4,9 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
 import 'package:lurnify/config/data.dart';
-import 'package:lurnify/ui/constant/constant.dart';
+import 'package:lurnify/ui/screen/dareToDo/dareToDo.dart';
 import 'package:lurnify/ui/screen/selfstudy/recent.dart';
+import 'package:lurnify/ui/screen/userProfile/user-profile.dart';
 import 'package:lurnify/widgets/CustomDrawer.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -94,6 +95,11 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       _currentIndex = index;
     });
+    if (index == 4) {
+      Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => UserProfile(),
+      ));
+    }
   }
 
   static List pageKey = [
@@ -234,6 +240,10 @@ class _HomePageState extends State<HomePage> {
                 BottomNavigationBarItem(
                   icon: Icon(Icons.search),
                   label: 'Search',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.group),
+                  label: 'Group',
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(Icons.person),

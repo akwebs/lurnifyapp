@@ -33,7 +33,7 @@ dependencies:
   intl: ^0.16.1
   http: ^0.12.1
   awesome_dialog: ^1.2.1
-  animated_text_kit: 2.1.0
+  animated_text_kit: ^2.1.0
   audioplayers: ^0.15.1
   material_switch: ^0.0.8
   analog_clock: ^0.0.1

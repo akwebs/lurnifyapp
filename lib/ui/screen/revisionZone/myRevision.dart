@@ -17,16 +17,16 @@ class RevisionZone extends StatefulWidget {
 Color _backgroundColor = AppColors.tileIconColors[3];
 
 class _RevisionZoneState extends State<RevisionZone> {
-  List<DropdownMenuItem<String>> _days = [];
-  List<DropdownMenuItem<String>> _topicImp = [];
-  List<DropdownMenuItem<String>> _performance = [];
-  List<DropdownMenuItem<String>> _subjectItem = [];
+  // List<DropdownMenuItem<String>> _days = [];
+  // List<DropdownMenuItem<String>> _topicImp = [];
+  // List<DropdownMenuItem<String>> _performance = [];
+  // List<DropdownMenuItem<String>> _subjectItem = [];
   var data;
-
-  String _selectedDay = "0";
-  String _selectedTopicImp = "0";
-  String _selectedPerformance = "0";
-  String _selectedSubjectSno = "0";
+  List result = [];
+  // String _selectedDay = "0";
+  // String _selectedTopicImp = "0";
+  // String _selectedPerformance = "0";
+  // String _selectedSubjectSno = "0";
   List _topics = [];
   List _subjects = [];
   static List rDays = [
@@ -35,13 +35,8 @@ class _RevisionZoneState extends State<RevisionZone> {
     '90 Days',
   ];
   List<bool> _isSelected = List.generate(rDays.length, (i) => false);
-  int _currentIndex = 0;
-
-  void onTabTapped(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
-  }
+  String _selectedDateRange = "90 Days";
+  int _selectedSubjectIndex = 0;
 
   void handleClick(String value) {
     switch (value) {
@@ -52,98 +47,55 @@ class _RevisionZoneState extends State<RevisionZone> {
     }
   }
 
-  Future _getSubjects() async {
-    _subjects = [];
-    _getHomePageData();
+  Future _getRevisionZone() async {
     SharedPreferences sp = await SharedPreferences.getInstance();
-    var url =
-        baseUrl + "getSubjectsByCourse?courseSno=" + sp.getString("courseSno");
-    http.Response response = await http.get(
+    var url = baseUrl +
+        "getRevisionZone?days=" +
+        _selectedDateRange +
+        "&regSno=" +
+        sp.getString("studentSno");
+    print(url);
+    http.Response response = await http.post(
       Uri.encodeFull(url),
     );
-    var resbody = jsonDecode(response.body);
-    print(resbody);
-    _subjects = resbody;
-    _subjectItem.add(DropdownMenuItem(
-      child: Text("Please Select Subject"),
-      value: "0",
-    ));
-    for (int i = 0; i < _subjects.length; i++) {
-      _subjectItem.add(DropdownMenuItem(
-        child: Text(_subjects[i]['subjectName']),
-        value: _subjects[i]['sno'].toString(),
-      ));
-    }
-  }
-
-  Future _getHomePageData() async {
-    _days = [];
-    _topicImp = [];
-    _performance = [];
-    setState(() {
-      _days.add(DropdownMenuItem(
-        child: Text("Please Select Date Range "),
-        value: "0",
-      ));
-      _days.add(DropdownMenuItem(
-        child: Text("1 - 2 Months "),
-        value: "1",
-      ));
-      _days.add(DropdownMenuItem(
-        child: Text("2 - 3 Months"),
-        value: "2",
-      ));
-      _days.add(DropdownMenuItem(
-        child: Text("Older than 3 Months"),
-        value: "3",
-      ));
-
-      _topicImp.add(DropdownMenuItem(
-        child: Text("Please Select Topic Importance"),
-        value: "0",
-      ));
-      _topicImp.add(DropdownMenuItem(
-        child: Text("4-5"),
-        value: "1",
-      ));
-      _topicImp.add(DropdownMenuItem(
-        child: Text("3-4"),
-        value: "2",
-      ));
-      _topicImp.add(DropdownMenuItem(
-        child: Text("3 and below"),
-        value: "3",
-      ));
-
-      _performance.add(DropdownMenuItem(
-        child: Text("Please Select Test Performance"),
-        value: "0",
-      ));
-      _performance.add(DropdownMenuItem(
-        child: Text("Medium"),
-        value: "1",
-      ));
-      _performance.add(DropdownMenuItem(
-        child: Text("High"),
-        value: "2",
-      ));
-      _performance.add(DropdownMenuItem(
-        child: Text("Top"),
-        value: "3",
-      ));
+    List resbody = jsonDecode(response.body);
+    // print(resbody);
+    List<RevisionModel> list = [];
+    resbody.forEach((element) {
+      RevisionModel model = new RevisionModel();
+      model.subjectSno = element['subjectSno'];
+      model.subjectName = element['subjectName'];
+      list.add(model);
     });
+    // convert each item to a string by using JSON encoding
+    final jsonList = list.map((item) => jsonEncode(item)).toList();
+
+    // using toSet - toList strategy
+    final uniqueJsonList = jsonList.toSet().toList();
+
+    // convert each item back to the original form using JSON decoding
+    result = uniqueJsonList.map((item) => jsonDecode(item)).toList();
+    print(result);
+    result.forEach((el) {
+      var a = resbody
+          .where((element) => element['subjectSno'] == el['subjectSno'])
+          .toList();
+      el['topic'] = a;
+    });
+
+    print(result);
   }
 
   @override
   void initState() {
-    data = _getSubjects();
+    // data = _getRevisionZone();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: data,
+      future: _getRevisionZone(),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           return Scaffold(
@@ -167,8 +119,8 @@ class _RevisionZoneState extends State<RevisionZone> {
                           onPressed: () {
                             setState(() {
                               _isSelected[i] = !_isSelected[i];
-                              print(_isSelected[i]);
-                              print(rDays[i]);
+                              _selectedDateRange = rDays[i];
+                              _getRevisionZone();
                             });
                           },
                           child: Text(rDays[i]),
@@ -199,125 +151,37 @@ class _RevisionZoneState extends State<RevisionZone> {
                 padding: const EdgeInsets.all(10),
                 child: Column(
                   children: [
-                    // DropdownButtonHideUnderline(
-                    //   child: DropdownButton(
-                    //     iconSize: 40,
-                    //     items: _subjectItem,
-                    //     isExpanded: true,
-                    //     value: _selectedSubjectSno,
-                    //     style: TextStyle(
-                    //       fontWeight: FontWeight.w800,
-                    //       color: Colors.black,
-                    //       fontSize: 16,
-                    //     ),
-                    //     onChanged: (value) {
-                    //       print(value);
-                    //       setState(() {
-                    //         _selectedSubjectSno = value;
-                    //       });
-                    //     },
-                    //   ),
-                    // ),
-                    // DropdownButtonHideUnderline(
-                    //   child: DropdownButton(
-                    //     iconSize: 40,
-                    //     items: _days,
-                    //     isExpanded: true,
-                    //     value: _selectedDay,
-                    //     style: TextStyle(
-                    //       fontWeight: FontWeight.w800,
-                    //       color: Colors.black,
-                    //       fontSize: 16,
-                    //     ),
-                    //     onChanged: (value) {
-                    //       print(value);
-                    //       setState(() {
-                    //         _selectedDay = value;
-                    //       });
-                    //     },
-                    //   ),
-                    // ),
-                    // DropdownButtonHideUnderline(
-                    //   child: DropdownButton(
-                    //     iconSize: 40,
-                    //     items: _topicImp,
-                    //     isExpanded: true,
-                    //     value: _selectedTopicImp,
-                    //     style: TextStyle(
-                    //       fontWeight: FontWeight.w800,
-                    //       color: Colors.black,
-                    //       fontSize: 16,
-                    //     ),
-                    //     onChanged: (value) {
-                    //       print(value);
-                    //       setState(() {
-                    //         _selectedTopicImp = value;
-                    //       });
-                    //     },
-                    //   ),
-                    // ),
-                    // DropdownButtonHideUnderline(
-                    //   child: DropdownButton(
-                    //     iconSize: 40,
-                    //     items: _performance,
-                    //     isExpanded: true,
-                    //     value: _selectedPerformance,
-                    //     style: TextStyle(
-                    //       fontWeight: FontWeight.w800,
-                    //       color: Colors.black,
-                    //       fontSize: 16,
-                    //     ),
-                    //     onChanged: (value) {
-                    //       print(value);
-                    //       setState(() {
-                    //         _selectedPerformance = value;
-                    //       });
-                    //     },
-                    //   ),
-                    // ),
-                    // SizedBox(
-                    //   height: 20,
-                    // ),
-                    // Row(
-                    //   children: [
-                    //     Expanded(
-                    //       child: RaisedButton(
-                    //         shape: RoundedRectangleBorder(
-                    //             borderRadius: BorderRadius.circular(10)),
-                    //         child: Text("Search"),
-                    //         onPressed: () {
-                    //           _search();
-                    //         },
-                    //       ),
-                    //     )
-                    //   ],
-                    // ),
-                    _topics.isEmpty
-                        ? Container(
-                            child: Center(
-                              child: Text(
-                                  'Please Select Options to Get Topics to Revise'),
-                            ),
-                          )
-                        : ListView.builder(
-                            itemCount: _topics.length,
-                            shrinkWrap: true,
-                            primary: false,
-                            scrollDirection: Axis.vertical,
-                            itemBuilder: (context, i) {
-                              return Padding(
-                                padding: const EdgeInsets.only(bottom: 10),
-                                child: cards(i),
-                              );
-                            },
-                          )
+                    result.isEmpty
+                        ? Container()
+                        : result[_selectedSubjectIndex]['topic'].isEmpty
+                            ? Container(
+                                child: Center(
+                                  child: Text(
+                                      'Please Select Options to Get Topics to Revise'),
+                                ),
+                              )
+                            : ListView.builder(
+                                itemCount: result[_selectedSubjectIndex]
+                                        ['topic']
+                                    .length,
+                                shrinkWrap: true,
+                                primary: false,
+                                scrollDirection: Axis.vertical,
+                                itemBuilder: (context, i) {
+                                  return Padding(
+                                    padding: const EdgeInsets.only(bottom: 10),
+                                    child: cards(i,
+                                        result[_selectedSubjectIndex]['topic']),
+                                  );
+                                },
+                              )
                   ],
                 ),
               ),
             ),
             floatingActionButton: FloatingActionButton(
               onPressed: () {
-                _search();
+                // _search();
               },
               child: Icon(
                 Icons.search,
@@ -325,7 +189,7 @@ class _RevisionZoneState extends State<RevisionZone> {
               ),
             ),
             bottomNavigationBar: Row(
-              children: List.generate(_subjects.length, (i) {
+              children: List.generate(result.length, (i) {
                 return new Expanded(
                   child: RaisedButton(
                     color: firstColor,
@@ -334,7 +198,7 @@ class _RevisionZoneState extends State<RevisionZone> {
                         borderRadius: BorderRadius.circular(0)),
                     padding: EdgeInsets.symmetric(vertical: 18),
                     onPressed: () {},
-                    child: Text(_subjects[i]['subjectName']),
+                    child: Text(result[i]['subjectName']),
                   ),
                 );
               }),
@@ -351,7 +215,10 @@ class _RevisionZoneState extends State<RevisionZone> {
     );
   }
 
-  Widget cards(int i) {
+  Widget cards(int i, List topics) {
+    int days = DateTime.now()
+        .difference(DateTime.parse(topics[i]['lastStudied']))
+        .inDays;
     return Card(
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(5),
@@ -372,7 +239,7 @@ class _RevisionZoneState extends State<RevisionZone> {
                   children: [
                     Expanded(
                       child: SmoothStarRating(
-                        rating: _topics[i]['topicRating'],
+                        rating: topics[i]['topicImp'],
                         size: 16,
                         starCount: 5,
                         allowHalfRating: true,
@@ -384,7 +251,7 @@ class _RevisionZoneState extends State<RevisionZone> {
                     ),
                     Expanded(
                       child: Text(
-                        _topics[i]['topicName'],
+                        topics[i]['topicName'],
                         style: TextStyle(
                             fontSize: 14, fontWeight: FontWeight.w600),
                         textAlign: TextAlign.center,
@@ -423,7 +290,7 @@ class _RevisionZoneState extends State<RevisionZone> {
                 Expanded(
                   flex: 3,
                   child: Text(
-                    'Path > from > Course > to > Chapter',
+                    '${topics[i]['subjectName']} > ${topics[i]['unitName']} > ${topics[i]['chapterName']} ',
                     style: TextStyle(
                       fontSize: 12,
                     ),
@@ -450,7 +317,7 @@ class _RevisionZoneState extends State<RevisionZone> {
                 Expanded(
                   flex: 3,
                   child: Text(
-                    _topics[i]['subTopic'],
+                    topics[i]['subTopic'],
                     style: TextStyle(
                       fontSize: 12,
                     ),
@@ -472,7 +339,8 @@ class _RevisionZoneState extends State<RevisionZone> {
                 Expanded(
                   flex: 1,
                   child: Container(
-                    child: topicInfo(i, 'Studied', _topics[i]['isStudied']),
+                    child: topicInfo(i, 'Studied',
+                        topics[i]['isUserStudied'] == 1 ? "Yes" : "No"),
                     decoration: BoxDecoration(
                       border: Border(
                           right:
@@ -486,7 +354,7 @@ class _RevisionZoneState extends State<RevisionZone> {
                     child: topicInfo(
                       i,
                       'Test Score',
-                      _topics[i]['testScore'] + "%",
+                      topics[i]['lastTestScore'].toString() + "%",
                     ),
                     decoration: BoxDecoration(
                       border: Border(
@@ -498,7 +366,8 @@ class _RevisionZoneState extends State<RevisionZone> {
                 Expanded(
                   flex: 1,
                   child: Container(
-                    child: topicInfo(i, 'Revision', _topics[i]['revision']),
+                    child: topicInfo(
+                        i, 'Revision', topics[i]['revision'].toString()),
                     decoration: BoxDecoration(
                       border: Border(
                           right:
@@ -510,10 +379,7 @@ class _RevisionZoneState extends State<RevisionZone> {
                   flex: 1,
                   child: Container(
                       child: topicInfo(
-                          i,
-                          'Last Studied',
-                          _topics[i]['lastStudied'].round().toString() +
-                              ' days ago')),
+                          i, 'Last Studied', days.toString() + ' days ago')),
                 ),
               ],
             ),
@@ -545,31 +411,31 @@ class _RevisionZoneState extends State<RevisionZone> {
     );
   }
 
-  Future _search() async {
-    SharedPreferences sp = await SharedPreferences.getInstance();
-    var url = baseUrl +
-        "getRevisionZone?days=" +
-        _selectedDay +
-        "&topicImp=" +
-        _selectedTopicImp +
-        "&performance=" +
-        _selectedPerformance +
-        "&regSno=" +
-        sp.getString("studentSno") +
-        "&subjectSno=" +
-        _selectedSubjectSno +
-        "&courseSno=" +
-        sp.getString("courseSno");
-    print(url);
-    http.Response response = await http.post(
-      Uri.encodeFull(url),
-    );
-    var responseData = jsonDecode(response.body);
-    print(responseData);
-    setState(() {
-      _topics = responseData;
-    });
-  }
+// Future _search() async {
+//   SharedPreferences sp = await SharedPreferences.getInstance();
+//   var url = baseUrl +
+//       "getRevisionZone?days=" +
+//       _selectedDay +
+//       "&topicImp=" +
+//       _selectedTopicImp +
+//       "&performance=" +
+//       _selectedPerformance +
+//       "&regSno=" +
+//       sp.getString("studentSno") +
+//       "&subjectSno=" +
+//       _selectedSubjectSno +
+//       "&courseSno=" +
+//       sp.getString("courseSno");
+//   print(url);
+//   http.Response response = await http.post(
+//     Uri.encodeFull(url),
+//   );
+//   var responseData = jsonDecode(response.body);
+//   print(responseData);
+//   setState(() {
+//     _topics = responseData;
+//   });
+// }
 }
 
 Color _randomColor(int i) {
@@ -581,4 +447,23 @@ Color _randomColor(int i) {
     return AppColors.tileColors[1];
   }
   return AppColors.tileColors[0];
+}
+
+class RevisionModel {
+  String subjectSno;
+  String subjectName;
+
+  RevisionModel({this.subjectName, this.subjectSno});
+
+  RevisionModel.fromJson(Map<String, dynamic> json) {
+    subjectName = json['subjectName'];
+    subjectSno = json['subjectSno'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['subjectName'] = this.subjectName;
+    data['subjectSno'] = this.subjectSno;
+    return data;
+  }
 }

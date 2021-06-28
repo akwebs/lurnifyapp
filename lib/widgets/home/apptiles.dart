@@ -3,6 +3,8 @@ import 'package:lurnify/config/data.dart';
 import 'package:lurnify/ui/screen/dareToDo/dareToDo.dart';
 import 'package:lurnify/ui/screen/myCourseContain/NewCourseContent.dart';
 import 'package:lurnify/ui/screen/myProgress/subject-unit.dart';
+import 'package:lurnify/ui/screen/myReport/my-report.dart';
+import 'package:lurnify/ui/screen/rankBooster/rankboosterHome.dart';
 import 'package:lurnify/ui/screen/selfstudy/selfstudy.dart';
 import 'package:lurnify/ui/screen/revisionZone/myRevision.dart';
 import 'package:lurnify/ui/screen/marketPlace/week-month.dart';
@@ -40,6 +42,14 @@ class AppTiles extends StatelessWidget {
                 if (index == 0) {
                   Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) => SelfStudySection(),
+                  ));
+                } else if (index == 1) {
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => RankBoosterHome(),
+                  ));
+                } else if (index == 2) {
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => MyReportHome(),
                   ));
                 } else if (index == 3) {
                   Navigator.of(context).push(MaterialPageRoute(
