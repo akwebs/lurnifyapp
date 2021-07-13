@@ -2,10 +2,13 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:lurnify/config/data.dart';
+import 'package:lurnify/ui/constant/constant.dart';
+import 'package:lurnify/widgets/componants/custom-expantion-tile.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:lurnify/ui/constant/ApiConstant.dart';
 import 'package:lurnify/ui/screen/widget/custom-alert.dart';
-import 'package:lurnify/ui/screen/widget/custom-button.dart';
+import 'package:lurnify/widgets/componants/custom-button.dart';
 
 import 'package:http/http.dart' as http;
 
@@ -19,133 +22,186 @@ class MakePayment extends StatefulWidget {
 class _MakePaymentState extends State<MakePayment> {
   final bool _isPaymentDone;
   _MakePaymentState(this._isPaymentDone);
-  List _payment=[];
-  String _totalAmount="";
-  String _discountedAmount="";
-  String validTill="";
-  _getPayment()async{
-    try{
+  List _payment = [];
+  String _totalAmount = "";
+  String _discountedAmount = "";
+  String validTill = "";
+  String dateWithoutT = "";
+  _getPayment() async {
+    try {
       SharedPreferences sp = await SharedPreferences.getInstance();
-      var url=baseUrl+"getPaymentByCourse?courseSno="+sp.getString("courseSno");
+      var url =
+          baseUrl + "getPaymentByCourse?courseSno=" + sp.getString("courseSno");
       print(url);
       http.Response response = await http.get(
         Uri.encodeFull(url),
       );
       _payment = jsonDecode(response.body);
-      if(_payment.isNotEmpty){
-        _totalAmount=_payment[0]['totalAmount'].toString();
-        _discountedAmount=_payment[0]['discountedAmount'].toString();
-        validTill=_payment[0]['validTill'].toString();
+      if (_payment.isNotEmpty) {
+        _totalAmount = _payment[0]['totalAmount'].toStringAsFixed(0);
+        _discountedAmount = _payment[0]['discountedAmount'].toStringAsFixed(0);
+        validTill = _payment[0]['validTill'].toString();
+        dateWithoutT = validTill.substring(0, 10);
       }
-    }catch(e){
+    } catch (e) {
       print(e);
     }
   }
+
+  // \u20B9 $_totalAmount
+  // \u20B9 $_discountedAmount
+  // Valid Till " + validTill
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Make payment"),
+        title: Text("Money Matters"),
+        centerTitle: true,
+        elevation: 0,
       ),
       body: FutureBuilder(
         future: _getPayment(),
-        builder: (BuildContext context, AsyncSnapshot snapshot){
-          if(snapshot.connectionState==ConnectionState.done){
-            return Container(
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            return SingleChildScrollView(
               padding: EdgeInsets.all(10),
-              child: Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      padding: EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                          color: Colors.red,
-                          borderRadius: BorderRadius.circular(30),
-                          boxShadow: [
-                            BoxShadow(
-                                color: Colors.redAccent.withOpacity(0.4),
-                                blurRadius: 1,
-                                spreadRadius: 1,
-                                offset: Offset(0,1)
-                            )
-                          ]
-                      ),
-                      child: Text("\u20B9 $_totalAmount",style: TextStyle(color: Colors.white,fontSize: 30,decoration: TextDecoration.lineThrough),),
-                    ),
-                    SizedBox(height: 20,),
-                    Container(
-                      padding: EdgeInsets.all(15),
-                      decoration: BoxDecoration(
-                          color: Colors.green,
-                          borderRadius: BorderRadius.circular(40),
-                          boxShadow: [
-                            BoxShadow(
-                                color: Colors.yellow.withOpacity(0.4),
-                                blurRadius: 1,
-                                spreadRadius: 1,
-                                offset: Offset(0,1)
-                            )
-                          ]
-                      ),
-                      child: Text("\u20B9 $_discountedAmount",style: TextStyle(color: Colors.white,fontSize: 40),),
-                    ),
-                    SizedBox(height: 20,),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        Text("Valid Till " + validTill,style: TextStyle(fontWeight: FontWeight.w600,fontSize: 16,),),
-                      ],
-                    ),
-                    SizedBox(height: 20,),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: CustomButton(
-                            buttonText: "Pay",
-                            onPressed: (){
-                              if(_isPaymentDone){
-                                toastMethod("Payment Already done");
-                              }else{
-                                _makePayment();
-                              }
-                            },
+              physics: BouncingScrollPhysics(),
+              child: Column(
+                children: [
+                  Card(
+                    child: CustomExpansionTile(
+                      childrenPadding: EdgeInsets.all(15),
+                      title: Column(
+                        children: [
+                          Text(
+                            'Course Name',
+                            style: TextStyle(
+                                color: Colors.amberAccent,
+                                fontSize: 25,
+                                fontWeight: FontWeight.w600),
                           ),
-                        ),
+                          Text('Course features & Benefits'),
+                        ],
+                      ),
+                      children: [
+                        Text(''),
                       ],
-                    )
-                  ],
-                ),
+                    ),
+                  ),
+                  Card(
+                    child: CustomExpansionTile(
+                      childrenPadding: EdgeInsets.all(15),
+                      title: Column(
+                        children: [
+                          Text(
+                            'Program Fee',
+                            style: TextStyle(
+                                color: Colors.amberAccent,
+                                fontSize: 25,
+                                fontWeight: FontWeight.w600),
+                          ),
+                          SizedBox(height: 8),
+                          Text(
+                            '\u20B9 $_totalAmount',
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.w600),
+                          ),
+                          SizedBox(height: 8),
+                          Text(
+                            'Valid Till ' + dateWithoutT,
+                            style: TextStyle(
+                                fontSize: 10, fontWeight: FontWeight.w600),
+                          )
+                        ],
+                      ),
+                      children: [
+                        Text(''),
+                      ],
+                    ),
+                  ),
+                  Card(
+                    child: CustomExpansionTile(
+                      childrenPadding: EdgeInsets.all(15),
+                      title: Column(
+                        children: [
+                          Text(
+                            'Your Earning',
+                            style: TextStyle(
+                                color: Colors.amberAccent,
+                                fontSize: 25,
+                                fontWeight: FontWeight.w600),
+                          ),
+                          Text('Referral Earning & Rewards'),
+                        ],
+                      ),
+                      children: [
+                        Text(''),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             );
-          }else{
+          } else {
             return Center(
               child: CircularProgressIndicator(),
             );
           }
         },
-      )
+      ),
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(gradient: AppSlider.gradient[3]),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                'Net Payable Due = \u20B9 $_discountedAmount',
+                style: TextStyle(color: whiteColor),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: CustomButton(
+                btnClr: Colors.orange,
+                brdRds: 50,
+                buttonText: 'Pay \u20B9 $_discountedAmount Now',
+                verpad: EdgeInsets.symmetric(vertical: 5, horizontal: 40),
+                onPressed: () {
+                  if (_isPaymentDone) {
+                    toastMethod("Payment Already done");
+                  } else {
+                    _makePayment();
+                  }
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
-  _makePayment()async{
-    try{
+  _makePayment() async {
+    try {
       _otpSentAlertBox(context);
       SharedPreferences sp = await SharedPreferences.getInstance();
-      var url=baseUrl+"makePayment?registerSno="+sp.getString("studentSno");
+      var url =
+          baseUrl + "makePayment?registerSno=" + sp.getString("studentSno");
       print(url);
       http.Response response = await http.post(
         Uri.encodeFull(url),
       );
-      Map<String,dynamic> result = jsonDecode(response.body);
-      if(result['result']==true){
+      Map<String, dynamic> result = jsonDecode(response.body);
+      if (result['result'] == true) {
         toastMethod("Payment Successful");
-      }else{
+      } else {
         toastMethod("Payment Failed. Please try again");
       }
-    }catch(e){
+    } catch (e) {
       print(e);
     }
 
@@ -162,6 +218,7 @@ class _MakePaymentState extends State<MakePayment> {
         textColor: Colors.white,
         fontSize: 18.0);
   }
+
   _otpSentAlertBox(BuildContext context) {
     var alert = CustomAlert();
     showDialog(
@@ -172,3 +229,91 @@ class _MakePaymentState extends State<MakePayment> {
     );
   }
 }
+
+
+// Container(
+// padding: EdgeInsets.all(10),
+// child: Center(
+//   child: Column(
+//     mainAxisSize: MainAxisSize.max,
+//     mainAxisAlignment: MainAxisAlignment.center,
+//     children: [
+//       Container(
+//         padding: EdgeInsets.all(10),
+//         decoration: BoxDecoration(
+//             color: Colors.red,
+//             borderRadius: BorderRadius.circular(30),
+//             boxShadow: [
+//               BoxShadow(
+//                   color: Colors.redAccent.withOpacity(0.4),
+//                   blurRadius: 1,
+//                   spreadRadius: 1,
+//                   offset: Offset(0, 1))
+//             ]),
+//         child: Text(
+//           "\u20B9 $_totalAmount",
+//           style: TextStyle(
+//               color: Colors.white,
+//               fontSize: 30,
+//               decoration: TextDecoration.lineThrough),
+//         ),
+//       ),
+//       SizedBox(
+//         height: 20,
+//       ),
+//       Container(
+//         padding: EdgeInsets.all(15),
+//         decoration: BoxDecoration(
+//             color: Colors.green,
+//             borderRadius: BorderRadius.circular(40),
+//             boxShadow: [
+//               BoxShadow(
+//                   color: Colors.yellow.withOpacity(0.4),
+//                   blurRadius: 1,
+//                   spreadRadius: 1,
+//                   offset: Offset(0, 1))
+//             ]),
+//         child: Text(
+//           "\u20B9 $_discountedAmount",
+//           style: TextStyle(color: Colors.white, fontSize: 40),
+//         ),
+//       ),
+//       SizedBox(
+//         height: 20,
+//       ),
+//       Row(
+//         mainAxisAlignment: MainAxisAlignment.center,
+//         mainAxisSize: MainAxisSize.max,
+//         children: [
+//           Text(
+//             "Valid Till " + validTill,
+//             style: TextStyle(
+//               fontWeight: FontWeight.w600,
+//               fontSize: 16,
+//             ),
+//           ),
+//         ],
+//       ),
+//       SizedBox(
+//         height: 20,
+//       ),
+//       // Row(
+//       //   children: [
+//       //     Expanded(
+//       //       child: CustomButton(
+//       //         buttonText: "Pay",
+//       //         onPressed: () {
+//       //           if (_isPaymentDone) {
+//       //             toastMethod("Payment Already done");
+//       //           } else {
+//       //             _makePayment();
+//       //           }
+//       //         },
+//       //       ),
+//       //     ),
+//       //   ],
+//       // )
+//     ],
+//   ),
+// ),
+// )

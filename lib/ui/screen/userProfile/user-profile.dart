@@ -587,7 +587,7 @@ class _UserProfileEditState extends State<UserProfileEdit> {
           borderRadius: BorderRadius.only(
               topLeft: Radius.circular(20), topRight: Radius.circular(20)),
         ),
-        height: MediaQuery.of(context).size.height * 7 / 10,
+        height: MediaQuery.of(context).size.height * 8 / 10,
         child: Card(
           margin: EdgeInsets.all(0),
           child: SingleChildScrollView(
@@ -598,11 +598,24 @@ class _UserProfileEditState extends State<UserProfileEdit> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        IconButton(
-                            icon: Icon(Icons.close),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            })
+                        Container(
+                          width: 50,
+                          height: 50,
+                          margin: EdgeInsets.only(top: 5, right: 10),
+                          child: Card(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            elevation: 2,
+                            child: IconButton(
+                                icon: Icon(
+                                  Icons.close,
+                                ),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                }),
+                          ),
+                        ),
                       ],
                     ),
                     preferredSize: Size.fromHeight(50)),
@@ -622,7 +635,7 @@ class _UserProfileEditState extends State<UserProfileEdit> {
                               Text(
                                 'Name',
                                 style: TextStyle(
-                                    fontSize: 15,
+                                    fontSize: 12,
                                     color: _color2,
                                     fontWeight: FontWeight.normal),
                               ),
@@ -659,7 +672,7 @@ class _UserProfileEditState extends State<UserProfileEdit> {
                               Text(
                                 'Email',
                                 style: TextStyle(
-                                    fontSize: 15,
+                                    fontSize: 12,
                                     color: _color2,
                                     fontWeight: FontWeight.normal),
                               ),
@@ -696,7 +709,7 @@ class _UserProfileEditState extends State<UserProfileEdit> {
                               Text(
                                 'Phone Number',
                                 style: TextStyle(
-                                    fontSize: 15,
+                                    fontSize: 12,
                                     color: _color2,
                                     fontWeight: FontWeight.normal),
                               ),
@@ -730,7 +743,7 @@ class _UserProfileEditState extends State<UserProfileEdit> {
                               Text(
                                 'Date of Birth',
                                 style: TextStyle(
-                                    fontSize: 15,
+                                    fontSize: 12,
                                     color: _color2,
                                     fontWeight: FontWeight.normal),
                               ),
@@ -766,7 +779,7 @@ class _UserProfileEditState extends State<UserProfileEdit> {
                               Text(
                                 'Father Name',
                                 style: TextStyle(
-                                    fontSize: 15,
+                                    fontSize: 12,
                                     color: _color2,
                                     fontWeight: FontWeight.normal),
                               ),
@@ -802,7 +815,7 @@ class _UserProfileEditState extends State<UserProfileEdit> {
                               Text(
                                 'Current Class',
                                 style: TextStyle(
-                                    fontSize: 15,
+                                    fontSize: 12,
                                     color: _color2,
                                     fontWeight: FontWeight.normal),
                               ),
@@ -838,7 +851,7 @@ class _UserProfileEditState extends State<UserProfileEdit> {
                               Text(
                                 'Target',
                                 style: TextStyle(
-                                    fontSize: 15,
+                                    fontSize: 12,
                                     color: _color2,
                                     fontWeight: FontWeight.normal),
                               ),
@@ -874,7 +887,7 @@ class _UserProfileEditState extends State<UserProfileEdit> {
                               Text(
                                 'School Name',
                                 style: TextStyle(
-                                    fontSize: 15,
+                                    fontSize: 12,
                                     color: _color2,
                                     fontWeight: FontWeight.normal),
                               ),
@@ -910,7 +923,7 @@ class _UserProfileEditState extends State<UserProfileEdit> {
                               Text(
                                 'Marks in 10th',
                                 style: TextStyle(
-                                    fontSize: 15,
+                                    fontSize: 12,
                                     color: _color2,
                                     fontWeight: FontWeight.normal),
                               ),
@@ -946,7 +959,7 @@ class _UserProfileEditState extends State<UserProfileEdit> {
                               Text(
                                 'Marks in 12th',
                                 style: TextStyle(
-                                    fontSize: 15,
+                                    fontSize: 12,
                                     color: _color2,
                                     fontWeight: FontWeight.normal),
                               ),
@@ -982,7 +995,7 @@ class _UserProfileEditState extends State<UserProfileEdit> {
                               Text(
                                 'Address',
                                 style: TextStyle(
-                                    fontSize: 15,
+                                    fontSize: 12,
                                     color: _color2,
                                     fontWeight: FontWeight.normal),
                               ),
@@ -1018,7 +1031,7 @@ class _UserProfileEditState extends State<UserProfileEdit> {
                               Text(
                                 'Email',
                                 style: TextStyle(
-                                    fontSize: 15,
+                                    fontSize: 12,
                                     color: _color2,
                                     fontWeight: FontWeight.normal),
                               ),
@@ -1064,7 +1077,8 @@ class _UserProfileEditState extends State<UserProfileEdit> {
   }
 
   Widget _createProfilePicture() {
-    final double profilePictureSize = MediaQuery.of(context).size.width / 3;
+    final double profilePictureSize =
+        MediaQuery.of(context).size.width * 4 / 10;
     return Align(
       alignment: Alignment.center,
       child: Container(
@@ -1077,17 +1091,26 @@ class _UserProfileEditState extends State<UserProfileEdit> {
           },
           child: Stack(
             children: [
-              CircleAvatar(
-                backgroundColor: Colors.white,
-                radius: (profilePictureSize),
-                child: Hero(
-                  tag: 'profilePicture',
-                  child: ClipOval(
-                    child: SizedBox(
-                      width: profilePictureSize,
-                      height: profilePictureSize,
-                      child: Image.asset('assets/images/anshul.png'),
+              Container(
+                child: CircleAvatar(
+                  backgroundColor: Colors.white,
+                  radius: (profilePictureSize),
+                  child: Hero(
+                    tag: 'profilePicture',
+                    child: ClipOval(
+                      child: SizedBox(
+                        width: profilePictureSize,
+                        height: profilePictureSize,
+                        child: Image.asset('assets/images/anshul.png'),
+                      ),
                     ),
+                  ),
+                ),
+                decoration: new BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: new Border.all(
+                    color: Colors.deepPurple,
+                    width: 3.0,
                   ),
                 ),
               ),
@@ -1101,8 +1124,11 @@ class _UserProfileEditState extends State<UserProfileEdit> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
-                  elevation: 1,
-                  child: Icon(Icons.edit, size: 12, color: _color3),
+                  elevation: 2,
+                  child: Icon(
+                    Icons.edit,
+                    size: 12,
+                  ),
                 ),
               ),
             ],

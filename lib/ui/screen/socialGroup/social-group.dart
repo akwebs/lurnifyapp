@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lurnify/ui/constant/constant.dart';
+import 'package:lurnify/ui/screen/socialGroup/group.dart';
 
 class SocialGroup extends StatefulWidget {
   const SocialGroup({Key key}) : super(key: key);
@@ -95,104 +96,118 @@ class _SocialGroupState extends State<SocialGroup> {
                                 width: shapeSize,
                                 height: shapeSize,
                                 clipBehavior: Clip.antiAlias,
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: 8, horizontal: 10),
-                                  child: Stack(
-                                    alignment: Alignment.center,
-                                    children: [
-                                      Align(
-                                          alignment: Alignment.lerp(
-                                              Alignment.centerLeft,
-                                              Alignment.centerRight,
-                                              0.20),
-                                          child: Container(
-                                            child: CircleAvatar(
-                                                radius: 15,
-                                                backgroundImage: AssetImage(
-                                                    'assets/images/anshul.png')),
-                                            decoration: new BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              border: new Border.all(
-                                                color: Colors.deepPurple,
-                                                width: 2.0,
-                                              ),
-                                            ),
-                                          )),
-                                      Align(
-                                          alignment: Alignment.lerp(
-                                              Alignment.centerLeft,
-                                              Alignment.centerRight,
-                                              0.40),
-                                          child: Container(
-                                            child: CircleAvatar(
-                                                radius: 15,
-                                                backgroundImage: AssetImage(
-                                                    'assets/images/anshul.png')),
-                                            decoration: new BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              border: new Border.all(
-                                                color: Colors.deepPurple,
-                                                width: 2.0,
-                                              ),
-                                            ),
-                                          )),
-                                      Align(
-                                          alignment: Alignment.lerp(
-                                              Alignment.centerLeft,
-                                              Alignment.centerRight,
-                                              0.60),
-                                          child: Container(
-                                            child: CircleAvatar(
-                                                radius: 15,
-                                                backgroundImage: AssetImage(
-                                                    'assets/images/anshul.png')),
-                                            decoration: new BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              border: new Border.all(
-                                                color: Colors.deepPurple,
-                                                width: 2.0,
-                                              ),
-                                            ),
-                                          )),
-                                      Align(
-                                          alignment: Alignment.lerp(
-                                              Alignment.centerLeft,
-                                              Alignment.centerRight,
-                                              0.80),
-                                          child: Container(
-                                            child: CircleAvatar(
-                                              foregroundColor: whiteColor,
-                                              backgroundColor: firstColor,
-                                              radius: 15,
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.center,
-                                                children: [
-                                                  Text(
-                                                    '20',
-                                                    style:
-                                                        TextStyle(fontSize: 12),
+                                child: Stack(
+                                  children: [
+                                    Align(
+                                      alignment: Alignment.center,
+                                      child: CircleAvatar(
+                                        backgroundImage: AssetImage(
+                                            'assets/images/anshul.png'),
+                                        radius: 50,
+                                      ),
+                                    ),
+                                    Container(
+                                      padding: EdgeInsets.symmetric(
+                                          vertical: 8, horizontal: 10),
+                                      child: Stack(
+                                        alignment: Alignment.center,
+                                        children: [
+                                          Align(
+                                              alignment: Alignment.lerp(
+                                                  Alignment.bottomLeft,
+                                                  Alignment.bottomRight,
+                                                  0.20),
+                                              child: Container(
+                                                child: CircleAvatar(
+                                                    radius: 15,
+                                                    backgroundImage: AssetImage(
+                                                        'assets/images/anshul.png')),
+                                                decoration: new BoxDecoration(
+                                                  shape: BoxShape.circle,
+                                                  border: new Border.all(
+                                                    color: Colors.deepPurple,
+                                                    width: 2.0,
                                                   ),
-                                                  Icon(
-                                                    Icons.add,
-                                                    size: 10,
+                                                ),
+                                              )),
+                                          Align(
+                                              alignment: Alignment.lerp(
+                                                  Alignment.bottomLeft,
+                                                  Alignment.bottomRight,
+                                                  0.40),
+                                              child: Container(
+                                                child: CircleAvatar(
+                                                    radius: 15,
+                                                    backgroundImage: AssetImage(
+                                                        'assets/images/anshul.png')),
+                                                decoration: new BoxDecoration(
+                                                  shape: BoxShape.circle,
+                                                  border: new Border.all(
+                                                    color: Colors.deepPurple,
+                                                    width: 2.0,
                                                   ),
-                                                ],
-                                              ),
-                                            ),
-                                            decoration: new BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              border: new Border.all(
-                                                color: Colors.deepPurple,
-                                                width: 2.0,
-                                              ),
-                                            ),
-                                          )),
-                                    ],
-                                  ),
+                                                ),
+                                              )),
+                                          Align(
+                                              alignment: Alignment.lerp(
+                                                  Alignment.bottomLeft,
+                                                  Alignment.bottomRight,
+                                                  0.60),
+                                              child: Container(
+                                                child: CircleAvatar(
+                                                    radius: 15,
+                                                    backgroundImage: AssetImage(
+                                                        'assets/images/anshul.png')),
+                                                decoration: new BoxDecoration(
+                                                  shape: BoxShape.circle,
+                                                  border: new Border.all(
+                                                    color: Colors.deepPurple,
+                                                    width: 2.0,
+                                                  ),
+                                                ),
+                                              )),
+                                          Align(
+                                              alignment: Alignment.lerp(
+                                                  Alignment.bottomLeft,
+                                                  Alignment.bottomRight,
+                                                  0.80),
+                                              child: Container(
+                                                child: CircleAvatar(
+                                                  foregroundColor: whiteColor,
+                                                  backgroundColor: firstColor,
+                                                  radius: 15,
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      Text(
+                                                        '20',
+                                                        style: TextStyle(
+                                                            fontSize: 12),
+                                                      ),
+                                                      Icon(
+                                                        Icons.add,
+                                                        size: 10,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                                decoration: new BoxDecoration(
+                                                  shape: BoxShape.circle,
+                                                  border: new Border.all(
+                                                    color: Colors.deepPurple,
+                                                    width: 2.0,
+                                                  ),
+                                                ),
+                                              )),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
                                 ),
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
@@ -204,7 +219,12 @@ class _SocialGroupState extends State<SocialGroup> {
                                 child: Material(
                                   color: Colors.transparent,
                                   child: InkWell(
-                                    onTap: () {},
+                                    onTap: () {
+                                      Navigator.of(context)
+                                          .push(MaterialPageRoute(
+                                        builder: (context) => GroupBoard(),
+                                      ));
+                                    },
                                     child: Padding(
                                       padding: const EdgeInsets.all(8.0),
                                       child: Row(
@@ -247,104 +267,118 @@ class _SocialGroupState extends State<SocialGroup> {
                                 width: shapeSize,
                                 height: shapeSize,
                                 clipBehavior: Clip.antiAlias,
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: 8, horizontal: 10),
-                                  child: Stack(
-                                    alignment: Alignment.center,
-                                    children: [
-                                      Align(
-                                          alignment: Alignment.lerp(
-                                              Alignment.centerLeft,
-                                              Alignment.centerRight,
-                                              0.20),
-                                          child: Container(
-                                            child: CircleAvatar(
-                                                radius: 15,
-                                                backgroundImage: AssetImage(
-                                                    'assets/images/anshul.png')),
-                                            decoration: new BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              border: new Border.all(
-                                                color: Colors.deepPurple,
-                                                width: 2.0,
-                                              ),
-                                            ),
-                                          )),
-                                      Align(
-                                          alignment: Alignment.lerp(
-                                              Alignment.centerLeft,
-                                              Alignment.centerRight,
-                                              0.40),
-                                          child: Container(
-                                            child: CircleAvatar(
-                                                radius: 15,
-                                                backgroundImage: AssetImage(
-                                                    'assets/images/anshul.png')),
-                                            decoration: new BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              border: new Border.all(
-                                                color: Colors.deepPurple,
-                                                width: 2.0,
-                                              ),
-                                            ),
-                                          )),
-                                      Align(
-                                          alignment: Alignment.lerp(
-                                              Alignment.centerLeft,
-                                              Alignment.centerRight,
-                                              0.60),
-                                          child: Container(
-                                            child: CircleAvatar(
-                                                radius: 15,
-                                                backgroundImage: AssetImage(
-                                                    'assets/images/anshul.png')),
-                                            decoration: new BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              border: new Border.all(
-                                                color: Colors.deepPurple,
-                                                width: 2.0,
-                                              ),
-                                            ),
-                                          )),
-                                      Align(
-                                          alignment: Alignment.lerp(
-                                              Alignment.centerLeft,
-                                              Alignment.centerRight,
-                                              0.80),
-                                          child: Container(
-                                            child: CircleAvatar(
-                                              foregroundColor: whiteColor,
-                                              backgroundColor: firstColor,
-                                              radius: 15,
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.center,
-                                                children: [
-                                                  Text(
-                                                    '20',
-                                                    style:
-                                                        TextStyle(fontSize: 12),
+                                child: Stack(
+                                  children: [
+                                    Align(
+                                      alignment: Alignment.center,
+                                      child: CircleAvatar(
+                                        radius: 50,
+                                        backgroundImage: AssetImage(
+                                            'assets/images/anshul.png'),
+                                      ),
+                                    ),
+                                    Container(
+                                      padding: EdgeInsets.symmetric(
+                                          vertical: 8, horizontal: 10),
+                                      child: Stack(
+                                        alignment: Alignment.center,
+                                        children: [
+                                          Align(
+                                              alignment: Alignment.lerp(
+                                                  Alignment.bottomLeft,
+                                                  Alignment.bottomRight,
+                                                  0.20),
+                                              child: Container(
+                                                child: CircleAvatar(
+                                                    radius: 15,
+                                                    backgroundImage: AssetImage(
+                                                        'assets/images/anshul.png')),
+                                                decoration: new BoxDecoration(
+                                                  shape: BoxShape.circle,
+                                                  border: new Border.all(
+                                                    color: Colors.deepPurple,
+                                                    width: 2.0,
                                                   ),
-                                                  Icon(
-                                                    Icons.add,
-                                                    size: 10,
+                                                ),
+                                              )),
+                                          Align(
+                                              alignment: Alignment.lerp(
+                                                  Alignment.bottomLeft,
+                                                  Alignment.bottomRight,
+                                                  0.40),
+                                              child: Container(
+                                                child: CircleAvatar(
+                                                    radius: 15,
+                                                    backgroundImage: AssetImage(
+                                                        'assets/images/anshul.png')),
+                                                decoration: new BoxDecoration(
+                                                  shape: BoxShape.circle,
+                                                  border: new Border.all(
+                                                    color: Colors.deepPurple,
+                                                    width: 2.0,
                                                   ),
-                                                ],
-                                              ),
-                                            ),
-                                            decoration: new BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              border: new Border.all(
-                                                color: Colors.deepPurple,
-                                                width: 2.0,
-                                              ),
-                                            ),
-                                          )),
-                                    ],
-                                  ),
+                                                ),
+                                              )),
+                                          Align(
+                                              alignment: Alignment.lerp(
+                                                  Alignment.bottomLeft,
+                                                  Alignment.bottomRight,
+                                                  0.60),
+                                              child: Container(
+                                                child: CircleAvatar(
+                                                    radius: 15,
+                                                    backgroundImage: AssetImage(
+                                                        'assets/images/anshul.png')),
+                                                decoration: new BoxDecoration(
+                                                  shape: BoxShape.circle,
+                                                  border: new Border.all(
+                                                    color: Colors.deepPurple,
+                                                    width: 2.0,
+                                                  ),
+                                                ),
+                                              )),
+                                          Align(
+                                              alignment: Alignment.lerp(
+                                                  Alignment.bottomLeft,
+                                                  Alignment.bottomRight,
+                                                  0.80),
+                                              child: Container(
+                                                child: CircleAvatar(
+                                                  foregroundColor: whiteColor,
+                                                  backgroundColor: firstColor,
+                                                  radius: 15,
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      Text(
+                                                        '20',
+                                                        style: TextStyle(
+                                                            fontSize: 12),
+                                                      ),
+                                                      Icon(
+                                                        Icons.add,
+                                                        size: 10,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                                decoration: new BoxDecoration(
+                                                  shape: BoxShape.circle,
+                                                  border: new Border.all(
+                                                    color: Colors.deepPurple,
+                                                    width: 2.0,
+                                                  ),
+                                                ),
+                                              )),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
                                 ),
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
@@ -356,7 +390,12 @@ class _SocialGroupState extends State<SocialGroup> {
                                 child: Material(
                                   color: Colors.transparent,
                                   child: InkWell(
-                                    onTap: () {},
+                                    onTap: () {
+                                      Navigator.of(context)
+                                          .push(MaterialPageRoute(
+                                        builder: (context) => GroupBoard(),
+                                      ));
+                                    },
                                     child: Padding(
                                       padding: const EdgeInsets.all(8.0),
                                       child: Row(
@@ -437,6 +476,8 @@ class _SocialGroupState extends State<SocialGroup> {
                                         itemCount: 10,
                                         itemBuilder:
                                             (BuildContext context, int i) {
+                                          bool _isActive = false;
+                                          bool _isOpened = true;
                                           return Container(
                                             margin:
                                                 EdgeInsets.fromLTRB(5, 5, 5, 0),
@@ -452,93 +493,117 @@ class _SocialGroupState extends State<SocialGroup> {
                                                       color:
                                                           Colors.transparent),
                                             ),
-                                            child: Card(
-                                              clipBehavior: Clip.hardEdge,
-                                              margin: EdgeInsets.all(0),
-                                              child: Container(
-                                                color: Colors.blue
-                                                    .withOpacity(0.2),
-                                                child: InkWell(
-                                                  onTap: () {},
-                                                  child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(5),
-                                                    child: Row(
-                                                      children: [
-                                                        Stack(
-                                                          alignment: Alignment
-                                                              .bottomRight,
+                                            child: Stack(
+                                              children: [
+                                                Card(
+                                                  clipBehavior: Clip.hardEdge,
+                                                  margin: EdgeInsets.all(0),
+                                                  child: Container(
+                                                    color: Colors.blue
+                                                        .withOpacity(0.2),
+                                                    child: InkWell(
+                                                      onTap: () {},
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(5),
+                                                        child: Row(
                                                           children: [
-                                                            Container(
-                                                              child:
-                                                                  CircleAvatar(
-                                                                radius: 20,
-                                                                backgroundImage:
-                                                                    AssetImage(
-                                                                        'assets/images/anshul.png'),
-                                                              ),
-                                                              decoration:
-                                                                  new BoxDecoration(
-                                                                shape: BoxShape
-                                                                    .circle,
-                                                                border:
-                                                                    new Border
-                                                                        .all(
-                                                                  color: Colors
-                                                                      .deepPurple,
-                                                                  width: 2.0,
+                                                            Stack(
+                                                              alignment: Alignment
+                                                                  .bottomRight,
+                                                              children: [
+                                                                Container(
+                                                                  child:
+                                                                      CircleAvatar(
+                                                                    radius: 20,
+                                                                    backgroundImage:
+                                                                        AssetImage(
+                                                                            'assets/images/anshul.png'),
+                                                                  ),
+                                                                  decoration:
+                                                                      new BoxDecoration(
+                                                                    shape: BoxShape
+                                                                        .circle,
+                                                                    border:
+                                                                        new Border
+                                                                            .all(
+                                                                      color: Colors
+                                                                          .deepPurple,
+                                                                      width:
+                                                                          2.0,
+                                                                    ),
+                                                                  ),
                                                                 ),
+                                                                i == 0
+                                                                    ? Align(
+                                                                        child:
+                                                                            SizedBox(
+                                                                          height:
+                                                                              20,
+                                                                          width:
+                                                                              20,
+                                                                          child:
+                                                                              Image.asset('assets/awesome-crown.png'),
+                                                                        ),
+                                                                      )
+                                                                    : Container(),
+                                                              ],
+                                                            ),
+                                                            Expanded(
+                                                              child: Column(
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .end,
+                                                                children: [
+                                                                  Text(
+                                                                    '#' +
+                                                                        (i + 1)
+                                                                            .toString(),
+                                                                    style: TextStyle(
+                                                                        fontWeight:
+                                                                            FontWeight.w600),
+                                                                  ),
+                                                                  SizedBox(
+                                                                    height: 10,
+                                                                  ),
+                                                                  Text(
+                                                                    i <= 4
+                                                                        ? (8 - i).toString() +
+                                                                            '.00 hours'
+                                                                        : (4).toString() +
+                                                                            '.00 hours',
+                                                                  ),
+                                                                ],
                                                               ),
                                                             ),
-                                                            i == 0
-                                                                ? Align(
-                                                                    child:
-                                                                        SizedBox(
-                                                                      height:
-                                                                          20,
-                                                                      width: 20,
-                                                                      child: Image
-                                                                          .asset(
-                                                                              'assets/awesome-crown.png'),
-                                                                    ),
-                                                                  )
-                                                                : Container(),
                                                           ],
                                                         ),
-                                                        Expanded(
-                                                          child: Column(
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .end,
-                                                            children: [
-                                                              Text(
-                                                                '#' +
-                                                                    (i + 1)
-                                                                        .toString(),
-                                                                style: TextStyle(
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w600),
-                                                              ),
-                                                              SizedBox(
-                                                                height: 10,
-                                                              ),
-                                                              Text(
-                                                                i <= 4
-                                                                    ? (8 - i)
-                                                                            .toString() +
-                                                                        '.00 hours'
-                                                                    : (4).toString() +
-                                                                        '.00 hours',
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                      ],
+                                                      ),
                                                     ),
                                                   ),
                                                 ),
-                                              ),
+                                                Align(
+                                                  alignment: Alignment.lerp(
+                                                      Alignment.topLeft,
+                                                      Alignment.topRight,
+                                                      0.4),
+                                                  child: Container(
+                                                    width: 10,
+                                                    height: 10,
+                                                    margin: EdgeInsets.only(
+                                                        top: 5, right: 5),
+                                                    decoration: BoxDecoration(
+                                                      shape: BoxShape.circle,
+                                                      color: _isActive
+                                                          ? Colors.green
+                                                          : _isOpened
+                                                              ? Colors.orange
+                                                              : Colors.grey,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
                                             ),
                                           );
                                         }),
@@ -587,6 +652,8 @@ class _SocialGroupState extends State<SocialGroup> {
                                         itemCount: 10,
                                         itemBuilder:
                                             (BuildContext context, int i) {
+                                          bool _isActive = true;
+                                          bool _isOpened = false;
                                           return Container(
                                             margin:
                                                 EdgeInsets.fromLTRB(5, 5, 5, 0),
@@ -602,93 +669,117 @@ class _SocialGroupState extends State<SocialGroup> {
                                                       color:
                                                           Colors.transparent),
                                             ),
-                                            child: Card(
-                                              clipBehavior: Clip.hardEdge,
-                                              margin: EdgeInsets.all(0),
-                                              child: Container(
-                                                color: Colors.green
-                                                    .withOpacity(0.2),
-                                                child: InkWell(
-                                                  onTap: () {},
-                                                  child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(5),
-                                                    child: Row(
-                                                      children: [
-                                                        Expanded(
-                                                          child: Column(
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .start,
-                                                            children: [
-                                                              Text(
-                                                                '#' +
-                                                                    (i + 1)
-                                                                        .toString(),
-                                                                style: TextStyle(
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w600),
-                                                              ),
-                                                              SizedBox(
-                                                                height: 10,
-                                                              ),
-                                                              Text(
-                                                                i <= 4
-                                                                    ? (8 - i)
-                                                                            .toString() +
-                                                                        '.00 hours'
-                                                                    : (4).toString() +
-                                                                        '.00 hours',
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                        Stack(
-                                                          alignment: Alignment
-                                                              .bottomRight,
+                                            child: Stack(
+                                              children: [
+                                                Card(
+                                                  clipBehavior: Clip.hardEdge,
+                                                  margin: EdgeInsets.all(0),
+                                                  child: Container(
+                                                    color: Colors.green
+                                                        .withOpacity(0.2),
+                                                    child: InkWell(
+                                                      onTap: () {},
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(5),
+                                                        child: Row(
                                                           children: [
-                                                            Container(
-                                                              child:
-                                                                  CircleAvatar(
-                                                                radius: 20,
-                                                                backgroundImage:
-                                                                    AssetImage(
-                                                                        'assets/images/anshul.png'),
-                                                              ),
-                                                              decoration:
-                                                                  new BoxDecoration(
-                                                                shape: BoxShape
-                                                                    .circle,
-                                                                border:
-                                                                    new Border
-                                                                        .all(
-                                                                  color: Colors
-                                                                      .deepPurple,
-                                                                  width: 2.0,
-                                                                ),
+                                                            Expanded(
+                                                              child: Column(
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                children: [
+                                                                  Text(
+                                                                    '#' +
+                                                                        (i + 1)
+                                                                            .toString(),
+                                                                    style: TextStyle(
+                                                                        fontWeight:
+                                                                            FontWeight.w600),
+                                                                  ),
+                                                                  SizedBox(
+                                                                    height: 10,
+                                                                  ),
+                                                                  Text(
+                                                                    i <= 4
+                                                                        ? (8 - i).toString() +
+                                                                            '.00 hours'
+                                                                        : (4).toString() +
+                                                                            '.00 hours',
+                                                                  ),
+                                                                ],
                                                               ),
                                                             ),
-                                                            i == 0
-                                                                ? Align(
-                                                                    child:
-                                                                        SizedBox(
-                                                                      height:
-                                                                          20,
-                                                                      width: 20,
-                                                                      child: Image
-                                                                          .asset(
-                                                                              'assets/awesome-crown.png'),
+                                                            Stack(
+                                                              alignment: Alignment
+                                                                  .bottomRight,
+                                                              children: [
+                                                                Container(
+                                                                  child:
+                                                                      CircleAvatar(
+                                                                    radius: 20,
+                                                                    backgroundImage:
+                                                                        AssetImage(
+                                                                            'assets/images/anshul.png'),
+                                                                  ),
+                                                                  decoration:
+                                                                      new BoxDecoration(
+                                                                    shape: BoxShape
+                                                                        .circle,
+                                                                    border:
+                                                                        new Border
+                                                                            .all(
+                                                                      color: Colors
+                                                                          .deepPurple,
+                                                                      width:
+                                                                          2.0,
                                                                     ),
-                                                                  )
-                                                                : Container(),
+                                                                  ),
+                                                                ),
+                                                                i == 0
+                                                                    ? Align(
+                                                                        child:
+                                                                            SizedBox(
+                                                                          height:
+                                                                              20,
+                                                                          width:
+                                                                              20,
+                                                                          child:
+                                                                              Image.asset('assets/awesome-crown.png'),
+                                                                        ),
+                                                                      )
+                                                                    : Container(),
+                                                              ],
+                                                            ),
                                                           ],
                                                         ),
-                                                      ],
+                                                      ),
                                                     ),
                                                   ),
                                                 ),
-                                              ),
+                                                Align(
+                                                  alignment: Alignment.lerp(
+                                                      Alignment.topRight,
+                                                      Alignment.topLeft,
+                                                      0.4),
+                                                  child: Container(
+                                                    width: 10,
+                                                    height: 10,
+                                                    margin: EdgeInsets.only(
+                                                        top: 5, right: 5),
+                                                    decoration: BoxDecoration(
+                                                      shape: BoxShape.circle,
+                                                      color: _isActive
+                                                          ? Colors.green
+                                                          : _isOpened
+                                                              ? Colors.orange
+                                                              : Colors.grey,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
                                             ),
                                           );
                                         }),

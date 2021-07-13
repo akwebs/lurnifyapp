@@ -233,7 +233,7 @@ class _WeekMonthState extends State<WeekMonth> {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    'Week',
+                                    'Week ' + _weeks[i].toString(),
                                     style: TextStyle(
                                         shadows: <Shadow>[
                                           Shadow(
