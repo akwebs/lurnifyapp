@@ -1,16 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lurnify/config/data.dart';
-import 'package:lurnify/helper/helper.dart';
-import 'package:lurnify/model/model.dart';
+import 'package:lurnify/helper/DBHelper.dart';
+import 'package:lurnify/model/chapters.dart';
+import 'package:lurnify/model/subject.dart';
+import 'package:lurnify/model/topics.dart';
+import 'package:lurnify/model/units.dart';
+import 'package:lurnify/ui/constant/ApiConstant.dart';
 import 'package:lurnify/ui/constant/constant.dart';
-import 'package:lurnify/ui/screen/screen.dart';
+import 'package:lurnify/ui/screen/selfstudy/starttimer.dart';
+import 'package:lurnify/ui/screen/selfstudy/syncyourtime.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:lottie/lottie.dart';
+import 'package:http/http.dart' as http;
+import 'package:sqflite/sqflite.dart';
+import 'dart:convert';
 import 'dart:math' as math;
 
-import 'package:sqflite/sqflite.dart';
+import '../../../model/units.dart';
 
 class ContentSelect extends StatefulWidget {
   final String pageKey;
@@ -127,7 +135,7 @@ class _ContentSelectState extends State<ContentSelect> {
     return Scaffold(
       body: FutureBuilder(
         future: _data,
-        builder: (conext, snapshot) {
+        builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             return Material(
               child: Stack(
@@ -420,7 +428,7 @@ class _ContentSelectState extends State<ContentSelect> {
                     child: LinearPercentIndicator(
                       padding: EdgeInsets.all(3),
                       lineHeight: 5,
-                      percent: 0.5,
+                      percent: 0.8,
                       backgroundColor: Colors.grey,
                       progressColor: _randomColor(i),
                     ),

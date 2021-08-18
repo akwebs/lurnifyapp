@@ -716,167 +716,171 @@ class _TestState extends State<Test> with TickerProviderStateMixin {
   }
 
   Widget buttonRow() {
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height * 0.7 / 10,
-      child: Row(
-        children: [
-          Expanded(
-            child: RaisedButton(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.arrow_back,
-                    color: Colors.white,
-                    size: 16,
-                  ),
-                  Text(
-                    "Previous",
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 0.8),
-                  ),
-                ],
-              ),
-              onPressed: () {
-                if (_isFirstQuestion) {
-                } else {
-                  _controller.animateToPage(_index - 1,
+    return Row(
+      children: [
+        Flexible(
+          flex: 1,
+          child: RaisedButton(
+            clipBehavior: Clip.antiAlias,
+            autofocus: false,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(0),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.arrow_back,
+                  color: Colors.white,
+                  size: 16,
+                ),
+                Text(
+                  "Previous",
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 0.8),
+                ),
+              ],
+            ),
+            onPressed: () {
+              if (_isFirstQuestion) {
+              } else {
+                _controller.animateToPage(_index - 1,
+                    curve: Curves.decelerate,
+                    duration: Duration(milliseconds: 300));
+                if (_index > 10) {
+                  _controllerList.animateToPage(_index - 1,
                       curve: Curves.decelerate,
                       duration: Duration(milliseconds: 300));
-                  if (_index > 10) {
-                    _controllerList.animateToPage(_index - 1,
-                        curve: Curves.decelerate,
-                        duration: Duration(milliseconds: 300));
-                  }
                 }
-              },
-              padding: EdgeInsets.symmetric(vertical: 15),
-              color:
-                  _isFirstQuestion ? firstColor.withOpacity(0.6) : firstColor,
+              }
+            },
+            padding: EdgeInsets.symmetric(vertical: 15),
+            color: firstColor,
+          ),
+        ),
+        // child: GestureDetector(
+        //   onTap: () {
+        //     if (_isFirstQuestion) {
+        //     } else {
+        //       _controller.animateToPage(_index - 1,
+        //           curve: Curves.decelerate,
+        //           duration: Duration(milliseconds: 300));
+        //       _controllerList.animateToPage(_index - 1,
+        //           curve: Curves.decelerate,
+        //           duration: Duration(milliseconds: 300));
+        //     }
+        //   },
+        //   child: Container(
+        //     decoration: BoxDecoration(
+        //         color: _isFirstQuestion
+        //             ? firstColor.withOpacity(0.6)
+        //             : firstColor),
+        //     child: Center(
+        //       child: Row(
+        //         mainAxisAlignment: MainAxisAlignment.center,
+        //         children: [
+        //           Icon(
+        //             Icons.arrow_back,
+        //             color: Colors.white,
+        //           ),
+        //           Text(
+        //             "Previous",
+        //             style: TextStyle(
+        //                 color: Colors.white,
+        //                 fontSize: 16,
+        //                 fontWeight: FontWeight.bold,
+        //                 letterSpacing: 0.8),
+        //           ),
+        //         ],
+        //       ),
+        //     ),
+        //   ),
+        // ),
+        Flexible(
+          flex: 1,
+          child: RaisedButton(
+            clipBehavior: Clip.antiAlias,
+            autofocus: false,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.zero),
             ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  "Next",
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 0.8),
+                ),
+                Icon(
+                  Icons.arrow_forward,
+                  color: Colors.white,
+                  size: 16,
+                ),
+              ],
+            ),
+            onPressed: () {
+              if (_isLastQuestion) {
+              } else {
+                _controller.animateToPage(_index + 1,
+                    curve: Curves.decelerate,
+                    duration: Duration(milliseconds: 300));
+                if (_index > 10) {
+                  _controllerList.animateToPage(_index - 1,
+                      curve: Curves.decelerate,
+                      duration: Duration(milliseconds: 300));
+                }
+              }
+            },
+            padding: EdgeInsets.symmetric(vertical: 15),
+            color: firstColor,
           ),
           // child: GestureDetector(
           //   onTap: () {
-          //     if (_isFirstQuestion) {
+          //     if (_isLastQuestion) {
           //     } else {
-          //       _controller.animateToPage(_index - 1,
+          //       _controller.animateToPage(_index + 1,
           //           curve: Curves.decelerate,
           //           duration: Duration(milliseconds: 300));
-          //       _controllerList.animateToPage(_index - 1,
+          //       _controllerList.animateToPage(_index + 1,
           //           curve: Curves.decelerate,
           //           duration: Duration(milliseconds: 300));
           //     }
           //   },
           //   child: Container(
           //     decoration: BoxDecoration(
-          //         color: _isFirstQuestion
+          //         color: _isLastQuestion
           //             ? firstColor.withOpacity(0.6)
           //             : firstColor),
           //     child: Center(
           //       child: Row(
           //         mainAxisAlignment: MainAxisAlignment.center,
           //         children: [
+          //           Text("Next",
+          //               style: TextStyle(
+          //                   color: Colors.white,
+          //                   fontSize: 16,
+          //                   fontWeight: FontWeight.bold,
+          //                   letterSpacing: 0.8)),
           //           Icon(
-          //             Icons.arrow_back,
+          //             Icons.arrow_forward,
           //             color: Colors.white,
-          //           ),
-          //           Text(
-          //             "Previous",
-          //             style: TextStyle(
-          //                 color: Colors.white,
-          //                 fontSize: 16,
-          //                 fontWeight: FontWeight.bold,
-          //                 letterSpacing: 0.8),
           //           ),
           //         ],
           //       ),
           //     ),
           //   ),
           // ),
-          Container(
-            width: 1,
-          ),
-          Expanded(
-            child: RaisedButton(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(
-                    "Next",
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 0.8),
-                  ),
-                  Icon(
-                    Icons.arrow_forward,
-                    color: Colors.white,
-                    size: 16,
-                  ),
-                ],
-              ),
-              onPressed: () {
-                if (_isLastQuestion) {
-                } else {
-                  _controller.animateToPage(_index + 1,
-                      curve: Curves.decelerate,
-                      duration: Duration(milliseconds: 300));
-                  if (_index > 10) {
-                    _controllerList.animateToPage(_index - 1,
-                        curve: Curves.decelerate,
-                        duration: Duration(milliseconds: 300));
-                  }
-                }
-              },
-              padding: EdgeInsets.symmetric(vertical: 15),
-              color: _isLastQuestion ? firstColor.withOpacity(0.6) : firstColor,
-            ),
-            // child: GestureDetector(
-            //   onTap: () {
-            //     if (_isLastQuestion) {
-            //     } else {
-            //       _controller.animateToPage(_index + 1,
-            //           curve: Curves.decelerate,
-            //           duration: Duration(milliseconds: 300));
-            //       _controllerList.animateToPage(_index + 1,
-            //           curve: Curves.decelerate,
-            //           duration: Duration(milliseconds: 300));
-            //     }
-            //   },
-            //   child: Container(
-            //     decoration: BoxDecoration(
-            //         color: _isLastQuestion
-            //             ? firstColor.withOpacity(0.6)
-            //             : firstColor),
-            //     child: Center(
-            //       child: Row(
-            //         mainAxisAlignment: MainAxisAlignment.center,
-            //         children: [
-            //           Text("Next",
-            //               style: TextStyle(
-            //                   color: Colors.white,
-            //                   fontSize: 16,
-            //                   fontWeight: FontWeight.bold,
-            //                   letterSpacing: 0.8)),
-            //           Icon(
-            //             Icons.arrow_forward,
-            //             color: Colors.white,
-            //           ),
-            //         ],
-            //       ),
-            //     ),
-            //   ),
-            // ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -886,20 +890,22 @@ class _TestState extends State<Test> with TickerProviderStateMixin {
       SharedPreferences sp = await SharedPreferences.getInstance();
       sp.setString(_testName, jsonEncode(_questionTiming));
       print(_questionTiming);
-      Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) => TestSummary(
-            _testQuestions,
-            _answerMap,
-            _bookmarkMap,
-            _FORMATTED_TEST_DURATION,
-            sno,
-            testType,
-            course,
-            subject,
-            unit,
-            chapter,
-            _totalSecond),
-      ));
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => TestSummary(
+              _testQuestions,
+              _answerMap,
+              _bookmarkMap,
+              _FORMATTED_TEST_DURATION,
+              sno,
+              testType,
+              course,
+              subject,
+              unit,
+              chapter,
+              _totalSecond),
+        ),
+      );
     }
   }
 
