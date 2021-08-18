@@ -389,17 +389,17 @@ class _CourseSelectionState extends State<CourseSelection> {
           }
         },
       ),
-      // bottomNavigationBar: Container(
-      //   width: double.infinity,
-      //   child: CustomButton(
-      //     verpad: EdgeInsets.symmetric(vertical: 10),
-      //     buttonText: "Let's Get Started",
-      //     brdRds: 0,
-      //     onPressed: () {
-      //       _start();
-      //     },
-      //   ),
-      // ),
+      bottomNavigationBar: Container(
+        width: double.infinity,
+        child: CustomButton(
+          verpad: EdgeInsets.symmetric(vertical: 10),
+          buttonText: "Let's Get Started",
+          brdRds: 0,
+          onPressed: () {
+            _start();
+          },
+        ),
+      ),
     );
   }
 
