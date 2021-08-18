@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:lurnify/config/data.dart';
+import 'package:lurnify/helper/my_progress_repo.dart';
 import 'package:lurnify/ui/constant/constant.dart';
 import 'package:lurnify/ui/screen/myProgress/topic-progress.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
@@ -28,22 +29,25 @@ class _UnitProgressState extends State<UnitProgress> {
   Future _getMyUnitProgress() async {
     SharedPreferences sp = await SharedPreferences.getInstance();
     String registrationSno = sp.getString("studentSno");
-    var url = baseUrl +
-        "getChapterProgressByUnit?registrationSno=" +
-        registrationSno +
-        "&unitSno=" +
-        sno.toString();
-    print(url);
-    http.Response response = await http.get(
-      Uri.encodeFull(url),
-    );
-    var resbody = jsonDecode(response.body);
-    List _myUnitProgress = resbody;
+    // var url = baseUrl +
+    //     "getChapterProgressByUnit?registrationSno=" +
+    //     registrationSno +
+    //     "&unitSno=" +
+    //     sno.toString();
+    // print(url);
+    // http.Response response = await http.get(
+    //   Uri.encodeFull(url),
+    // );
+    // var resbody = jsonDecode(response.body);
+    MyProgressRepo myProgressRepo = new MyProgressRepo();
+    List<Map<String, dynamic>> _myUnitProgress =
+        await myProgressRepo.getChapterTopicByUnit(
+            sno.toString(), registrationSno, '0', 'Complete');
 
     List<ChapterModel> list = [];
     _myUnitProgress.forEach((element) {
       ChapterModel model = new ChapterModel();
-      model.sno = element['chapterSno'];
+      model.sno = element['chapterSno'].toString();
       model.chapterName = element['chapterName'];
       model.completedTopicByUser = element['completedTopicByUser'];
       model.totalChapterTopic = element['totalChapterTopic'];

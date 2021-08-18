@@ -192,22 +192,26 @@ class _DareToDoState extends State<DareToDo> {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Center(
-                            child: _weekData['coins'] != null
-                                ? Row(
-                                    children: [
-                                      Text(
-                                        _weekData['coins'].toString(),
-                                        style: TextStyle(
-                                            color: firstColor,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      Icon(
-                                        Icons.monetization_on_rounded,
-                                        size: 18,
-                                      )
-                                    ],
-                                  )
-                                : Container()),
+                            child:
+                                // _weekData['coins'] != null
+                                // ?
+                                Row(
+                          children: [
+                            Text(
+                              // _weekData['coins'].toString(),
+                              '150',
+                              style: TextStyle(
+                                  color: firstColor,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            Icon(
+                              Icons.monetization_on_rounded,
+                              size: 18,
+                            )
+                          ],
+                        )
+                            // : Container()
+                            ),
                       ),
                     ],
                     bottom: PreferredSize(

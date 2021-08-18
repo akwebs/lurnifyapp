@@ -362,8 +362,8 @@ class _CourseSelectionState extends State<CourseSelection> {
                                     courseList[i]['courseName'],
                                     style: TextStyle(
                                         color: textColor,
-                                        fontSize: 24,
-                                        fontWeight: FontWeight.w800),
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w600),
                                   )),
                                 ),
                               ),

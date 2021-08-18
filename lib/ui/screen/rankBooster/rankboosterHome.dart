@@ -1,14 +1,12 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:lurnify/config/data.dart';
-import 'package:lurnify/ui/constant/ApiConstant.dart';
+import 'package:lurnify/helper/helper.dart';
 import 'package:lurnify/ui/constant/constant.dart';
 import 'package:lurnify/ui/screen/rankBooster/createYourOwnTest.dart';
 import 'package:lurnify/widgets/componants/custom-button.dart';
 import 'package:lurnify/ui/screen/test/instructionPage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smooth_star_rating/smooth_star_rating.dart';
-import 'package:http/http.dart' as http;
 
 class RankBoosterHome extends StatefulWidget {
   @override
@@ -28,20 +26,28 @@ Color _randomColor(int i) {
 
 class _RankBoosterHomeState extends State<RankBoosterHome> {
   var _data;
-  List _dueTests = [];
+  List<Map<String, dynamic>> _dueTests = [];
 
   Future _search() async {
-    SharedPreferences sp = await SharedPreferences.getInstance();
-    var url = baseUrl + "getDueTests?regSno=" + sp.getString("studentSno");
-    print(url);
-    http.Response response = await http.post(
-      Uri.encodeFull(url),
-    );
-    var responseData = jsonDecode(response.body);
-    print(responseData);
-    setState(() {
-      _dueTests = responseData;
-    });
+    try {
+      SharedPreferences sp = await SharedPreferences.getInstance();
+      // var url = baseUrl +"getDueTests?regSno="+sp.getString("studentSno");
+      // print(url);
+      // http.Response response = await http.post(
+      //   Uri.encodeFull(url),
+      // );
+      // var responseData = jsonDecode(response.body);
+      // print(responseData);
+      // setState(() {
+      //   _dueTests = responseData;
+      // });
+      DueTopicTestRepo dueTopicTestRepo = new DueTopicTestRepo();
+      _dueTests = await dueTopicTestRepo.getDueTopicTestByStatusAndRegister(
+          'INCOMPLETE', sp.getString("studentSno"), '0');
+      print(_dueTests);
+    } catch (e) {
+      print(e);
+    }
   }
 
   @override
@@ -191,7 +197,8 @@ class _RankBoosterHomeState extends State<RankBoosterHome> {
                     children: [
                       Expanded(
                         child: SmoothStarRating(
-                          rating: dueTests[i]['topicImp'],
+                          rating:
+                              double.parse(dueTests[i]['topicImp'] ?? "0") ?? 0,
                           size: 16,
                           starCount: 5,
                           allowHalfRating: true,
@@ -269,7 +276,7 @@ class _RankBoosterHomeState extends State<RankBoosterHome> {
                   Expanded(
                     flex: 3,
                     child: Text(
-                      dueTests[i]['subTopic'],
+                      dueTests[i]['subtopic'],
                       style: TextStyle(
                         fontSize: 12,
                       ),

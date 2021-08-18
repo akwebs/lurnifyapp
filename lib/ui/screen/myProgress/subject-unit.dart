@@ -2,13 +2,12 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:lurnify/config/data.dart';
-import 'package:lurnify/ui/constant/ApiConstant.dart';
+import 'package:lurnify/helper/my_progress_repo.dart';
 import 'package:lurnify/ui/constant/constant.dart';
 import 'package:lurnify/ui/screen/myProgress/chapter-progress.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as http;
 
 class MyProgress extends StatefulWidget {
   @override
@@ -23,18 +22,20 @@ class _MyProgressState extends State<MyProgress> {
     try {
       SharedPreferences sp = await SharedPreferences.getInstance();
       String registrationSno = sp.getString("studentSno");
-      String courseSno = sp.getString("courseSno");
-      var url = baseUrl +
-          "getSubjectProgressByCourse?registrationSno=" +
-          registrationSno +
-          "&courseSno=" +
-          courseSno;
-      print(url);
-      http.Response response = await http.get(
-        Uri.encodeFull(url),
-      );
-      var resbody = jsonDecode(response.body);
-      List _mySubjectProgress = resbody;
+      // String courseSno = sp.getString("courseSno");
+      // var url = baseUrl +
+      //     "getSubjectProgressByCourse?registrationSno=" +
+      //     registrationSno +
+      //     "&courseSno=" +
+      //     courseSno;
+      // print(url);
+      // http.Response response = await http.get(
+      //   Uri.encodeFull(url),
+      // );
+      // var resbody = jsonDecode(response.body);
+      MyProgressRepo myProgressRepo = new MyProgressRepo();
+      List<Map<String, dynamic>> _mySubjectProgress =
+          await myProgressRepo.getMyProgress('Complete', '0', registrationSno);
 
       List<SubjectModel> list = [];
       _mySubjectProgress.forEach((element) {
