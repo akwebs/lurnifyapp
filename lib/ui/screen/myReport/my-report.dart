@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:lurnify/config/data.dart';
-import 'package:lurnify/ui/constant/constant.dart';
 import 'package:lurnify/ui/screen/myReport/my-report-overall.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 

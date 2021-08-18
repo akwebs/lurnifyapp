@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+// ignore: implementation_imports
 import 'package:flutter_spinning_wheel/src/utils.dart';
 
 class SpinningWheel extends StatefulWidget {

@@ -4,12 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lurnify/ui/constant/constant.dart';
-import 'package:lurnify/ui/screen/marketPlace/week-month.dart';
-import 'package:lurnify/widgets/componants/custom-button.dart';
+import 'package:lurnify/ui/screen/screen.dart';
+import 'package:lurnify/widgets/widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:lurnify/ui/constant/ApiConstant.dart';
-import 'package:lurnify/ui/screen/widget/custom-alert.dart';
 import 'package:share/share.dart';
 
 class PurchasedItem extends StatefulWidget {
@@ -20,6 +19,7 @@ class PurchasedItem extends StatefulWidget {
 class _PurchasedItemState extends State<PurchasedItem> {
   List _purchasedItems = [];
 
+  // ignore: unused_field
   var _data;
   Map<String, dynamic> resbody = Map();
   String _totalDimes = "0";
@@ -195,6 +195,7 @@ class _PurchasedItemState extends State<PurchasedItem> {
                                                               ['referralCode']))
                                                       .then((_) {
                                                     Scaffold.of(context)
+                                                        // ignore: deprecated_member_use
                                                         .showSnackBar(SnackBar(
                                                             content: Text(
                                                                 "Referral Coupon copied to clipboard")));

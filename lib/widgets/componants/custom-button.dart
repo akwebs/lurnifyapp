@@ -8,8 +8,18 @@ class CustomButton extends StatelessWidget {
   double brdRds = 10;
   final verpad;
   Color btnClr;
+  IconData icon;
+  double fntSize;
+  FontWeight fntWgt;
   CustomButton(
-      {this.buttonText, this.onPressed, this.verpad, this.brdRds, this.btnClr});
+      {this.buttonText,
+      this.onPressed,
+      this.verpad,
+      this.brdRds,
+      this.btnClr,
+      this.icon,
+      this.fntSize,
+      this.fntWgt});
 
   @override
   Widget build(BuildContext context) {
@@ -32,11 +42,19 @@ class CustomButton extends StatelessWidget {
         onPressed: onPressed,
         child: Padding(
           padding: verpad == null ? EdgeInsets.symmetric(vertical: 10) : verpad,
-          child: Text(
-            buttonText,
-            style: TextStyle(fontSize: 16, color: Colors.white),
-            textAlign: TextAlign.center,
-          ),
+          child: buttonText != null
+              ? Text(
+                  buttonText,
+                  style: TextStyle(
+                      fontWeight: fntWgt == null ? FontWeight.normal : fntWgt,
+                      fontSize: fntSize == null ? 16 : fntSize,
+                      color: Colors.white),
+                  textAlign: TextAlign.center,
+                )
+              : Icon(
+                  icon,
+                  color: whiteColor,
+                ),
         ));
   }
 }

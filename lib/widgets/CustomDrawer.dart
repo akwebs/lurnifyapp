@@ -2,7 +2,6 @@ import 'dart:ui';
 
 import 'package:lurnify/ui/constant/constant.dart';
 import 'package:flutter/material.dart';
-import 'package:lurnify/ui/constant/routes.dart';
 import 'package:lurnify/ui/home-page.dart';
 import 'package:lurnify/ui/screen/login/login.dart';
 import 'package:shared_preferences/shared_preferences.dart';

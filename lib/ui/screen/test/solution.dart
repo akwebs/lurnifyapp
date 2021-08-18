@@ -243,13 +243,13 @@ class _SolutionState extends State<Solution> {
                           child: Row(
                             children: [
                               Expanded(
-                                  child: FadeInImage(
-                                placeholder: AssetImage('assets/lurnify.png'),
-                                image: NetworkImage(imageUrl +
-                                    _testData[i]['directory'] +
-                                    "/" +
-                                    _testData[i]['fileName']),
-                              ))
+                                child: Image.memory(
+                                    base64.decode(
+                                        _testData[i]['encodedSolution'] == null
+                                            ? ""
+                                            : _testData[i]['encodedSolution']),
+                                    gaplessPlayback: true),
+                              )
                             ],
                           ),
                         ),

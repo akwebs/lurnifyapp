@@ -35,7 +35,6 @@ class _TestResultState extends State<TestResult>
 
   @override
   void initState() {
-    print(_response);
     _tabController = new TabController(length: 2, vsync: this);
     super.initState();
     _timer = Timer(Duration(seconds: 1), () {

@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:intl/intl.dart';
+import 'package:lurnify/helper/helper.dart';
 import 'package:lurnify/ui/constant/ApiConstant.dart';
 import 'package:lurnify/ui/constant/constant.dart';
 import 'package:lurnify/ui/screen/selfstudy/studycomplete.dart';
@@ -26,7 +28,9 @@ class _SyncYourTime extends State<SyncYourTime> {
   _SyncYourTime(this.course, this.subject, this.unit, this.chapter, this.topic,
       this.duration);
 
+  // ignore: unused_field
   double _height;
+  // ignore: unused_field
   double _width;
   double startHr = 0;
   double startMin = 0;
@@ -138,6 +142,7 @@ class _SyncYourTime extends State<SyncYourTime> {
         barrierDismissible: true,
         barrierLabel: '',
         context: context,
+        // ignore: missing_return
         pageBuilder: (context, animation1, animation2) {});
   }
 
@@ -848,7 +853,7 @@ class _SyncYourTime extends State<SyncYourTime> {
         endMinute = endMin.round().toString();
       }
       String startingTime = startHour + ":" + startMinute + ":00";
-      ;
+
       String endTime = endHour + ":" + endMinute + ":00";
       int startSeconds =
           Duration(hours: startHr.round(), minutes: startMin.round()).inSeconds;
@@ -867,19 +872,43 @@ class _SyncYourTime extends State<SyncYourTime> {
         startDate = startDate + " " + startingTime;
         endDate = endDate + " " + endTime;
         SharedPreferences sp = await SharedPreferences.getInstance();
-        var url = baseUrl +
-            "checkEndDateForManualEntry?date=" +
-            startDate +
-            "&registrationSno=" +
-            sp.getString("studentSno");
-        print(url);
-        http.Response response = await http.get(
-          Uri.encodeFull(url),
-        );
-        var resbody = jsonDecode(response.body);
-        print(resbody);
-        Map<String, dynamic> mapResult = resbody;
-        if (mapResult['result'].toString() == "true") {
+        // var url = baseUrl +
+        //     "checkEndDateForManualEntry?date=" +
+        //     startDate +
+        //     "&registrationSno=" +
+        //     sp.getString("studentSno");
+        // print(url);
+        // http.Response response = await http.get(
+        //   Uri.encodeFull(url),
+        // );
+        // var resbody = jsonDecode(response.body);
+        // print(resbody);
+        // Map<String, dynamic> mapResult = resbody;
+        StudyRepo studyRepo = new StudyRepo();
+        List<Map<String, dynamic>> list =
+            await studyRepo.checkEndDateForManualEntry();
+        bool check = false;
+        print(list);
+        if (list.isEmpty) {
+          check = true;
+        } else {
+          String endDate = "";
+          for (var a in list) {
+            endDate = a['endDate'];
+          }
+          DateTime sDate = DateFormat('yyyy-MM-dd hh:mm:ss').parse(startDate);
+          DateTime eDate = DateFormat('yyyy-MM-dd hh:mm:ss').parse(endDate);
+          print(sDate);
+          print(eDate);
+          if (eDate.isAfter(sDate)) {
+            check = false;
+          } else {
+            check = true;
+          }
+        }
+        print("111111111111111111111111111111111111");
+        print(check);
+        if (check) {
           Navigator.pushReplacement(
               context,
               MaterialPageRoute(

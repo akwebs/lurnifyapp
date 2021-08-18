@@ -3,19 +3,26 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:lurnify/Animation/FadeAnimation.dart';
+import 'package:lurnify/helper/helper.dart';
+import 'package:lurnify/model/model.dart';
 import 'package:lurnify/ui/constant/constant.dart';
-import 'package:lurnify/widgets/componants/custom-button.dart';
+import 'package:lurnify/ui/home-page.dart';
+import 'package:lurnify/widgets/widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:lurnify/ui/constant/ApiConstant.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class SelectThePace extends StatefulWidget {
+  final bool backButtonWillWork;
+  SelectThePace(this.backButtonWillWork);
   @override
-  _SelectThePaceState createState() => _SelectThePaceState();
+  _SelectThePaceState createState() => _SelectThePaceState(backButtonWillWork);
 }
 
 class _SelectThePaceState extends State<SelectThePace> {
+  _SelectThePaceState(this.backButtonWillWork);
+  final bool backButtonWillWork;
   String _radioValue; //Initial definition of radio button value
   String choice;
   bool customProgram = false;
@@ -30,21 +37,30 @@ class _SelectThePaceState extends State<SelectThePace> {
   Future getTotalTopicDuration() async {
     try {
       SharedPreferences sp = await SharedPreferences.getInstance();
-      var url = baseUrl +
-          "getDurationByCourse?courseSno=" +
-          sp.get("courseSno") +
-          "&registrationSno=" +
-          sp.getString("studentSno");
-      print(url);
-      http.Response response = await http.get(
-        Uri.encodeFull(url),
-      );
-      var resbody = jsonDecode(response.body);
-      Map<String, dynamic> map = resbody;
-      String getTotalDuration = map['totalTopicDurationByCourse'];
+      // var url = baseUrl +
+      //     "getDurationByCourse?courseSno=" +
+      //     sp.get("courseSno") +
+      //     "&registrationSno=" +
+      //     sp.getString("studentSno");
+      // print(url);
+      // http.Response response = await http.get(
+      //   Uri.encodeFull(url),
+      // );
+      // var resbody = jsonDecode(response.body);
+      // Map<String, dynamic> map = resbody;
+      DBHelper dbHelper = new DBHelper();
+      List<Map<String, dynamic>> map =
+          await dbHelper.getTotalTopicDurationByCourse(sp.get("courseSno"));
+      int tDuration = 0;
+      for (var a in map) {
+        tDuration = a['totalDuration'] ?? 0;
+      }
+      String getTotalDuration = tDuration.toString() ?? "0";
       totalDuration = double.parse(getTotalDuration);
-      totalDuration = 0;
+      // totalDuration = 0;
+      // toastMethod(totalDuration.toString());
     } catch (e) {
+      print(e);
       toastMethod(e.toString());
     }
   }
@@ -58,56 +74,62 @@ class _SelectThePaceState extends State<SelectThePace> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Self Study Program Pace"),
-        centerTitle: true,
-      ),
-      body: FutureBuilder(
-        future: _data,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            return Material(
-              color: Colors.transparent,
-              child: SingleChildScrollView(
-                child: Container(
-                  height: MediaQuery.of(context).size.height - 90,
+    return WillPopScope(
+      onWillPop: () async => backButtonWillWork,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text("Self Study Program Pace"),
+          centerTitle: true,
+          elevation: 0,
+          leading: backButtonWillWork
+              ? IconButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  icon: Icon(
+                    Icons.arrow_back,
+                  ),
+                )
+              : Container(),
+        ),
+        body: FutureBuilder(
+          future: _data,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done) {
+              return Material(
+                color: Colors.transparent,
+                child: SingleChildScrollView(
                   child: Column(
                     children: [
                       mainContent(),
-                      Spacer(),
-                      SizedBox(
-                        width: Responsive.getPercent(
-                            90, ResponsiveSize.WIDTH, context),
-                        child: CustomButton(
-                          brdRds: 10,
-                          buttonText: 'DONE',
-                          onPressed: () {
-                            submit();
-                          },
-                          verpad: EdgeInsets.symmetric(vertical: 10),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      )
                     ],
                   ),
                 ),
-              ),
-            );
-          } else {
-            return Center(
-              child: SizedBox(
-                height: 150,
-                width: 150,
-                child: Lottie.asset(
-                  'assets/lottie/56446-walk.json',
+              );
+            } else {
+              return Center(
+                child: SizedBox(
+                  height: 150,
+                  width: 150,
+                  child: Lottie.asset(
+                    'assets/lottie/56446-walk.json',
+                  ),
                 ),
-              ),
-            );
-          }
-        },
+              );
+            }
+          },
+        ),
+        bottomNavigationBar: SizedBox(
+          width: Responsive.getPercent(90, ResponsiveSize.WIDTH, context),
+          child: CustomButton(
+            brdRds: 0,
+            buttonText: 'DONE',
+            onPressed: () {
+              submit();
+            },
+            verpad: EdgeInsets.symmetric(vertical: 5),
+          ),
+        ),
       ),
     );
   }
@@ -128,9 +150,6 @@ class _SelectThePaceState extends State<SelectThePace> {
               height: 10,
             ),
             FadeAnimation(1.6, studyHoursPick()),
-            SizedBox(
-              height: 20,
-            ),
           ],
         ),
       ),
@@ -204,6 +223,7 @@ class _SelectThePaceState extends State<SelectThePace> {
 
   Widget studyHoursPick() {
     return Container(
+      clipBehavior: Clip.antiAlias,
       margin: EdgeInsets.symmetric(horizontal: 10),
       width: MediaQuery.of(context).size.width,
       decoration: BoxDecoration(
@@ -213,12 +233,7 @@ class _SelectThePaceState extends State<SelectThePace> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(10),
-                  topRight: Radius.circular(10),
-                ),
-                color: firstColor),
+            decoration: BoxDecoration(color: firstColor),
             padding: EdgeInsets.symmetric(vertical: 10),
             width: double.maxFinite,
             alignment: Alignment.center,
@@ -431,7 +446,7 @@ class _SelectThePaceState extends State<SelectThePace> {
       context: context,
       initialDate: selectedDate,
       firstDate: DateTime(2020, 1),
-      lastDate: DateTime(2022),
+      lastDate: DateTime(2023),
     );
 
     if (picked != null)
@@ -452,51 +467,62 @@ class _SelectThePaceState extends State<SelectThePace> {
       } else {
         Duration inDays = selectedDate.difference(DateTime.now());
         int convertedInDays = inDays.inDays;
+        print(totalDuration);
         if (customValue == null) {
-          totalPerDayHours = totalDuration.round() / convertedInDays;
+          totalPerDayHours = (totalDuration / 60).round() / convertedInDays;
         } else {
           totalPerDayHours = double.parse(customValue);
         }
+        print(totalPerDayHours);
         if (totalPerDayHours > 15) {
           toastMethod("Too Less");
         } else {
           SharedPreferences sp = await SharedPreferences.getInstance();
-          String studentSno = "1";
+          String studentSno = sp.getString("studentSno");
           String syllabusCompletionDate = selectedDate.toString();
           String perDayStudyHour = totalTiming.toString();
           String courseSno = sp.get("courseSno");
-          var url = baseUrl +
-              "savePace?registrationSno=" +
-              studentSno +
-              "&syllabusCompletionDate=" +
-              syllabusCompletionDate +
-              "&perDayStudyHour=" +
-              perDayStudyHour +
-              "&expectedRank=" +
-              expectedRank +
-              "&courseSno=" +
-              courseSno;
-          http.Response response = await http.post(
-            Uri.encodeFull(url),
-          );
-          var resbody = jsonDecode(response.body);
-          print(resbody);
-          Map<String, dynamic> mapResult = resbody;
-          if (mapResult['result'].toString() == "true") {
-            toastMethod("Data Saved Successfully");
-            SharedPreferences sp = await SharedPreferences.getInstance();
-            sp.setString("courseCompletionDate", completionDate);
-            sp.setString("courseCompletionDateFormatted",
-                selectedDate.toString().split(" ")[0]);
-            sp.setString(
-                "courseStartingDate", DateTime.now().toString().split(" ")[0]);
-            sp.setInt("totalWeeks",
-                (selectedDate.difference(DateTime.now()).inDays / 7).round());
-            sp.setDouble("totalStudyHour", totalTiming);
-            Navigator.of(context).pop();
-          } else {
-            toastMethod("Something Went Wrong. Please try again later");
-          }
+          // var url = baseUrl +
+          //     "savePace?registrationSno=" +
+          //     studentSno +
+          //     "&syllabusCompletionDate=" +
+          //     syllabusCompletionDate +
+          //     "&perDayStudyHour=" +
+          //     perDayStudyHour +
+          //     "&expectedRank=" +
+          //     expectedRank +
+          //     "&courseSno=" +
+          //     courseSno;
+          // http.Response response = await http.post(
+          //   Uri.encodeFull(url),
+          // );
+          // var resbody = jsonDecode(response.body);
+          // print(resbody);
+          // Map<String, dynamic> mapResult = resbody;
+          Pace pace = new Pace();
+          pace.courseSno = courseSno;
+          pace.enteredDate = DateTime.now().toString();
+          pace.studentSno = studentSno;
+          pace.expectedRank = expectedRank;
+          pace.perDayStudyHour = perDayStudyHour;
+          pace.syllabusCompletionDate = syllabusCompletionDate;
+
+          PaceRepo paceRepo = new PaceRepo();
+          paceRepo.insertIntoPace(pace);
+          toastMethod("Data Saved Successfully");
+
+          sp.setString("courseCompletionDate", completionDate);
+          sp.setString("courseCompletionDateFormatted",
+              selectedDate.toString().split(" ")[0]);
+          sp.setString(
+              "courseStartingDate", DateTime.now().toString().split(" ")[0]);
+          sp.setInt("totalWeeks",
+              (selectedDate.difference(DateTime.now()).inDays / 7).round());
+          sp.setDouble("totalStudyHour", totalTiming);
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (BuildContext context) => HomePage()),
+              ModalRoute.withName('/'));
         }
       }
     } catch (e) {

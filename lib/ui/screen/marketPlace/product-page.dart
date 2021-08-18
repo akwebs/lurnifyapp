@@ -3,12 +3,11 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lurnify/ui/constant/constant.dart';
+import 'package:lurnify/widgets/widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:http/http.dart' as http;
 import 'package:lurnify/ui/constant/ApiConstant.dart';
-import 'package:lurnify/ui/screen/widget/custom-alert.dart';
-import 'package:lurnify/widgets/componants/custom-button.dart';
 
 class ProductPage extends StatefulWidget {
   final String weekOrMonthSno;
@@ -284,6 +283,7 @@ class _ProductPageState extends State<ProductPage> {
           title: Text('Confirmation'),
           content: Text('Do you want to buy this product?'),
           actions: <Widget>[
+            // ignore: deprecated_member_use
             new FlatButton(
               onPressed: () {
                 Navigator.of(context, rootNavigator: true)
@@ -294,6 +294,7 @@ class _ProductPageState extends State<ProductPage> {
                 style: TextStyle(color: Colors.black),
               ),
             ),
+            // ignore: deprecated_member_use
             FlatButton(
               onPressed: () {
                 Navigator.of(context, rootNavigator: true)

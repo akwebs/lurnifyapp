@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:lottie/lottie.dart';
 import 'package:lurnify/config/data.dart';
 import 'package:lurnify/config/size.dart';
 import 'package:lurnify/ui/constant/constant.dart';
 import 'package:percent_indicator/percent_indicator.dart';
-import 'dart:math';
 
 class CardWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    var height = SizeConfig.getHeight(context);
+    // var height = SizeConfig.getHeight(context);
     var width = SizeConfig.getWidth(context);
     double fontSize(double size) {
       return size * width / 414;
@@ -126,11 +124,12 @@ class CardWidget extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
                                     Row(
+                                      mainAxisSize: MainAxisSize.max,
                                       children: <Widget>[
                                         Text(
                                           AppSlider.name[index],
                                           style: TextStyle(
-                                              fontSize: fontSize(30),
+                                              fontSize: fontSize(26),
                                               fontWeight: FontWeight.w500),
                                         ),
                                       ],

@@ -1,13 +1,7 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:lurnify/config/data.dart';
-import 'package:lurnify/ui/constant/ApiConstant.dart';
 import 'package:lurnify/ui/constant/constant.dart';
 import 'package:lurnify/ui/screen/selfstudy/starttimer.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
-import 'package:http/http.dart' as http;
 import 'package:smooth_star_rating/smooth_star_rating.dart';
 
 class TopicProgress extends StatefulWidget {
@@ -76,7 +70,7 @@ class _TopicProgressState extends State<TopicProgress> {
                   primary: false,
                   scrollDirection: Axis.vertical,
                   itemBuilder: (context, i) {
-                    return cards(i);
+                    return _cards(i);
                   },
                 ),
               ),
@@ -103,7 +97,7 @@ class _TopicProgressState extends State<TopicProgress> {
     );
   }
 
-  Widget cards(int i) {
+  Widget _cards(int i) {
     return Padding(
       padding: EdgeInsets.all(8),
       child: Card(
@@ -212,7 +206,7 @@ class _TopicProgressState extends State<TopicProgress> {
                   Expanded(
                     flex: 1,
                     child: Container(
-                      child: topicInfo(
+                      child: _topicInfo(
                         i,
                         'Studied',
                         topics[i]['isUserStudied'] == 0 ? "No" : "Yes",
@@ -227,7 +221,7 @@ class _TopicProgressState extends State<TopicProgress> {
                   Expanded(
                     flex: 1,
                     child: Container(
-                      child: topicInfo(
+                      child: _topicInfo(
                         i,
                         'Test Score',
                         topics[i]['lastTestScore'] == null
@@ -246,7 +240,7 @@ class _TopicProgressState extends State<TopicProgress> {
                   Expanded(
                     flex: 1,
                     child: Container(
-                      child: topicInfo(
+                      child: _topicInfo(
                         i,
                         'Revision',
                         topics[i]['revision'] == null
@@ -263,7 +257,7 @@ class _TopicProgressState extends State<TopicProgress> {
                   Expanded(
                     flex: 1,
                     child: Container(
-                        child: topicInfo(
+                        child: _topicInfo(
                             i,
                             'Last Studied',
                             topics[i]['lastStudied'] == null
@@ -281,7 +275,7 @@ class _TopicProgressState extends State<TopicProgress> {
   }
 }
 
-Column topicInfo(int i, String heading, String detail) {
+Column _topicInfo(int i, String heading, String detail) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.center,
     children: [

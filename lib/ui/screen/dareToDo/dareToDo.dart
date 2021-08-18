@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -12,8 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
-
-import '../../constant/ApiConstant.dart';
+import 'package:lurnify/ui/constant/ApiConstant.dart';
 
 class DareToDo extends StatefulWidget {
   @override
@@ -23,9 +21,13 @@ class DareToDo extends StatefulWidget {
 List _weekDailyData = [];
 
 class _DareToDoState extends State<DareToDo> {
+  // ignore: unused_field
   Map<String, dynamic> _tasksMonths = Map();
+  // ignore: unused_field
   List _dailyTask = [];
+  // ignore: unused_field
   List _weeklyTask = [];
+  // ignore: unused_field
   List _montholyTask = [];
   double progressValue = 0;
   String taskText = '';
@@ -299,13 +301,13 @@ class _DareToDoState extends State<DareToDo> {
                             ),
                           ),
                         ),
-                        DailyTaskInfo(
+                        _DailyTaskInfo(
                           dailyTaskDetail: _dailyTaskDetail == ''
                               ? 'Please Spin the Spinner to Get Daily Task'
                               : _dailyTaskDetail,
                         ),
                         Spacer(),
-                        WeekDays(),
+                        _WeekDays(),
                       ],
                     ),
                     SingleChildScrollView(
@@ -390,8 +392,8 @@ class _DareToDoState extends State<DareToDo> {
                             ),
                           ),
                           //BarChartSample1(),
-                          WeekTaskInfo(),
-                          Weeks(),
+                          _WeekTaskInfo(),
+                          _Weeks(),
                         ],
                       ),
                     ),
@@ -681,8 +683,8 @@ class _ProgressBar extends StatelessWidget {
   }
 }
 
-class WeekDays extends StatelessWidget {
-  const WeekDays({
+class _WeekDays extends StatelessWidget {
+  const _WeekDays({
     Key key,
   }) : super(key: key);
 
@@ -778,8 +780,8 @@ class WeekDays extends StatelessWidget {
   }
 }
 
-class Weeks extends StatelessWidget {
-  const Weeks({
+class _Weeks extends StatelessWidget {
+  const _Weeks({
     Key key,
   }) : super(key: key);
 
@@ -852,9 +854,9 @@ class Weeks extends StatelessWidget {
   }
 }
 
-class DailyTaskInfo extends StatelessWidget {
+class _DailyTaskInfo extends StatelessWidget {
   final String dailyTaskDetail;
-  const DailyTaskInfo({Key key, this.dailyTaskDetail}) : super(key: key);
+  const _DailyTaskInfo({Key key, this.dailyTaskDetail}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -895,8 +897,8 @@ class DailyTaskInfo extends StatelessWidget {
   }
 }
 
-class WeekTaskInfo extends StatelessWidget {
-  const WeekTaskInfo({
+class _WeekTaskInfo extends StatelessWidget {
+  const _WeekTaskInfo({
     Key key,
   }) : super(key: key);
 
@@ -915,7 +917,7 @@ class WeekTaskInfo extends StatelessWidget {
             padding: const EdgeInsets.only(top: 30.0),
             child: AspectRatio(
               aspectRatio: 4.0 / 2.4,
-              child: BarChartNew(),
+              child: _BarChartNew(),
             ),
             decoration: BoxDecoration(
               gradient: LinearGradient(
@@ -934,8 +936,8 @@ class WeekTaskInfo extends StatelessWidget {
   }
 }
 
-class BarChartNew extends StatelessWidget {
-  const BarChartNew({
+class _BarChartNew extends StatelessWidget {
+  const _BarChartNew({
     Key key,
   }) : super(key: key);
 

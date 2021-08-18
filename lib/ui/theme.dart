@@ -137,7 +137,7 @@ class AppTheme {
           headline6: TextStyle(color: _darkSeconderyColor, fontSize: 20),
         ),
         iconTheme: IconThemeData(
-          color: _darkSeconderyColor,
+          color: _darkOnPrimaryColor,
         ),
       ),
       colorScheme: ColorScheme(

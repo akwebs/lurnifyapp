@@ -4,13 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lurnify/config/data.dart';
 import 'package:lurnify/ui/constant/constant.dart';
+import 'package:lurnify/widgets/widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/services.dart';
 import 'package:lurnify/ui/constant/ApiConstant.dart';
-import 'package:lurnify/ui/screen/widget/custom-alert.dart';
-import 'package:lurnify/ui/screen/widget/custom-button.dart';
-import 'package:lurnify/ui/screen/marketPlace/product-page.dart';
+import 'package:lurnify/ui/screen/screen.dart';
 
 class MarketPlace extends StatefulWidget {
   @override
@@ -43,6 +42,7 @@ class _MarketPlaceState extends State<MarketPlace> {
     }
   }
 
+  // ignore: unused_field
   Color _backgroundColor = AppColors.tileIconColors[3];
   Color subColor(int i) {
     if (i % 3 == 0) {
@@ -55,6 +55,7 @@ class _MarketPlaceState extends State<MarketPlace> {
     return AppColors.tileIconColors[0];
   }
 
+  // ignore: unused_element
   _onSelected(int i) {
     setState(() {
       _backgroundColor = subColor(i);
@@ -426,6 +427,7 @@ class _MarketPlaceState extends State<MarketPlace> {
     );
   }
 
+  // ignore: unused_element
   Widget _weekCards() {
     return Container(
       height: 200,
@@ -482,6 +484,7 @@ class _MarketPlaceState extends State<MarketPlace> {
     );
   }
 
+  // ignore: unused_element
   Widget _monthCards() {
     return Container(
       height: 250,
@@ -539,6 +542,7 @@ class _MarketPlaceState extends State<MarketPlace> {
     );
   }
 
+  // ignore: unused_element
   Widget _otherProducts() {
     return Container(
         child: GridView.builder(
@@ -631,12 +635,14 @@ class _MarketPlaceState extends State<MarketPlace> {
                               Clipboard.setData(new ClipboardData(
                                       text: _products[i]['referralCode']))
                                   .then((_) {
+                                // ignore: deprecated_member_use
                                 Scaffold.of(context).showSnackBar(SnackBar(
                                     content: Text(
                                         "Referral Coupon copied to clipboard")));
                               });
                             },
                           )
+                        // ignore: deprecated_member_use
                         : RaisedButton(
                             child: Text("Purchased"),
                             onPressed: null,
@@ -657,6 +663,7 @@ class _MarketPlaceState extends State<MarketPlace> {
           title: Text('Confirmation'),
           content: Text('Do you want to buy this product?'),
           actions: <Widget>[
+            // ignore: deprecated_member_use
             new FlatButton(
               onPressed: () {
                 Navigator.of(context, rootNavigator: true)
@@ -667,6 +674,7 @@ class _MarketPlaceState extends State<MarketPlace> {
                 style: TextStyle(color: Colors.black),
               ),
             ),
+            // ignore: deprecated_member_use
             FlatButton(
               onPressed: () {
                 Navigator.of(context, rootNavigator: true)

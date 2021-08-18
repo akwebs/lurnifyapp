@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -51,6 +50,7 @@ class _RankboosterInstructionState extends State<RankboosterInstruction> {
   _getTestData() async {
     try {
       String testData = jsonEncode(_selectedSubjectMap);
+      // ignore: unused_local_variable
       String testDuration = "";
       if (selectedSwitchOption == "Numerical") {
         testDuration =
@@ -82,7 +82,6 @@ class _RankboosterInstructionState extends State<RankboosterInstruction> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
   }
 
@@ -136,6 +135,7 @@ class _RankboosterInstructionState extends State<RankboosterInstruction> {
                     SizedBox(
                       height: 20,
                     ),
+                    // ignore: deprecated_member_use
                     RaisedButton(
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
@@ -173,7 +173,8 @@ class _RankboosterInstructionState extends State<RankboosterInstruction> {
       toastMethod("Please wait a while. we are loading your test");
     } else {
       Navigator.of(context).pushReplacement(MaterialPageRoute(
-        builder: (context) => Test(_testData, "rankBoosterTest", ""),
+        builder: (context) =>
+            Test(_testData, "rankBoosterTest", "", "", "", "", ""),
       ));
     }
   }

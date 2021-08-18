@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
+import 'package:lurnify/helper/helper.dart';
 import 'package:lurnify/ui/constant/ApiConstant.dart';
 import 'package:lurnify/ui/constant/constant.dart';
 import 'package:lurnify/ui/home-page.dart';
@@ -93,41 +94,53 @@ class _StudyCompleteState extends State<StudyComplete> {
 
   get fullWidth => Responsive.getPercent(100, ResponsiveSize.WIDTH, context);
   Future _getTotalSecondByDate() async {
-    SharedPreferences sp = await SharedPreferences.getInstance();
-    var url = baseUrl +
-        "getTotalSecondByDate?date=" +
-        startDate.split(" ")[0] +
-        "&registrationSno=" +
-        sp.getString("studentSno") +
-        "&totalSeconds=" +
-        second;
-    print(url);
-    http.Response response = await http.get(
-      Uri.encodeFull(url),
-    );
-    var resbody = jsonDecode(response.body);
-    Map<String, dynamic> mapResult = resbody;
-    String sum = mapResult['totalSecondByDate'].toString();
-    totalDimeEarns = mapResult['totalDimeEarns'];
+    // SharedPreferences sp = await SharedPreferences.getInstance();
+    // var url = baseUrl +
+    //     "getTotalSecondByDate?date=" +
+    //     startDate.split(" ")[0] +
+    //     "&registrationSno=" +
+    //     sp.getString("studentSno") +
+    //     "&totalSeconds=" +
+    //     second;
+    // print(url);
+    // http.Response response = await http.get(
+    //   Uri.encodeFull(url),
+    // );
+    // var resbody = jsonDecode(response.body);
+    // Map<String, dynamic> mapResult = resbody;
+    // String sum = mapResult['totalSecondByDate'].toString();
+    DBHelper dbHelper = new DBHelper();
+    List<Map<String, dynamic>> list =
+        await dbHelper.totalSecondByDate(startDate.split(" ")[0]);
+    double sum = 0;
+    for (var a in list) {
+      print(a);
+      int tSecond = a['totalSecond'] ?? 0;
+      sum = tSecond.toDouble() ?? 0;
+    }
+    // totalDimeEarns = mapResult['totalDimeEarns'];
+    RewardRepo repo = new RewardRepo();
+    List<Map<String, dynamic>> list2 = await repo.getReward();
+    int reward = 0;
+    for (var a in list2) {
+      reward = a['studyTime'] ?? 0;
+    }
+    double totalDimeEarn = reward * (int.parse(second ?? "0") / 60);
+    totalDimeEarns = totalDimeEarn.toStringAsFixed(2) ?? "0";
     if (totalDimeEarns == null) {
       totalDimeEarns = "0";
     }
     getLeftStudyHour(sum);
   }
 
-  Future getLeftStudyHour(String sum) async {
+  Future getLeftStudyHour(double sum) async {
     SharedPreferences sp = await SharedPreferences.getInstance();
-    double lastStudySecond = 0;
-    try {
-      lastStudySecond = double.parse(sum);
-    } catch (e) {
-      lastStudySecond = 0;
-    }
+
     totalStudyHour = sp.getDouble("totalStudyHour");
     int totalStudyHourInSeconds =
         Duration(hours: totalStudyHour.round()).inSeconds;
     double totalLefSecond =
-        totalStudyHourInSeconds - int.parse(second) - lastStudySecond;
+        totalStudyHourInSeconds - int.parse(second ?? "0") - sum;
     String twoDigits(int n) => n.toString().padLeft(2, "0");
     String twoDigitMinutes = twoDigits(
         Duration(seconds: totalLefSecond.toInt()).inMinutes.remainder(60));
@@ -192,7 +205,7 @@ class _StudyCompleteState extends State<StudyComplete> {
       bottomNavigationBar: CustomButton(
         buttonText: 'SUBMIT',
         onPressed: () => _submitDone(),
-        verpad: EdgeInsets.symmetric(vertical: 18),
+        verpad: EdgeInsets.symmetric(vertical: 5),
         brdRds: 0,
       ),
       // floatingActionButton: FloatingActionButton.extended(
@@ -295,13 +308,13 @@ class _StudyCompleteState extends State<StudyComplete> {
                 child: SwitchListTile(
                   contentPadding: EdgeInsets.only(left: 4, right: 4),
                   title: Text(
-                    'Completed ? ',
+                    _isStudyCompleted ? 'Completed ?' : 'Studying ?',
                     style: TextStyle(fontSize: 18),
                   ),
-                  subtitle: Text(
-                    'or Studying ?',
-                    style: TextStyle(fontSize: 14),
-                  ),
+                  // subtitle: Text(
+                  //   'or Studying ?',
+                  //   style: TextStyle(fontSize: 14),
+                  // ),
                   secondary: IconButton(
                     icon: Icon(
                       Icons.comment,
@@ -350,7 +363,7 @@ class _StudyCompleteState extends State<StudyComplete> {
                                   fontSize: 13, fontWeight: FontWeight.w800),
                             ),
                             Container(
-                              width: MediaQuery.of(context).size.width * 0.65,
+                              width: MediaQuery.of(context).size.width * 0.62,
                               child: SliderTheme(
                                 data: SliderTheme.of(context).copyWith(
                                   activeTrackColor: firstColor,
@@ -432,7 +445,7 @@ class _StudyCompleteState extends State<StudyComplete> {
                                   fontSize: 13, fontWeight: FontWeight.w800),
                             ),
                             Container(
-                              width: MediaQuery.of(context).size.width * 0.65,
+                              width: MediaQuery.of(context).size.width * 0.62,
                               child: SliderTheme(
                                 data: SliderTheme.of(context).copyWith(
                                   activeTrackColor: firstColor,
@@ -560,6 +573,7 @@ class _StudyCompleteState extends State<StudyComplete> {
                   onTimerDurationChanged: (Duration changedtimer) {
                     setState(
                       () {
+                        // ignore: unused_local_variable
                         var formatter = DateFormat("hh:mm a");
                         startStudyAfter = _printDuration(changedtimer);
                       },
@@ -581,12 +595,16 @@ class _StudyCompleteState extends State<StudyComplete> {
     SharedPreferences sp = await SharedPreferences.getInstance();
     String thOrNum = theoryOrNum.toString();
     String effectiveStudy = effectivenessOfStudy.toString();
+    // ignore: unused_local_variable
     String hour = printHr.toString();
+    // ignore: unused_local_variable
     String min = printMin.toString();
     String totalTime = time;
     String totalSecond = second;
     String studentSno = sp.getString("studentSno");
+    // ignore: unused_local_variable
     String newEndDate = startDate.split(" ")[0] + "23:59:59";
+    // ignore: unused_local_variable
     String newStartDate = "00:00:00" + endDate.split(" ")[0];
     String completionStatus = "";
     if (_isStudyCompleted) {
@@ -670,6 +688,7 @@ class _StudyCompleteState extends State<StudyComplete> {
         fontSize: 18.0);
   }
 
+  // ignore: unused_element
   void _setContinueStudyAfterTime() {
     var formatter = new DateFormat('hh:mm a');
     printTime = formatter.format(
@@ -768,6 +787,7 @@ class _StudyCompleteState extends State<StudyComplete> {
         barrierDismissible: true,
         barrierLabel: '',
         context: context,
+        // ignore: missing_return
         pageBuilder: (context, animation1, animation2) {});
   }
 
@@ -805,6 +825,7 @@ class _StudyCompleteState extends State<StudyComplete> {
   String _printDuration(Duration duration) {
     String twoDigits(int n) => n.toString().padLeft(2, "0");
     String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
+    // ignore: unused_local_variable
     String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
     return "${twoDigits(duration.inHours)}:$twoDigitMinutes";
   }
@@ -818,14 +839,17 @@ class _StudyCompleteState extends State<StudyComplete> {
             "Congratulations! You have completed the topic.",
             style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
           ),
+          // ignore: deprecated_member_use
           OutlineButton(
             child: Text("Take Test?"),
             onPressed: () {
               Navigator.of(context).pushReplacement(MaterialPageRoute(
-                builder: (context) => InstructionPage(topic),
+                builder: (context) =>
+                    InstructionPage(course, subject, unit, chapter, topic),
               ));
             },
           ),
+          // ignore: deprecated_member_use
           OutlineButton(
             child: Text("Not now"),
             onPressed: () {
@@ -847,6 +871,7 @@ class _StudyCompleteState extends State<StudyComplete> {
     );
   }
 
+  // ignore: unused_element
   _acceptChallengeBox(BuildContext context) {
     AlertDialog alert = AlertDialog(
       content: new Column(
@@ -856,12 +881,14 @@ class _StudyCompleteState extends State<StudyComplete> {
             "Congratulations! You have completed the last week challenge. Do you want to take next week challenge",
             style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
           ),
+          // ignore: deprecated_member_use
           OutlineButton(
             child: Text("Take Challenge?"),
             onPressed: () {
               // Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => Test(topic,"topicTest",[]),));
             },
           ),
+          // ignore: deprecated_member_use
           OutlineButton(
             child: Text("Not now"),
             onPressed: () {

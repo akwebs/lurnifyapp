@@ -11,6 +11,11 @@ Color firstColor = Colors.deepPurple;
 Color borderColor = Colors.deepPurpleAccent;
 Color textColor = Colors.deepPurple;
 
+Image logo = Image.asset('assets/lurnify.png');
+String logoUrl = 'assets/lurnify.png';
+double cirRds = 10.0;
+double padBtn = 5.0;
+
 enum ResponsiveSize { WIDTH, HEIGHT }
 
 enum ViewState {

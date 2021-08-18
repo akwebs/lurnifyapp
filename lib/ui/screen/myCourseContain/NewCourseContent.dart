@@ -2,20 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lottie/lottie.dart';
 import 'package:lurnify/config/data.dart';
-import 'package:lurnify/model/chapters.dart';
-import 'package:lurnify/model/subject.dart';
-import 'package:lurnify/model/units.dart';
+import 'package:lurnify/model/model.dart';
 import 'package:lurnify/ui/constant/ApiConstant.dart';
 import 'package:lurnify/ui/constant/constant.dart';
-import 'package:lurnify/ui/screen/myCourseContain/ClassNotes.dart';
-import 'package:lurnify/ui/screen/myCourseContain/FlashCard.dart';
-import 'package:lurnify/ui/screen/myCourseContain/MicroVideo.dart';
-import 'package:lurnify/ui/screen/myCourseContain/PreciseTheory.dart';
+import 'package:lurnify/ui/screen/screen.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import '../../../model/units.dart';
 
 class NewCourseContent extends StatefulWidget {
   @override
@@ -25,6 +19,7 @@ class NewCourseContent extends StatefulWidget {
 class _NewCourseContentState extends State<NewCourseContent>
     with SingleTickerProviderStateMixin {
   List<Subject> _subjects = [];
+  // ignore: unused_field
   List<UnitDtos> _units = [];
   TabController _controller;
   List<Widget> _myTabs = [];
@@ -50,6 +45,7 @@ class _NewCourseContentState extends State<NewCourseContent>
     return AppColors.tileIconColors[0];
   }
 
+  // ignore: unused_element
   _onSelected(int i) {
     setState(() {
       _backgroundColor = subColor(i);
@@ -375,8 +371,8 @@ class _NewCourseContentState extends State<NewCourseContent>
             title: Text(TopicDtos.topicName),
             onTap: () {
               topic = TopicDtos.sno.toString();
-              if (TopicDtos.subTopic != null) {
-                subTopic = TopicDtos.subTopic;
+              if (TopicDtos.subtopic != null) {
+                subTopic = TopicDtos.subtopic;
               }
               if (TopicDtos.duration != null) {
                 duration = TopicDtos.duration;

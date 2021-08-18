@@ -1,25 +1,27 @@
 import 'dart:convert';
-import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
-import 'package:lurnify/config/data.dart';
-import 'package:lurnify/ui/screen/dareToDo/dareToDo.dart';
-import 'package:lurnify/ui/screen/selfstudy/recent.dart';
-import 'package:lurnify/ui/screen/userProfile/user-profile.dart';
-import 'package:lurnify/widgets/CustomDrawer.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:lurnify/widgets/home/apptiles.dart';
-import 'package:lurnify/widgets/home/bottom_slider.dart';
-import 'package:lurnify/widgets/home/cards_Slider.dart';
-import 'package:lurnify/widgets/home/cardwidget.dart';
+import 'package:intl/intl.dart';
+import 'package:lurnify/config/data.dart';
+import 'package:lurnify/confitti.dart';
+import 'package:lurnify/helper/helper.dart';
+import 'package:lurnify/model/DataUpdate.dart';
+import 'package:lurnify/widgets/home/reviews.dart';
+import 'package:lurnify/widgets/home/spinner.dart';
+import 'package:share/share.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:lurnify/ui/constant/ApiConstant.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
-
+import 'package:lurnify/widgets/widget.dart';
+import 'package:lurnify/ui/screen/screen.dart';
 import 'dart:async';
+
+import 'constant/constant.dart';
+
+import 'package:sqflite/sqflite.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key key}) : super(key: key);
@@ -38,33 +40,325 @@ class _HomePageState extends State<HomePage> {
   bool isReferralCodeUsed = false;
   bool _isPaymentDone = false;
   bool _isSpinned = false;
-  List _spinData = [];
+  List<Map<String, dynamic>> _spinData = [];
 
   _getHomePageData() async {
-    SharedPreferences sp = await SharedPreferences.getInstance();
-    var url =
-        baseUrl + "getHomePageData?registerSno=" + sp.getString("studentSno");
-    print(url);
-    http.Response response = await http.post(
-      Uri.encodeFull(url),
-    );
-    resbody = jsonDecode(response.body);
-    setState(() {
-      _totalDimes = resbody['totalDimes'].toString();
-      _signUpToast(_totalDimes);
-    });
-    if (resbody['result'] == true) {
-      _showChallenge();
-    } else {
-      _showMyDialog();
+    try {
+      bool showChallenge = false;
+      DataUpdate dataUpdate = new DataUpdate();
+      SharedPreferences sp = await SharedPreferences.getInstance();
+      DataUpdateRepo dataUpdateRepo = new DataUpdateRepo();
+      List<Map<String, dynamic>> list = await dataUpdateRepo.findBySno();
+      if (list.isEmpty) {
+        dataUpdate = new DataUpdate(
+            beatDistraction: "1",
+            dailyAppOpening: "1",
+            dailyTask: "1",
+            dailyTaskCompletion: "1",
+            dailyTaskData: "1",
+            reward: "1",
+            timerPage: "1",
+            weeklyTask: "1",
+            challengeAccept: "1");
+        String dateTimeNow = DateTime.now().toString();
+        DataUpdate update = new DataUpdate(
+            weeklyTask: dateTimeNow,
+            timerPage: dateTimeNow,
+            reward: dateTimeNow,
+            dailyTaskData: dateTimeNow,
+            dailyTaskCompletion: dateTimeNow,
+            dailyTask: dateTimeNow,
+            dailyAppOpening: dateTimeNow,
+            beatDistraction: dateTimeNow,
+            challengeAccept: dateTimeNow);
+
+        dataUpdateRepo.insertIntoDataUpdate(update);
+      } else {
+        DataUpdate update = new DataUpdate();
+        for (var a in list) {
+          String dateTimeNow = DateTime.now().toString();
+          if (a['reward'] == null ||
+              DateFormat('yyyy-MM-dd hh:mm')
+                      .parse(a['reward'])
+                      .add(Duration(hours: 10))
+                      .compareTo(DateTime.now()) <
+                  1) {
+            dataUpdate.reward = "1";
+            update.reward = dateTimeNow;
+          }
+          if (a['weeklyTask'] == null ||
+              DateFormat('yyyy-MM-dd hh:mm')
+                      .parse(a['weeklyTask'])
+                      .add(Duration(hours: 10))
+                      .compareTo(DateTime.now()) <
+                  1) {
+            dataUpdate.weeklyTask = "1";
+            update.weeklyTask = dateTimeNow;
+          }
+          if (a['dailyTaskCompletion'] == null ||
+              DateFormat('yyyy-MM-dd hh:mm')
+                      .parse(a['dailyTaskCompletion'])
+                      .add(Duration(hours: 10))
+                      .compareTo(DateTime.now()) <
+                  1) {
+            dataUpdate.dailyTaskCompletion = "1";
+            update.dailyTaskCompletion = dateTimeNow;
+          }
+          if (a['dailyAppOpening'] == null ||
+              DateFormat('yyyy-MM-dd hh:mm')
+                      .parse(a['dailyAppOpening'])
+                      .add(Duration(hours: 10))
+                      .compareTo(DateTime.now()) <
+                  1) {
+            dataUpdate.dailyAppOpening = "1";
+            update.dailyAppOpening = dateTimeNow;
+          }
+          if (a['dailyTask'] == null ||
+              DateFormat('yyyy-MM-dd hh:mm')
+                      .parse(a['dailyTask'])
+                      .add(Duration(hours: 10))
+                      .compareTo(DateTime.now()) <
+                  1) {
+            dataUpdate.dailyTask = "1";
+            update.dailyTask = dateTimeNow;
+          }
+          if (a['dailyTaskData'] == null ||
+              DateFormat('yyyy-MM-dd hh:mm')
+                      .parse(a['dailyTaskData'])
+                      .add(Duration(hours: 10))
+                      .compareTo(DateTime.now()) <
+                  1) {
+            dataUpdate.dailyTaskData = "1";
+            update.dailyTaskData = dateTimeNow;
+          }
+          if (a['beatDistraction'] == null ||
+              DateFormat('yyyy-MM-dd hh:mm')
+                      .parse(a['beatDistraction'])
+                      .add(Duration(hours: 10))
+                      .compareTo(DateTime.now()) <
+                  1) {
+            dataUpdate.beatDistraction = "1";
+            update.beatDistraction = dateTimeNow;
+          }
+          if (a['timerPage'] == null ||
+              DateFormat('yyyy-MM-dd hh:mm')
+                      .parse(a['timerPage'])
+                      .add(Duration(hours: 10))
+                      .compareTo(DateTime.now()) <
+                  1) {
+            dataUpdate.timerPage = "1";
+            update.timerPage = dateTimeNow;
+          }
+          if (a['challengeAccept'] == null ||
+              DateFormat('yyyy-MM-dd hh:mm')
+                      .parse(a['challengeAccept'])
+                      .add(Duration(hours: 10))
+                      .compareTo(DateTime.now()) <
+                  1) {
+            dataUpdate.challengeAccept = "1";
+            update.challengeAccept = dateTimeNow;
+          }
+        }
+      }
+
+      var url =
+          baseUrl + "getHomePageData?registerSno=" + sp.getString("studentSno");
+      print(url);
+      http.Response response = await http.post(Uri.encodeFull(url),
+          body: jsonEncode(dataUpdate.toJson()));
+
+      resbody = jsonDecode(response.body);
+
+      isReferralCodeUsed = resbody['isReferralCodeUsed'];
+      _isPaymentDone = resbody['isPaymentDone'];
+      // _isSpinned = resbody['isSpinned'];
+      DBHelper dbHelper = new DBHelper();
+      Database database = await dbHelper.database;
+
+      await database.transaction((txn) async {
+        if (resbody.containsKey('reward')) {
+          txn.delete('reward');
+          print("reward deleted");
+          txn.insert('reward', jsonDecode(resbody['reward']));
+          print("reward inserted");
+          List<Map<String, dynamic>> list =
+              await txn.rawQuery("select * from reward");
+          print("reward printing");
+          print(list);
+        }
+
+        if (resbody.containsKey('weeklyTask')) {
+          txn.delete('weekly_task');
+          print("weeklyTask deleted");
+          List datas = jsonDecode(resbody['weeklyTask']);
+          for (var a in datas) {
+            txn.insert('weekly_task', a);
+          }
+          print("weeklyTask inserted");
+          List<Map<String, dynamic>> list =
+              await txn.rawQuery("select * from weekly_task");
+          print("weeklyTask printing");
+          print(list);
+        }
+
+        if (resbody.containsKey('dailyTaskCompletion')) {
+          txn.delete('daily_task_completion');
+          print("daily_task_completion deleted");
+          List datas = jsonDecode(resbody['dailyTaskCompletion']);
+          for (var a in datas) {
+            txn.insert('daily_task_completion', a);
+          }
+          print("daily_task_completion inserted");
+          List<Map<String, dynamic>> list =
+              await txn.rawQuery("select * from daily_task_completion");
+          print("daily_task_completion printing");
+          print(list);
+        }
+
+        if (resbody.containsKey('dailyTask')) {
+          txn.delete('daily_task');
+          print("dailyTask deleted");
+          List datas = jsonDecode(resbody['dailyTask']);
+          for (var a in datas) {
+            txn.insert('daily_task', a);
+          }
+          print("dailyTask inserted");
+          List<Map<String, dynamic>> list =
+              await txn.rawQuery("select * from daily_task");
+          print("daily_task printing");
+        }
+
+        if (resbody.containsKey('dailyTaskData')) {
+          txn.delete('daily_task_data');
+          print("dailyTaskData deleted");
+          List datas = jsonDecode(resbody['dailyTaskData']);
+          for (var a in datas) {
+            txn.insert('daily_task_data', a);
+          }
+          print("dailyTaskData inserted");
+          List<Map<String, dynamic>> list =
+              await txn.rawQuery("select * from daily_task_data");
+          print("dailyTaskData printing");
+        }
+
+        if (resbody.containsKey('beatDistraction')) {
+          txn.delete('beat_distraction');
+          print("beat_distraction deleted");
+          List datas = jsonDecode(resbody['beatDistraction']);
+          for (var a in datas) {
+            txn.insert('beat_distraction', a);
+          }
+          print("beat_distraction inserted");
+          List<Map<String, dynamic>> list =
+              await txn.rawQuery("select * from beat_distraction");
+          print("beat_distraction printing");
+        }
+
+        if (resbody.containsKey('dailyAppOpening')) {
+          txn.delete('daily_app_opening');
+          print("daily_app_opening deleted");
+          List datas = jsonDecode(resbody['dailyAppOpening']);
+          for (var a in datas) {
+            txn.insert('daily_app_opening', a);
+          }
+          print("daily_app_opening inserted");
+          List<Map<String, dynamic>> list =
+              await txn.rawQuery("select * from daily_app_opening");
+          print("daily_app_opening printing");
+        }
+
+        if (resbody.containsKey('timerPage')) {
+          txn.delete('timer_page_message');
+          print("timer_page_message deleted");
+          List datas = jsonDecode(resbody['timerPage']);
+          for (var a in datas) {
+            txn.insert('timer_page_message', a);
+          }
+          print("timer_page_message inserted");
+          List<Map<String, dynamic>> list =
+              await txn.rawQuery("select * from timer_page_message");
+          print("timer_page_message printing");
+        }
+
+        if (resbody.containsKey("challengeAccept")) {
+          txn.insert(
+              'challenge_accept', jsonDecode(resbody['challengeAccept']));
+          print("challenge_accept inserted");
+          showChallenge = true;
+        }
+
+        DimeRepo dimeRepo = new DimeRepo();
+
+        List<Map<String, dynamic>> totalDimeList = await dimeRepo
+            .getTotalDimesByRegister(sp.getString("studentSno"), txn);
+
+        setState(() {
+          for (var a in totalDimeList) {
+            _totalDimes = a['totalDimes'].toString();
+          }
+        });
+      });
+
+      String date = DateFormat('yyyy-MM-dd').format(DateTime.now());
+      String sql =
+          "select * from daily_app_opening where registerSno=${sp.getString("studentSno")} and appOpeningDate = $date";
+      List<Map<String, dynamic>> dailyAppOpeningList =
+          await database.rawQuery(sql);
+      if (dailyAppOpeningList.isEmpty) {
+        await database.rawQuery(
+            "insert into daily_app_opening(appOpeningDate,registerSno,enteredDate) values('$date','${sp.getString("studentSno")}','${DateTime.now()}')");
+        List<Map<String, dynamic>> list = await database
+            .rawQuery("select * from reward order by sno desc limit 1");
+        for (var a in list) {
+          var credit = a['appOpening'];
+          String sql2 =
+              "insert into dimes(credit,debit,message,enteredDate,registerSno) "
+              "values('$credit','0','Daily app opening reward','${DateTime.now().toString()}','${sp.getString("studentSno")}')";
+          await database.rawQuery(sql2);
+        }
+      }
+
+      if (showChallenge) {
+        _showChallenge();
+      } else {
+        _showMyDialog();
+      }
+
+      String sql2 =
+          "select * from daily_task_completion where spinDate='$date' and registerSno=${sp.getString('studentSno')}";
+      List<Map<String, dynamic>> list2 = await database.rawQuery(sql2);
+      if (list2.isEmpty) {
+        String sql =
+            "select * from daily_task where '$date'>=startDateTime and '$date'<=endDateTime and status='enable' order by random() limit 6";
+        List<Map<String, dynamic>> list = await database.rawQuery(sql);
+        for (var a in list) {
+          Map<String, dynamic> map = Map();
+          map.putIfAbsent('taskName', () => a['taskName']);
+          map.putIfAbsent('sno', () => a['sno']);
+          String sql2 =
+              "select * from daily_task_data where dailyTaskSno=${a['sno']}";
+          List<Map<String, dynamic>> list = await database.rawQuery(sql2);
+          map.putIfAbsent("dailyTaskDatas", () => list);
+          _spinData.add(map);
+        }
+        if (_spinData.length < 6) {
+          String sql2 = "select * from daily_task order by random() limit 6";
+          _spinData = await database.rawQuery(sql2);
+          for (var a in _spinData) {
+            Map<String, dynamic> map = Map();
+            map.putIfAbsent('taskName', () => a['taskName']);
+            map.putIfAbsent('sno', () => a['sno']);
+            String sql2 =
+                "select * from daily_task_data where dailyTaskSno=${a['sno']}";
+            List<Map<String, dynamic>> list = await database.rawQuery(sql2);
+            map.putIfAbsent("dailyTaskDatas", () => list);
+            _spinData.add(map);
+          }
+        }
+      }
+    } catch (e) {
+      print(e);
     }
-    isReferralCodeUsed = resbody['isReferralCodeUsed'];
-    _isPaymentDone = resbody['isPaymentDone'];
-    _isSpinned = resbody['isSpinned'];
-    if (resbody.containsKey("spinData")) {
-      _spinData = jsonDecode(resbody['spinData']);
-    }
-    print(_spinData);
   }
 
   @override
@@ -100,6 +394,11 @@ class _HomePageState extends State<HomePage> {
         builder: (context) => UserProfile(),
       ));
     }
+    if (index == 2) {
+      Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => Confetti(),
+      ));
+    }
   }
 
   static List pageKey = [
@@ -132,39 +431,21 @@ class _HomePageState extends State<HomePage> {
             resizeToAvoidBottomInset: false,
             appBar: AppBar(
               title: Image.asset(
-                'assets/lurnify.png',
+                logoUrl,
                 fit: BoxFit.contain,
                 height: 40,
               ),
               actions: <Widget>[
                 IconButton(
                   icon: const Icon(Icons.notifications_outlined),
-                  onPressed: () {
-                    Navigator.push(context, MaterialPageRoute<void>(
-                      builder: (BuildContext context) {
-                        return Scaffold(
-                          appBar: AppBar(
-                            iconTheme: IconThemeData(color: Colors.deepPurple),
-                            backgroundColor: Colors.white,
-                            title: const Text(
-                              'Notifications',
-                              style: TextStyle(color: Colors.black),
-                            ),
-                          ),
-                          body: const Center(
-                            child: Text(
-                              'This is the Notification Page',
-                              style: TextStyle(fontSize: 24),
-                            ),
-                          ),
-                        );
-                      },
-                    ));
-                  },
+                  onPressed: () {},
                 ),
                 IconButton(
                   icon: const Icon(Icons.share),
-                  onPressed: () {},
+                  onPressed: () {
+                    Share.share(
+                        'Hey Check out this cool app, https://lurnify.in/');
+                  },
                 ),
                 PopupMenuButton<String>(
                   onSelected: handleClick,
@@ -188,9 +469,19 @@ class _HomePageState extends State<HomePage> {
                 child: CustomDrawer(_isPaymentDone),
               ),
             ),
-            body: Container(
-              child: WillPopScope(
-                onWillPop: _onWillPop,
+            body: WillPopScope(
+              onWillPop: _onWillPop,
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Colors.purple[100].withOpacity(0.1),
+                      Colors.deepPurple[100].withOpacity(0.1)
+                    ],
+                    begin: Alignment.topRight,
+                    end: Alignment.bottomLeft,
+                  ),
+                ),
                 child: SingleChildScrollView(
                   physics: BouncingScrollPhysics(),
                   child: Column(
@@ -199,21 +490,37 @@ class _HomePageState extends State<HomePage> {
                       AppTiles(pageKey),
                       BottomSlider(pageKey),
                       TestSlider(),
+                      Container(
+                        color: Colors.grey.withOpacity(0.1),
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.fromLTRB(8, 15, 8, 10),
+                              child: Text(
+                                'Hear from delighted users',
+                                style: TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.w600),
+                              ),
+                            ),
+                            Reviews(
+                              clr: AppColors.cardHeader[2],
+                            ),
+                            Reviews(
+                              clr: AppColors.cardHeader[1],
+                            ),
+                            Reviews(
+                              clr: AppColors.cardHeader[0],
+                            ),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
                 ),
               ),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    Colors.purple[100].withOpacity(0.1),
-                    Colors.deepPurple[100].withOpacity(0.1)
-                  ],
-                  begin: Alignment.topRight,
-                  end: Alignment.bottomLeft,
-                ),
-              ),
             ),
+            // floatingActionButtonLocation:
+            //     FloatingActionButtonLocation.centerDocked,
             floatingActionButton: FloatingActionButton(
               onPressed: () {
                 Navigator.of(context).push(MaterialPageRoute(
@@ -354,168 +661,44 @@ class _HomePageState extends State<HomePage> {
 
   _updateChallengeStatus(status) async {
     SharedPreferences sp = await SharedPreferences.getInstance();
-    var url = baseUrl +
-        "updateChallengeStatus?registerSno=" +
-        sp.getString("studentSno") +
-        "&status=" +
-        status;
-    print(url);
-    http.Response response = await http.post(
-      Uri.encodeFull(url),
-    );
-    Map<String, dynamic> resbody = jsonDecode(response.body);
-    print(resbody);
-    if (resbody['result'] == true) {
-      if (status == "accepted") {
-        _signUpToast(
-            "Congratulations, you have accepted the challenge. Start Study and earn real money");
-      } else {
-        _signUpToast(
-            "OOPS!!! you have declined the challenge. Don't worry! you can enroll in upcoming and challenges and still you can make money.");
+    // var url = baseUrl +
+    //     "updateChallengeStatus?registerSno=" +
+    //     sp.getString("studentSno") +
+    //     "&status=" +
+    //     status;
+    // print(url);
+    // http.Response response = await http.post(
+    //   Uri.encodeFull(url),
+    // );
+
+    DBHelper dbHelper = new DBHelper();
+    Database database = await dbHelper.database;
+    String sql =
+        "select * from challenge_accept where register=${sp.getString("studentSno")} and status='pending'";
+    List<Map<String, dynamic>> list = await database.rawQuery(sql);
+    for (var a in list) {
+      String sql2 =
+          "update challenge_accept set status=$status where sno=${a['sno']}";
+      database.rawUpdate(sql2);
+    }
+
+    if (status == 'accepted') {
+      List<Map<String, dynamic>> list = await database
+          .rawQuery("select * from reward order by sno desc limit 1");
+      for (var a in list) {
+        String sql =
+            "insert into dimes (credit,register,enteredDate,message,debit) values('${a['weeklyChallengeAccept']}','${sp.getString("studentSno")}',"
+            "'${DateTime.now().toString()}','Weekly challenge accepted reward','0')";
+        await database.rawInsert(sql);
       }
+    }
+
+    if (status == "accepted") {
+      _signUpToast(
+          "Congratulations, you have accepted the challenge. Start Study and earn real money");
     } else {
-      _signUpToast("OOPS!!! Something went wrong. Please try again later");
+      _signUpToast(
+          "OOPS!!! you have declined the challenge. Don't worry! you can enroll in upcoming and challenges and still you can make money.");
     }
-  }
-}
-
-class SpinnerClass extends StatefulWidget {
-  final _spinData;
-  SpinnerClass(this._spinData);
-  @override
-  _SpinnerClassState createState() => _SpinnerClassState(_spinData);
-}
-
-class _SpinnerClassState extends State<SpinnerClass> {
-  final _spinData;
-  _SpinnerClassState(this._spinData);
-  int _selected = 0;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              child: Column(
-                children: [
-                  Container(
-                    padding: EdgeInsets.all(20),
-                    height: 300.0,
-                    color: Colors.transparent,
-                    child: GestureDetector(
-                      onTap: () {
-                        try {
-                          print(_selected);
-                          var _random = new Random();
-                          setState(() {
-                            _selected = _random.nextInt(6);
-                            print(_selected);
-                          });
-                        } catch (e) {
-                          print(e);
-                        }
-                      },
-                      child: FortuneWheel(
-                        indicators: [
-                          FortuneIndicator(
-                              child: Image.asset(
-                                'assets/icons/spineer.png',
-                                fit: BoxFit.contain,
-                                height: 50,
-                              ),
-                              alignment: Alignment.center)
-                        ],
-                        physics: CircularPanPhysics(
-                          duration: Duration(seconds: 1),
-                          curve: Curves.decelerate,
-                        ),
-                        duration: Duration(seconds: 10),
-                        animateFirst: false,
-                        selected: _selected,
-                        onAnimationEnd: () {
-                          _updateDailyTask();
-                        },
-                        items: List.generate(
-                          _spinData.length,
-                          (index) {
-                            return FortuneItem(
-                                style: FortuneItemStyle(
-                                    color: AppColors.tileIconColors[index],
-                                    textStyle: TextStyle(
-                                      color: Colors.white,
-                                    ),
-                                    textAlign: TextAlign.center),
-                                child: Text(_spinData[index]['taskName']));
-                          },
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  _updateDailyTask() async {
-    SharedPreferences sp = await SharedPreferences.getInstance();
-    var url = baseUrl +
-        "storeSpinData?registerSno=" +
-        sp.getString("studentSno") +
-        "&dailyTaskSno=" +
-        _spinData[_selected - 1]['sno'].toString();
-    print(url);
-    http.Response response = await http.post(
-      Uri.encodeFull(url),
-    );
-    Map<String, dynamic> resbody = jsonDecode(response.body);
-    if (resbody['result'] == true) {
-      Fluttertoast.showToast(msg: "Success");
-
-      _showSpinTask();
-    } else {
-      Fluttertoast.showToast(msg: "Failed");
-    }
-  }
-
-  Future<void> _showSpinTask() async {
-    String result = "";
-    List data = _spinData[_selected - 1]['dailyTaskDatas'];
-    for (int i = 0; i < data.length; i++) {
-      result = result +
-          "Your task type is" +
-          data[i]['taskType'] +
-          " and you have to complete " +
-          data[i]['taskUnit'].toString() +
-          "test or study minute\nAnd you will be rewarded with " +
-          data[i]['coins'].toString() +
-          " Coins or " +
-          data[i]['cash'].toString() +
-          " cash or " +
-          data[i]['certificate'].toString() +
-          " certificates or " +
-          data[i]['noOfReferralCoupons'].toString() +
-          " refferals coupons\n";
-    }
-    return AwesomeDialog(
-      context: context,
-      dialogType: DialogType.SUCCES,
-      animType: AnimType.BOTTOMSLIDE,
-      title: 'Congratulations',
-      desc: result,
-      dismissOnBackKeyPress: false,
-      dismissOnTouchOutside: false,
-      btnOkColor: Colors.black87,
-      btnOkText: "Great",
-      btnOkOnPress: () {
-        Navigator.of(context).pop();
-      },
-    )..show();
   }
 }

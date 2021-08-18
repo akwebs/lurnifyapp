@@ -1,21 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lurnify/config/data.dart';
-import 'package:lurnify/model/chapters.dart';
-import 'package:lurnify/model/subject.dart';
-import 'package:lurnify/model/units.dart';
-import 'package:lurnify/ui/constant/ApiConstant.dart';
+import 'package:lurnify/helper/helper.dart';
+import 'package:lurnify/model/model.dart';
 import 'package:lurnify/ui/constant/constant.dart';
-import 'package:lurnify/ui/screen/selfstudy/starttimer.dart';
-import 'package:lurnify/ui/screen/selfstudy/syncyourtime.dart';
+import 'package:lurnify/ui/screen/screen.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:lottie/lottie.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'dart:math' as math;
 
-import '../../../model/units.dart';
+import 'package:sqflite/sqflite.dart';
 
 class ContentSelect extends StatefulWidget {
   final String pageKey;
@@ -59,16 +54,62 @@ class _ContentSelectState extends State<ContentSelect> {
 
   Future _getSubjects() async {
     SharedPreferences sp = await SharedPreferences.getInstance();
-    var url =
-        baseUrl + "getSubjectsByCourse?courseSno=" + sp.getString("courseSno");
+    // var url =
+    //     baseUrl + "getSubjectsByCourse?courseSno=" + sp.getString("courseSno");
+    // course = sp.getString("courseSno");
+    // http.Response response = await http.get(
+    //   Uri.encodeFull(url),
+    // );
     course = sp.getString("courseSno");
-    http.Response response = await http.get(
-      Uri.encodeFull(url),
-    );
+    DBHelper dbHelper = new DBHelper();
+    Database db = await dbHelper.database;
+    var a = await db.rawQuery(
+        'select * from subject where courseSno=${sp.getString('courseSno')}');
+    for (var b in a) {
+      Subject subject = new Subject();
+      subject.sno = b['sno'];
+      subject.subjectName = b['subjectName'];
+      var sql = await db
+          .rawQuery("select * from unit where subjectSno='${b['sno']}'");
+      List<UnitDtos> u = [];
+      for (var c in sql) {
+        UnitDtos unitDtos = new UnitDtos();
+        unitDtos.sno = c['sno'];
+        unitDtos.unitName = c['unitName'];
 
-    _subjects = (jsonDecode(response.body) as List)
-        .map((e) => Subject.fromJson(e))
-        .toList();
+        var sql2 = await db
+            .rawQuery("select * from chapter where unitSno=${c['sno']}");
+        List<ChapterDtos> chap = [];
+        for (var d in sql2) {
+          ChapterDtos chapterDtos = new ChapterDtos();
+          chapterDtos.sno = d['sno'];
+          chapterDtos.chapterName = d['chapterName'];
+
+          var sql3 = await db
+              .rawQuery("select * from topic where chapterSno=${d['sno']}");
+          List<TopicDtos> t = [];
+          for (var e in sql3) {
+            TopicDtos topicDtos = new TopicDtos();
+            topicDtos.sno = e['sno'];
+            topicDtos.topicName = e['topicName'];
+            topicDtos.duration = e['duration'];
+            topicDtos.topicImp = e['topicImp'];
+            topicDtos.topicLabel = e['topicLabel'];
+            t.add(topicDtos);
+          }
+          chapterDtos.topicDtos = t;
+          chap.add(chapterDtos);
+        }
+        unitDtos.chapterDtos = chap;
+        u.add(unitDtos);
+      }
+      subject.unitDtos = u;
+      _subjects.add(subject);
+    }
+    print(_subjects);
+    // _subjects = (jsonDecode(response.body) as List)
+    //     .map((e) => Subject.fromJson(e))
+    //     .toList();
     if (_subjects.isNotEmpty) {
       _units = _subjects[0].unitDtos;
       subject = _subjects[0].sno.toString();
@@ -280,7 +321,15 @@ class _ContentSelectState extends State<ContentSelect> {
 
   Widget _unitGrids() {
     return _units.isEmpty
-        ? Container()
+        ? SliverGrid(
+            gridDelegate: null,
+            delegate: SliverChildBuilderDelegate(
+              (BuildContext ctx, i) {
+                return _unitSelect(i);
+              },
+              childCount: _units.length,
+            ),
+          )
         : SliverGrid(
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
@@ -405,8 +454,8 @@ class _ContentSelectState extends State<ContentSelect> {
             title: Text(TopicDtos.topicName),
             onTap: () {
               topic = TopicDtos.sno.toString();
-              if (TopicDtos.subTopic != null) {
-                subTopic = TopicDtos.subTopic;
+              if (TopicDtos.subtopic != null) {
+                subTopic = TopicDtos.subtopic;
               }
               if (TopicDtos.duration != null) {
                 duration = TopicDtos.duration;

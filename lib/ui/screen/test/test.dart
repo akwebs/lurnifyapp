@@ -13,21 +13,24 @@ import 'package:shared_preferences/shared_preferences.dart';
 class Test extends StatefulWidget {
   final Map<String, dynamic> testData;
   final String testType;
-  final sno;
-  Test(this.testData, this.testType, this.sno);
+  final sno, course, subject, unit, chapter;
+  Test(this.testData, this.testType, this.sno, this.course, this.subject,
+      this.unit, this.chapter);
   @override
-  _TestState createState() => _TestState(testData, testType, sno);
+  _TestState createState() =>
+      _TestState(testData, testType, sno, course, subject, unit, chapter);
 }
 
 class _TestState extends State<Test> with TickerProviderStateMixin {
   final Map<String, dynamic> testData;
-  final String testType, sno;
-  _TestState(this.testData, this.testType, this.sno);
+  final String testType, sno, course, subject, unit, chapter;
+  _TestState(this.testData, this.testType, this.sno, this.course, this.subject,
+      this.unit, this.chapter);
   int _index = 0;
   bool reviewLater = false;
   int selectedOptionIndex;
   Timer _timer;
-  int _TEST_TIMER_INSECONDS = 3000;
+  int _TEST_TIMER_INSECONDS = 600;
   int _questionTime = 0;
   String _FORMATTED_TEST_DURATION = "";
   int _noOFQuestions;
@@ -43,6 +46,7 @@ class _TestState extends State<Test> with TickerProviderStateMixin {
   String _toolBarName = "";
   String _testName = "";
   List _testQuestions = [];
+  int _totalSecond = 0;
   Map<String, int> _questionTiming = Map();
   static const List<IconData> icons = const [
     Icons.check_circle_outline,
@@ -104,6 +108,7 @@ class _TestState extends State<Test> with TickerProviderStateMixin {
           if (_TEST_TIMER_INSECONDS < 1) {
             timer.cancel();
           } else {
+            _totalSecond = _totalSecond + 1;
             _TEST_TIMER_INSECONDS = _TEST_TIMER_INSECONDS - 1;
             _FORMATTED_TEST_DURATION =
                 _formatDuration(Duration(seconds: _TEST_TIMER_INSECONDS));
@@ -132,10 +137,16 @@ class _TestState extends State<Test> with TickerProviderStateMixin {
 
   @override
   void initState() {
+    print("---------------------------------------------");
+    print(testData['topicTestTime']);
     if (testData['test'] != null) {
-      _testQuestions = testData['test'];
-      _toolBarName = testData['testName'];
-      _testName = testData['testName'];
+      _testQuestions = testData['test'] ?? [];
+      _toolBarName = testData['testName'] ?? "";
+      _testName = testData['testName'] ?? '';
+      _TEST_TIMER_INSECONDS = int.tryParse(testData['topicTestTime']) ?? 600;
+      if (_TEST_TIMER_INSECONDS == 0) {
+        _TEST_TIMER_INSECONDS = 600;
+      }
     }
     print(_testQuestions);
     if (_testQuestions != null) {
@@ -352,9 +363,13 @@ class _TestState extends State<Test> with TickerProviderStateMixin {
         scrollDirection: Axis.horizontal,
         itemCount: _noOFQuestions,
         onPageChanged: (i) {
+          print(i);
           HapticFeedback.selectionClick();
-          _controllerList.animateToPage(i,
-              curve: Curves.decelerate, duration: Duration(milliseconds: 300));
+          if (i > 10) {
+            _controllerList.animateToPage(i,
+                curve: Curves.decelerate,
+                duration: Duration(milliseconds: 300));
+          }
           setState(() {
             _index = i;
             if (i == 0) {
@@ -733,9 +748,11 @@ class _TestState extends State<Test> with TickerProviderStateMixin {
                   _controller.animateToPage(_index - 1,
                       curve: Curves.decelerate,
                       duration: Duration(milliseconds: 300));
-                  _controllerList.animateToPage(_index - 1,
-                      curve: Curves.decelerate,
-                      duration: Duration(milliseconds: 300));
+                  if (_index > 10) {
+                    _controllerList.animateToPage(_index - 1,
+                        curve: Curves.decelerate,
+                        duration: Duration(milliseconds: 300));
+                  }
                 }
               },
               padding: EdgeInsets.symmetric(vertical: 15),
@@ -811,9 +828,11 @@ class _TestState extends State<Test> with TickerProviderStateMixin {
                   _controller.animateToPage(_index + 1,
                       curve: Curves.decelerate,
                       duration: Duration(milliseconds: 300));
-                  _controllerList.animateToPage(_index + 1,
-                      curve: Curves.decelerate,
-                      duration: Duration(milliseconds: 300));
+                  if (_index > 10) {
+                    _controllerList.animateToPage(_index - 1,
+                        curve: Curves.decelerate,
+                        duration: Duration(milliseconds: 300));
+                  }
                 }
               },
               padding: EdgeInsets.symmetric(vertical: 15),
@@ -868,8 +887,18 @@ class _TestState extends State<Test> with TickerProviderStateMixin {
       sp.setString(_testName, jsonEncode(_questionTiming));
       print(_questionTiming);
       Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) => TestSummary(_testQuestions, _answerMap,
-            _bookmarkMap, _FORMATTED_TEST_DURATION, sno, testType),
+        builder: (context) => TestSummary(
+            _testQuestions,
+            _answerMap,
+            _bookmarkMap,
+            _FORMATTED_TEST_DURATION,
+            sno,
+            testType,
+            course,
+            subject,
+            unit,
+            chapter,
+            _totalSecond),
       ));
     }
   }

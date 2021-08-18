@@ -86,6 +86,7 @@ class AppTiles extends StatelessWidget {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
+                          Spacer(),
                           Expanded(
                             flex: 5,
                             child: Container(
@@ -111,7 +112,7 @@ class AppTiles extends StatelessWidget {
                           ),
                           Spacer(),
                           Expanded(
-                            flex: 3,
+                            flex: 4,
                             child: Padding(
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 5),

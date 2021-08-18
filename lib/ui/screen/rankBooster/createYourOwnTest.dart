@@ -407,6 +407,7 @@ class _CreateYourOwnTestState extends State<CreateYourOwnTest> {
     ));
   }
 
+  // ignore: unused_element
   Future _submit() async {
     try {
       String testData = jsonEncode(_selectedSubjectMap);
@@ -434,7 +435,7 @@ class _CreateYourOwnTestState extends State<CreateYourOwnTest> {
       var resbody = jsonDecode(response.body);
       Map<String, dynamic> map = resbody;
       Navigator.of(context).pushReplacement(MaterialPageRoute(
-        builder: (context) => Test(map, "rankBoosterTest", ""),
+        builder: (context) => Test(map, "rankBoosterTest", "", "", "", "", ""),
       ));
     } catch (e) {
       print(e);

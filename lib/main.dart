@@ -3,9 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:lurnify/ui/constant/routes.dart';
 import 'package:lurnify/ui/home-page.dart';
 import 'package:lurnify/ui/library/flutter_overboard/onboarding/on-boarding.dart';
-import 'package:lurnify/ui/screen/login/login.dart';
-import 'package:lurnify/ui/screen/selfstudy/selectpace.dart';
-import 'package:lurnify/ui/screen/selfstudy/selfstudy.dart';
+import 'package:lurnify/ui/screen/screen.dart';
 import 'package:lurnify/ui/splash_screen.dart';
 import 'package:lurnify/ui/theme.dart';
 import 'package:flutter/material.dart';
@@ -40,8 +38,9 @@ class _MyAppState extends State<MyApp> {
         on_boarding: (BuildContext context) => Onboarding1Page(),
         home_page: (BuildContext context) => HomePage(),
         self_study: (BuildContext context) => SelfStudySection(),
-        select_pace: (BuildContext context) => SelectThePace(),
+        select_pace: (BuildContext context) => SelectThePace(true),
         Log_in: (BuildContext context) => Login(),
+        courseGroup: (BuildContext context) => CourseGroup(''),
       },
       initialRoute: splash_screen,
     );

@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:lurnify/config/data.dart';
 import 'package:lurnify/ui/constant/constant.dart';
-import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smooth_star_rating/smooth_star_rating.dart';
 import 'package:lurnify/ui/constant/ApiConstant.dart';
@@ -14,6 +13,7 @@ class RevisionZone extends StatefulWidget {
   _RevisionZoneState createState() => _RevisionZoneState();
 }
 
+// ignore: unused_element
 Color _backgroundColor = AppColors.tileIconColors[3];
 
 class _RevisionZoneState extends State<RevisionZone> {
@@ -27,7 +27,9 @@ class _RevisionZoneState extends State<RevisionZone> {
   // String _selectedTopicImp = "0";
   // String _selectedPerformance = "0";
   // String _selectedSubjectSno = "0";
+  // ignore: unused_field
   List _topics = [];
+  // ignore: unused_field
   List _subjects = [];
   static List rDays = [
     '30 Days',
@@ -112,6 +114,7 @@ class _RevisionZoneState extends State<RevisionZone> {
                       // ignore: deprecated_member_use
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 8),
+                        // ignore: deprecated_member_use
                         child: RaisedButton(
                           padding: EdgeInsets.symmetric(vertical: 14),
                           color: firstColor,
@@ -170,11 +173,11 @@ class _RevisionZoneState extends State<RevisionZone> {
                                 itemBuilder: (context, i) {
                                   return Padding(
                                     padding: const EdgeInsets.only(bottom: 10),
-                                    child: cards(i,
+                                    child: _cards(i,
                                         result[_selectedSubjectIndex]['topic']),
                                   );
                                 },
-                              )
+                              ),
                   ],
                 ),
               ),
@@ -191,6 +194,7 @@ class _RevisionZoneState extends State<RevisionZone> {
             bottomNavigationBar: Row(
               children: List.generate(result.length, (i) {
                 return new Expanded(
+                  // ignore: deprecated_member_use
                   child: RaisedButton(
                     color: firstColor,
                     textColor: whiteColor,
@@ -215,7 +219,7 @@ class _RevisionZoneState extends State<RevisionZone> {
     );
   }
 
-  Widget cards(int i, List topics) {
+  Widget _cards(int i, List topics) {
     int days = DateTime.now()
         .difference(DateTime.parse(topics[i]['lastStudied']))
         .inDays;
@@ -339,7 +343,7 @@ class _RevisionZoneState extends State<RevisionZone> {
                 Expanded(
                   flex: 1,
                   child: Container(
-                    child: topicInfo(i, 'Studied',
+                    child: _topicInfo(i, 'Studied',
                         topics[i]['isUserStudied'] == 1 ? "Yes" : "No"),
                     decoration: BoxDecoration(
                       border: Border(
@@ -351,7 +355,7 @@ class _RevisionZoneState extends State<RevisionZone> {
                 Expanded(
                   flex: 1,
                   child: Container(
-                    child: topicInfo(
+                    child: _topicInfo(
                       i,
                       'Test Score',
                       topics[i]['lastTestScore'].toString() + "%",
@@ -366,7 +370,7 @@ class _RevisionZoneState extends State<RevisionZone> {
                 Expanded(
                   flex: 1,
                   child: Container(
-                    child: topicInfo(
+                    child: _topicInfo(
                         i, 'Revision', topics[i]['revision'].toString()),
                     decoration: BoxDecoration(
                       border: Border(
@@ -378,7 +382,7 @@ class _RevisionZoneState extends State<RevisionZone> {
                 Expanded(
                   flex: 1,
                   child: Container(
-                      child: topicInfo(
+                      child: _topicInfo(
                           i, 'Last Studied', days.toString() + ' days ago')),
                 ),
               ],
@@ -389,7 +393,7 @@ class _RevisionZoneState extends State<RevisionZone> {
     );
   }
 
-  Column topicInfo(int i, String heading, String detail) {
+  Column _topicInfo(int i, String heading, String detail) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -410,32 +414,6 @@ class _RevisionZoneState extends State<RevisionZone> {
       ],
     );
   }
-
-// Future _search() async {
-//   SharedPreferences sp = await SharedPreferences.getInstance();
-//   var url = baseUrl +
-//       "getRevisionZone?days=" +
-//       _selectedDay +
-//       "&topicImp=" +
-//       _selectedTopicImp +
-//       "&performance=" +
-//       _selectedPerformance +
-//       "&regSno=" +
-//       sp.getString("studentSno") +
-//       "&subjectSno=" +
-//       _selectedSubjectSno +
-//       "&courseSno=" +
-//       sp.getString("courseSno");
-//   print(url);
-//   http.Response response = await http.post(
-//     Uri.encodeFull(url),
-//   );
-//   var responseData = jsonDecode(response.body);
-//   print(responseData);
-//   setState(() {
-//     _topics = responseData;
-//   });
-// }
 }
 
 Color _randomColor(int i) {

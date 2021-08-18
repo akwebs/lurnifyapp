@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lurnify/ui/constant/constant.dart';
+import 'package:lurnify/ui/constant/routes.dart';
 import 'package:lurnify/ui/screen/myProgress/subject-unit.dart';
 import 'package:lurnify/ui/screen/socialGroup/social-group.dart';
+import 'package:lurnify/widgets/componants/componants.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 import 'package:flutter/cupertino.dart';
@@ -553,6 +555,14 @@ class _UserProfileState extends State<UserProfile> {
           ],
         ),
       ),
+      bottomNavigationBar: CustomButton(
+        buttonText: 'Update Study Pace',
+        brdRds: 0,
+        onPressed: () {
+          Navigator.of(context).pop();
+          Navigator.of(context).pushNamed(select_pace);
+        },
+      ),
     );
   }
 }
@@ -563,9 +573,9 @@ class UserProfileEdit extends StatefulWidget {
 }
 
 class _UserProfileEditState extends State<UserProfileEdit> {
-  Color _color1 = firstColor;
+  // Color _color1 = firstColor;
   Color _color2 = Color(0xff777777);
-  Color _color3 = Color(0xFF515151);
+  // Color _color3 = Color(0xFF515151);
 
   @override
   void initState() {

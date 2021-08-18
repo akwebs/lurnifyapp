@@ -1,6 +1,4 @@
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:lurnify/ui/constant/constant.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 
@@ -478,109 +476,6 @@ class _MyReportOverAllState extends State<MyReportOverAll> {
             ],
           ),
         ),
-      ),
-    );
-  }
-}
-
-class BarChartNew extends StatelessWidget {
-  const BarChartNew({
-    Key key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    final Brightness brightnessValue =
-        MediaQuery.of(context).platformBrightness;
-    bool isDark = brightnessValue == Brightness.light;
-    return BarChart(
-      BarChartData(
-        alignment: BarChartAlignment.spaceAround,
-        maxY: 10,
-        barTouchData: BarTouchData(
-          enabled: true,
-          touchTooltipData: BarTouchTooltipData(
-            tooltipBgColor: Colors.transparent,
-            tooltipPadding: const EdgeInsets.all(0),
-            // tooltipMargin: 8,
-            tooltipBottomMargin: 0,
-            getTooltipItem: (
-              BarChartGroupData group,
-              int groupIndex,
-              BarChartRodData rod,
-              int rodIndex,
-            ) {
-              return BarTooltipItem(
-                rod.y.round() == 0 ? '' : rod.y.round().toString(),
-                TextStyle(
-                  color: rod.y.round() >= 5 ? Colors.white : Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-              );
-            },
-          ),
-        ),
-        titlesData: FlTitlesData(
-          show: true,
-          bottomTitles: SideTitles(
-            showTitles: true,
-            getTextStyles: (value) => TextStyle(
-                color: isDark ? Colors.white : Colors.black87, fontSize: 14),
-            margin: 5,
-            getTitles: (double value) {
-              switch (value.toInt()) {
-                case 0:
-                  return 'Phy';
-                case 1:
-                  return 'Che';
-                case 2:
-                  return 'Math';
-                default:
-                  return '';
-              }
-            },
-          ),
-          leftTitles: SideTitles(
-            showTitles: false,
-            getTextStyles: (value) => TextStyle(
-                color: isDark ? Colors.white : Colors.black87, fontSize: 14),
-          ),
-        ),
-        borderData: FlBorderData(
-          show: false,
-        ),
-        barGroups: [
-          BarChartGroupData(
-            x: 0,
-            barRods: [
-              BarChartRodData(
-                y: 5,
-                colors: [whiteColor],
-              ),
-            ],
-            showingTooltipIndicators: [0],
-          ),
-          BarChartGroupData(
-            x: 1,
-            barRods: [
-              BarChartRodData(
-                y: 3,
-                colors: [whiteColor],
-              ),
-            ],
-            showingTooltipIndicators: [0],
-          ),
-          BarChartGroupData(
-            x: 2,
-            barRods: [
-              BarChartRodData(
-                y: 9,
-                colors: [whiteColor],
-              ),
-            ],
-            showingTooltipIndicators: [0],
-          ),
-        ],
       ),
     );
   }

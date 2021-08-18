@@ -153,6 +153,7 @@ class _CustomExpansionTileState extends State<CustomExpansionTile>
       CurveTween(curve: Curves.easeOut);
   static final Animatable<double> _easeInTween =
       CurveTween(curve: Curves.easeIn);
+  // ignore: unused_field
   static final Animatable<double> _halfTween =
       Tween<double>(begin: 0.0, end: 0.5);
 
@@ -164,6 +165,7 @@ class _CustomExpansionTileState extends State<CustomExpansionTile>
   AnimationController _controller;
   // Animation<double> _iconTurns;
   Animation<double> _heightFactor;
+  // ignore: unused_field
   Animation<Color> _borderColor;
   Animation<Color> _headerColor;
   Animation<Color> _iconColor;
@@ -214,7 +216,7 @@ class _CustomExpansionTileState extends State<CustomExpansionTile>
   }
 
   Widget _buildChildren(BuildContext context, Widget child) {
-    final Color borderSideColor = _borderColor.value ?? Colors.transparent;
+    // final Color borderSideColor = _borderColor.value ?? Colors.transparent;
 
     return Container(
       decoration: BoxDecoration(

@@ -6,8 +6,8 @@ import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lurnify/ui/constant/constant.dart';
-import 'package:lurnify/ui/screen/login/courseSelection.dart';
-import 'package:lurnify/widgets/componants/custom-alert.dart';
+import 'package:lurnify/widgets/widget.dart';
+import 'package:lurnify/ui/screen/screen.dart';
 
 class OtpScreen extends StatefulWidget {
   final String mobile;
@@ -94,6 +94,9 @@ class _OtpScreenState extends State<OtpScreen>
       mainAxisSize: MainAxisSize.max,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
+        SizedBox(
+          height: MediaQuery.of(context).size.height * 0.1,
+        ),
         _getVerificationCodeLabel,
         _getEmailLabel,
         _getInputField,
@@ -150,6 +153,7 @@ class _OtpScreenState extends State<OtpScreen>
   // Returns "Otp" keyboard
   get _getOtpKeyboard {
     return new Container(
+        padding: EdgeInsets.only(bottom: 10),
         height: _screenSize.width - 80,
         child: new Column(
           children: <Widget>[
@@ -301,12 +305,12 @@ class _OtpScreenState extends State<OtpScreen>
   Widget build(BuildContext context) {
     _screenSize = MediaQuery.of(context).size;
     return new Scaffold(
-      appBar: AppBar(),
-      backgroundColor: Colors.white,
-      body: new Container(
-        width: _screenSize.width,
+      body: SafeArea(
+        child: new Container(
+          width: _screenSize.width,
 //        padding: new EdgeInsets.only(bottom: 16.0),
-        child: _getInputPart,
+          child: _getInputPart,
+        ),
       ),
     );
   }
@@ -490,7 +494,7 @@ class _OtpScreenState extends State<OtpScreen>
         Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(
-                builder: (BuildContext context) => CourseSelection(mobile)),
+                builder: (BuildContext context) => CourseGroup(mobile)),
             ModalRoute.withName('/'));
       } else {
         _signUpToast("Invalid Otp");

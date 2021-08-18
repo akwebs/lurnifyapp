@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lottie/lottie.dart';
+import 'package:lurnify/helper/helper.dart';
 import 'package:lurnify/ui/constant/ApiConstant.dart';
 import 'package:lurnify/ui/screen/test/test.dart';
 import 'package:lurnify/widgets/componants/custom-button.dart';
@@ -12,45 +13,92 @@ import 'package:http/http.dart' as http;
 import 'package:awesome_dialog/awesome_dialog.dart';
 
 class InstructionPage extends StatefulWidget {
-  final String sno;
-  InstructionPage(this.sno);
+  final String course, subject, unit, chapter, sno;
+  InstructionPage(this.course, this.subject, this.unit, this.chapter, this.sno);
   @override
-  _InstructionPageState createState() => _InstructionPageState(sno);
+  _InstructionPageState createState() =>
+      _InstructionPageState(course, subject, unit, chapter, sno);
 }
 
 class _InstructionPageState extends State<InstructionPage> {
-  final String sno;
-  _InstructionPageState(this.sno);
+  final String course, subject, unit, chapter, sno;
+  _InstructionPageState(
+      this.course, this.subject, this.unit, this.chapter, this.sno);
   bool check = false;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-  Map<String, dynamic> _instructions = Map();
+  // Map<String, dynamic> _instructions = Map();
   List _instructionData = [];
   var _data;
-  Timer _timer;
+  // Timer _timer;
   Map<String, dynamic> _testData = Map();
   int _testAttempt = 0;
+  List<Map<String, dynamic>> _testList = [];
 
   Future getInstructions() async {
     try {
       SharedPreferences sp = await SharedPreferences.getInstance();
-      var url = baseUrl +
-          "getInstructionPageByTopic?topicSno=" +
-          sno +
-          "&registerSno=" +
-          sp.getString("studentSno");
-      print(url);
-      http.Response response = await http.get(Uri.encodeFull(url));
-      print(response);
-      var responseBody = jsonDecode(response.body);
-      print(responseBody);
-      if (responseBody['instruction'] != null) {
-        _instructions = responseBody['instruction'];
-        _instructionData = _instructions['instructionData'];
+      TestMainRepo testMainRepo = new TestMainRepo();
+      _testList = await testMainRepo.findByTopicAndRegister(
+          sno, sp.getString("studentSno"));
+      if (_testList != null || _testList.isNotEmpty) {
+        for (var a in _testList) {
+          var insSno = a['instruction'];
+          // _instructions=a;
+          InstructionRepo instructionRepo = new InstructionRepo();
+          List<Map<String, dynamic>> list =
+              await instructionRepo.getInstructionBySno(insSno);
+          for (var b in list) {
+            InstructionDataRepo instructionDataRepo = new InstructionDataRepo();
+            List<Map<String, dynamic>> list2 = await instructionDataRepo
+                .getInstructionDataByInstruction(b['sno'].toString());
+            _instructionData = list2;
+          }
+        }
+        for (var i = 0; i < _testList.length; i++) {
+          TestRepo testRepo = new TestRepo();
+          List<Map<String, dynamic>> list =
+              await testRepo.getTestByTestMain(_testList[i]['sno'].toString());
+          _testData.update(
+            'testName',
+            (value) => _testList[i]['testName'],
+            ifAbsent: () => _testList[i]['testName'],
+          );
+          _testData.update(
+            'topicTestTime',
+            (value) => _testList[i]['topicTestTime'],
+            ifAbsent: () => _testList[i]['topicTestTime'],
+          );
+          _testData.update(
+            'test',
+            (value) => list,
+            ifAbsent: () => list,
+          );
+        }
       }
+      //
+      // var url = baseUrl +
+      //     "getInstructionPageByTopic?topicSno=" +
+      //     sno +
+      //     "&registerSno=" +
+      //     sp.getString("studentSno");
+      // print(url);
+      // http.Response response = await http.get(Uri.encodeFull(url));
+      // print(response);
+      // var responseBody = jsonDecode(response.body);
+      // print(responseBody);
+      // if (responseBody['instruction'] != null) {
+      //   _instructions = responseBody['instruction'];
+      //   _instructionData = _instructions['instructionData'];
+      // }
 
-      if (responseBody['testAttempt'] != null) {
-        _testAttempt = responseBody['testAttempt'];
+      RewardRepo rewardRepo = new RewardRepo();
+      List<Map<String, dynamic>> reward = await rewardRepo.getReward();
+      for (var a in reward) {
+        _testAttempt = a['testAttempt'];
       }
+      // if (responseBody['testAttempt'] != null) {
+      //   _testAttempt = responseBody['testAttempt'];
+      // }
 
       _showDailyAppOpening();
     } catch (e) {
@@ -76,15 +124,15 @@ class _InstructionPageState extends State<InstructionPage> {
   @override
   void initState() {
     _data = getInstructions();
-    _timer = new Timer(Duration(seconds: 2), () {
-      _getTestData();
-    });
+    // _timer = new Timer(Duration(seconds: 2), () {
+    //   _getTestData();
+    // });
     super.initState();
   }
 
   @override
   void dispose() {
-    _timer.cancel();
+    // _timer.cancel();
     super.dispose();
   }
 
@@ -168,7 +216,7 @@ class _InstructionPageState extends State<InstructionPage> {
           onPressed: () {
             _startTest();
           },
-          verpad: EdgeInsets.symmetric(vertical: 18),
+          verpad: EdgeInsets.symmetric(vertical: 5),
         ),
       ),
       // floatingActionButton: FloatingActionButton.extended(
@@ -191,11 +239,13 @@ class _InstructionPageState extends State<InstructionPage> {
       toastMethod("Sorry no data");
     } else {
       Navigator.of(context).pushReplacement(MaterialPageRoute(
-        builder: (context) => Test(_testData, "topicTest", sno),
+        builder: (context) =>
+            Test(_testData, "topicTest", sno, course, subject, unit, chapter),
       ));
     }
   }
 
+  // ignore: unused_element
   _failed() {
     final snackBar = SnackBar(
       content: Text('Failed. Test Already Done'),

@@ -10,13 +10,17 @@ class SocialGroup extends StatefulWidget {
 }
 
 class _SocialGroupState extends State<SocialGroup> {
+  // ignore: unused_field
   static List buttonText = [
     'Study Hours',
     'Coins Earned',
     'Test Score',
   ];
+  // ignore: unused_field
   List<bool> _isSelected = List.generate(3, (i) => false);
+  // ignore: unused_field
   String _selectedDateRange = "90 Days";
+  // ignore: unused_field
   int _selectedSubjectIndex = 0;
 
   @override

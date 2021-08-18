@@ -12,24 +12,56 @@ class TestSummary extends StatefulWidget {
   final Map _answerMap, _bookmarkMap;
   final List _testData;
   final String _FORMATTED_TEST_DURATION, testType;
-  final sno;
+  final sno, course, subject, unit, chapter;
+  final int totalSecond;
 
-  TestSummary(this._testData, this._answerMap, this._bookmarkMap,
-      this._FORMATTED_TEST_DURATION, this.sno, this.testType);
+  TestSummary(
+      this._testData,
+      this._answerMap,
+      this._bookmarkMap,
+      this._FORMATTED_TEST_DURATION,
+      this.sno,
+      this.testType,
+      this.course,
+      this.subject,
+      this.unit,
+      this.chapter,
+      this.totalSecond);
 
   @override
-  _TestSummaryState createState() => _TestSummaryState(_testData, _answerMap,
-      _bookmarkMap, _FORMATTED_TEST_DURATION, sno, testType);
+  _TestSummaryState createState() => _TestSummaryState(
+      _testData,
+      _answerMap,
+      _bookmarkMap,
+      _FORMATTED_TEST_DURATION,
+      sno,
+      testType,
+      course,
+      subject,
+      unit,
+      chapter,
+      totalSecond);
 }
 
 class _TestSummaryState extends State<TestSummary> {
   final Map _answerMap, _bookmarkMap;
   final List _testData;
-  final sno;
+  final sno, course, subject, unit, chapter;
   String _FORMATTED_TEST_DURATION, testType;
+  final int totalSecond;
 
-  _TestSummaryState(this._testData, this._answerMap, this._bookmarkMap,
-      this._FORMATTED_TEST_DURATION, this.sno, this.testType);
+  _TestSummaryState(
+      this._testData,
+      this._answerMap,
+      this._bookmarkMap,
+      this._FORMATTED_TEST_DURATION,
+      this.sno,
+      this.testType,
+      this.course,
+      this.subject,
+      this.unit,
+      this.chapter,
+      this.totalSecond);
 
   String totalNoOFQuestions = "0";
   String totalNoOFAnsweredQuestions = "0";
@@ -39,6 +71,7 @@ class _TestSummaryState extends State<TestSummary> {
   int _wrongAnswer = 0;
   int _resultNumber = 0;
 
+  // ignore: missing_return
   Future getTestSummary() {
     totalNoOFQuestions = _testData.length.toString();
     totalNoOFAnsweredQuestions = _answerMap.length.toString();
@@ -151,6 +184,7 @@ class _TestSummaryState extends State<TestSummary> {
                       SizedBox(
                         height: 10,
                       ),
+                      // ignore: deprecated_member_use
                       RaisedButton(
                         color: Colors.deepPurpleAccent,
                         splashColor: Colors.black87,

@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lurnify/config/data.dart';
 import 'package:lurnify/ui/constant/constant.dart';
+import 'package:lurnify/widgets/componants/custom-alert.dart';
 import 'package:lurnify/widgets/componants/custom-expantion-tile.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:lurnify/ui/constant/ApiConstant.dart';
-import 'package:lurnify/ui/screen/widget/custom-alert.dart';
 import 'package:lurnify/widgets/componants/custom-button.dart';
 
 import 'package:http/http.dart' as http;

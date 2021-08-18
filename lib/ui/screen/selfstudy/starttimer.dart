@@ -6,14 +6,17 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter/services.dart';
 import 'package:lottie/lottie.dart';
+import 'package:lurnify/helper/helper.dart';
+import 'package:lurnify/model/model.dart';
 import 'package:lurnify/ui/constant/ApiConstant.dart';
 import 'package:lurnify/ui/constant/constant.dart';
 import 'package:lurnify/ui/screen/selfstudy/studycomplete.dart';
 import 'package:lurnify/ui/theme.dart';
-import 'package:lurnify/widgets/componants/custom-button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+
+import 'package:sqflite/sqflite.dart';
 
 class StartTimer extends StatefulWidget {
   final course, subject, unit, chapter, topic, subtopic, duration;
@@ -47,6 +50,7 @@ class _StartTimerState extends State<StartTimer> {
   String weekDay = DateTime.now().weekday.toString();
   String totalWeeks = "";
   String leftDaysOrWeek = "";
+  // ignore: non_constant_identifier_names
   int BEEP_SOUND_DURATION = 600;
 
   void _updateTimer() {
@@ -73,8 +77,62 @@ class _StartTimerState extends State<StartTimer> {
     return "${oneDigits(duration.inHours)}:$twoDigitMinutes:$twoDigitSeconds";
   }
 
-  calculateTimeInSeconds() {
+  calculateTimeInSeconds() async {
     second = second + 1;
+
+    SharedPreferences sp = await SharedPreferences.getInstance();
+    sp.setInt('lastStudyTime', second);
+
+    List<TestMain> testMain = [];
+    if (second == 10) {
+      TestMainRepo testMainRepo = new TestMainRepo();
+      List<Map<String, dynamic>> list =
+          await testMainRepo.getTestMainByChapter(chapter);
+      if (list.isEmpty) {
+        var url3 = baseUrl + "getTestByChapter?chapterSno=" + chapter;
+        print(url3);
+        http.Response response2 = await http
+            .post(
+              Uri.encodeFull(url3),
+            )
+            .timeout(Duration(seconds: 1800));
+        print('request done');
+        testMain = (jsonDecode(response2.body) as List)
+            .map((e) => TestMain.fromJson(e))
+            .toList();
+
+        DBHelper dbHelper = new DBHelper();
+        Database db = await dbHelper.database;
+        await db.transaction(
+          (txn) async {
+            for (var a in testMain) {
+              InstructionRepo instructionRepo = new InstructionRepo();
+              instructionRepo.insertIntoInstruction(a.instruction, txn);
+              print("Instruction Inserted");
+
+              InstructionDataRepo instructionDataRepo =
+                  new InstructionDataRepo();
+              for (var b in a.instruction.instructionData) {
+                instructionDataRepo.insertIntoInstructionData(
+                    b, a.instruction.sno.toString(), txn);
+                print("Instruction Data Inserted");
+              }
+
+              TestMainRepo testMainRepo = new TestMainRepo();
+              testMainRepo.insertIntoTestMain(a, txn);
+              print("TestMain Inserted");
+
+              for (var c in a.test) {
+                TestRepo testRepo = new TestRepo();
+                c.testMain = a.sno.toString();
+                testRepo.insertIntoTest(c, txn);
+                print("Test Inserted");
+              }
+            }
+          },
+        );
+      }
+    }
   }
 
   DateTime _currentBackPressTime;
@@ -123,7 +181,9 @@ class _StartTimerState extends State<StartTimer> {
       if (sound == "sound") {
         AudioCache player = new AudioCache();
         const alarmAudioPath = "audio/beep.mp3";
-        player.play(alarmAudioPath);
+        player.play(
+          alarmAudioPath,
+        );
       }
     });
     data = _getHeading();
@@ -144,25 +204,33 @@ class _StartTimerState extends State<StartTimer> {
 
   Future _getHeading() async {
     try {
-      SharedPreferences sp = await SharedPreferences.getInstance();
-      var url3 = baseUrl +
-          "getTimerPageMessage?registerSno=" +
-          sp.getString("studentSno") +
-          "&topicSno=" +
-          topic;
-      print(url3);
-      http.Response response2 = await http.get(
-        Uri.encodeFull(url3),
-      );
-      var resbody2 = jsonDecode(response2.body);
-      heading = resbody2;
-      List tempHead = heading['timepageMessage'];
-      headingList = [];
-      for (int i = 0; i < tempHead.length; i++) {
-        headingList
-            .add(utf8.decode(tempHead[i]['message'].toString().runes.toList()));
+      // SharedPreferences sp = await SharedPreferences.getInstance();
+      // var url3 = baseUrl +
+      //     "getTimerPageMessage?registerSno=" +
+      //     sp.getString("studentSno") +
+      //     "&topicSno=" +
+      //     topic;
+      // print(url3);
+      // http.Response response2 = await http.get(
+      //   Uri.encodeFull(url3),
+      // );
+      // var resbody2 = jsonDecode(response2.body);
+      // heading = resbody2;
+      // List tempHead = heading['timepageMessage'];
+      // headingList = [];
+      // for (int i = 0; i < tempHead.length; i++) {
+      //   headingList
+      //       .add(utf8.decode(tempHead[i]['message'].toString().runes.toList()));
+      // }
+      // sum = double.parse(heading['totalSecondByRegistrationAndTopic']);
+      DBHelper dbHelper = new DBHelper();
+      List<Map<String, dynamic>> list =
+          await dbHelper.getTimerPageMessage(topic);
+      for (var a in list) {
+        int totalSecond = a['totalSecond'] ?? 0;
+        sum = totalSecond.toDouble();
+        print(sum);
       }
-      sum = double.parse(heading['totalSecondByRegistrationAndTopic']);
       calculateRemainingDuration();
     } catch (e) {
       print(e);
@@ -215,11 +283,15 @@ class _StartTimerState extends State<StartTimer> {
         theme: AppTheme.darkTheme,
         home: Scaffold(
           appBar: AppBar(
+            actionsIconTheme: IconThemeData(color: whiteColor),
             // leading: IconButton(
             //   icon: Icon(Icons.arrow_back),
             //   onPressed: () => Navigator.pop(context),
             // ),
-            title: Text('Study Timer'),
+            title: Text(
+              'Study Timer',
+              style: TextStyle(color: whiteColor),
+            ),
             actions: [
               IconButton(
                 icon: sound == "sound"
@@ -245,6 +317,9 @@ class _StartTimerState extends State<StartTimer> {
                   questionAlertBox(context);
                 },
               ),
+              SizedBox(
+                width: 10,
+              )
             ],
           ),
           body: AnnotatedRegion<SystemUiOverlayStyle>(
@@ -279,12 +354,13 @@ class _StartTimerState extends State<StartTimer> {
                             alignment: AlignmentDirectional.center,
                             repeatForever: true,
                             // or Alignment.topLeft
-                            duration: Duration(seconds: 1),
+                            duration: Duration(seconds: 3),
                           ),
                         ),
                         SizedBox(
                           height: _height / 22,
                         ),
+                        // ignore: deprecated_member_use
                         RaisedButton(
                           child: Text('Beat Distraction'),
                           onPressed: () => beatDistraction(),
@@ -302,6 +378,7 @@ class _StartTimerState extends State<StartTimer> {
                             child: Container(
                               child: Column(
                                 children: [
+                                  // ignore: deprecated_member_use
                                   RaisedButton(
                                     onPressed: () => showSubTopic(context),
                                     child: Row(
@@ -355,6 +432,7 @@ class _StartTimerState extends State<StartTimer> {
                                           ),
                                         )),
                                   ),
+                                  // ignore: deprecated_member_use
                                   RaisedButton(
                                     onPressed: () => remainingAlertBox(),
                                     child: Row(
@@ -502,9 +580,11 @@ class _StartTimerState extends State<StartTimer> {
         barrierDismissible: true,
         barrierLabel: '',
         context: context,
+        // ignore: missing_return
         pageBuilder: (context, animation1, animation2) {});
   }
 
+  // ignore: missing_return
   Future endSession() {
     _ticker.cancel();
     String endDate = DateTime.now().toString().split("\.")[0];
@@ -563,6 +643,7 @@ class _StartTimerState extends State<StartTimer> {
         barrierDismissible: true,
         barrierLabel: '',
         context: context,
+        // ignore: missing_return
         pageBuilder: (context, animation1, animation2) {});
   }
 
@@ -616,6 +697,7 @@ class _StartTimerState extends State<StartTimer> {
         barrierDismissible: true,
         barrierLabel: '',
         context: context,
+        // ignore: missing_return
         pageBuilder: (context, animation1, animation2) {});
   }
 
@@ -665,6 +747,7 @@ class _StartTimerState extends State<StartTimer> {
         barrierDismissible: true,
         barrierLabel: '',
         context: context,
+        // ignore: missing_return
         pageBuilder: (context, animation1, animation2) {});
   }
 }
