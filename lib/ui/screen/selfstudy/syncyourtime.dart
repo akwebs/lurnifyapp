@@ -2,14 +2,11 @@ import 'dart:async';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:lurnify/helper/helper.dart';
-import 'package:lurnify/ui/constant/ApiConstant.dart';
 import 'package:lurnify/ui/constant/constant.dart';
 import 'package:lurnify/ui/screen/selfstudy/studycomplete.dart';
 import 'package:material_switch/material_switch.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 
 class SyncYourTime extends StatefulWidget {
   final course, subject, unit, chapter, topic, duration;

@@ -4,11 +4,12 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:lurnify/helper/helper.dart';
+import 'package:lurnify/model/model.dart';
 import 'package:lurnify/ui/constant/ApiConstant.dart';
 import 'package:lurnify/ui/constant/constant.dart';
 import 'package:lurnify/ui/home-page.dart';
-import 'package:lurnify/ui/screen/test/instructionPage.dart';
-import 'package:lurnify/widgets/componants/custom-button.dart';
+import 'package:lurnify/ui/screen/screen.dart';
+import 'package:lurnify/widgets/widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -595,17 +596,13 @@ class _StudyCompleteState extends State<StudyComplete> {
     SharedPreferences sp = await SharedPreferences.getInstance();
     String thOrNum = theoryOrNum.toString();
     String effectiveStudy = effectivenessOfStudy.toString();
-    // ignore: unused_local_variable
-    String hour = printHr.toString();
-    // ignore: unused_local_variable
-    String min = printMin.toString();
+    // String hour = printHr.toString();
+    // String min = printMin.toString();
     String totalTime = time;
     String totalSecond = second;
     String studentSno = sp.getString("studentSno");
-    // ignore: unused_local_variable
-    String newEndDate = startDate.split(" ")[0] + "23:59:59";
-    // ignore: unused_local_variable
-    String newStartDate = "00:00:00" + endDate.split(" ")[0];
+    // String newEndDate = startDate.split(" ")[0] + "23:59:59";
+    // String newStartDate = "00:00:00" + endDate.split(" ")[0];
     String completionStatus = "";
     if (_isStudyCompleted) {
       completionStatus = "Complete";
@@ -613,65 +610,169 @@ class _StudyCompleteState extends State<StudyComplete> {
       completionStatus = "Studying";
     }
     try {
-      var url = baseUrl +
-          "saveStudy?registrationSno=" +
-          studentSno +
-          "&startDate=" +
-          startDate +
-          "&endDate=" +
-          endDate +
-          "&totalTime=" +
-          totalTime +
-          "&totalSecond=" +
-          totalSecond +
-          "&topicCompletionStatus=" +
-          completionStatus +
-          "&theoryPercent=" +
-          thOrNum +
-          "&numericalPercent=" +
-          (100 - theoryOrNum).toString() +
-          ""
-              "&effectivenessOfStudy=" +
-          effectiveStudy +
-          ""
-              "&courseSno=" +
-          course +
-          ""
-              "&subjectSno=" +
-          subject +
-          ""
-              "&unitSno=" +
-          unit +
-          ""
-              "&chapterSno=" +
-          chapter +
-          ""
-              "&topicSno=" +
-          topic +
-          ""
-              "&date=" +
-          startDate.split(" ")[0] +
-          ""
-              "&duration=" +
-          duration +
-          "&timePunchedFrom=TIMER";
-      print(url);
-      http.Response response = await http.post(
-        Uri.encodeFull(url),
-      );
-      var resbody = jsonDecode(response.body);
-      print(resbody);
-      Map<String, dynamic> mapResult = resbody;
-      if (mapResult['saveResult'] == true) {
-        toastMethod("Study Saved");
-        if (completionStatus == "Complete") {
-          _takeTestAlertBox(context);
-        } else {
-          Navigator.pop(context);
-        }
+      DueTopicTestRepo dueTopicTestRepo = new DueTopicTestRepo();
+      Study study = new Study();
+      RecentStudy recentStudy = new RecentStudy();
+
+      recentStudy.course = course;
+      recentStudy.subject = subject;
+      recentStudy.unit = unit;
+      recentStudy.chapter = chapter;
+      recentStudy.topic = topic;
+      recentStudy.registrationSno = studentSno;
+      recentStudy.duration = duration;
+      recentStudy.enteredBy = studentSno;
+      recentStudy.enteredDate = DateTime.now().toString();
+      recentStudy.studyType = completionStatus;
+
+      List<Map<String, dynamic>> list =
+          await dueTopicTestRepo.getDueTopicTestByStatusAndTopicAndRegister(
+              'COMPLETE', topic, studentSno);
+
+      study.revision = list.length.toString();
+
+      study.register = studentSno;
+      study.startDate = startDate;
+      study.endDate = endDate;
+      study.totalTime = totalTime;
+      study.totalSecond = totalSecond;
+      study.topicCompletionStatus = completionStatus;
+      study.theoryPercent = thOrNum;
+      study.numericalPercent = (100 - theoryOrNum).toString();
+      study.effectivenessOfStudy = effectiveStudy;
+      study.courseSno = course;
+      study.subjectSno = subject;
+      study.unitSno = unit;
+      study.chapterSno = chapter;
+      study.topicSno = topic;
+      study.date = startDate.split(" ")[0];
+      study.duration = duration;
+      study.timePunchedFrom = 'TIMER';
+      study.enteredDate = DateTime.now().toString();
+
+      DateTime sDate = DateFormat('yyyy-MM-dd').parse(startDate);
+      DateTime eDate = DateFormat('yyyy-MM-dd').parse(endDate);
+      if (eDate.isAfter(sDate)) {
+        String oldEndDate = endDate;
+        String newEndDate = startDate.split(" ")[0] + " 23:59:59";
+        String newStartDate = endDate.split(" ")[0] + " 00:00:00";
+
+        study.endDate = newEndDate;
+        StudyRepo repo = new StudyRepo();
+        repo.insertIntoStudy(study);
+        print("First Date Inserted");
+        study.startDate = newStartDate;
+        study.endDate = oldEndDate;
+        repo.insertIntoStudy(study);
+        print("Second Date Inserted");
       } else {
-        toastMethod("failed");
+        StudyRepo repo = new StudyRepo();
+        repo.insertIntoStudy(study);
+        print("Study Inserted");
       }
+
+      RecentStudyRepo recentStudyRepo = new RecentStudyRepo();
+      recentStudyRepo.insertIntoRecentStudy(recentStudy);
+      print("Recent Inserted");
+
+      Dimes dimes = new Dimes();
+      dimes.credit = double.parse(totalDimeEarns ?? "0").round();
+      dimes.enteredDate = DateTime.now().toString();
+      dimes.debit = 0;
+      dimes.message = "Study reward for studying " +
+          (int.parse(totalSecond ?? "0") / 60).toStringAsFixed(2) +
+          " minutes";
+      dimes.registerSno = studentSno;
+
+      DimeRepo dimeRepo = new DimeRepo();
+      dimeRepo.insertIntoDimes(dimes);
+      print("Dimes Inserted");
+      if (completionStatus == 'Complete') {
+        List<Map<String, dynamic>> list2 =
+            await dueTopicTestRepo.getDueTopicTestByStatusAndTopicAndRegister(
+                'Complete', topic, studentSno);
+        if (list2.isEmpty) {
+          DueTopicTest dueTopicTest = new DueTopicTest();
+          dueTopicTest.registerSno = studentSno;
+          dueTopicTest.topicSno = topic;
+          dueTopicTest.enteredDate = DateTime.now().toString();
+          dueTopicTest.status = 'INCOMPLETE';
+          dueTopicTest.course = course;
+          dueTopicTest.subject = subject;
+          dueTopicTest.unit = unit;
+          dueTopicTest.chapter = chapter;
+          dueTopicTestRepo.insertIntoDueTopicTest(dueTopicTest);
+
+          print("Due Topic test inserted");
+        }
+      }
+
+      toastMethod("Study Saved");
+      if (completionStatus == "Complete") {
+        _takeTestAlertBox(context);
+      } else {
+        Navigator.pop(context);
+      }
+
+      // var url = baseUrl +
+      //     "saveStudy?registrationSno=" +
+      //     studentSno +
+      //     "&startDate=" +
+      //     startDate +
+      //     "&endDate=" +
+      //     endDate +
+      //     "&totalTime=" +
+      //     totalTime +
+      //     "&totalSecond=" +
+      //     totalSecond +
+      //     "&topicCompletionStatus=" +
+      //     completionStatus +
+      //     "&theoryPercent=" +
+      //     thOrNum +
+      //     "&numericalPercent=" +
+      //     (100 - theoryOrNum).toString() +
+      //     ""
+      //         "&effectivenessOfStudy=" +
+      //     effectiveStudy +
+      //     ""
+      //         "&courseSno=" +
+      //     course +
+      //     ""
+      //         "&subjectSno=" +
+      //     subject +
+      //     ""
+      //         "&unitSno=" +
+      //     unit +
+      //     ""
+      //         "&chapterSno=" +
+      //     chapter +
+      //     ""
+      //         "&topicSno=" +
+      //     topic +
+      //     ""
+      //         "&date=" +
+      //     startDate.split(" ")[0] +
+      //     ""
+      //         "&duration=" +
+      //     duration +
+      //     "&timePunchedFrom=TIMER";
+      // print(url);
+      // http.Response response = await http.post(
+      //   Uri.encodeFull(url),
+      // );
+      // var resbody = jsonDecode(response.body);
+      // print(resbody);
+      // Map<String, dynamic> mapResult = resbody;
+      // if (mapResult['saveResult'] == true) {
+      //   toastMethod("Study Saved");
+      //   if (completionStatus == "Complete") {
+      //     _takeTestAlertBox(context);
+      //   } else {
+      //     Navigator.pop(context);
+      //   }
+      // } else {
+      //   toastMethod("failed");
+      // }
     } catch (e) {
       print(e);
     }
@@ -688,7 +789,6 @@ class _StudyCompleteState extends State<StudyComplete> {
         fontSize: 18.0);
   }
 
-  // ignore: unused_element
   void _setContinueStudyAfterTime() {
     var formatter = new DateFormat('hh:mm a');
     printTime = formatter.format(
@@ -798,27 +898,34 @@ class _StudyCompleteState extends State<StudyComplete> {
       toastMethod("Please Enter Message");
     } else {
       SharedPreferences sp = await SharedPreferences.getInstance();
-      var url = baseUrl +
-          "saveRemark?subject=" +
-          remarkSubject.text +
-          "&message=" +
-          remarkMessage.text +
-          "&topicSno=" +
-          topic +
-          "&registrationSno=" +
-          sp.getString("studentSno");
-      print(url);
-      http.Response response2 = await http.post(
-        Uri.encodeFull(url),
-      );
-      var resbody2 = jsonDecode(response2.body);
-      Map<String, dynamic> result = resbody2;
-      if (result['result'].toString() == "true") {
-        toastMethod("Remark Added");
-        Navigator.of(context).pop();
-      } else {
-        toastMethod("Failed. Please Try Again");
-      }
+      // var url = baseUrl +
+      //     "saveRemark?subject=" +
+      //     remarkSubject.text +
+      //     "&message=" +
+      //     remarkMessage.text +
+      //     "&topicSno=" +
+      //     topic +
+      //     "&registrationSno=" +
+      //     sp.getString("studentSno");
+      // print(url);
+      // http.Response response2 = await http.post(
+      //   Uri.encodeFull(url),
+      // );
+      // var resbody2 = jsonDecode(response2.body);
+      // Map<String, dynamic> result = resbody2;
+      Remark remark = new Remark();
+      remark.studentSno = sp.getString("studentSno");
+      remark.enteredDate = DateTime.now().toString();
+      remark.topicSno = topic;
+      remark.enteredBy = sp.getString("studentSno");
+      remark.subject = remarkSubject.text;
+      remark.message = remarkMessage.text;
+
+      RemarkRepo repo = new RemarkRepo();
+      repo.insertIntoRemark(remark);
+
+      toastMethod("Remark Added");
+      Navigator.of(context).pop();
     }
   }
 

@@ -9,9 +9,6 @@ import 'package:lurnify/ui/constant/constant.dart';
 import 'package:lurnify/ui/home-page.dart';
 import 'package:lurnify/widgets/widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:lurnify/ui/constant/ApiConstant.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 
 class SelectThePace extends StatefulWidget {
   final bool backButtonWillWork;

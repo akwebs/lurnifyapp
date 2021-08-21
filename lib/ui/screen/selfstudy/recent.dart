@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:lurnify/helper/helper.dart';
 import 'package:lurnify/ui/constant/constant.dart';
-import 'package:lurnify/ui/screen/selfstudy/contentselect.dart';
-import 'package:lurnify/ui/screen/selfstudy/starttimer.dart';
-import 'package:lurnify/ui/screen/selfstudy/syncyourtime.dart';
-import 'package:lurnify/widgets/componants/custom-button.dart';
+import 'package:lurnify/ui/screen/screen.dart';
+import 'package:lurnify/widgets/widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Recent extends StatefulWidget {

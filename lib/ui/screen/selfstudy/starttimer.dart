@@ -10,7 +10,7 @@ import 'package:lurnify/helper/helper.dart';
 import 'package:lurnify/model/model.dart';
 import 'package:lurnify/ui/constant/ApiConstant.dart';
 import 'package:lurnify/ui/constant/constant.dart';
-import 'package:lurnify/ui/screen/selfstudy/studycomplete.dart';
+import 'package:lurnify/ui/screen/screen.dart';
 import 'package:lurnify/ui/theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
@@ -50,7 +50,6 @@ class _StartTimerState extends State<StartTimer> {
   String weekDay = DateTime.now().weekday.toString();
   String totalWeeks = "";
   String leftDaysOrWeek = "";
-  // ignore: non_constant_identifier_names
   int BEEP_SOUND_DURATION = 600;
 
   void _updateTimer() {
@@ -103,34 +102,31 @@ class _StartTimerState extends State<StartTimer> {
 
         DBHelper dbHelper = new DBHelper();
         Database db = await dbHelper.database;
-        await db.transaction(
-          (txn) async {
-            for (var a in testMain) {
-              InstructionRepo instructionRepo = new InstructionRepo();
-              instructionRepo.insertIntoInstruction(a.instruction, txn);
-              print("Instruction Inserted");
+        await db.transaction((txn) async {
+          for (var a in testMain) {
+            InstructionRepo instructionRepo = new InstructionRepo();
+            instructionRepo.insertIntoInstruction(a.instruction, txn);
+            print("Instruction Inserted");
 
-              InstructionDataRepo instructionDataRepo =
-                  new InstructionDataRepo();
-              for (var b in a.instruction.instructionData) {
-                instructionDataRepo.insertIntoInstructionData(
-                    b, a.instruction.sno.toString(), txn);
-                print("Instruction Data Inserted");
-              }
-
-              TestMainRepo testMainRepo = new TestMainRepo();
-              testMainRepo.insertIntoTestMain(a, txn);
-              print("TestMain Inserted");
-
-              for (var c in a.test) {
-                TestRepo testRepo = new TestRepo();
-                c.testMain = a.sno.toString();
-                testRepo.insertIntoTest(c, txn);
-                print("Test Inserted");
-              }
+            InstructionDataRepo instructionDataRepo = new InstructionDataRepo();
+            for (var b in a.instruction.instructionData) {
+              instructionDataRepo.insertIntoInstructionData(
+                  b, a.instruction.sno.toString(), txn);
+              print("Instruction Data Inserted");
             }
-          },
-        );
+
+            TestMainRepo testMainRepo = new TestMainRepo();
+            testMainRepo.insertIntoTestMain(a, txn);
+            print("TestMain Inserted");
+
+            for (var c in a.test) {
+              TestRepo testRepo = new TestRepo();
+              c.testMain = a.sno.toString();
+              testRepo.insertIntoTest(c, txn);
+              print("Test Inserted");
+            }
+          }
+        });
       }
     }
   }
@@ -181,9 +177,7 @@ class _StartTimerState extends State<StartTimer> {
       if (sound == "sound") {
         AudioCache player = new AudioCache();
         const alarmAudioPath = "audio/beep.mp3";
-        player.play(
-          alarmAudioPath,
-        );
+        player.play(alarmAudioPath);
       }
     });
     data = _getHeading();
