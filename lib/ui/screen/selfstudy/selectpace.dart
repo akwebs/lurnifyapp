@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
@@ -30,6 +31,7 @@ class _SelectThePaceState extends State<SelectThePace> {
   double totalTiming = 0.0;
   var formatter = new DateFormat('dd MMM yyyy');
   var _data;
+  double totalPerDayHours = 0;
 
   Future getTotalTopicDuration() async {
     try {
@@ -211,7 +213,15 @@ class _SelectThePaceState extends State<SelectThePace> {
                   iconSize: 50,
                 )
               ],
-            )
+            ),
+            Text("Your standard hours will be ${totalPerDayHours.toStringAsFixed(2)}",style: TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+                fontWeight: FontWeight.w800),),
+            Text("But you can still choose as per your want",style: TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+                fontWeight: FontWeight.w800),)
           ],
         ),
       ),
@@ -428,9 +438,8 @@ class _SelectThePaceState extends State<SelectThePace> {
           customValue = null;
           choice = value;
           break;
-        default:
-          choice = null;
       }
+
       debugPrint(choice); //Debug the choice in console
     });
   }
@@ -447,29 +456,45 @@ class _SelectThePaceState extends State<SelectThePace> {
     );
 
     if (picked != null)
-      setState(() {
-        selectedDate = picked;
 
-        completionDate = formatter.format(selectedDate);
-        print(picked);
-      });
+        selectedDate = picked;
+        if(DateFormat('EEEE').format(selectedDate)=="Sunday"){
+          completionDate = formatter.format(selectedDate);
+          print(completionDate);
+          SharedPreferences sp = await SharedPreferences.getInstance();
+          print(sp.getString('firstMonday'));
+          Duration inDays = selectedDate.difference(DateTime.parse(sp.getString('firstMonday')));
+          int convertedInDays = inDays.inDays;
+          print(convertedInDays);
+          print(totalDuration);
+          setState(() {
+            if (customValue == null) {
+              totalPerDayHours = (totalDuration / 60).round() / convertedInDays;
+            } else {
+              totalPerDayHours = double.parse(customValue);
+            }
+            print(totalPerDayHours);
+          });
+        }else{
+          Fluttertoast.showToast(msg: 'Selected Date should be sunday');
+        }
   }
 
   void submit() async {
-    double totalPerDayHours = 0;
+
     try {
       if (selectedDate.toString().split(" ")[0] ==
           DateTime.now().toString().split(" ")[0]) {
         toastMethod("Please Select Syllabus Completion Date");
       } else {
-        Duration inDays = selectedDate.difference(DateTime.now());
-        int convertedInDays = inDays.inDays;
-        print(totalDuration);
-        if (customValue == null) {
-          totalPerDayHours = (totalDuration / 60).round() / convertedInDays;
-        } else {
-          totalPerDayHours = double.parse(customValue);
-        }
+        // Duration inDays = selectedDate.difference(DateTime.now());
+        // int convertedInDays = inDays.inDays;
+        // print(totalDuration);
+        // if (customValue == null) {
+        //   totalPerDayHours = (totalDuration / 60).round() / convertedInDays;
+        // } else {
+        //   totalPerDayHours = double.parse(customValue);
+        // }
         print(totalPerDayHours);
         if (totalPerDayHours > 15) {
           toastMethod("Too Less");
@@ -477,7 +502,14 @@ class _SelectThePaceState extends State<SelectThePace> {
           SharedPreferences sp = await SharedPreferences.getInstance();
           String studentSno = sp.getString("studentSno");
           String syllabusCompletionDate = selectedDate.toString();
+
+          if(totalTiming==null){
+            totalTiming=totalPerDayHours;
+          }
+
           String perDayStudyHour = totalTiming.toString();
+          double userStudyHourDifference=totalTiming-totalPerDayHours;//user selected-standard time
+          double percentDifference=(userStudyHourDifference*100)/totalPerDayHours;
           String courseSno = sp.get("courseSno");
           // var url = baseUrl +
           //     "savePace?registrationSno=" +
@@ -503,16 +535,22 @@ class _SelectThePaceState extends State<SelectThePace> {
           pace.expectedRank = expectedRank;
           pace.perDayStudyHour = perDayStudyHour;
           pace.syllabusCompletionDate = syllabusCompletionDate;
+          pace.percentDifference=percentDifference.toStringAsFixed(2);
+          pace.register=sp.getString('studentSno');
 
           PaceRepo paceRepo = new PaceRepo();
           paceRepo.insertIntoPace(pace);
+
+          FirebaseFirestore.instance.collection('pace').add(pace.toJson());
+
           toastMethod("Data Saved Successfully");
 
           sp.setString("courseCompletionDate", completionDate);
           sp.setString("courseCompletionDateFormatted",
               selectedDate.toString().split(" ")[0]);
+          //
           sp.setString(
-              "courseStartingDate", DateTime.now().toString().split(" ")[0]);
+              "courseStartingDate", sp.getString('firstMonday'));
           sp.setInt("totalWeeks",
               (selectedDate.difference(DateTime.now()).inDays / 7).round());
           sp.setDouble("totalStudyHour", totalTiming);

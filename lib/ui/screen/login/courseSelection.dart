@@ -426,6 +426,8 @@ class _CourseSelectionState extends State<CourseSelection> {
           sp.setString("mobile", mobile.toString());
           sp.setString("courseSno", selectedCourseSno.toString());
           sp.setString("studentSno", recentData['studentSno'].toString());
+          sp.setString("firstMonday", recentData['firstMonday'].toString());
+          sp.setString("joiningDate", recentData['joiningDate'].toString());
 
           //Saving data to local DB
           DBHelper dbHelper = new DBHelper();

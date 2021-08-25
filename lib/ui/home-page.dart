@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -70,7 +71,9 @@ class _HomePageState extends State<HomePage> {
             dailyTask: dateTimeNow,
             dailyAppOpening: dateTimeNow,
             beatDistraction: dateTimeNow,
-            challengeAccept: dateTimeNow);
+            challengeAccept: dateTimeNow,
+            dataSynced: dateTimeNow
+        );
 
         dataUpdateRepo.insertIntoDataUpdate(update);
       } else {
@@ -158,11 +161,68 @@ class _HomePageState extends State<HomePage> {
             dataUpdate.challengeAccept = "1";
             update.challengeAccept = dateTimeNow;
           }
+
+          if (a['dataSynced'] == null ||
+              DateFormat('yyyy-MM-dd hh:mm')
+                      .parse(a['dataSynced'])
+                      .add(Duration(minutes: 2))
+                      .compareTo(DateTime.now()) < 1) {
+
+
+
+
+              DBHelper dbHelper = new DBHelper();
+              Database db = await dbHelper.database;
+              var batch = db.batch();
+
+              RecentStudyRepo recentStudyRepo = new RecentStudyRepo();
+              List<Map<String,dynamic>> recentStudys=await recentStudyRepo.getNewRecentStudy();
+
+              for(var a in recentStudys){
+                FirebaseFirestore.instance.collection('recentStudy').add(a);
+
+                batch.rawUpdate("update recent_study set status='old' where sno=${a['sno']}");
+              }
+
+              DueTopicTestRepo dueTopicTestRepo = new DueTopicTestRepo();
+              List<Map<String,dynamic>> dueTests=await dueTopicTestRepo.getNewDueTopicTest();
+              for(var a in dueTests){
+                FirebaseFirestore.instance.collection('dueTopicTests').add(a);
+
+                batch.rawUpdate("update due_topic_tests set onlineStatus='old' where sno=${a['sno']}");
+              }
+
+              StudyRepo studyRepo = new StudyRepo();
+              List<Map<String,dynamic>> studys=await studyRepo.getNewStudy();
+              print("--------------------------");
+              print(studys);
+              for(var a in studys){
+                FirebaseFirestore.instance.collection('study').add(a);
+                batch.rawUpdate("update study set status='old' where sno=${a['sno']}");
+              }
+
+              DimeRepo dimeRepo = new DimeRepo();
+              List<Map<String,dynamic>> dimes=await dimeRepo.getNewDimes();
+              for(var a in dimes){
+                FirebaseFirestore.instance.collection('dimes').add(a);
+                String sql="update dimes set status='old' where sno='${a['sno']}'";
+                batch.rawUpdate(sql);
+              }
+
+              TopicTestResultRepo topicTestResultRepo = new TopicTestResultRepo();
+              List<Map<String,dynamic>> topicResults=await topicTestResultRepo.getNewTopicTestResult();
+              for(var a in topicResults){
+                FirebaseFirestore.instance.collection('topicTestResult').add(a);
+                batch.rawUpdate("update topic_test_result set status='old' where sno=${a['sno']}");
+              }
+
+              batch.commit();
+          }
         }
       }
-
+      String registerSno=sp.getString("studentSno");
       var url =
-          baseUrl + "getHomePageData?registerSno=" + sp.getString("studentSno");
+          baseUrl + "getHomePageData?registerSno=" + registerSno;
       print(url);
       http.Response response = await http.post(Uri.encodeFull(url),
           body: jsonEncode(dataUpdate.toJson()));
@@ -299,6 +359,7 @@ class _HomePageState extends State<HomePage> {
         });
       });
 
+      //Checking daily app opening
       String date = DateFormat('yyyy-MM-dd').format(DateTime.now());
       String sql =
           "select * from daily_app_opening where registerSno=${sp.getString("studentSno")} and appOpeningDate = $date";
@@ -318,16 +379,14 @@ class _HomePageState extends State<HomePage> {
         }
       }
 
-      if (showChallenge) {
-        _showChallenge();
-      } else {
-        _showMyDialog();
-      }
+
 
       String sql2 =
-          "select * from daily_task_completion where spinDate='$date' and registerSno=${sp.getString('studentSno')}";
+          "select * from daily_task_completion where spinDate='${DateTime.now().toString().split(" ")[0]}' and registerSno=${sp.getString('studentSno')}";
       List<Map<String, dynamic>> list2 = await database.rawQuery(sql2);
+      print("-------------------------------------------------------$list2");
       if (list2.isEmpty) {
+        _isSpinned=false;
         String sql =
             "select * from daily_task where '$date'>=startDateTime and '$date'<=endDateTime and status='enable' order by random() limit 6";
         List<Map<String, dynamic>> list = await database.rawQuery(sql);
@@ -355,6 +414,14 @@ class _HomePageState extends State<HomePage> {
             _spinData.add(map);
           }
         }
+      }else{
+        _isSpinned=true;
+      }
+
+      if (showChallenge) {
+        _showChallenge();
+      } else {
+        _showMyDialog();
       }
     } catch (e) {
       print(e);
@@ -385,6 +452,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   int _currentIndex = 0;
+
   void onTabTapped(int index) {
     setState(() {
       _currentIndex = index;
@@ -412,6 +480,7 @@ class _HomePageState extends State<HomePage> {
     'my_reward',
     'money_matters',
   ];
+
   void handleClick(String value) {
     switch (value) {
       case 'Logout':
@@ -618,7 +687,8 @@ class _HomePageState extends State<HomePage> {
         if (resbody['dailyReward'] == true) {
           _showDailyAppOpening();
         } else {
-          if (_spinData.isNotEmpty) {
+          print("---------------------------------------$_isSpinned");
+          if (_spinData.isNotEmpty && !_isSpinned) {
             _showSpinWheel();
           } else {
             print("SPIN DATA EMPTY");

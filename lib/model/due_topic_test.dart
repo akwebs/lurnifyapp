@@ -8,6 +8,7 @@ class DueTopicTest{
   String subject;
   String unit;
   String chapter;
+  String onlineStatus;
 
   DueTopicTest();
 
@@ -22,6 +23,7 @@ class DueTopicTest{
     subject = json['subject'];
     unit = json['unit'];
     chapter = json['chapter'];
+    onlineStatus = json['onlineStatus'];
   }
 
   Map<String, dynamic> toJson() {
@@ -35,6 +37,7 @@ class DueTopicTest{
     data['subject'] = this.subject;
     data['unit'] = this.unit;
     data['chapter'] = this.chapter;
+    data['onlineStatus'] = this.onlineStatus;
     return data;
   }
 }

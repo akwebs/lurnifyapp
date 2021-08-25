@@ -51,6 +51,7 @@ class _StartTimerState extends State<StartTimer> {
   String totalWeeks = "";
   String leftDaysOrWeek = "";
   int BEEP_SOUND_DURATION = 600;
+  int _topicTestTime=0;
 
   void _updateTimer() {
     final duration = DateTime.now().difference(_lastButtonPress);
@@ -193,7 +194,7 @@ class _StartTimerState extends State<StartTimer> {
 
   Map<String, dynamic> heading;
   List<String> headingList = [];
-  double sum = 0;
+  double _alreadyStudiedTime = 0;
   String remainingMessage = "";
 
   Future _getHeading() async {
@@ -222,9 +223,32 @@ class _StartTimerState extends State<StartTimer> {
           await dbHelper.getTimerPageMessage(topic);
       for (var a in list) {
         int totalSecond = a['totalSecond'] ?? 0;
-        sum = totalSecond.toDouble();
-        print(sum);
+        _alreadyStudiedTime = totalSecond.toDouble();
       }
+
+      print("_alreadyStudiedTime $_alreadyStudiedTime");
+      TestMainRepo testMainRepo = new TestMainRepo();
+      List<Map<String,dynamic>> list2=await testMainRepo.findByTopic(topic);
+      for(var a in list2){
+        print("---------------------------------${a['topicTestTime']}");
+        _topicTestTime=int.tryParse(a['topicTestTime']) ?? 0;
+        _topicTestTime=_topicTestTime ;
+      }
+      if(_topicTestTime==0){
+        _topicTestTime=20;
+      }
+      print("_topicTestTime $_topicTestTime");
+      PaceRepo paceRepo = new PaceRepo();
+      List<Map<String,dynamic>> list3=await paceRepo.getPace();
+      double percentDifference=0;
+      for(var a in list3){
+        print("---------------------------------${a['percentDifference']}");
+        percentDifference=double.tryParse(a['percentDifference']) ?? 0;
+      }
+      print("percentDifference $percentDifference");
+      double convertedDuration=double.tryParse(duration) ?? 0;
+      duration =(convertedDuration+(convertedDuration*percentDifference/100)-_topicTestTime).round().toString();
+
       calculateRemainingDuration();
     } catch (e) {
       print(e);
@@ -234,7 +258,7 @@ class _StartTimerState extends State<StartTimer> {
   void calculateRemainingDuration() {
     getDatesForDateRow();
     remainingDuration =
-        Duration(minutes: double.parse(duration).round()).inSeconds - sum;
+        Duration(minutes: double.parse(duration).round()).inSeconds - _alreadyStudiedTime;
     if (remainingDuration > 0) {
       remainingMessage =
           Duration(seconds: remainingDuration.round()).inMinutes.toString() +
@@ -250,10 +274,10 @@ class _StartTimerState extends State<StartTimer> {
     SharedPreferences sp = await SharedPreferences.getInstance();
     totalWeeks = sp.getInt("totalWeeks").toString();
     int completedDays = DateTime.now()
-        .difference(DateTime.parse(sp.getString("courseStartingDate")))
+        .difference(DateTime.parse(sp.getString("firstMonday")))
         .inDays;
     int remainingDays =
-        DateTime.parse(sp.getString("courseCompletionDateFormatted"))
+        DateTime.parse(sp.getString("firstMonday"))
             .difference(DateTime.now())
             .inDays;
     if (remainingDays <= 100) {

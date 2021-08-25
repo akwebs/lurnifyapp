@@ -8,6 +8,7 @@ class Dimes{
   String enteredDate;
   String updatedBy;
   String updatedDate;
+  String status;
 
   Dimes(
       {this.sno,
@@ -18,7 +19,8 @@ class Dimes{
         this.enteredBy,
         this.enteredDate,
         this.updatedBy,
-        this.updatedDate});
+        this.updatedDate,
+        this.status,});
 
   Dimes.fromJson(Map<String, dynamic> json) {
     sno = json['sno'];
@@ -30,6 +32,7 @@ class Dimes{
     enteredDate = json['enteredDate'];
     updatedBy = json['updatedBy'];
     updatedDate = json['updatedDate'];
+    status = json['status'];
   }
 
   Map<String, dynamic> toJson() {
@@ -43,6 +46,7 @@ class Dimes{
     data['enteredDate'] = this.enteredDate;
     data['updatedBy'] = this.updatedBy;
     data['updatedDate'] = this.updatedDate;
+    data['status'] = this.status;
     return data;
   }
 }

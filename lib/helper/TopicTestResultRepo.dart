@@ -51,4 +51,11 @@ class TopicTestResultRepo{
     }
     return a;
   }
+
+  Future<List<Map<String,dynamic>>> getNewTopicTestResult()async{
+    Database db=await dbHelper.database;
+    String sql="select * from topic_test_result where status='new'";
+    var result=db.rawQuery(sql);
+    return result;
+  }
 }

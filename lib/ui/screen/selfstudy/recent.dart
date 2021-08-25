@@ -36,6 +36,7 @@ class _RecentState extends State<Recent> {
       RecentStudyRepo recentStudyRepo = new RecentStudyRepo();
       recentData = await recentStudyRepo.getRecentStudy();
       print(recentData);
+      print(recentData);
     } catch (e) {
       print(e);
     }

@@ -52,4 +52,11 @@ class DueTopicTestRepo{
       print(e);
     }
   }
+
+  Future<List<Map<String,dynamic>>> getNewDueTopicTest()async{
+    Database db=await dbHelper.database;
+    String sql="select * from due_topic_tests where onlineStatus='new'";
+    var result=db.rawQuery(sql);
+    return result;
+  }
 }

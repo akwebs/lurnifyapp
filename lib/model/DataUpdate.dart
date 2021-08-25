@@ -9,6 +9,7 @@ class DataUpdate{
   String dailyAppOpening;
   String timerPage;
   String challengeAccept;
+  String dataSynced;
 
 
   DataUpdate(
@@ -21,7 +22,8 @@ class DataUpdate{
         this.beatDistraction,
         this.dailyAppOpening,
         this.timerPage,
-      this.challengeAccept});
+      this.challengeAccept,
+      this.dataSynced});
 
   DataUpdate.fromJson(Map<String, dynamic> json) {
     sno = json['sno'];
@@ -34,6 +36,7 @@ class DataUpdate{
     dailyAppOpening = json['dailyAppOpening'];
     timerPage = json['timerPage'];
     challengeAccept = json['challengeAccept'];
+    dataSynced = json['dataSynced'];
   }
 
   Map<String, dynamic> toJson() {
@@ -48,6 +51,7 @@ class DataUpdate{
     data['dailyAppOpening'] = this.dailyAppOpening;
     data['timerPage'] = this.timerPage;
     data['challengeAccept'] = this.challengeAccept;
+    data['dataSynced'] = this.dataSynced;
     return data;
   }
 }
