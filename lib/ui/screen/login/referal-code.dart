@@ -30,31 +30,40 @@ class _ReferalCodeState extends State<ReferalCode> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Stack(
-          children: [
-            // Positioned(
-            //   left: 0,
-            //   bottom: 0,
-            //   width: Responsive.getPercent(100, ResponsiveSize.WIDTH, context),
-            //   height: Responsive.getPercent(100, ResponsiveSize.HEIGHT, context),
-            //   child: Container(
-            //     alignment: Alignment.bottomLeft,
-            //     child: Lottie.asset('assets/lottie/lf30_editor_thbzxa1z.json'),
-            //   ),
-            // ),
-            // Positioned(
-            //   right: 0,
-            //   top: 0,
-            //   width: Responsive.getPercent(100, ResponsiveSize.WIDTH, context),
-            //   height: Responsive.getPercent(100, ResponsiveSize.HEIGHT, context),
-            //   child: Container(
-            //     alignment: Alignment.topRight,
-            //     child: Lottie.asset('assets/lottie/lf30_editor_kko5fbwr.json'),
-            //   ),
-            // ),
-            Container(
+    return GestureDetector(
+      onTap: () {
+        FocusScopeNode currentFocus = FocusScope.of(context);
+
+        if (!currentFocus.hasPrimaryFocus) {
+          currentFocus.unfocus();
+        }
+      },
+      child: Scaffold(
+        body: SafeArea(
+          child: Stack(
+            children: [
+              // Positioned(
+              //   left: 0,
+              //   bottom: 0,
+              //   width: Responsive.getPercent(100, ResponsiveSize.WIDTH, context),
+              //   height: Responsive.getPercent(100, ResponsiveSize.HEIGHT, context),
+              //   child: Container(
+              //     alignment: Alignment.bottomLeft,
+              //     child: Lottie.asset('assets/lottie/lf30_editor_thbzxa1z.json'),
+              //   ),
+              // ),
+              // Positioned(
+              //   right: 0,
+              //   top: 0,
+              //   width: Responsive.getPercent(100, ResponsiveSize.WIDTH, context),
+              //   height: Responsive.getPercent(100, ResponsiveSize.HEIGHT, context),
+              //   child: Container(
+              //     alignment: Alignment.topRight,
+              //     child: Lottie.asset('assets/lottie/lf30_editor_kko5fbwr.json'),
+              //   ),
+              // ),
+
+              Container(
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height,
                 padding: EdgeInsets.all(10),
@@ -78,9 +87,9 @@ class _ReferalCodeState extends State<ReferalCode> {
                                   inputFormatters: [
                                     FilteringTextInputFormatter.digitsOnly
                                   ],
-                                  style: TextStyle(
-                                    fontSize: 25,
-                                  ),
+                                  // style: TextStyle(
+                                  //   fontSize: 25,
+                                  // ),
                                   textAlign: TextAlign.center,
                                   controller: _referalCode,
                                   decoration: InputDecoration(
@@ -108,23 +117,38 @@ class _ReferalCodeState extends State<ReferalCode> {
                           ));
                         },
                       ),
+                      SizedBox(
+                        child: CustomButton(
+                          verpad: EdgeInsets.symmetric(
+                              vertical: padBtn, horizontal: 30),
+                          buttonText: 'Submit',
+                          brdRds: cirRds,
+                          fntSize: 20,
+                          fntWgt: FontWeight.w500,
+                          onPressed: () {
+                            _saveReferalCode();
+                          },
+                        ),
+                      ),
                       Spacer(),
                     ],
                   ),
-                )),
-          ],
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
-      bottomNavigationBar: SizedBox(
-        width: double.maxFinite,
-        child: CustomButton(
-          verpad: EdgeInsets.symmetric(vertical: 10),
-          buttonText: 'Submit',
-          brdRds: 0,
-          onPressed: () {
-            _saveReferalCode();
-          },
-        ),
+        // bottomNavigationBar: SizedBox(
+        //   width: double.maxFinite,
+        //   child: CustomButton(
+        //     verpad: EdgeInsets.symmetric(vertical: 10),
+        //     buttonText: 'Submit',
+        //     brdRds: 0,
+        //     onPressed: () {
+        //       _saveReferalCode();
+        //     },
+        //   ),
+        // ),
       ),
     );
   }

@@ -9,7 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:lurnify/ui/constant/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:lottie/lottie.dart';
+// import 'package:lottie/lottie.dart';
 
 class SplashScreenPage extends StatefulWidget {
   @override
@@ -74,18 +74,13 @@ class _SplashScreenPageState extends State<SplashScreenPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle(
-          statusBarIconBrightness: Brightness.dark,
-          statusBarColor: Colors.transparent),
-      child: WillPopScope(
-        onWillPop: () {
-          return null;
-        },
-        child: Container(
-          child: Center(
-            child: Lottie.asset('assets/lottie/58305-guestlist.json'),
-          ),
+        body: WillPopScope(
+      onWillPop: () {
+        return null;
+      },
+      child: Container(
+        child: Center(
+          child: Image.asset('assets/images/logo_light.png', height: 200),
         ),
       ),
     ));

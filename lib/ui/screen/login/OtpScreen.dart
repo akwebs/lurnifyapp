@@ -57,8 +57,7 @@ class _OtpScreenState extends State<OtpScreen>
     return new Text(
       "Verification Code",
       textAlign: TextAlign.center,
-      style: new TextStyle(
-          fontSize: 28.0, color: Colors.black, fontWeight: FontWeight.bold),
+      style: new TextStyle(fontSize: 28.0, fontWeight: FontWeight.bold),
     );
   }
 
@@ -68,8 +67,7 @@ class _OtpScreenState extends State<OtpScreen>
     return new Text(
       "Please enter the OTP sent\non " + this.phoneNo,
       textAlign: TextAlign.center,
-      style: new TextStyle(
-          fontSize: 18.0, color: Colors.black, fontWeight: FontWeight.w600),
+      style: new TextStyle(fontSize: 18.0, fontWeight: FontWeight.w600),
     );
   }
 
@@ -119,7 +117,7 @@ class _OtpScreenState extends State<OtpScreen>
             new SizedBox(
               width: 5.0,
             ),
-            OtpTimer(_controller, 15.0, Colors.black)
+            OtpTimer(_controller, 15.0)
           ],
         ),
       ),
@@ -133,14 +131,11 @@ class _OtpScreenState extends State<OtpScreen>
         height: 32,
         width: 120,
         decoration: BoxDecoration(
-            color: Colors.black,
-            shape: BoxShape.rectangle,
-            borderRadius: BorderRadius.circular(32)),
+            shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(32)),
         alignment: Alignment.center,
         child: new Text(
           "Resend OTP",
-          style:
-              new TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+          style: new TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
       onTap: () {
@@ -250,7 +245,6 @@ class _OtpScreenState extends State<OtpScreen>
                   _otpKeyboardActionButton(
                       label: new Icon(
                         Icons.backspace,
-                        color: Colors.black,
                       ),
                       onPressed: () {
                         setState(() {
@@ -317,6 +311,9 @@ class _OtpScreenState extends State<OtpScreen>
 
   // Returns "Otp custom text field"
   Widget _otpTextField(int digit) {
+    final Brightness brightnessValue =
+        MediaQuery.of(context).platformBrightness;
+    bool isDark = brightnessValue == Brightness.dark;
     return new Container(
       width: 35.0,
       height: 45.0,
@@ -325,7 +322,6 @@ class _OtpScreenState extends State<OtpScreen>
         digit != null ? digit.toString() : "",
         style: new TextStyle(
           fontSize: 30.0,
-          color: Colors.black,
         ),
       ),
       decoration: BoxDecoration(
@@ -333,7 +329,7 @@ class _OtpScreenState extends State<OtpScreen>
           border: Border(
               bottom: BorderSide(
         width: 2.0,
-        color: Colors.black,
+        color: isDark ? Colors.white: Colors.black87
       ))),
     );
   }
@@ -356,7 +352,6 @@ class _OtpScreenState extends State<OtpScreen>
               label,
               style: new TextStyle(
                 fontSize: 30.0,
-                color: Colors.black,
               ),
             ),
           ),
@@ -532,9 +527,9 @@ class _OtpScreenState extends State<OtpScreen>
 class OtpTimer extends StatelessWidget {
   final AnimationController controller;
   double fontSize;
-  Color timeColor = Colors.black;
+  // Color timeColor = Colors.black;
 
-  OtpTimer(this.controller, this.fontSize, this.timeColor);
+  OtpTimer(this.controller, this.fontSize);
 
   String get timerString {
     Duration duration = controller.duration * controller.value;
@@ -558,7 +553,7 @@ class OtpTimer extends StatelessWidget {
             timerString,
             style: new TextStyle(
                 fontSize: fontSize,
-                color: timeColor,
+                // color: timeColor,
                 fontWeight: FontWeight.w600),
           );
         });

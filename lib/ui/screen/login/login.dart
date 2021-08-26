@@ -33,6 +33,9 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
+    final Brightness brightnessValue =
+        MediaQuery.of(context).platformBrightness;
+    bool isDark = brightnessValue == Brightness.dark;
     return GestureDetector(
       onTap: () {
         FocusScopeNode currentFocus = FocusScope.of(context);
@@ -51,7 +54,7 @@ class _LoginState extends State<Login> {
               width: Responsive.getPercent(100, ResponsiveSize.WIDTH, context),
               height: Responsive.getPercent(50, ResponsiveSize.HEIGHT, context),
               child: Opacity(
-                opacity: 0.3,
+                opacity: isDark ? 0.3 : 0.5,
                 child: Container(
                   decoration: BoxDecoration(
                     image: DecorationImage(
@@ -65,7 +68,7 @@ class _LoginState extends State<Login> {
             ),
             Align(
               alignment: Alignment.lerp(
-                  Alignment.topCenter, Alignment.bottomCenter, 0.15),
+                  Alignment.topCenter, Alignment.bottomCenter, 0.18),
               child: Container(
                   child: Image.asset(
                 logoUrl,
@@ -89,11 +92,17 @@ class _LoginState extends State<Login> {
                 child: Form(
                   key: _formKey,
                   child: TextFormField(
+                    onEditingComplete: () {
+                      if (_formKey.currentState.validate()) {
+                        _verifyPhone();
+                      }
+                    },
                     cursorColor: firstColor,
                     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                    textAlign: TextAlign.center,
+                    textAlign: TextAlign.left,
                     controller: _mobile,
                     decoration: InputDecoration(
+                      prefixText: '+91',
                       border: new OutlineInputBorder(
                         borderRadius: new BorderRadius.circular(cirRds),
                         borderSide: BorderSide(),
@@ -116,7 +125,7 @@ class _LoginState extends State<Login> {
             ),
             Align(
               alignment: Alignment.lerp(
-                  Alignment.topCenter, Alignment.bottomCenter, 0.7),
+                  Alignment.topCenter, Alignment.bottomCenter, 0.6),
               child: SizedBox(
                 child: CustomButton(
                   verpad:
@@ -132,7 +141,14 @@ class _LoginState extends State<Login> {
                   },
                 ),
               ),
-            )
+            ),
+            Align(
+              alignment: Alignment.lerp(
+                  Alignment.topCenter, Alignment.bottomCenter, 0.98),
+              child: Text(
+                'A Smarter way to simplify your Self Study',
+              ),
+            ),
           ],
         ),
       ),

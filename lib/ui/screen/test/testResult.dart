@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:lurnify/ui/home-page.dart';
 import 'package:lurnify/ui/screen/test/solution.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
@@ -53,6 +54,15 @@ class _TestResultState extends State<TestResult>
     return Scaffold(
       appBar: AppBar(
         title: Text("Result"),
+        actions: [
+          IconButton(
+              icon: Icon(Icons.exit_to_app),
+              onPressed: () {
+                Navigator.of(context).pushReplacement(MaterialPageRoute(
+                  builder: (context) => HomePage(),
+                ));
+              })
+        ],
         bottom: TabBar(
           tabs: [
             Row(

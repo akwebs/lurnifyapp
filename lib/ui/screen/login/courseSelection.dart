@@ -392,7 +392,7 @@ class _CourseSelectionState extends State<CourseSelection> {
       bottomNavigationBar: Container(
         width: double.infinity,
         child: CustomButton(
-          verpad: EdgeInsets.symmetric(vertical: 10),
+          verpad: EdgeInsets.symmetric(vertical: 5),
           buttonText: "Let's Get Started",
           brdRds: 0,
           onPressed: () {
@@ -535,7 +535,7 @@ class _CourseSelectionState extends State<CourseSelection> {
           SizedBox(
             width: 20,
           ),
-          Text("Please Wait...\nRegistering you and downloading content.")
+          Text("Please Wait...")
         ],
       ),
     );
