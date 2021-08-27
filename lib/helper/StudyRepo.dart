@@ -32,4 +32,11 @@ class StudyRepo{
     return list;
   }
 
+  Future<List<Map<String,dynamic>>> getNewStudy()async{
+    Database db=await dbHelper.database;
+    String sql="select * from study where status='new'";
+    var result=db.rawQuery(sql);
+    return result;
+  }
+
 }

@@ -27,4 +27,11 @@ class DimeRepo {
         "select (sum(credit)-sum(debit)) as totalDimes from dimes where registerSno=$register";
     return txn.rawQuery(sql);
   }
+
+  Future<List<Map<String,dynamic>>> getNewDimes()async{
+    Database db=await dbHelper.database;
+    String sql="select * from dimes where status='new'";
+    var result=db.rawQuery(sql);
+    return result;
+  }
 }

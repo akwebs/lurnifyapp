@@ -1,13 +1,22 @@
 import 'dart:async';
+import 'dart:convert';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:lurnify/helper/DBHelper.dart';
+import 'package:lurnify/model/model.dart';
+import 'package:lurnify/ui/constant/ApiConstant.dart';
 import 'package:lurnify/ui/constant/constant.dart';
+import 'package:lurnify/ui/home-page.dart';
 import 'package:lurnify/widgets/widget.dart';
 import 'package:lurnify/ui/screen/screen.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sqflite/sqflite.dart';
 
 class OtpScreen extends StatefulWidget {
   final String mobile;
@@ -485,12 +494,163 @@ class _OtpScreenState extends State<OtpScreen>
       // ignore: await_only_futures
       final User currentUser = await _auth.currentUser;
       if (user.user.uid == currentUser.uid) {
-        print("DONE");
-        Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(
-                builder: (BuildContext context) => CourseGroup(mobile)),
-            ModalRoute.withName('/'));
+        String url=baseUrl+"checkIfUserExist?mobile=$mobile";
+        http.Response response = await http.post(Uri.encodeFull(url));
+        var body=jsonDecode(response.body);
+        if(body['result']==true){
+          SharedPreferences sp = await SharedPreferences.getInstance();
+          sp.setString("mobile", mobile.toString());
+          sp.setString("courseSno", body['courseSno']);
+          sp.setString("studentSno", body['studentSno'].toString());
+          sp.setString("firstMonday", body['firstMonday'].toString());
+          sp.setString("joiningDate", body['joiningDate'].toString());
+
+          //Saving data to local DB
+          DBHelper dbHelper = new DBHelper();
+          Database db = await dbHelper.database;
+          var batch = db.batch();
+
+          batch.delete('course');
+          batch.delete('subject');
+          batch.delete('unit');
+          batch.delete('chapter');
+          batch.delete('topic');
+          batch.delete('register');
+
+          Map<String, dynamic> registerMap = jsonDecode(body['register']);
+          Register register = new Register();
+          register.sno = body['studentSno'];
+          register.block = registerMap['block'];
+          register.mobileno = registerMap['mobileno'];
+          register.accounttypeId = "1";
+          register.courseId = body['courseSno'];
+          register.firstMonday = registerMap['firstMonday'];
+          register.joiningDate = registerMap['joiningDate'];
+
+          // print(register.toJson());
+
+          batch.insert('register', register.toJson());
+
+          CourseDto courseDto = new CourseDto();
+          courseDto.sno = int.parse(body['courseSno']);
+          courseDto.courseName = body['courseName'];
+
+          batch.insert('course', courseDto.toJson());
+
+          for (var a in body['courseContent']) {
+            Subject subject = new Subject();
+            subject.sno = a['sno'];
+            subject.subjectName = a['subjectName'];
+            subject.courseSno = body['courseSno'];
+            batch.insert('subject', subject.toJson());
+
+            List b = a['unitDtos'] ?? [];
+            for (var c in b) {
+              UnitDtos unitDtos = new UnitDtos();
+              unitDtos.sno = c['sno'];
+              unitDtos.unitName = c['unitName'];
+              unitDtos.subjectSno = a['sno'].toString();
+              batch.insert('unit', unitDtos.toJson());
+
+              List d = c['chapterDtos'] ?? [];
+              for (var e in d) {
+                ChapterDtos chapterDtos = new ChapterDtos();
+                chapterDtos.sno = e['sno'];
+                chapterDtos.chapterName = e['chapterName'];
+                chapterDtos.unitSno = c['sno'].toString();
+
+                batch.insert('chapter', chapterDtos.toJson());
+
+                List f = e['topicDtos'] ?? [];
+                for (var g in f) {
+                  TopicDtos topicDtos = new TopicDtos();
+                  topicDtos.sno = g['sno'];
+                  topicDtos.topicName = g['topicName'];
+                  topicDtos.subtopic = g['subTopic'];
+                  topicDtos.duration = g['duration'];
+                  topicDtos.chapterSno = e['sno'].toString();
+                  topicDtos.topicImp = g['topicImp'].toString();
+                  topicDtos.topicLabel = g['topicLabel'];
+                  batch.insert('topic', topicDtos.toJson());
+                }
+              }
+            }
+          }
+
+
+          String registerSno=sp.getString("studentSno");
+
+
+
+          FirebaseFirestore.instance.collection("dimes")
+              .where('registerSno',isEqualTo:registerSno)
+              .get().then((QuerySnapshot snapshot) {
+            snapshot.docs.forEach((f) {
+              batch.insert('dimes', f.data());
+            });
+          });
+          print("dimes inserted");
+          FirebaseFirestore.instance.collection("dueTopicTests")
+              .where('registerSno',isEqualTo:registerSno)
+              .get().then((QuerySnapshot snapshot) {
+            snapshot.docs.forEach((f) {
+              batch.insert('due_topic_test', f.data());
+            });
+          });
+          print("dueTopicTests inserted");
+          FirebaseFirestore.instance.collection("recentStudy")
+              .where('registrationSno',isEqualTo:registerSno)
+              .get().then((QuerySnapshot snapshot) {
+            snapshot.docs.forEach((f) {
+              batch.insert('recent_study', f.data());
+            });
+          });
+          print("recentStudy inserted");
+          FirebaseFirestore.instance.collection("study")
+              .where('register',isEqualTo:registerSno)
+              .get().then((QuerySnapshot snapshot) {
+            snapshot.docs.forEach((f) {
+              batch.insert('study', f.data());
+            });
+          });
+          print("study inserted");
+          FirebaseFirestore.instance.collection("topicTestResult")
+              .where('regSno',isEqualTo:registerSno)
+              .get().then((QuerySnapshot snapshot) {
+            snapshot.docs.forEach((f) {
+              batch.insert('topic_test_result', f.data());
+            });
+          });
+          print("topicTestResult inserted");
+
+          FirebaseFirestore.instance.collection("pace")
+              .where('register',isEqualTo:registerSno)
+              .get().then((QuerySnapshot snapshot) {
+            snapshot.docs.forEach((f) {
+              batch.insert('pace', f.data());
+            });
+          });
+          print("topicTestResult inserted");
+
+
+          batch.commit();
+          _signUpToast("Login Successful");
+
+
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                  builder: (BuildContext context) => HomePage()),
+              ModalRoute.withName('/'));
+        }else{
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                  builder: (BuildContext context) => CourseGroup(mobile)),
+              ModalRoute.withName('/'));
+        }
+
+
       } else {
         _signUpToast("Invalid Otp");
       }

@@ -145,37 +145,50 @@ class _SpinnerClassState extends State<SpinnerClass> {
 // ),
 
   _updateDailyTask() async {
-    SharedPreferences sp = await SharedPreferences.getInstance();
-    // var url = baseUrl +
-    //     "storeSpinData?registerSno=" +
-    //     sp.getString("studentSno") +
-    //     "&dailyTaskSno=" +
-    //     _spinData[_selected - 1]['sno'].toString();
-    // print(url);
-    // http.Response response = await http.post(
-    //   Uri.encodeFull(url),
-    // );
-    DBHelper dbHelper = new DBHelper();
-    Database database = await dbHelper.database;
-    String sql = "select count(sno) from daily_task_completion "
-        "where registerSno=${sp.getString("studentSno")} and spinDate=${DateTime.now().toString().split(" ")[0]} ";
-    List<Map<String, dynamic>> list = await database.rawQuery(sql);
-    if (list.isEmpty) {
-      String sql2 =
-          "insert into daily_task_completion (registerSno,dailyTaskSno,spinDate,status,enteredDate) "
-          "values('${sp.getString("studentSno")}','${_spinData[_selected - 1]['sno'].toString()}',"
-          "'${DateTime.now().toString().split(" ")[0]}',"
-          "'spined','${DateTime.now().toString()}')";
-      await database.rawInsert(sql2);
-    } else {
-      String sql2 =
-          "update daily_task_completion set daily_task_sno='${_spinData[_selected - 1]['sno'].toString()}', status='spined' where register_sno='${sp.getString("studentSno")}'";
-      await database.rawUpdate(sql2);
-    }
+   try{
+     SharedPreferences sp = await SharedPreferences.getInstance();
+     // var url = baseUrl +
+     //     "storeSpinData?registerSno=" +
+     //     sp.getString("studentSno") +
+     //     "&dailyTaskSno=" +
+     //     _spinData[_selected - 1]['sno'].toString();
+     // print(url);
+     // http.Response response = await http.post(
+     //   Uri.encodeFull(url),
+     // );
+     DBHelper dbHelper = new DBHelper();
+     Database database = await dbHelper.database;
+     String sql = "select sno from daily_task_completion "
+         "where registerSno='${sp.getString("studentSno")}' and spinDate='${DateTime.now().toString().split(" ")[0]}' ";
+     List<Map<String, dynamic>> list = await database.rawQuery(sql);
+     print("-----------------------------------$list");
+     if (list.isEmpty) {
+       String sql2 =
+           "insert into daily_task_completion (registerSno,dailyTaskSno,spinDate,status,enteredDate) "
+           "values('${sp.getString("studentSno")}','${_spinData[_selected - 1]['sno'].toString()}',"
+           "'${DateTime.now().toString().split(" ")[0]}',"
+           "'spined','${DateTime.now().toString()}')";
+       print(sql2);
+       await database.rawInsert(sql2);
+     } else {
 
-    Fluttertoast.showToast(msg: "Success");
+       String sql2 =
+           "update daily_task_completion set dailyTaskSno='${_spinData[_selected - 1]['sno'].toString()}', status='spined' where registerSno='${sp.getString("studentSno")}' "
+           "and spinDate='${DateTime.now().toString().split(" ")[0]}'";
+       print(sql2);
+       await database.rawUpdate(sql2);
+     }
 
-    _showSpinTask();
+     String s="select * from daily_task_completion";
+     var a = await database.rawQuery(s);
+     print(a);
+
+     Fluttertoast.showToast(msg: "Success");
+
+     _showSpinTask();
+   }catch(e){
+     print(e);
+   }
   }
 
   Future<void> _showSpinTask() async {

@@ -13,6 +13,9 @@ class Pace {
   String enteredDate;
 
   String updatedDate;
+  String percentDifference;
+
+  String register;
 
   Pace();
 
@@ -25,6 +28,8 @@ class Pace {
     courseSno = json['courseSno'];
     enteredDate = json['enteredDate'];
     updatedDate = json['updatedDate'];
+    percentDifference = json['percentDifference'];
+    register = json['register'];
   }
 
   Map<String, dynamic> toJson() {
@@ -37,6 +42,8 @@ class Pace {
     data['courseSno'] = this.courseSno;
     data['enteredDate'] = this.enteredDate;
     data['updatedDate'] = this.updatedDate;
+    data['percentDifference'] = this.percentDifference;
+    data['register'] = this.register;
     return data;
   }
 }

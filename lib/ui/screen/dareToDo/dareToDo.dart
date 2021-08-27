@@ -959,8 +959,8 @@ class _BarChartNew extends StatelessWidget {
           touchTooltipData: BarTouchTooltipData(
             tooltipBgColor: Colors.transparent,
             tooltipPadding: const EdgeInsets.all(0),
-            // tooltipMargin: 8,
-            tooltipBottomMargin: 0,
+            tooltipMargin: 8,
+            // tooltipBottomMargin: 0,
             getTooltipItem: (
               BarChartGroupData group,
               int groupIndex,
@@ -981,8 +981,8 @@ class _BarChartNew extends StatelessWidget {
           show: true,
           bottomTitles: SideTitles(
             showTitles: true,
-            getTextStyles: (value) => TextStyle(
-                color: isDark ? Colors.white : Colors.black87, fontSize: 14),
+            // getTextStyles: (value) => TextStyle(
+            //     color: isDark ? Colors.white : Colors.black87, fontSize: 14),
             margin: 5,
             getTitles: (double value) {
               switch (value.toInt()) {
@@ -1007,8 +1007,8 @@ class _BarChartNew extends StatelessWidget {
           ),
           leftTitles: SideTitles(
             showTitles: true,
-            getTextStyles: (value) => TextStyle(
-                color: isDark ? Colors.white : Colors.black87, fontSize: 14),
+            // getTextStyles: (value) => TextStyle(
+            //     color: isDark ? Colors.white : Colors.black87, fontSize: 14),
           ),
         ),
         borderData: FlBorderData(

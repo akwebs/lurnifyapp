@@ -25,4 +25,12 @@ class RecentStudyRepo{
       print('insertIntoRecent_study : '+e.toString());
     }
   }
+
+  Future<List<Map<String,dynamic>>> getNewRecentStudy()async{
+    Database db=await dbHelper.database;
+    String sql="select * from recent_study where status='new'";
+    var result=db.rawQuery(sql);
+    return result;
+  }
+
 }

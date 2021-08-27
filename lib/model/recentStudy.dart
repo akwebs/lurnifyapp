@@ -12,6 +12,7 @@ class RecentStudy{
   String subject;
   String topic;
   String unit;
+  String status;
 
   RecentStudy();
 
@@ -29,6 +30,7 @@ class RecentStudy{
     subject = json['subject'];
     topic = json['topic'];
     unit = json['unit'];
+    status = json['status'];
 
   }
 
@@ -47,7 +49,7 @@ class RecentStudy{
     data['subject'] = this.subject;
     data['topic'] = this.topic;
     data['unit'] = this.unit;
-
+    data['status'] = this.status;
     return data;
   }
 }

@@ -16,6 +16,8 @@ class TopicTestResult{
   String subject;
   String unit;
   String chapter;
+  String status;
+  String questionTiming;
 
 
   TopicTestResult(
@@ -34,7 +36,9 @@ class TopicTestResult{
         this.course,
         this.subject,
         this.unit,
-        this.chapter
+        this.chapter,
+        this.status,
+        this.questionTiming
         });
 
   TopicTestResult.fromJson(Map<String, dynamic> json) {
@@ -54,7 +58,8 @@ class TopicTestResult{
     unit = json['unit'];
     chapter = json['chapter'];
     totalTestTime = json['totalTestTime'];
-
+    status = json['status'];
+    questionTiming = json['questionTiming'];
   }
 
   Map<String, dynamic> toJson() {
@@ -75,6 +80,8 @@ class TopicTestResult{
     data['unit'] = this.unit;
     data['chapter'] = this.chapter;
     data['totalTestTime'] = this.totalTestTime;
+    data['status'] = this.status;
+    data['questionTiming'] = this.questionTiming;
     return data;
   }
 

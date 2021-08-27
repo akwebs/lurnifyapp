@@ -1,6 +1,6 @@
 export 'chapters.dart';
 export 'course.dart';
-export 'courseGroup.dart';
+// export 'courseGroup.dart';
 export 'DataUpdate.dart';
 export 'dimes.dart';
 export 'due_topic_test.dart';
@@ -13,7 +13,7 @@ export 'remark.dart';
 export 'reward.dart';
 export 'study.dart';
 export 'subject.dart';
-export 'test.dart';
+// export 'test.dart';
 export 'testMain.dart';
 export 'topic_test_result.dart';
 export 'topics.dart';

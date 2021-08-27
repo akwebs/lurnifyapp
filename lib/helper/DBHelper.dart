@@ -59,7 +59,7 @@ class DBHelper {
     await db.execute('create table study(sno integer primary key autoincrement,chapterSno text,courseSno text,'
         'date text,duration text, effectivenessOfStudy text, endDate text, enteredDate text, numericalPercent text,'
         'revision text, startDate text, subjectSno text, theoryPercent text, timePunchedFrom text,'
-        'topicCompletionStatus text, topicSno text, totalSecond text, totalTime text, unitSno text, updatedDate text, register text )');
+        'topicCompletionStatus text, topicSno text, totalSecond text, totalTime text, unitSno text, updatedDate text, register text, status text )');
 
     await db.execute("create table reward(sno integer primary key autoincrement,appOpening text, dailyTask text,"
         "enteredBy text, enteredDate text, feeDeposite text, monthlyChallenge text, rankboosterTestAttempt text,"
@@ -68,14 +68,14 @@ class DBHelper {
         "updatedBy text, updatedDate text, weeklyChallengeAccept text)");
 
     await db.execute("create table dimes(sno integer primary key autoincrement,credit text, debit text,"
-        "message text, enteredBy text, enteredDate text,updatedBy text, updatedDate text, registerSno text)");
+        "message text, enteredBy text, enteredDate text,updatedBy text, updatedDate text, registerSno text, status text)");
 
     await db.execute("create table recent_study(sno integer primary key autoincrement,duration text,"
         "enteredBy text, enteredDate text, registrationSno text, studyType text, updatedBy text, updatedDate text,"
-        "chapter text, course text, subject text, topic text, unit text)");
+        "chapter text, course text, subject text, topic text, unit text, status text)");
 
     await db.execute("create table due_topic_tests(sno integer primary key autoincrement,enteredDate text,"
-        " status text, registerSno text, topicSno text,course text,subject text, unit text, chapter text)");
+        " status text, registerSno text, topicSno text,course text,subject text, unit text, chapter text, onlineStatus text)");
 
     await db.execute("create table remark(sno integer primary key autoincrement,"
         "enteredBy text, enteredDate text, message text, studentSno text,"
@@ -83,12 +83,13 @@ class DBHelper {
 
     await db.execute("create table pace(sno integer primary key autoincrement,"
         "courseSno text, enteredDate text, expectedRank text, perDayStudyHour text,"
-        "syllabusCompletionDate text, updatedDate text, studentSno text)");
+        "syllabusCompletionDate text, updatedDate text, studentSno text,"
+        " timePercent text,percentDifference text, register text)");
 
     await db.execute("create table topic_test_result(sno integer primary key autoincrement, answerMap text,"
         "correctQuestion text, enteredBy text, enteredDate text, resultNumber text, testPercent text,"
         "totalQuestion text, wrongQuestion   text, regSno text, topicSno text, totalTestTime text,course text, subject text,"
-        " unit text, chapter text)");
+        " unit text, chapter text, status text, questionTiming text)");
 
     await db.execute("create table test_main(sno integer primary key autoincrement,"
         "enteredBy text,enteredDate text, testName text, topicSet integer, updatedBy text, updatedDate text,"
@@ -125,7 +126,7 @@ class DBHelper {
         "enteredDate text, noOfReferralCoupons text, taskType text, dailyTaskSno text, taskUnit text)");
 
     await db.execute("create table data_update(sno integer primary key autoincrement,reward text, weeklyTask text,"
-        "dailyTaskCompletion text,dailyAppOpening text, dailyTask text, dailyTaskData text, beatDistraction text, timerPage text,challengeAccept text)");
+        "dailyTaskCompletion text,dailyAppOpening text, dailyTask text, dailyTaskData text, beatDistraction text, timerPage text,challengeAccept text,dataSynced text)");
 
     await db.execute("create table beat_distraction(sno integer primary key autoincrement,message text)");
 

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -136,10 +137,16 @@ class _StudyCompleteState extends State<StudyComplete> {
 
   Future getLeftStudyHour(double sum) async {
     SharedPreferences sp = await SharedPreferences.getInstance();
-
+    PaceRepo paceRepo = new PaceRepo();
+    List<Map<String,dynamic>> pace = await paceRepo.getPace();
+    String totalStudyHr="0";
+    for(var a in pace){
+      totalStudyHr=a['perDayStudyHour'] ?? "0";
+    }
+    int tStudyHr=int.tryParse(totalStudyHr) ?? 0;
     totalStudyHour = sp.getDouble("totalStudyHour");
     int totalStudyHourInSeconds =
-        Duration(hours: totalStudyHour.round()).inSeconds;
+        Duration(hours: tStudyHr).inSeconds;
     double totalLefSecond =
         totalStudyHourInSeconds - int.parse(second ?? "0") - sum;
     String twoDigits(int n) => n.toString().padLeft(2, "0");
@@ -624,6 +631,7 @@ class _StudyCompleteState extends State<StudyComplete> {
       recentStudy.enteredBy = studentSno;
       recentStudy.enteredDate = DateTime.now().toString();
       recentStudy.studyType = completionStatus;
+      recentStudy.status='new';
 
       List<Map<String, dynamic>> list =
           await dueTopicTestRepo.getDueTopicTestByStatusAndTopicAndRegister(
@@ -648,6 +656,7 @@ class _StudyCompleteState extends State<StudyComplete> {
       study.date = startDate.split(" ")[0];
       study.duration = duration;
       study.timePunchedFrom = 'TIMER';
+      study.status='new';
       study.enteredDate = DateTime.now().toString();
 
       DateTime sDate = DateFormat('yyyy-MM-dd').parse(startDate);
@@ -671,6 +680,8 @@ class _StudyCompleteState extends State<StudyComplete> {
         print("Study Inserted");
       }
 
+
+
       RecentStudyRepo recentStudyRepo = new RecentStudyRepo();
       recentStudyRepo.insertIntoRecentStudy(recentStudy);
       print("Recent Inserted");
@@ -683,9 +694,13 @@ class _StudyCompleteState extends State<StudyComplete> {
           (int.parse(totalSecond ?? "0") / 60).toStringAsFixed(2) +
           " minutes";
       dimes.registerSno = studentSno;
+      dimes.status='new';
 
       DimeRepo dimeRepo = new DimeRepo();
       dimeRepo.insertIntoDimes(dimes);
+
+
+
       print("Dimes Inserted");
       if (completionStatus == 'Complete') {
         List<Map<String, dynamic>> list2 =
@@ -702,10 +717,15 @@ class _StudyCompleteState extends State<StudyComplete> {
           dueTopicTest.unit = unit;
           dueTopicTest.chapter = chapter;
           dueTopicTestRepo.insertIntoDueTopicTest(dueTopicTest);
-
+          dueTopicTest.onlineStatus='new';
+          FirebaseFirestore.instance.collection('dueTopicTest').add(dueTopicTest.toJson());
           print("Due Topic test inserted");
         }
       }
+
+      FirebaseFirestore.instance.collection('study').add(study.toJson());
+      FirebaseFirestore.instance.collection('recentStudy').add(recentStudy.toJson());
+      FirebaseFirestore.instance.collection('dimes').add(dimes.toJson());
 
       toastMethod("Study Saved");
       if (completionStatus == "Complete") {

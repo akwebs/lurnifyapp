@@ -26,12 +26,12 @@ class _TestState extends State<Test> with TickerProviderStateMixin {
   final String testType, sno, course, subject, unit, chapter;
   _TestState(this.testData, this.testType, this.sno, this.course, this.subject,
       this.unit, this.chapter);
-  int _index = 0;
+  int _index = 0,_currentPageIndex=0;
   bool reviewLater = false;
   int selectedOptionIndex;
   Timer _timer;
   int _TEST_TIMER_INSECONDS = 600;
-  int _questionTime = 0;
+  // int _questionTime = 0;
   String _FORMATTED_TEST_DURATION = "";
   int _noOFQuestions;
   bool _isFirstQuestion = true;
@@ -112,7 +112,12 @@ class _TestState extends State<Test> with TickerProviderStateMixin {
             _TEST_TIMER_INSECONDS = _TEST_TIMER_INSECONDS - 1;
             _FORMATTED_TEST_DURATION =
                 _formatDuration(Duration(seconds: _TEST_TIMER_INSECONDS));
-            _questionTime = _questionTime + 1;
+            // _questionTime = _questionTime + 1;
+
+              _questionTiming.update(_testQuestions[_currentPageIndex]['sno'].toString(),
+                      (value) => value + 1,
+                  ifAbsent: () => 1);
+
           }
         },
       ),
@@ -363,7 +368,7 @@ class _TestState extends State<Test> with TickerProviderStateMixin {
         scrollDirection: Axis.horizontal,
         itemCount: _noOFQuestions,
         onPageChanged: (i) {
-          print(i);
+          _currentPageIndex=i;
           HapticFeedback.selectionClick();
           if (i > 10) {
             _controllerList.animateToPage(i,
@@ -381,12 +386,7 @@ class _TestState extends State<Test> with TickerProviderStateMixin {
               _isLastQuestion = false;
             }
             //-------------------//
-            if (i != 0) {
-              _questionTiming.update(_testQuestions[i - 1]['sno'].toString(),
-                  (value) => value + _questionTime,
-                  ifAbsent: () => _questionTime);
-              _questionTime = 0;
-            }
+
           });
         },
         itemBuilder: (context, i) {
@@ -887,9 +887,7 @@ class _TestState extends State<Test> with TickerProviderStateMixin {
   _floatingButtonClick(int index) async {
     _controllerFloat.reverse();
     if (index == 0) {
-      SharedPreferences sp = await SharedPreferences.getInstance();
-      sp.setString(_testName, jsonEncode(_questionTiming));
-      print(_questionTiming);
+
       Navigator.of(context).push(
         MaterialPageRoute(
           builder: (context) => TestSummary(
@@ -903,7 +901,8 @@ class _TestState extends State<Test> with TickerProviderStateMixin {
               subject,
               unit,
               chapter,
-              _totalSecond),
+              _totalSecond,
+              _questionTiming),
         ),
       );
     }

@@ -20,6 +20,7 @@ class Study{
   String unitSno;
   String updatedDate;
   String register;
+  String status;
 
   Study({
     this.sno,
@@ -43,7 +44,7 @@ class Study{
     this.unitSno,
     this.updatedDate,
     this.register,
-
+    this.status,
   });
 
   Study.fromJson(Map<String, dynamic> json) {
@@ -68,6 +69,7 @@ class Study{
     unitSno = json['unitSno'];
     updatedDate = json['updatedDate'];
     register = json['register'];
+    status = json['status'];
   }
 
   Map<String, dynamic> toJson() {
@@ -93,6 +95,7 @@ class Study{
     data['unitSno'] = this.unitSno;
     data['updatedDate'] = this.updatedDate;
     data['register'] = this.register;
+    data['status'] = this.status;
     return data;
   }
 }

@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:lurnify/helper/DBHelper.dart';
 import 'package:lurnify/ui/constant/constant.dart';
 import 'package:flutter/material.dart';
 import 'package:lurnify/ui/home-page.dart';
@@ -7,6 +8,7 @@ import 'package:lurnify/ui/screen/login/login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:lurnify/ui/screen/payment/make-payment.dart';
 import 'package:lurnify/ui/screen/marketPlace/purchased-item.dart';
+import 'package:sqflite/sqflite.dart';
 
 class CustomDrawer extends StatefulWidget {
   final isPaymentDone;
@@ -29,6 +31,8 @@ class _CustomDrawerState extends State<CustomDrawer> {
     sp.remove("courseStartingDate");
     sp.remove("totalWeeks");
     sp.remove("totalStudyHour");
+    DBHelper dbHelper = new DBHelper();
+    dbHelper.deleteDb();
     Navigator.pushReplacement(
         context, MaterialPageRoute(builder: (context) => Login()));
   }
