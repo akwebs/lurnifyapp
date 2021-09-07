@@ -1,4 +1,5 @@
 import 'package:lurnify/helper/DBHelper.dart';
+import 'package:sqflite/sqflite.dart';
 
 class DailyTaskCompletionRepo {
   DBHelper dbHelper = new DBHelper();
@@ -21,5 +22,12 @@ class DailyTaskCompletionRepo {
       print('getDailyTaskForDareToDuo ' + e.toString());
     }
     return list;
+  }
+
+  Future<List<Map<String,dynamic>>> getNewDailyTaskCompletion()async{
+    Database db=await dbHelper.database;
+    String sql="select * from daily_task_completion where onlineStatus='new'";
+    var result=db.rawQuery(sql);
+    return result;
   }
 }

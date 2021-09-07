@@ -5,11 +5,12 @@ import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:lurnify/Animation/FadeAnimation.dart';
 import 'package:lurnify/helper/helper.dart';
-import 'package:lurnify/model/model.dart';
+import 'package:lurnify/model/pace.dart';
 import 'package:lurnify/ui/constant/constant.dart';
 import 'package:lurnify/ui/home-page.dart';
 import 'package:lurnify/widgets/widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sqflite/sqflite.dart';
 
 class SelectThePace extends StatefulWidget {
   final bool backButtonWillWork;
@@ -27,10 +28,11 @@ class _SelectThePaceState extends State<SelectThePace> {
   String completionDate = "";
   double totalDuration = 0;
   String customValue;
-  String expectedRank;
+  String expectedRank = "101-1000";
   double totalTiming = 0.0;
   var formatter = new DateFormat('dd MMM yyyy');
   var _data;
+  DateTime selectedDate = DateTime.now();
   double totalPerDayHours = 0;
 
   Future getTotalTopicDuration() async {
@@ -56,6 +58,18 @@ class _SelectThePaceState extends State<SelectThePace> {
       }
       String getTotalDuration = tDuration.toString() ?? "0";
       totalDuration = double.parse(getTotalDuration);
+
+      Database database = await dbHelper.database;
+      String sql = "select * from pace order by sno desc limit 1";
+      List<Map<String, dynamic>> list = await database.rawQuery(sql);
+      for (var a in list) {
+        print(a);
+        expectedRank = a['expectedRank'];
+        completionDate = DateFormat('dd MMM yyyy')
+            .parse(a['syllabusCompletionDate'])
+            .toString();
+        totalPerDayHours = a['perDayStudyHour'];
+      }
       // totalDuration = 0;
       // toastMethod(totalDuration.toString());
     } catch (e) {
@@ -67,7 +81,7 @@ class _SelectThePaceState extends State<SelectThePace> {
   @override
   void initState() {
     super.initState();
-    completionDate = formatter.format(DateTime.now().add(Duration(days: 180)));
+    // completionDate = formatter.format(DateTime.now().add(Duration(days: 180)));
     _data = getTotalTopicDuration();
   }
 
@@ -214,14 +228,20 @@ class _SelectThePaceState extends State<SelectThePace> {
                 )
               ],
             ),
-            Text("Your standard hours will be ${totalPerDayHours.toStringAsFixed(2)}",style: TextStyle(
-                color: Colors.white,
-                fontSize: 20,
-                fontWeight: FontWeight.w800),),
-            Text("But you can still choose as per your want",style: TextStyle(
-                color: Colors.white,
-                fontSize: 20,
-                fontWeight: FontWeight.w800),)
+            Text(
+              "Your standard hours will be ${totalPerDayHours.toStringAsFixed(2)}",
+              style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                  fontWeight: FontWeight.w800),
+            ),
+            Text(
+              "But you can still choose as per your want",
+              style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                  fontWeight: FontWeight.w800),
+            )
           ],
         ),
       ),
@@ -444,8 +464,6 @@ class _SelectThePaceState extends State<SelectThePace> {
     });
   }
 
-  DateTime selectedDate = DateTime.now();
-
   Future<Null> _selectDate(BuildContext context) async {
     final DateTime picked = await showDatePicker(
       confirmText: 'Confirm',
@@ -455,33 +473,31 @@ class _SelectThePaceState extends State<SelectThePace> {
       lastDate: DateTime(2023),
     );
 
-    if (picked != null)
-
-        selectedDate = picked;
-        if(DateFormat('EEEE').format(selectedDate)=="Sunday"){
-          completionDate = formatter.format(selectedDate);
-          print(completionDate);
-          SharedPreferences sp = await SharedPreferences.getInstance();
-          print(sp.getString('firstMonday'));
-          Duration inDays = selectedDate.difference(DateTime.parse(sp.getString('firstMonday')));
-          int convertedInDays = inDays.inDays;
-          print(convertedInDays);
-          print(totalDuration);
-          setState(() {
-            if (customValue == null) {
-              totalPerDayHours = (totalDuration / 60).round() / convertedInDays;
-            } else {
-              totalPerDayHours = double.parse(customValue);
-            }
-            print(totalPerDayHours);
-          });
-        }else{
-          Fluttertoast.showToast(msg: 'Selected Date should be sunday');
+    if (picked != null) selectedDate = picked;
+    if (DateFormat('EEEE').format(selectedDate) == "Sunday") {
+      completionDate = formatter.format(selectedDate);
+      print(completionDate);
+      SharedPreferences sp = await SharedPreferences.getInstance();
+      print(sp.getString('firstMonday'));
+      Duration inDays =
+          selectedDate.difference(DateTime.parse(sp.getString('firstMonday')));
+      int convertedInDays = inDays.inDays;
+      print(convertedInDays);
+      print(totalDuration);
+      setState(() {
+        if (customValue == null) {
+          totalPerDayHours = (totalDuration / 60).round() / convertedInDays;
+        } else {
+          totalPerDayHours = double.parse(customValue);
         }
+        print(totalPerDayHours);
+      });
+    } else {
+      Fluttertoast.showToast(msg: 'Selected Date should be sunday');
+    }
   }
 
   void submit() async {
-
     try {
       if (selectedDate.toString().split(" ")[0] ==
           DateTime.now().toString().split(" ")[0]) {
@@ -503,13 +519,15 @@ class _SelectThePaceState extends State<SelectThePace> {
           String studentSno = sp.getString("studentSno");
           String syllabusCompletionDate = selectedDate.toString();
 
-          if(totalTiming==null){
-            totalTiming=totalPerDayHours;
+          if (totalTiming == null) {
+            totalTiming = totalPerDayHours;
           }
 
           String perDayStudyHour = totalTiming.toString();
-          double userStudyHourDifference=totalTiming-totalPerDayHours;//user selected-standard time
-          double percentDifference=(userStudyHourDifference*100)/totalPerDayHours;
+          double userStudyHourDifference =
+              totalTiming - totalPerDayHours; //user selected-standard time
+          double percentDifference =
+              (userStudyHourDifference * 100) / totalPerDayHours;
           String courseSno = sp.get("courseSno");
           // var url = baseUrl +
           //     "savePace?registrationSno=" +
@@ -535,8 +553,8 @@ class _SelectThePaceState extends State<SelectThePace> {
           pace.expectedRank = expectedRank;
           pace.perDayStudyHour = perDayStudyHour;
           pace.syllabusCompletionDate = syllabusCompletionDate;
-          pace.percentDifference=percentDifference.toStringAsFixed(2);
-          pace.register=sp.getString('studentSno');
+          pace.percentDifference = percentDifference.toStringAsFixed(2);
+          pace.register = sp.getString('studentSno');
 
           PaceRepo paceRepo = new PaceRepo();
           paceRepo.insertIntoPace(pace);
@@ -549,8 +567,7 @@ class _SelectThePaceState extends State<SelectThePace> {
           sp.setString("courseCompletionDateFormatted",
               selectedDate.toString().split(" ")[0]);
           //
-          sp.setString(
-              "courseStartingDate", sp.getString('firstMonday'));
+          sp.setString("courseStartingDate", sp.getString('firstMonday'));
           sp.setInt("totalWeeks",
               (selectedDate.difference(DateTime.now()).inDays / 7).round());
           sp.setDouble("totalStudyHour", totalTiming);

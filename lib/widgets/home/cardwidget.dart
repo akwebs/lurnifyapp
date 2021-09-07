@@ -5,6 +5,9 @@ import 'package:lurnify/ui/constant/constant.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 
 class CardWidget extends StatelessWidget {
+  CardWidget(this.selfStudyPercent,this.testPercent);
+  final double selfStudyPercent;
+  final double testPercent;
   @override
   Widget build(BuildContext context) {
     // var height = SizeConfig.getHeight(context);
@@ -105,7 +108,7 @@ class CardWidget extends StatelessWidget {
                                           padding: EdgeInsets.all(3),
                                           width: width / 4.5,
                                           lineHeight: 5,
-                                          percent: 0.5,
+                                          percent: selfStudyPercent,
                                           backgroundColor: Colors.grey,
                                           progressColor: Colors.white,
                                         ),

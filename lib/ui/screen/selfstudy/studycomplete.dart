@@ -5,15 +5,16 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:lurnify/helper/helper.dart';
-import 'package:lurnify/model/model.dart';
-import 'package:lurnify/ui/constant/ApiConstant.dart';
+import 'package:lurnify/model/dimes.dart';
+import 'package:lurnify/model/due_topic_test.dart';
+import 'package:lurnify/model/recentStudy.dart';
+import 'package:lurnify/model/remark.dart';
+import 'package:lurnify/model/study.dart';
 import 'package:lurnify/ui/constant/constant.dart';
 import 'package:lurnify/ui/home-page.dart';
 import 'package:lurnify/ui/screen/screen.dart';
 import 'package:lurnify/widgets/widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 
 class StudyComplete extends StatefulWidget {
   final time;
@@ -138,15 +139,14 @@ class _StudyCompleteState extends State<StudyComplete> {
   Future getLeftStudyHour(double sum) async {
     SharedPreferences sp = await SharedPreferences.getInstance();
     PaceRepo paceRepo = new PaceRepo();
-    List<Map<String,dynamic>> pace = await paceRepo.getPace();
-    String totalStudyHr="0";
-    for(var a in pace){
-      totalStudyHr=a['perDayStudyHour'] ?? "0";
+    List<Map<String, dynamic>> pace = await paceRepo.getPace();
+    String totalStudyHr = "0";
+    for (var a in pace) {
+      totalStudyHr = a['perDayStudyHour'] ?? "0";
     }
-    int tStudyHr=int.tryParse(totalStudyHr) ?? 0;
+    int tStudyHr = int.tryParse(totalStudyHr) ?? 0;
     totalStudyHour = sp.getDouble("totalStudyHour");
-    int totalStudyHourInSeconds =
-        Duration(hours: tStudyHr).inSeconds;
+    int totalStudyHourInSeconds = Duration(hours: tStudyHr).inSeconds;
     double totalLefSecond =
         totalStudyHourInSeconds - int.parse(second ?? "0") - sum;
     String twoDigits(int n) => n.toString().padLeft(2, "0");
@@ -631,7 +631,7 @@ class _StudyCompleteState extends State<StudyComplete> {
       recentStudy.enteredBy = studentSno;
       recentStudy.enteredDate = DateTime.now().toString();
       recentStudy.studyType = completionStatus;
-      recentStudy.status='new';
+      recentStudy.status = 'new';
 
       List<Map<String, dynamic>> list =
           await dueTopicTestRepo.getDueTopicTestByStatusAndTopicAndRegister(
@@ -656,7 +656,7 @@ class _StudyCompleteState extends State<StudyComplete> {
       study.date = startDate.split(" ")[0];
       study.duration = duration;
       study.timePunchedFrom = 'TIMER';
-      study.status='new';
+      study.status = 'new';
       study.enteredDate = DateTime.now().toString();
 
       DateTime sDate = DateFormat('yyyy-MM-dd').parse(startDate);
@@ -680,8 +680,6 @@ class _StudyCompleteState extends State<StudyComplete> {
         print("Study Inserted");
       }
 
-
-
       RecentStudyRepo recentStudyRepo = new RecentStudyRepo();
       recentStudyRepo.insertIntoRecentStudy(recentStudy);
       print("Recent Inserted");
@@ -694,12 +692,10 @@ class _StudyCompleteState extends State<StudyComplete> {
           (int.parse(totalSecond ?? "0") / 60).toStringAsFixed(2) +
           " minutes";
       dimes.registerSno = studentSno;
-      dimes.status='new';
+      dimes.status = 'new';
 
       DimeRepo dimeRepo = new DimeRepo();
       dimeRepo.insertIntoDimes(dimes);
-
-
 
       print("Dimes Inserted");
       if (completionStatus == 'Complete') {
@@ -717,14 +713,20 @@ class _StudyCompleteState extends State<StudyComplete> {
           dueTopicTest.unit = unit;
           dueTopicTest.chapter = chapter;
           dueTopicTestRepo.insertIntoDueTopicTest(dueTopicTest);
-          dueTopicTest.onlineStatus='new';
-          FirebaseFirestore.instance.collection('dueTopicTest').add(dueTopicTest.toJson());
+          dueTopicTest.onlineStatus = 'new';
+          FirebaseFirestore.instance
+              .collection('dueTopicTest')
+              .add(dueTopicTest.toJson());
           print("Due Topic test inserted");
         }
+
+
       }
 
       FirebaseFirestore.instance.collection('study').add(study.toJson());
-      FirebaseFirestore.instance.collection('recentStudy').add(recentStudy.toJson());
+      FirebaseFirestore.instance
+          .collection('recentStudy')
+          .add(recentStudy.toJson());
       FirebaseFirestore.instance.collection('dimes').add(dimes.toJson());
 
       toastMethod("Study Saved");

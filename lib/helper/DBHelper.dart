@@ -31,6 +31,7 @@ class DBHelper {
       path,
       version: 2,
       onCreate: _createDB,
+
     );
 
 
@@ -117,7 +118,7 @@ class DBHelper {
         "updatedDate text, week text)");
 
     await db.execute("create table daily_task_completion(sno integer primary key autoincrement, enteredBy text, enteredDate text,"
-        "spinDate text, status text, updatedBy text, updatedDate text, registerSno text, dailyTaskSno text)");
+        "spinDate text, status text, updatedBy text, updatedDate text, registerSno text, dailyTaskSno text, onlineStatus text)");
 
     await db.execute("create table daily_task(sno integer primary key autoincrement, enteredBy text, enteredDate text,"
         " taskName text, endDateTime text, startDateTime text, status text)");
@@ -136,6 +137,16 @@ class DBHelper {
 
     await db.execute("create table challenge_accept(sno integer primary key autoincrement,enteredBy text, enteredDate text, status text,"
         "updatedBy text, updatedDate text, week text, registerSno text)");
+
+    // new tables to be synced
+
+    await db.execute('create table completed_chapters(sno integer primary key autoincrement,chapter text,unit text,subject text, register text, enteredDate text)');
+
+    await db.execute('create table completed_units(sno integer primary key autoincrement,chapter text,unit text,subject text, register text, enteredDate text)');
+
+    await db.execute('create table completed_subjects(sno integer primary key autoincrement,chapter text,unit text,subject text, register text, enteredDate text)');
+
+    print("ALL TABLES CREATED");
   }
 
   void deleteDb()async{

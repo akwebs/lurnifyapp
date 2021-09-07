@@ -6,7 +6,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lottie/lottie.dart';
 import 'package:lurnify/helper/due_topic_test_repo.dart';
 import 'package:lurnify/helper/helper.dart';
-import 'package:lurnify/model/model.dart';
+import 'package:lurnify/model/topic_test_result.dart';
 import 'package:lurnify/ui/constant/ApiConstant.dart';
 import 'package:lurnify/ui/screen/screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';

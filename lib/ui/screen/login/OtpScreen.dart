@@ -8,7 +8,12 @@ import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lurnify/helper/DBHelper.dart';
-import 'package:lurnify/model/model.dart';
+import 'package:lurnify/model/chapters.dart';
+import 'package:lurnify/model/course.dart';
+import 'package:lurnify/model/register.dart';
+import 'package:lurnify/model/subject.dart';
+import 'package:lurnify/model/topics.dart';
+import 'package:lurnify/model/units.dart';
 import 'package:lurnify/ui/constant/ApiConstant.dart';
 import 'package:lurnify/ui/constant/constant.dart';
 import 'package:lurnify/ui/home-page.dart';
@@ -17,6 +22,7 @@ import 'package:lurnify/ui/screen/screen.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
+
 
 class OtpScreen extends StatefulWidget {
   final String mobile;
@@ -38,7 +44,8 @@ class _OtpScreenState extends State<OtpScreen>
   // Constants
   int time = 60;
   AnimationController _controller;
-
+  DBHelper dbHelper = new DBHelper();
+  Database database;
   // Variables
   Size _screenSize;
   int _currentDigit;
@@ -296,6 +303,12 @@ class _OtpScreenState extends State<OtpScreen>
     _controller.reverse(
         from: _controller.value == 0.0 ? 1.0 : _controller.value);
     _startCountdown();
+    _initializeDb();
+  }
+
+  _initializeDb()async{
+    database = await dbHelper.database;
+    print('Database intitalized');
   }
 
   @override
@@ -337,9 +350,7 @@ class _OtpScreenState extends State<OtpScreen>
 //            color: Colors.grey.withOpacity(0.4),
           border: Border(
               bottom: BorderSide(
-        width: 2.0,
-        color: isDark ? Colors.white: Colors.black87
-      ))),
+                  width: 2.0, color: isDark ? Colors.white : Colors.black87))),
     );
   }
 
@@ -494,10 +505,10 @@ class _OtpScreenState extends State<OtpScreen>
       // ignore: await_only_futures
       final User currentUser = await _auth.currentUser;
       if (user.user.uid == currentUser.uid) {
-        String url=baseUrl+"checkIfUserExist?mobile=$mobile";
+        String url = baseUrl + "checkIfUserExist?mobile=$mobile";
         http.Response response = await http.post(Uri.encodeFull(url));
-        var body=jsonDecode(response.body);
-        if(body['result']==true){
+        var body = jsonDecode(response.body);
+        if (body['result'] == true) {
           SharedPreferences sp = await SharedPreferences.getInstance();
           sp.setString("mobile", mobile.toString());
           sp.setString("courseSno", body['courseSno']);
@@ -506,16 +517,19 @@ class _OtpScreenState extends State<OtpScreen>
           sp.setString("joiningDate", body['joiningDate'].toString());
 
           //Saving data to local DB
-          DBHelper dbHelper = new DBHelper();
-          Database db = await dbHelper.database;
-          var batch = db.batch();
+          // DBHelper dbHelper = new DBHelper();
+          // Database db = await dbHelper.database;
 
-          batch.delete('course');
-          batch.delete('subject');
-          batch.delete('unit');
-          batch.delete('chapter');
-          batch.delete('topic');
-          batch.delete('register');
+
+          // await database.rawQuery("select * from course");
+          var batch = database.batch();
+
+          batch.rawQuery('delete from course');
+          batch.rawQuery('delete from subject');
+          batch.rawQuery('delete from unit');
+          batch.rawQuery('delete from chapter');
+          batch.rawQuery('delete from topic');
+          batch.rawQuery('delete from register');
 
           Map<String, dynamic> registerMap = jsonDecode(body['register']);
           Register register = new Register();
@@ -577,80 +591,95 @@ class _OtpScreenState extends State<OtpScreen>
             }
           }
 
+          String registerSno = sp.getString("studentSno");
 
-          String registerSno=sp.getString("studentSno");
-
-
-
-          FirebaseFirestore.instance.collection("dimes")
-              .where('registerSno',isEqualTo:registerSno)
-              .get().then((QuerySnapshot snapshot) {
+           await FirebaseFirestore.instance
+              .collection("dimes")
+              .where('registerSno', isEqualTo: registerSno)
+              .get()
+              .then((QuerySnapshot snapshot) {
             snapshot.docs.forEach((f) {
               batch.insert('dimes', f.data());
             });
           });
           print("dimes inserted");
-          FirebaseFirestore.instance.collection("dueTopicTests")
-              .where('registerSno',isEqualTo:registerSno)
-              .get().then((QuerySnapshot snapshot) {
+          await FirebaseFirestore.instance
+              .collection("dueTopicTests")
+              .where('registerSno', isEqualTo: registerSno)
+              .get()
+              .then((QuerySnapshot snapshot) {
             snapshot.docs.forEach((f) {
               batch.insert('due_topic_test', f.data());
             });
           });
           print("dueTopicTests inserted");
-          FirebaseFirestore.instance.collection("recentStudy")
-              .where('registrationSno',isEqualTo:registerSno)
-              .get().then((QuerySnapshot snapshot) {
+          await FirebaseFirestore.instance
+              .collection("recentStudy")
+              .where('registrationSno', isEqualTo: registerSno)
+              .get()
+              .then((QuerySnapshot snapshot) {
             snapshot.docs.forEach((f) {
               batch.insert('recent_study', f.data());
             });
           });
           print("recentStudy inserted");
-          FirebaseFirestore.instance.collection("study")
-              .where('register',isEqualTo:registerSno)
-              .get().then((QuerySnapshot snapshot) {
+          await FirebaseFirestore.instance
+              .collection("study")
+              .where('register', isEqualTo: registerSno)
+              .get()
+              .then((QuerySnapshot snapshot) {
             snapshot.docs.forEach((f) {
               batch.insert('study', f.data());
             });
           });
           print("study inserted");
-          FirebaseFirestore.instance.collection("topicTestResult")
-              .where('regSno',isEqualTo:registerSno)
-              .get().then((QuerySnapshot snapshot) {
+          await  FirebaseFirestore.instance
+              .collection("topicTestResult")
+              .where('regSno', isEqualTo: registerSno)
+              .get()
+              .then((QuerySnapshot snapshot) {
             snapshot.docs.forEach((f) {
               batch.insert('topic_test_result', f.data());
             });
           });
           print("topicTestResult inserted");
 
-          FirebaseFirestore.instance.collection("pace")
-              .where('register',isEqualTo:registerSno)
-              .get().then((QuerySnapshot snapshot) {
+          await FirebaseFirestore.instance
+              .collection("pace")
+              .where('register', isEqualTo: registerSno)
+              .get()
+              .then((QuerySnapshot snapshot) {
             snapshot.docs.forEach((f) {
               batch.insert('pace', f.data());
             });
           });
-          print("topicTestResult inserted");
+          print("pace inserted");
 
+          await FirebaseFirestore.instance
+              .collection("dailyTaskCompletion")
+              .where('registerSno', isEqualTo: registerSno)
+              .get()
+              .then((QuerySnapshot snapshot) {
+            snapshot.docs.forEach((f) {
+              batch.insert('daily_task_completion', f.data());
+            });
+          });
+          print("dailyTaskCompletion inserted");
 
-          batch.commit();
+          await batch.commit(noResult: true);
           _signUpToast("Login Successful");
-
 
           Navigator.pushAndRemoveUntil(
               context,
-              MaterialPageRoute(
-                  builder: (BuildContext context) => HomePage()),
+              MaterialPageRoute(builder: (BuildContext context) => HomePage()),
               ModalRoute.withName('/'));
-        }else{
+        } else {
           Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(
                   builder: (BuildContext context) => CourseGroup(mobile)),
               ModalRoute.withName('/'));
         }
-
-
       } else {
         _signUpToast("Invalid Otp");
       }

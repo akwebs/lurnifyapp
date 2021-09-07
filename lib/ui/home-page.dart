@@ -42,6 +42,10 @@ class _HomePageState extends State<HomePage> {
   bool _isPaymentDone = false;
   bool _isSpinned = false;
   List<Map<String, dynamic>> _spinData = [];
+  double _selfStudyPercent=0;
+  double _testPercent=0;
+  List<Map<String,dynamic>> _recentData=[];
+  List<Map<String,dynamic>> _dueTopicTestData=[];
 
   _getHomePageData() async {
     try {
@@ -168,9 +172,6 @@ class _HomePageState extends State<HomePage> {
                       .add(Duration(minutes: 2))
                       .compareTo(DateTime.now()) < 1) {
 
-
-
-
               DBHelper dbHelper = new DBHelper();
               Database db = await dbHelper.database;
               var batch = db.batch();
@@ -179,41 +180,63 @@ class _HomePageState extends State<HomePage> {
               List<Map<String,dynamic>> recentStudys=await recentStudyRepo.getNewRecentStudy();
 
               for(var a in recentStudys){
-                FirebaseFirestore.instance.collection('recentStudy').add(a);
+                Map<String,dynamic> m = Map.of(a);
+                m.update('status', (value) => 'old',ifAbsent: () => 'old',);
 
                 batch.rawUpdate("update recent_study set status='old' where sno=${a['sno']}");
+                await FirebaseFirestore.instance.collection('recentStudy').add(m);
               }
 
               DueTopicTestRepo dueTopicTestRepo = new DueTopicTestRepo();
               List<Map<String,dynamic>> dueTests=await dueTopicTestRepo.getNewDueTopicTest();
               for(var a in dueTests){
-                FirebaseFirestore.instance.collection('dueTopicTests').add(a);
+                Map<String,dynamic> m = Map.of(a);
+                m.update('onlineStatus', (value) => 'old',ifAbsent: () => 'old',);
 
                 batch.rawUpdate("update due_topic_tests set onlineStatus='old' where sno=${a['sno']}");
+                await FirebaseFirestore.instance.collection('dueTopicTests').add(m);
               }
 
               StudyRepo studyRepo = new StudyRepo();
               List<Map<String,dynamic>> studys=await studyRepo.getNewStudy();
-              print("--------------------------");
-              print(studys);
+
               for(var a in studys){
-                FirebaseFirestore.instance.collection('study').add(a);
+                Map<String,dynamic> m = Map.of(a);
+                m.update('status', (value) => 'old',ifAbsent: () => 'old',);
+
                 batch.rawUpdate("update study set status='old' where sno=${a['sno']}");
+                await FirebaseFirestore.instance.collection('study').add(m);
               }
 
               DimeRepo dimeRepo = new DimeRepo();
               List<Map<String,dynamic>> dimes=await dimeRepo.getNewDimes();
               for(var a in dimes){
-                FirebaseFirestore.instance.collection('dimes').add(a);
+                Map<String,dynamic> m = Map.of(a);
+                m.update('status', (value) => 'old',ifAbsent: () => 'old',);
+
                 String sql="update dimes set status='old' where sno='${a['sno']}'";
                 batch.rawUpdate(sql);
+
+                await FirebaseFirestore.instance.collection('dimes').add(m);
               }
 
               TopicTestResultRepo topicTestResultRepo = new TopicTestResultRepo();
               List<Map<String,dynamic>> topicResults=await topicTestResultRepo.getNewTopicTestResult();
               for(var a in topicResults){
-                FirebaseFirestore.instance.collection('topicTestResult').add(a);
+                Map<String,dynamic> m = Map.of(a);
+                m.update('status', (value) => 'old',ifAbsent: () => 'old',);
+
                 batch.rawUpdate("update topic_test_result set status='old' where sno=${a['sno']}");
+                await FirebaseFirestore.instance.collection('topicTestResult').add(m);
+              }
+
+              DailyTaskCompletionRepo dailyTaskCompletionRepo = new DailyTaskCompletionRepo();
+              List<Map<String,dynamic>> dailyResult=await dailyTaskCompletionRepo.getNewDailyTaskCompletion();
+              for(int i=0;i<dailyResult.length;i++){
+                batch.rawUpdate("update daily_task_completion set onlineStatus='old' where sno=${dailyResult[i]['sno']}");
+                Map<String,dynamic> m = Map.of(dailyResult[i]);
+                m.update('onlineStatus', (value) => 'old',ifAbsent: () => 'old',);
+                await FirebaseFirestore.instance.collection('dailyTaskCompletion').add(m);
               }
 
               batch.commit();
@@ -357,66 +380,101 @@ class _HomePageState extends State<HomePage> {
             _totalDimes = a['totalDimes'].toString();
           }
         });
-      });
-
-      //Checking daily app opening
-      String date = DateFormat('yyyy-MM-dd').format(DateTime.now());
-      String sql =
-          "select * from daily_app_opening where registerSno=${sp.getString("studentSno")} and appOpeningDate = $date";
-      List<Map<String, dynamic>> dailyAppOpeningList =
-          await database.rawQuery(sql);
-      if (dailyAppOpeningList.isEmpty) {
-        await database.rawQuery(
-            "insert into daily_app_opening(appOpeningDate,registerSno,enteredDate) values('$date','${sp.getString("studentSno")}','${DateTime.now()}')");
-        List<Map<String, dynamic>> list = await database
-            .rawQuery("select * from reward order by sno desc limit 1");
-        for (var a in list) {
-          var credit = a['appOpening'];
-          String sql2 =
-              "insert into dimes(credit,debit,message,enteredDate,registerSno) "
-              "values('$credit','0','Daily app opening reward','${DateTime.now().toString()}','${sp.getString("studentSno")}')";
-          await database.rawQuery(sql2);
-        }
-      }
 
 
-
-      String sql2 =
-          "select * from daily_task_completion where spinDate='${DateTime.now().toString().split(" ")[0]}' and registerSno=${sp.getString('studentSno')}";
-      List<Map<String, dynamic>> list2 = await database.rawQuery(sql2);
-      print("-------------------------------------------------------$list2");
-      if (list2.isEmpty) {
-        _isSpinned=false;
+        //Checking daily app opening
+        String date = DateFormat('yyyy-MM-dd').format(DateTime.now());
         String sql =
-            "select * from daily_task where '$date'>=startDateTime and '$date'<=endDateTime and status='enable' order by random() limit 6";
-        List<Map<String, dynamic>> list = await database.rawQuery(sql);
-        for (var a in list) {
-          Map<String, dynamic> map = Map();
-          map.putIfAbsent('taskName', () => a['taskName']);
-          map.putIfAbsent('sno', () => a['sno']);
-          String sql2 =
-              "select * from daily_task_data where dailyTaskSno=${a['sno']}";
-          List<Map<String, dynamic>> list = await database.rawQuery(sql2);
-          map.putIfAbsent("dailyTaskDatas", () => list);
-          _spinData.add(map);
+            "select * from daily_app_opening where registerSno=${sp.getString("studentSno")} and appOpeningDate = $date";
+        List<Map<String, dynamic>> dailyAppOpeningList =
+        await txn.rawQuery(sql);
+        if (dailyAppOpeningList.isEmpty) {
+          await txn.rawQuery(
+              "insert into daily_app_opening(appOpeningDate,registerSno,enteredDate) values('$date','${sp.getString("studentSno")}','${DateTime.now()}')");
+          List<Map<String, dynamic>> list = await txn
+              .rawQuery("select * from reward order by sno desc limit 1");
+          for (var a in list) {
+            var credit = a['appOpening'];
+            String sql2 =
+                "insert into dimes(credit,debit,message,enteredDate,registerSno) "
+                "values('$credit','0','Daily app opening reward','${DateTime.now().toString()}','${sp.getString("studentSno")}')";
+            await txn.rawQuery(sql2);
+          }
         }
-        if (_spinData.length < 6) {
-          String sql2 = "select * from daily_task order by random() limit 6";
-          _spinData = await database.rawQuery(sql2);
-          for (var a in _spinData) {
+
+
+
+        String sql2 =
+            "select * from daily_task_completion where spinDate='${DateTime.now().toString().split(" ")[0]}' and registerSno=${sp.getString('studentSno')}";
+        List<Map<String, dynamic>> list2 = await txn.rawQuery(sql2);
+        if (list2.isEmpty) {
+          _isSpinned=false;
+          String sql =
+              "select * from daily_task where '$date'>=startDateTime and '$date'<=endDateTime and status='enable' order by random() limit 6";
+          List<Map<String, dynamic>> list = await txn.rawQuery(sql);
+          for (var a in list) {
             Map<String, dynamic> map = Map();
             map.putIfAbsent('taskName', () => a['taskName']);
             map.putIfAbsent('sno', () => a['sno']);
             String sql2 =
                 "select * from daily_task_data where dailyTaskSno=${a['sno']}";
-            List<Map<String, dynamic>> list = await database.rawQuery(sql2);
+            List<Map<String, dynamic>> list = await txn.rawQuery(sql2);
             map.putIfAbsent("dailyTaskDatas", () => list);
             _spinData.add(map);
           }
+          if (_spinData.length < 6) {
+            _spinData=[];
+            String sql2 = "select * from daily_task order by random() limit 6";
+            List<Map<String,dynamic>> list = await txn.rawQuery(sql2);
+            for (var a in list) {
+              Map<String, dynamic> map = Map();
+              map.putIfAbsent('taskName', () => a['taskName']);
+              map.putIfAbsent('sno', () => a['sno']);
+              String sql2 =
+                  "select * from daily_task_data where dailyTaskSno=${a['sno']}";
+              List<Map<String, dynamic>> list = await txn.rawQuery(sql2);
+              map.putIfAbsent("dailyTaskDatas", () => list);
+              _spinData.add(map);
+            }
+          }
+        }else{
+          _isSpinned=true;
         }
-      }else{
-        _isSpinned=true;
-      }
+
+        //Getting data for home page
+        String sql3="select count(sno) as totalTopic,"
+            "(select count(sno) from study where topicCompletionStatus='Complete' and revision=0 group by topicSno) as completedTopics"
+            " from topic";
+        List<Map<String,dynamic>> list4=await txn.rawQuery(sql3);
+        for(var a in list4){
+          if(a['totalTopic']!=null && a['totalTopic']!=0){
+            _selfStudyPercent=a['totalTopic']/a['totalTopic'];
+          }
+        }
+
+        String sql4="select (sum(correctQuestion)/sum(totalQuestion)) as testPercent from topic_test_result";
+        List<Map<String,dynamic>> list5=await txn.rawQuery(sql4);
+        for(var a in list5){
+            _testPercent=a['testPercent'];
+        }
+
+        //Getting recent data
+        RecentStudyRepo recentStudyRepo = new RecentStudyRepo();
+        _recentData=await recentStudyRepo.getRecentStudyForHomePage(txn);
+
+        //Getting due topic tests
+        DueTopicTestRepo dueTopicTestRepo = new DueTopicTestRepo();
+        _dueTopicTestData=await dueTopicTestRepo.getHomePageDueTest(txn);
+
+
+      });
+
+
+        int lastLoginTime=DateTime.now().add(Duration(minutes: 10)).millisecondsSinceEpoch;
+        await FirebaseFirestore.instance.collection('lastOnline').add({
+        'register':registerSno,
+        'lastLoginTime':lastLoginTime
+      });
 
       if (showChallenge) {
         _showChallenge();
@@ -424,6 +482,7 @@ class _HomePageState extends State<HomePage> {
         _showMyDialog();
       }
     } catch (e) {
+      print("-----------------------");
       print(e);
     }
   }
@@ -555,10 +614,10 @@ class _HomePageState extends State<HomePage> {
                   physics: BouncingScrollPhysics(),
                   child: Column(
                     children: <Widget>[
-                      CardWidget(),
+                      CardWidget(_selfStudyPercent,_testPercent),
                       AppTiles(pageKey),
-                      BottomSlider(pageKey),
-                      TestSlider(),
+                      BottomSlider(pageKey,_recentData),
+                      TestSlider(_dueTopicTestData),
                       Container(
                         color: Colors.grey.withOpacity(0.1),
                         child: Column(
@@ -688,7 +747,7 @@ class _HomePageState extends State<HomePage> {
           _showDailyAppOpening();
         } else {
           print("---------------------------------------$_isSpinned");
-          if (_spinData.isNotEmpty && !_isSpinned) {
+          if (_spinData.isNotEmpty && _isSpinned) {
             _showSpinWheel();
           } else {
             print("SPIN DATA EMPTY");
