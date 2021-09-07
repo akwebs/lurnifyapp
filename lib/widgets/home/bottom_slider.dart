@@ -5,7 +5,8 @@ import 'package:lurnify/ui/constant/constant.dart';
 
 class BottomSlider extends StatelessWidget {
   final List pagekey;
-  BottomSlider(this.pagekey);
+  final List<Map<String,dynamic>> recentData;
+  BottomSlider(this.pagekey,this.recentData);
 
   @override
   Widget build(BuildContext context) {
@@ -13,7 +14,7 @@ class BottomSlider extends StatelessWidget {
       height: Responsive.getPercent(22, ResponsiveSize.HEIGHT, context),
       child: ListView.builder(
           scrollDirection: Axis.horizontal,
-          itemCount: AppSlider.cardtext.length,
+          itemCount: recentData.length,
           physics: BouncingScrollPhysics(),
           itemBuilder: (BuildContext ctx, index) {
             return Container(

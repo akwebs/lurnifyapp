@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:lurnify/config/data.dart';
+import 'package:lurnify/helper/revision_zone.dart';
 import 'package:lurnify/ui/constant/constant.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smooth_star_rating/smooth_star_rating.dart';
@@ -51,24 +52,44 @@ class _RevisionZoneState extends State<RevisionZone> {
 
   Future _getRevisionZone() async {
     SharedPreferences sp = await SharedPreferences.getInstance();
-    var url = baseUrl +
-        "getRevisionZone?days=" +
-        _selectedDateRange +
-        "&regSno=" +
-        sp.getString("studentSno");
-    print(url);
-    http.Response response = await http.post(
-      Uri.encodeFull(url),
-    );
-    List resbody = jsonDecode(response.body);
+    DateTime now = DateTime.now();
+    String firstDate=now.subtract(Duration(days: 60)).toString();
+    String secondDate=now.subtract(Duration(days: 31)).toString();
+    RevisionZoneHelper helper = new RevisionZoneHelper();
+
+    if(_selectedDateRange=='30 Days'){
+      firstDate=now.subtract(Duration(days: 60)).toString();
+      secondDate=now.subtract(Duration(days: 31)).toString();
+    }else if(_selectedDateRange=='60 Days'){
+      firstDate=now.subtract(Duration(days: 90)).toString();
+      secondDate=now.subtract(Duration(days: 61)).toString();
+    }else if(_selectedDateRange=='90 Days'){
+      firstDate=now.subtract(Duration(days: 30)).toString();
+      secondDate=now.subtract(Duration(days: 0)).toString();
+    }
+
+    List<Map<String,dynamic>> data= await helper.getRevisionZone(sp.getString("studentSno"),firstDate,secondDate);
+
+    // var url = baseUrl +
+    //     "getRevisionZone?days=" +
+    //     _selectedDateRange +
+    //     "&regSno=" +
+    //     sp.getString("studentSno");
+    // print(url);
+    // http.Response response = await http.post(
+    //   Uri.encodeFull(url),
+    // );
+    // List resbody = jsonDecode(response.body);
     // print(resbody);
     List<RevisionModel> list = [];
-    resbody.forEach((element) {
-      RevisionModel model = new RevisionModel();
-      model.subjectSno = element['subjectSno'];
-      model.subjectName = element['subjectName'];
-      list.add(model);
-    });
+    if(data!=null){
+      data.forEach((element) {
+        RevisionModel model = new RevisionModel();
+        model.subjectSno = element['subjectSno'];
+        model.subjectName = element['subjectName'];
+        list.add(model);
+      });
+    }
     // convert each item to a string by using JSON encoding
     final jsonList = list.map((item) => jsonEncode(item)).toList();
 
@@ -79,7 +100,7 @@ class _RevisionZoneState extends State<RevisionZone> {
     result = uniqueJsonList.map((item) => jsonDecode(item)).toList();
     print(result);
     result.forEach((el) {
-      var a = resbody
+      var a = data
           .where((element) => element['subjectSno'] == el['subjectSno'])
           .toList();
       el['topic'] = a;

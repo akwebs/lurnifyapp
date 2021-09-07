@@ -4,7 +4,6 @@ import 'dart:math';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lurnify/config/data.dart';
 import 'package:lurnify/helper/DBHelper.dart';
 import 'package:lurnify/widgets/componants/custom-button.dart';
@@ -164,25 +163,23 @@ class _SpinnerClassState extends State<SpinnerClass> {
       print("-----------------------------------$list");
       if (list.isEmpty) {
         String sql2 =
-            "insert into daily_task_completion (registerSno,dailyTaskSno,spinDate,status,enteredDate) "
+            "insert into daily_task_completion (registerSno,dailyTaskSno,spinDate,status,enteredDate,onlineStatus) "
             "values('${sp.getString("studentSno")}','${_spinData[_selected - 1]['sno'].toString()}',"
             "'${DateTime.now().toString().split(" ")[0]}',"
-            "'spined','${DateTime.now().toString()}')";
+            "'spined','${DateTime.now().toString()}','new')";
         print(sql2);
         await database.rawInsert(sql2);
       } else {
         String sql2 =
-            "update daily_task_completion set dailyTaskSno='${_spinData[_selected - 1]['sno'].toString()}', status='spined' where registerSno='${sp.getString("studentSno")}' "
+            "update daily_task_completion set dailyTaskSno='${_spinData[_selected - 1]['sno'].toString()}', status='spined', onlineStatus='new' where registerSno='${sp.getString("studentSno")}' "
             "and spinDate='${DateTime.now().toString().split(" ")[0]}'";
         print(sql2);
         await database.rawUpdate(sql2);
       }
 
-      String s = "select * from daily_task_completion";
-      var a = await database.rawQuery(s);
-      print(a);
-
-      Fluttertoast.showToast(msg: "Success");
+      // String s="select * from daily_task_completion";
+      // var a = await database.rawQuery(s);
+      // print(a);
 
       _showSpinTask();
     } catch (e) {

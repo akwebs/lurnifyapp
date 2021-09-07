@@ -5,6 +5,8 @@ import 'package:lurnify/config/data.dart';
 import 'package:lurnify/ui/constant/constant.dart';
 
 class TestSlider extends StatefulWidget {
+  TestSlider(this.dueTopicTest);
+  final List<Map<String,dynamic>> dueTopicTest;
   @override
   _TestSliderState createState() => _TestSliderState();
 }

@@ -180,17 +180,17 @@ class BarChartSample1State extends State<BarChartSample1> {
                 // ],
               );
             }),
-        touchCallback: (barTouchResponse) {
-          setState(() {
-            if (barTouchResponse.spot != null &&
-                barTouchResponse.touchInput is! PointerUpEvent &&
-                barTouchResponse.touchInput is! PointerExitEvent) {
-              touchedIndex = barTouchResponse.spot.touchedBarGroupIndex;
-            } else {
-              touchedIndex = -1;
-            }
-          });
-        },
+        // touchCallback: (barTouchResponse) {
+        //   setState(() {
+        //     if (barTouchResponse.spot != null &&
+        //         barTouchResponse.touchInput is! PointerUpEvent &&
+        //         barTouchResponse.touchInput is! PointerExitEvent) {
+        //       touchedIndex = barTouchResponse.spot.touchedBarGroupIndex;
+        //     } else {
+        //       touchedIndex = -1;
+        //     }
+        //   });
+        // },
       ),
       titlesData: FlTitlesData(
         show: true,

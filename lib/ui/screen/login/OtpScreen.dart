@@ -44,7 +44,8 @@ class _OtpScreenState extends State<OtpScreen>
   // Constants
   int time = 60;
   AnimationController _controller;
-
+  DBHelper dbHelper = new DBHelper();
+  Database database;
   // Variables
   Size _screenSize;
   int _currentDigit;
@@ -302,6 +303,12 @@ class _OtpScreenState extends State<OtpScreen>
     _controller.reverse(
         from: _controller.value == 0.0 ? 1.0 : _controller.value);
     _startCountdown();
+    _initializeDb();
+  }
+
+  _initializeDb() async {
+    database = await dbHelper.database;
+    print('Database intitalized');
   }
 
   @override
@@ -510,16 +517,18 @@ class _OtpScreenState extends State<OtpScreen>
           sp.setString("joiningDate", body['joiningDate'].toString());
 
           //Saving data to local DB
-          DBHelper dbHelper = new DBHelper();
-          Database db = await dbHelper.database;
-          var batch = db.batch();
+          // DBHelper dbHelper = new DBHelper();
+          // Database db = await dbHelper.database;
 
-          batch.delete('course');
-          batch.delete('subject');
-          batch.delete('unit');
-          batch.delete('chapter');
-          batch.delete('topic');
-          batch.delete('register');
+          // await database.rawQuery("select * from course");
+          var batch = database.batch();
+
+          batch.rawQuery('delete from course');
+          batch.rawQuery('delete from subject');
+          batch.rawQuery('delete from unit');
+          batch.rawQuery('delete from chapter');
+          batch.rawQuery('delete from topic');
+          batch.rawQuery('delete from register');
 
           Map<String, dynamic> registerMap = jsonDecode(body['register']);
           Register register = new Register();
@@ -583,7 +592,7 @@ class _OtpScreenState extends State<OtpScreen>
 
           String registerSno = sp.getString("studentSno");
 
-          FirebaseFirestore.instance
+          await FirebaseFirestore.instance
               .collection("dimes")
               .where('registerSno', isEqualTo: registerSno)
               .get()
@@ -593,7 +602,7 @@ class _OtpScreenState extends State<OtpScreen>
             });
           });
           print("dimes inserted");
-          FirebaseFirestore.instance
+          await FirebaseFirestore.instance
               .collection("dueTopicTests")
               .where('registerSno', isEqualTo: registerSno)
               .get()
@@ -603,7 +612,7 @@ class _OtpScreenState extends State<OtpScreen>
             });
           });
           print("dueTopicTests inserted");
-          FirebaseFirestore.instance
+          await FirebaseFirestore.instance
               .collection("recentStudy")
               .where('registrationSno', isEqualTo: registerSno)
               .get()
@@ -613,7 +622,7 @@ class _OtpScreenState extends State<OtpScreen>
             });
           });
           print("recentStudy inserted");
-          FirebaseFirestore.instance
+          await FirebaseFirestore.instance
               .collection("study")
               .where('register', isEqualTo: registerSno)
               .get()
@@ -623,7 +632,7 @@ class _OtpScreenState extends State<OtpScreen>
             });
           });
           print("study inserted");
-          FirebaseFirestore.instance
+          await FirebaseFirestore.instance
               .collection("topicTestResult")
               .where('regSno', isEqualTo: registerSno)
               .get()
@@ -634,7 +643,7 @@ class _OtpScreenState extends State<OtpScreen>
           });
           print("topicTestResult inserted");
 
-          FirebaseFirestore.instance
+          await FirebaseFirestore.instance
               .collection("pace")
               .where('register', isEqualTo: registerSno)
               .get()
@@ -643,9 +652,20 @@ class _OtpScreenState extends State<OtpScreen>
               batch.insert('pace', f.data());
             });
           });
-          print("topicTestResult inserted");
+          print("pace inserted");
 
-          batch.commit();
+          await FirebaseFirestore.instance
+              .collection("dailyTaskCompletion")
+              .where('registerSno', isEqualTo: registerSno)
+              .get()
+              .then((QuerySnapshot snapshot) {
+            snapshot.docs.forEach((f) {
+              batch.insert('daily_task_completion', f.data());
+            });
+          });
+          print("dailyTaskCompletion inserted");
+
+          await batch.commit(noResult: true);
           _signUpToast("Login Successful");
 
           Navigator.pushAndRemoveUntil(

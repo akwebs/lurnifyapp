@@ -20,7 +20,7 @@ class Recent extends StatefulWidget {
 class _RecentState extends State<Recent> {
   String pageKey;
   _RecentState(this.pageKey);
-  List recentData = [];
+  List<Map<String,dynamic>> recentData = [];
   List nextData = [];
   bool lastTopicResult = false;
   var data;
@@ -39,7 +39,6 @@ class _RecentState extends State<Recent> {
       // recentData = resbody;
       RecentStudyRepo recentStudyRepo = new RecentStudyRepo();
       recentData = await recentStudyRepo.getRecentStudy();
-      print(recentData);
       print(recentData);
     } catch (e) {
       print(e);

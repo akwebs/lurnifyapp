@@ -28,8 +28,8 @@ dependencies:
   shared_preferences: ^0.5.12+4
   marquee: ^1.7.0
   percent_indicator: ^2.1.9+1
-  firebase_auth: ^0.20.1
-  firebase_core: ^0.7.0
+  firebase_auth:
+  firebase_core: ^0.5.1
   intl: ^0.16.1
   http: ^0.12.1
   awesome_dialog: ^1.2.1
@@ -56,6 +56,8 @@ dependencies:
   confetti: ^0.5.5
   sqflite: ^2.0.0+3
   cloud_firestore:
+  image_picker: ^0.6.7+22
+  firebase_storage: ^5.1.0
 
 dev_dependencies:
   flutter_test:

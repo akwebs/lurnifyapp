@@ -59,4 +59,13 @@ class DueTopicTestRepo{
     var result=db.rawQuery(sql);
     return result;
   }
+
+  getHomePageDueTest(txn)async{
+    String sql="select topicName,subjectName,topic.sno,chapterName from due_topic_tests "
+        "inner join topic on topicSno=topic.sno "
+        "inner join chapter on chapter.sno=due_topic_tests.chapter "
+        "inner join subject on due_topic_tests.subject=subject.sno";
+    var result=txn.rawQuery(sql);
+    return result;
+  }
 }
