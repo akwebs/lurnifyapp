@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lottie/lottie.dart';
-import 'package:lurnify/config/data.dart';
-import 'package:lurnify/model/model.dart';
-import 'package:lurnify/ui/constant/ApiConstant.dart';
-import 'package:lurnify/ui/constant/constant.dart';
-import 'package:lurnify/ui/screen/screen.dart';
+import '../../../config/data.dart';
+import '../../../model/chapters.dart';
+import '../../../model/subject.dart';
+import '../../../model/units.dart';
+import '../../constant/ApiConstant.dart';
+import '../../constant/constant.dart';
+import '../screen.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;

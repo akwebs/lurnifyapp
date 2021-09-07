@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
-import 'package:lurnify/helper/helper.dart';
-import 'package:lurnify/ui/constant/constant.dart';
-import 'package:lurnify/ui/screen/screen.dart';
-import 'package:lurnify/widgets/widget.dart';
+import '../../../helper/DBHelper.dart';
+import '../../../helper/recent_study_repo.dart';
+import 'starttimer.dart';
+import 'syncyourtime.dart';
+import '../../../widgets/componants/custom-button.dart';
+import '../../constant/constant.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'contentselect.dart';
 
 class Recent extends StatefulWidget {
   final String pageKey;
@@ -730,7 +734,7 @@ class _RecentState extends State<Recent> {
                             Padding(
                                 padding: EdgeInsets.all(6),
                                 child: Text(
-                                  "SubTopic Name : " + nextData[0]['subtopic'],
+                                  "SubTopic Name : " + nextData[0]['subTopic'],
                                   style: TextStyle(
                                       color: Colors.black87,
                                       fontWeight: FontWeight.w600,

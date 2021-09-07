@@ -6,17 +6,23 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter/services.dart';
 import 'package:lottie/lottie.dart';
-import 'package:lurnify/helper/helper.dart';
-import 'package:lurnify/model/model.dart';
-import 'package:lurnify/ui/constant/ApiConstant.dart';
-import 'package:lurnify/ui/constant/constant.dart';
-import 'package:lurnify/ui/screen/screen.dart';
-import 'package:lurnify/ui/theme.dart';
+import '../../../helper/DBHelper.dart';
+import '../../../helper/instructionRepo.dart';
+import '../../../helper/instructionRepoData.dart';
+import '../../../helper/pace_repo.dart';
+import '../../../helper/testMainRepo.dart';
+import '../../../helper/testRepo.dart';
+import '../../../model/testMain.dart';
+import '../../constant/ApiConstant.dart';
+import '../../constant/constant.dart';
+import '../../theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import 'package:sqflite/sqflite.dart';
+
+import 'studycomplete.dart';
 
 class StartTimer extends StatefulWidget {
   final course, subject, unit, chapter, topic, subtopic, duration;
@@ -51,7 +57,7 @@ class _StartTimerState extends State<StartTimer> {
   String totalWeeks = "";
   String leftDaysOrWeek = "";
   int BEEP_SOUND_DURATION = 600;
-  int _topicTestTime=0;
+  int _topicTestTime = 0;
 
   void _updateTimer() {
     final duration = DateTime.now().difference(_lastButtonPress);
@@ -228,26 +234,30 @@ class _StartTimerState extends State<StartTimer> {
 
       print("_alreadyStudiedTime $_alreadyStudiedTime");
       TestMainRepo testMainRepo = new TestMainRepo();
-      List<Map<String,dynamic>> list2=await testMainRepo.findByTopic(topic);
-      for(var a in list2){
+      List<Map<String, dynamic>> list2 = await testMainRepo.findByTopic(topic);
+      for (var a in list2) {
         print("---------------------------------${a['topicTestTime']}");
-        _topicTestTime=int.tryParse(a['topicTestTime']) ?? 0;
-        _topicTestTime=_topicTestTime ;
+        _topicTestTime = int.tryParse(a['topicTestTime']) ?? 0;
+        _topicTestTime = _topicTestTime;
       }
-      if(_topicTestTime==0){
-        _topicTestTime=20;
+      if (_topicTestTime == 0) {
+        _topicTestTime = 20;
       }
       print("_topicTestTime $_topicTestTime");
       PaceRepo paceRepo = new PaceRepo();
-      List<Map<String,dynamic>> list3=await paceRepo.getPace();
-      double percentDifference=0;
-      for(var a in list3){
+      List<Map<String, dynamic>> list3 = await paceRepo.getPace();
+      double percentDifference = 0;
+      for (var a in list3) {
         print("---------------------------------${a['percentDifference']}");
-        percentDifference=double.tryParse(a['percentDifference']) ?? 0;
+        percentDifference = double.tryParse(a['percentDifference']) ?? 0;
       }
       print("percentDifference $percentDifference");
-      double convertedDuration=double.tryParse(duration) ?? 0;
-      duration =(convertedDuration+(convertedDuration*percentDifference/100)-_topicTestTime).round().toString();
+      double convertedDuration = double.tryParse(duration) ?? 0;
+      duration = (convertedDuration +
+              (convertedDuration * percentDifference / 100) -
+              _topicTestTime)
+          .round()
+          .toString();
 
       calculateRemainingDuration();
     } catch (e) {
@@ -258,7 +268,8 @@ class _StartTimerState extends State<StartTimer> {
   void calculateRemainingDuration() {
     getDatesForDateRow();
     remainingDuration =
-        Duration(minutes: double.parse(duration).round()).inSeconds - _alreadyStudiedTime;
+        Duration(minutes: double.parse(duration).round()).inSeconds -
+            _alreadyStudiedTime;
     if (remainingDuration > 0) {
       remainingMessage =
           Duration(seconds: remainingDuration.round()).inMinutes.toString() +
@@ -276,10 +287,9 @@ class _StartTimerState extends State<StartTimer> {
     int completedDays = DateTime.now()
         .difference(DateTime.parse(sp.getString("firstMonday")))
         .inDays;
-    int remainingDays =
-        DateTime.parse(sp.getString("firstMonday"))
-            .difference(DateTime.now())
-            .inDays;
+    int remainingDays = DateTime.parse(sp.getString("firstMonday"))
+        .difference(DateTime.now())
+        .inDays;
     if (remainingDays <= 100) {
       leftDaysOrWeek = remainingDays.toString() + "Days left";
     } else {

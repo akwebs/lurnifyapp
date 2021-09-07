@@ -29,6 +29,7 @@ class _SolutionState extends State<Solution> {
   bool _isFirstQuestion = true;
   bool _isLastQuestion = false;
   bool reviewLater = false;
+  String _FORMATTED_TEST_DURATION;
   Map map = Map();
   PageController _controller =
       PageController(viewportFraction: 1, keepPage: true);
@@ -87,7 +88,7 @@ class _SolutionState extends State<Solution> {
             width: 3,
           ),
           Text(
-            "00:00:00",
+            _FORMATTED_TEST_DURATION,
             style: TextStyle(
               color: Colors.red,
               fontSize: 15,

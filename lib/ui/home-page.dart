@@ -7,8 +7,19 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:lurnify/config/data.dart';
 import 'package:lurnify/confitti.dart';
-import 'package:lurnify/helper/helper.dart';
+import 'package:lurnify/helper/DBHelper.dart';
+import 'package:lurnify/helper/DimeRepo.dart';
+import 'package:lurnify/helper/StudyRepo.dart';
+import 'package:lurnify/helper/TopicTestResultRepo.dart';
+import 'package:lurnify/helper/data_update_repo.dart';
+import 'package:lurnify/helper/due_topic_test_repo.dart';
+import 'package:lurnify/helper/recent_study_repo.dart';
 import 'package:lurnify/model/DataUpdate.dart';
+import 'package:lurnify/widgets/CustomDrawer.dart';
+import 'package:lurnify/widgets/home/apptiles.dart';
+import 'package:lurnify/widgets/home/bottom_slider.dart';
+import 'package:lurnify/widgets/home/cards_Slider.dart';
+import 'package:lurnify/widgets/home/cardwidget.dart';
 import 'package:lurnify/widgets/home/reviews.dart';
 import 'package:lurnify/widgets/home/spinner.dart';
 import 'package:share/share.dart';
@@ -16,7 +27,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:lurnify/ui/constant/ApiConstant.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
-import 'package:lurnify/widgets/widget.dart';
 import 'package:lurnify/ui/screen/screen.dart';
 import 'dart:async';
 
@@ -72,8 +82,7 @@ class _HomePageState extends State<HomePage> {
             dailyAppOpening: dateTimeNow,
             beatDistraction: dateTimeNow,
             challengeAccept: dateTimeNow,
-            dataSynced: dateTimeNow
-        );
+            dataSynced: dateTimeNow);
 
         dataUpdateRepo.insertIntoDataUpdate(update);
       } else {
@@ -166,63 +175,67 @@ class _HomePageState extends State<HomePage> {
               DateFormat('yyyy-MM-dd hh:mm')
                       .parse(a['dataSynced'])
                       .add(Duration(minutes: 2))
-                      .compareTo(DateTime.now()) < 1) {
+                      .compareTo(DateTime.now()) <
+                  1) {
+            DBHelper dbHelper = new DBHelper();
+            Database db = await dbHelper.database;
+            var batch = db.batch();
 
+            RecentStudyRepo recentStudyRepo = new RecentStudyRepo();
+            List<Map<String, dynamic>> recentStudys =
+                await recentStudyRepo.getNewRecentStudy();
 
+            for (var a in recentStudys) {
+              FirebaseFirestore.instance.collection('recentStudy').add(a);
 
+              batch.rawUpdate(
+                  "update recent_study set status='old' where sno=${a['sno']}");
+            }
 
-              DBHelper dbHelper = new DBHelper();
-              Database db = await dbHelper.database;
-              var batch = db.batch();
+            DueTopicTestRepo dueTopicTestRepo = new DueTopicTestRepo();
+            List<Map<String, dynamic>> dueTests =
+                await dueTopicTestRepo.getNewDueTopicTest();
+            for (var a in dueTests) {
+              FirebaseFirestore.instance.collection('dueTopicTests').add(a);
 
-              RecentStudyRepo recentStudyRepo = new RecentStudyRepo();
-              List<Map<String,dynamic>> recentStudys=await recentStudyRepo.getNewRecentStudy();
+              batch.rawUpdate(
+                  "update due_topic_tests set onlineStatus='old' where sno=${a['sno']}");
+            }
 
-              for(var a in recentStudys){
-                FirebaseFirestore.instance.collection('recentStudy').add(a);
+            StudyRepo studyRepo = new StudyRepo();
+            List<Map<String, dynamic>> studys = await studyRepo.getNewStudy();
+            print("--------------------------");
+            print(studys);
+            for (var a in studys) {
+              FirebaseFirestore.instance.collection('study').add(a);
+              batch.rawUpdate(
+                  "update study set status='old' where sno=${a['sno']}");
+            }
 
-                batch.rawUpdate("update recent_study set status='old' where sno=${a['sno']}");
-              }
+            DimeRepo dimeRepo = new DimeRepo();
+            List<Map<String, dynamic>> dimes = await dimeRepo.getNewDimes();
+            for (var a in dimes) {
+              FirebaseFirestore.instance.collection('dimes').add(a);
+              String sql =
+                  "update dimes set status='old' where sno='${a['sno']}'";
+              batch.rawUpdate(sql);
+            }
 
-              DueTopicTestRepo dueTopicTestRepo = new DueTopicTestRepo();
-              List<Map<String,dynamic>> dueTests=await dueTopicTestRepo.getNewDueTopicTest();
-              for(var a in dueTests){
-                FirebaseFirestore.instance.collection('dueTopicTests').add(a);
+            TopicTestResultRepo topicTestResultRepo = new TopicTestResultRepo();
+            List<Map<String, dynamic>> topicResults =
+                await topicTestResultRepo.getNewTopicTestResult();
+            for (var a in topicResults) {
+              FirebaseFirestore.instance.collection('topicTestResult').add(a);
+              batch.rawUpdate(
+                  "update topic_test_result set status='old' where sno=${a['sno']}");
+            }
 
-                batch.rawUpdate("update due_topic_tests set onlineStatus='old' where sno=${a['sno']}");
-              }
-
-              StudyRepo studyRepo = new StudyRepo();
-              List<Map<String,dynamic>> studys=await studyRepo.getNewStudy();
-              print("--------------------------");
-              print(studys);
-              for(var a in studys){
-                FirebaseFirestore.instance.collection('study').add(a);
-                batch.rawUpdate("update study set status='old' where sno=${a['sno']}");
-              }
-
-              DimeRepo dimeRepo = new DimeRepo();
-              List<Map<String,dynamic>> dimes=await dimeRepo.getNewDimes();
-              for(var a in dimes){
-                FirebaseFirestore.instance.collection('dimes').add(a);
-                String sql="update dimes set status='old' where sno='${a['sno']}'";
-                batch.rawUpdate(sql);
-              }
-
-              TopicTestResultRepo topicTestResultRepo = new TopicTestResultRepo();
-              List<Map<String,dynamic>> topicResults=await topicTestResultRepo.getNewTopicTestResult();
-              for(var a in topicResults){
-                FirebaseFirestore.instance.collection('topicTestResult').add(a);
-                batch.rawUpdate("update topic_test_result set status='old' where sno=${a['sno']}");
-              }
-
-              batch.commit();
+            batch.commit();
           }
         }
       }
-      String registerSno=sp.getString("studentSno");
-      var url =
-          baseUrl + "getHomePageData?registerSno=" + registerSno;
+      String registerSno = sp.getString("studentSno");
+      var url = baseUrl + "getHomePageData?registerSno=" + registerSno;
       print(url);
       http.Response response = await http.post(Uri.encodeFull(url),
           body: jsonEncode(dataUpdate.toJson()));
@@ -379,14 +392,12 @@ class _HomePageState extends State<HomePage> {
         }
       }
 
-
-
       String sql2 =
           "select * from daily_task_completion where spinDate='${DateTime.now().toString().split(" ")[0]}' and registerSno=${sp.getString('studentSno')}";
       List<Map<String, dynamic>> list2 = await database.rawQuery(sql2);
       print("-------------------------------------------------------$list2");
       if (list2.isEmpty) {
-        _isSpinned=false;
+        _isSpinned = false;
         String sql =
             "select * from daily_task where '$date'>=startDateTime and '$date'<=endDateTime and status='enable' order by random() limit 6";
         List<Map<String, dynamic>> list = await database.rawQuery(sql);
@@ -414,8 +425,8 @@ class _HomePageState extends State<HomePage> {
             _spinData.add(map);
           }
         }
-      }else{
-        _isSpinned=true;
+      } else {
+        _isSpinned = true;
       }
 
       if (showChallenge) {

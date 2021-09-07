@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:lurnify/config/data.dart';
-import 'package:lurnify/helper/helper.dart';
-import 'package:lurnify/model/model.dart';
-import 'package:lurnify/ui/constant/ApiConstant.dart';
-import 'package:lurnify/ui/constant/constant.dart';
-import 'package:lurnify/ui/screen/screen.dart';
+import '../../../helper/DBHelper.dart';
+import '../../../config/data.dart';
+import '../../../model/chapters.dart';
+import '../../../model/subject.dart';
+import '../../../model/topics.dart';
+import '../../constant/constant.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:lottie/lottie.dart';
-import 'package:http/http.dart' as http;
 import 'package:sqflite/sqflite.dart';
-import 'dart:convert';
 import 'dart:math' as math;
 
 import '../../../model/units.dart';
+import 'starttimer.dart';
+import 'syncyourtime.dart';
 
 class ContentSelect extends StatefulWidget {
   final String pageKey;

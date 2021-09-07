@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
-import 'package:lurnify/helper/helper.dart';
+import 'package:lurnify/helper/StudyRepo.dart';
 import 'package:lurnify/ui/constant/constant.dart';
 import 'package:lurnify/ui/screen/selfstudy/studycomplete.dart';
 import 'package:material_switch/material_switch.dart';

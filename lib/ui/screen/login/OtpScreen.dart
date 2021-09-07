@@ -7,16 +7,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:lurnify/helper/DBHelper.dart';
-import 'package:lurnify/model/model.dart';
-import 'package:lurnify/ui/constant/ApiConstant.dart';
-import 'package:lurnify/ui/constant/constant.dart';
-import 'package:lurnify/ui/home-page.dart';
-import 'package:lurnify/widgets/widget.dart';
-import 'package:lurnify/ui/screen/screen.dart';
+import 'package:lurnify/widgets/componants/custom-alert.dart';
+import '../../../helper/DBHelper.dart';
+import '../../../model/chapters.dart';
+import '../../../model/course.dart';
+import '../../../model/register.dart';
+import '../../../model/subject.dart';
+import '../../../model/topics.dart';
+import '../../../model/units.dart';
+import '../../constant/ApiConstant.dart';
+import '../../constant/constant.dart';
+import '../../home-page.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
+
+import 'CourseGroup.dart';
 
 class OtpScreen extends StatefulWidget {
   final String mobile;
@@ -337,9 +343,7 @@ class _OtpScreenState extends State<OtpScreen>
 //            color: Colors.grey.withOpacity(0.4),
           border: Border(
               bottom: BorderSide(
-        width: 2.0,
-        color: isDark ? Colors.white: Colors.black87
-      ))),
+                  width: 2.0, color: isDark ? Colors.white : Colors.black87))),
     );
   }
 
@@ -494,10 +498,10 @@ class _OtpScreenState extends State<OtpScreen>
       // ignore: await_only_futures
       final User currentUser = await _auth.currentUser;
       if (user.user.uid == currentUser.uid) {
-        String url=baseUrl+"checkIfUserExist?mobile=$mobile";
+        String url = baseUrl + "checkIfUserExist?mobile=$mobile";
         http.Response response = await http.post(Uri.encodeFull(url));
-        var body=jsonDecode(response.body);
-        if(body['result']==true){
+        var body = jsonDecode(response.body);
+        if (body['result'] == true) {
           SharedPreferences sp = await SharedPreferences.getInstance();
           sp.setString("mobile", mobile.toString());
           sp.setString("courseSno", body['courseSno']);
@@ -577,80 +581,84 @@ class _OtpScreenState extends State<OtpScreen>
             }
           }
 
+          String registerSno = sp.getString("studentSno");
 
-          String registerSno=sp.getString("studentSno");
-
-
-
-          FirebaseFirestore.instance.collection("dimes")
-              .where('registerSno',isEqualTo:registerSno)
-              .get().then((QuerySnapshot snapshot) {
+          FirebaseFirestore.instance
+              .collection("dimes")
+              .where('registerSno', isEqualTo: registerSno)
+              .get()
+              .then((QuerySnapshot snapshot) {
             snapshot.docs.forEach((f) {
               batch.insert('dimes', f.data());
             });
           });
           print("dimes inserted");
-          FirebaseFirestore.instance.collection("dueTopicTests")
-              .where('registerSno',isEqualTo:registerSno)
-              .get().then((QuerySnapshot snapshot) {
+          FirebaseFirestore.instance
+              .collection("dueTopicTests")
+              .where('registerSno', isEqualTo: registerSno)
+              .get()
+              .then((QuerySnapshot snapshot) {
             snapshot.docs.forEach((f) {
               batch.insert('due_topic_test', f.data());
             });
           });
           print("dueTopicTests inserted");
-          FirebaseFirestore.instance.collection("recentStudy")
-              .where('registrationSno',isEqualTo:registerSno)
-              .get().then((QuerySnapshot snapshot) {
+          FirebaseFirestore.instance
+              .collection("recentStudy")
+              .where('registrationSno', isEqualTo: registerSno)
+              .get()
+              .then((QuerySnapshot snapshot) {
             snapshot.docs.forEach((f) {
               batch.insert('recent_study', f.data());
             });
           });
           print("recentStudy inserted");
-          FirebaseFirestore.instance.collection("study")
-              .where('register',isEqualTo:registerSno)
-              .get().then((QuerySnapshot snapshot) {
+          FirebaseFirestore.instance
+              .collection("study")
+              .where('register', isEqualTo: registerSno)
+              .get()
+              .then((QuerySnapshot snapshot) {
             snapshot.docs.forEach((f) {
               batch.insert('study', f.data());
             });
           });
           print("study inserted");
-          FirebaseFirestore.instance.collection("topicTestResult")
-              .where('regSno',isEqualTo:registerSno)
-              .get().then((QuerySnapshot snapshot) {
+          FirebaseFirestore.instance
+              .collection("topicTestResult")
+              .where('regSno', isEqualTo: registerSno)
+              .get()
+              .then((QuerySnapshot snapshot) {
             snapshot.docs.forEach((f) {
               batch.insert('topic_test_result', f.data());
             });
           });
           print("topicTestResult inserted");
 
-          FirebaseFirestore.instance.collection("pace")
-              .where('register',isEqualTo:registerSno)
-              .get().then((QuerySnapshot snapshot) {
+          FirebaseFirestore.instance
+              .collection("pace")
+              .where('register', isEqualTo: registerSno)
+              .get()
+              .then((QuerySnapshot snapshot) {
             snapshot.docs.forEach((f) {
               batch.insert('pace', f.data());
             });
           });
           print("topicTestResult inserted");
 
-
           batch.commit();
           _signUpToast("Login Successful");
 
-
           Navigator.pushAndRemoveUntil(
               context,
-              MaterialPageRoute(
-                  builder: (BuildContext context) => HomePage()),
+              MaterialPageRoute(builder: (BuildContext context) => HomePage()),
               ModalRoute.withName('/'));
-        }else{
+        } else {
           Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(
                   builder: (BuildContext context) => CourseGroup(mobile)),
               ModalRoute.withName('/'));
         }
-
-
       } else {
         _signUpToast("Invalid Otp");
       }

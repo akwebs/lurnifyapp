@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lurnify/config/data.dart';
-import 'package:lurnify/helper/helper.dart';
+import 'package:lurnify/helper/DBHelper.dart';
 import 'package:lurnify/widgets/componants/custom-button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
@@ -145,50 +145,49 @@ class _SpinnerClassState extends State<SpinnerClass> {
 // ),
 
   _updateDailyTask() async {
-   try{
-     SharedPreferences sp = await SharedPreferences.getInstance();
-     // var url = baseUrl +
-     //     "storeSpinData?registerSno=" +
-     //     sp.getString("studentSno") +
-     //     "&dailyTaskSno=" +
-     //     _spinData[_selected - 1]['sno'].toString();
-     // print(url);
-     // http.Response response = await http.post(
-     //   Uri.encodeFull(url),
-     // );
-     DBHelper dbHelper = new DBHelper();
-     Database database = await dbHelper.database;
-     String sql = "select sno from daily_task_completion "
-         "where registerSno='${sp.getString("studentSno")}' and spinDate='${DateTime.now().toString().split(" ")[0]}' ";
-     List<Map<String, dynamic>> list = await database.rawQuery(sql);
-     print("-----------------------------------$list");
-     if (list.isEmpty) {
-       String sql2 =
-           "insert into daily_task_completion (registerSno,dailyTaskSno,spinDate,status,enteredDate) "
-           "values('${sp.getString("studentSno")}','${_spinData[_selected - 1]['sno'].toString()}',"
-           "'${DateTime.now().toString().split(" ")[0]}',"
-           "'spined','${DateTime.now().toString()}')";
-       print(sql2);
-       await database.rawInsert(sql2);
-     } else {
+    try {
+      SharedPreferences sp = await SharedPreferences.getInstance();
+      // var url = baseUrl +
+      //     "storeSpinData?registerSno=" +
+      //     sp.getString("studentSno") +
+      //     "&dailyTaskSno=" +
+      //     _spinData[_selected - 1]['sno'].toString();
+      // print(url);
+      // http.Response response = await http.post(
+      //   Uri.encodeFull(url),
+      // );
+      DBHelper dbHelper = new DBHelper();
+      Database database = await dbHelper.database;
+      String sql = "select sno from daily_task_completion "
+          "where registerSno='${sp.getString("studentSno")}' and spinDate='${DateTime.now().toString().split(" ")[0]}' ";
+      List<Map<String, dynamic>> list = await database.rawQuery(sql);
+      print("-----------------------------------$list");
+      if (list.isEmpty) {
+        String sql2 =
+            "insert into daily_task_completion (registerSno,dailyTaskSno,spinDate,status,enteredDate) "
+            "values('${sp.getString("studentSno")}','${_spinData[_selected - 1]['sno'].toString()}',"
+            "'${DateTime.now().toString().split(" ")[0]}',"
+            "'spined','${DateTime.now().toString()}')";
+        print(sql2);
+        await database.rawInsert(sql2);
+      } else {
+        String sql2 =
+            "update daily_task_completion set dailyTaskSno='${_spinData[_selected - 1]['sno'].toString()}', status='spined' where registerSno='${sp.getString("studentSno")}' "
+            "and spinDate='${DateTime.now().toString().split(" ")[0]}'";
+        print(sql2);
+        await database.rawUpdate(sql2);
+      }
 
-       String sql2 =
-           "update daily_task_completion set dailyTaskSno='${_spinData[_selected - 1]['sno'].toString()}', status='spined' where registerSno='${sp.getString("studentSno")}' "
-           "and spinDate='${DateTime.now().toString().split(" ")[0]}'";
-       print(sql2);
-       await database.rawUpdate(sql2);
-     }
+      String s = "select * from daily_task_completion";
+      var a = await database.rawQuery(s);
+      print(a);
 
-     String s="select * from daily_task_completion";
-     var a = await database.rawQuery(s);
-     print(a);
+      Fluttertoast.showToast(msg: "Success");
 
-     Fluttertoast.showToast(msg: "Success");
-
-     _showSpinTask();
-   }catch(e){
-     print(e);
-   }
+      _showSpinTask();
+    } catch (e) {
+      print(e);
+    }
   }
 
   Future<void> _showSpinTask() async {

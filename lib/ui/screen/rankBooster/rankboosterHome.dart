@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:lurnify/config/data.dart';
-import 'package:lurnify/helper/helper.dart';
-import 'package:lurnify/ui/constant/constant.dart';
-import 'package:lurnify/ui/screen/rankBooster/createYourOwnTest.dart';
-import 'package:lurnify/widgets/componants/custom-button.dart';
-import 'package:lurnify/ui/screen/test/instructionPage.dart';
+import '../../../config/data.dart';
+import '../../../helper/due_topic_test_repo.dart';
+import '../../constant/constant.dart';
+import 'createYourOwnTest.dart';
+import '../../../widgets/componants/custom-button.dart';
+import '../test/instructionPage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smooth_star_rating/smooth_star_rating.dart';
 
