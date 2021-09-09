@@ -58,6 +58,7 @@ dependencies:
   cloud_firestore:
   image_picker: ^0.6.7+22
   firebase_storage: ^5.1.0
+  razorpay_flutter: ^1.2.7
 
 dev_dependencies:
   flutter_test:

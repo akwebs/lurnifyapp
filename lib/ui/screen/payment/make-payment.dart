@@ -1,32 +1,45 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lurnify/config/data.dart';
+import 'package:lurnify/helper/DBHelper.dart';
 import 'package:lurnify/ui/constant/constant.dart';
 import 'package:lurnify/widgets/componants/custom-alert.dart';
 import 'package:lurnify/widgets/componants/custom-expantion-tile.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:lurnify/ui/constant/ApiConstant.dart';
 import 'package:lurnify/widgets/componants/custom-button.dart';
 
 import 'package:http/http.dart' as http;
+import 'package:sqflite/sqflite.dart';
 
 class MakePayment extends StatefulWidget {
   final bool _isPaymentDone;
+
   MakePayment(this._isPaymentDone);
+
   @override
   _MakePaymentState createState() => _MakePaymentState(_isPaymentDone);
 }
 
 class _MakePaymentState extends State<MakePayment> {
+  static const platform = const MethodChannel("razorpay_flutter");
+  Razorpay _razorpay;
   final bool _isPaymentDone;
+
   _MakePaymentState(this._isPaymentDone);
+
   List _payment = [];
   String _totalAmount = "";
   String _discountedAmount = "";
   String validTill = "";
   String dateWithoutT = "";
+  String _courseName="";
+  String _mobile="";
+
   _getPayment() async {
     try {
       SharedPreferences sp = await SharedPreferences.getInstance();
@@ -43,28 +56,91 @@ class _MakePaymentState extends State<MakePayment> {
         validTill = _payment[0]['validTill'].toString();
         dateWithoutT = validTill.substring(0, 10);
       }
+
+      DBHelper dbHelper = new DBHelper();
+      Database database=await dbHelper.database;
+      String sql="select * from course";
+      List<Map<String,dynamic>> list=await database.rawQuery(sql);
+      for(var a in list){
+        _courseName=a['courseName'];
+      }
+      _mobile=sp.getString('mobile');
+
     } catch (e) {
       print(e);
     }
   }
 
-  // \u20B9 $_totalAmount
-  // \u20B9 $_discountedAmount
-  // Valid Till " + validTill
+  @override
+  void initState() {
+    super.initState();
+    _razorpay = Razorpay();
+    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
+    _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
+    _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _razorpay.clear();
+  }
+
+  void _openCheckout() async {
+    var options = {
+      'key': 'rzp_live_R1np7eYmGTALYA',
+      'amount': 200,
+      'name': 'Lurnify',
+      'description': _courseName,
+      'retry': {'enabled': true, 'max_count': 1},
+      'send_sms_hash': true,
+      'prefill': {'contact': _mobile, 'email': ''},
+      'external': {
+        'wallets': ['paytm']
+      }
+    };
+
+    try {
+      _razorpay.open(options);
+    } catch (e) {
+      debugPrint('Error: $e');
+    }
+  }
+
+  void _handlePaymentSuccess(PaymentSuccessResponse response) {
+    _makePayment();
+    print("SUCCESS: " + response.paymentId,);
+    Fluttertoast.showToast(
+        msg: "SUCCESS: " + response.paymentId, toastLength: Toast.LENGTH_SHORT);
+  }
+
+  void _handlePaymentError(PaymentFailureResponse response) {
+    print("ERROR: " + response.code.toString() + " - " + response.message,);
+    Fluttertoast.showToast(
+        msg: "ERROR: " + response.code.toString() + " - " + response.message,
+        toastLength: Toast.LENGTH_SHORT);
+  }
+
+  void _handleExternalWallet(ExternalWalletResponse response) {
+    print("EXTERNAL_WALLET: " + response.walletName);
+    Fluttertoast.showToast(
+        msg: "EXTERNAL_WALLET: " + response.walletName,
+        toastLength: Toast.LENGTH_SHORT);
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Money Matters"),
-        centerTitle: true,
-        elevation: 0,
-      ),
-      body: FutureBuilder(
-        future: _getPayment(),
-        builder: (BuildContext context, AsyncSnapshot snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            return SingleChildScrollView(
+    return FutureBuilder(
+      future: _getPayment(),
+      builder: (context, snapshot) {
+        if(snapshot.connectionState==ConnectionState.done){
+          return Scaffold(
+            appBar: AppBar(
+              title: Text("Money Matters"),
+              centerTitle: true,
+              elevation: 0,
+            ),
+            body: SingleChildScrollView(
               padding: EdgeInsets.all(10),
               physics: BouncingScrollPhysics(),
               child: Column(
@@ -142,46 +218,48 @@ class _MakePaymentState extends State<MakePayment> {
                   ),
                 ],
               ),
-            );
-          } else {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-        },
-      ),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(gradient: AppSlider.gradient[3]),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                'Net Payable Due = \u20B9 $_discountedAmount',
-                style: TextStyle(color: whiteColor),
+            ),
+            bottomNavigationBar: Container(
+              decoration: BoxDecoration(gradient: AppSlider.gradient[3]),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      'Net Payable Due = \u20B9 $_discountedAmount',
+                      style: TextStyle(color: whiteColor),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: CustomButton(
+                      btnClr: Colors.orange,
+                      brdRds: 50,
+                      buttonText: 'Pay \u20B9 $_discountedAmount Now',
+                      verpad: EdgeInsets.symmetric(vertical: 5, horizontal: 40),
+                      onPressed: () {
+                        _openCheckout();
+                        if (_isPaymentDone) {
+                          toastMethod("Payment Already done");
+                        } else {
+
+                        }
+                      },
+                    ),
+                  ),
+                ],
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: CustomButton(
-                btnClr: Colors.orange,
-                brdRds: 50,
-                buttonText: 'Pay \u20B9 $_discountedAmount Now',
-                verpad: EdgeInsets.symmetric(vertical: 5, horizontal: 40),
-                onPressed: () {
-                  if (_isPaymentDone) {
-                    toastMethod("Payment Already done");
-                  } else {
-                    _makePayment();
-                  }
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
+          );
+        }else{
+          return Center(
+            child: CircularProgressIndicator(color: Colors.black,),
+          );
+        }
+
+      }
     );
   }
 
