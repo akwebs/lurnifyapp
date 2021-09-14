@@ -146,7 +146,7 @@ class _SelectThePaceState extends State<SelectThePace> {
             'You Challange yourself to Complete your syllabus at most by...'.text.sm.center.lineHeight(1.5).make().p8().centered(),
             10.heightBox,
             [
-              (completionYear.text.bold.make().p8())
+              (completionYear.text.bold.make().p16())
                   .onInkTap(() {
                     showCupertinoModalPopup(
                         barrierColor: Colors.black54,
@@ -186,7 +186,7 @@ class _SelectThePaceState extends State<SelectThePace> {
                   .make()
                   .centered()
                   .p8(),
-              (completionMonth.text.bold.make().p8())
+              (completionMonth.text.bold.make().p16())
                   .onInkTap(() {
                     showCupertinoModalPopup(
                         barrierColor: Colors.black54,
@@ -235,7 +235,7 @@ class _SelectThePaceState extends State<SelectThePace> {
                   .make()
                   .centered()
                   .p8(),
-              (completionDay.text.bold.make().p8())
+              (completionDay.text.bold.make().p16())
                   .onInkTap(() {
                     showCupertinoModalPopup(
                         barrierColor: Colors.black54,
@@ -419,7 +419,7 @@ class _SelectThePaceState extends State<SelectThePace> {
           [
             ('Rank Challange'.text.white.xl.semiBold.makeCentered().p8()).box.color(Colors.deepPurple).make(),
             'You Challange yourself not to exceed your rank beyond'.text.sm.center.lineHeight(1.5).make().centered(),
-            (' $expectedRank'.text.bold.make().p8())
+            (' $expectedRank'.text.bold.make().p16())
                 .onInkTap(() {
                   showCupertinoModalPopup(
                       barrierColor: Colors.black54,
@@ -430,7 +430,7 @@ class _SelectThePaceState extends State<SelectThePace> {
                             [
                               ('Rank Challange'.text.xl.medium.makeCentered().p8()).box.color(Colors.deepPurple[200]).make(),
                               'You Challange yourself not to exceed your rank beyond'.text.sm.center.lineHeight(1.5).make().p8(),
-                              (expectedRank.text.bold.make().p8()).px12().card.elevation(10).roundedSM.make().centered().p4(),
+                              (expectedRank.text.bold.make().p16()).px12().card.elevation(10).roundedSM.make().centered().p4(),
                               // todo place the student selected coursename in below bracket
                               'in your (CourseName)'.text.sm.center.lineHeight(1.5).make().centered(),
                               20.heightBox,
