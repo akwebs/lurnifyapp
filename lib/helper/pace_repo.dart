@@ -1,16 +1,13 @@
-import 'package:lurnify/helper/DBHelper.dart';
+import 'package:lurnify/helper/db_helper.dart';
 import 'package:lurnify/model/pace.dart';
 import 'package:sqflite/sqflite.dart';
 
-class PaceRepo{
+class PaceRepo {
+  DBHelper dbHelper = DBHelper();
 
-
-  DBHelper dbHelper = new DBHelper();
-
-
-  insertIntoPace(Pace pace)async{
-    try{
-      Database db=await dbHelper.database;
+  insertIntoPace(Pace pace) async {
+    try {
+      Database db = await dbHelper.database;
       // String sql ="select * from pace";
       // List<Map<String,dynamic>> list=await db.rawQuery(sql);
       // if(list.isEmpty){
@@ -19,15 +16,15 @@ class PaceRepo{
       //
       // }
       db.insert('pace', pace.toJson());
-    }catch(e){
-      print('insertIntoPace : '+e.toString());
+    } catch (e) {
+      //print('insertIntoPace : ' + e.toString());
     }
   }
 
   Future<List<Map<String, dynamic>>> getPace() async {
     Database db = await dbHelper.database;
     String sql = "select * from pace";
-    print(sql);
+    //print(sql);
     var result = db.rawQuery(sql);
     return result;
   }

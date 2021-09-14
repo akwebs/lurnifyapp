@@ -1,10 +1,8 @@
-import 'package:lurnify/helper/DBHelper.dart';
+import 'package:lurnify/helper/db_helper.dart';
 import 'package:sqflite/sqflite.dart';
 
 class MyReportRepo {
-
-  DBHelper dbHelper = new DBHelper();
-
+  DBHelper dbHelper = DBHelper();
 
   Future<List<Map<String, dynamic>>> getMyReport(String regSno) async {
     Future<List<Map<String, dynamic>>> list;
@@ -29,32 +27,27 @@ class MyReportRepo {
           "left JOIN topic on chapter.sno=topic.chapterSno\r\n" +
           "where register.sno=$regSno GROUP BY `subject`.sno";
 
-
-
-      list=database.rawQuery(sql18);
-
-
+      list = database.rawQuery(sql18);
     } catch (e) {
-      print("My Report error : " + e.toString());
+      //print("My Report error : " + e.toString());
     }
 
     return list;
   }
 
-  getData()async{
-    try{
-      String sql="select * from register";
-      String sql2="select * from pace";
+  getData() async {
+    try {
+      String sql = "select * from register";
+      String sql2 = "select * from pace";
       Database database = await dbHelper.database;
 
-      var a =await database.rawQuery(sql);
-      var b =await database.rawQuery(sql2);
+      var a = await database.rawQuery(sql);
+      var b = await database.rawQuery(sql2);
 
-      print(a);
-      print(b);
-
-    }catch(e){
-      print(e.toString());
+      //print(a);
+      //print(b);
+    } catch (e) {
+      //print(e.toString());
     }
   }
 }

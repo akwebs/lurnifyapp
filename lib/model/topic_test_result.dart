@@ -1,5 +1,4 @@
-
-class TopicTestResult{
+class TopicTestResult {
   int sno;
   String answerMap;
   String correctQuestion;
@@ -19,27 +18,25 @@ class TopicTestResult{
   String status;
   String questionTiming;
 
-
   TopicTestResult(
       {this.sno,
-        this.answerMap,
-        this.correctQuestion,
-        this.enteredBy,
-        this.enteredDate,
-        this.resultNumber,
-        this.testPercent,
-        this.totalQuestion,
-        this.wrongQuestion,
-        this.regSno,
-        this.topicSno,
-        this.totalTestTime,
-        this.course,
-        this.subject,
-        this.unit,
-        this.chapter,
-        this.status,
-        this.questionTiming
-        });
+      this.answerMap,
+      this.correctQuestion,
+      this.enteredBy,
+      this.enteredDate,
+      this.resultNumber,
+      this.testPercent,
+      this.totalQuestion,
+      this.wrongQuestion,
+      this.regSno,
+      this.topicSno,
+      this.totalTestTime,
+      this.course,
+      this.subject,
+      this.unit,
+      this.chapter,
+      this.status,
+      this.questionTiming});
 
   TopicTestResult.fromJson(Map<String, dynamic> json) {
     sno = json['sno'];
@@ -63,26 +60,25 @@ class TopicTestResult{
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['sno'] = this.sno;
-    data['answerMap'] = this.answerMap;
-    data['correctQuestion'] = this.correctQuestion;
-    data['enteredBy'] = this.enteredBy;
-    data['enteredDate'] = this.enteredDate;
-    data['resultNumber'] = this.resultNumber;
-    data['testPercent'] = this.testPercent;
-    data['totalQuestion'] = this.totalQuestion;
-    data['wrongQuestion'] = this.wrongQuestion;
-    data['regSno'] = this.regSno;
-    data['topicSno'] = this.topicSno;
-    data['course'] = this.course;
-    data['subject'] = this.subject;
-    data['unit'] = this.unit;
-    data['chapter'] = this.chapter;
-    data['totalTestTime'] = this.totalTestTime;
-    data['status'] = this.status;
-    data['questionTiming'] = this.questionTiming;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['sno'] = sno;
+    data['answerMap'] = answerMap;
+    data['correctQuestion'] = correctQuestion;
+    data['enteredBy'] = enteredBy;
+    data['enteredDate'] = enteredDate;
+    data['resultNumber'] = resultNumber;
+    data['testPercent'] = testPercent;
+    data['totalQuestion'] = totalQuestion;
+    data['wrongQuestion'] = wrongQuestion;
+    data['regSno'] = regSno;
+    data['topicSno'] = topicSno;
+    data['course'] = course;
+    data['subject'] = subject;
+    data['unit'] = unit;
+    data['chapter'] = chapter;
+    data['totalTestTime'] = totalTestTime;
+    data['status'] = status;
+    data['questionTiming'] = questionTiming;
     return data;
   }
-
 }

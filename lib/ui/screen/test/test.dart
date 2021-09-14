@@ -7,26 +7,23 @@ import 'package:flutter/rendering.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter/services.dart';
 import 'package:lurnify/ui/constant/constant.dart';
-import 'package:lurnify/ui/screen/test/testSummary.dart';
+import 'package:lurnify/ui/screen/test/test_summary.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Test extends StatefulWidget {
   final Map<String, dynamic> testData;
   final String testType;
   final sno, course, subject, unit, chapter;
-  Test(this.testData, this.testType, this.sno, this.course, this.subject,
-      this.unit, this.chapter);
+  Test(this.testData, this.testType, this.sno, this.course, this.subject, this.unit, this.chapter);
   @override
-  _TestState createState() =>
-      _TestState(testData, testType, sno, course, subject, unit, chapter);
+  _TestState createState() => _TestState(testData, testType, sno, course, subject, unit, chapter);
 }
 
 class _TestState extends State<Test> with TickerProviderStateMixin {
   final Map<String, dynamic> testData;
   final String testType, sno, course, subject, unit, chapter;
-  _TestState(this.testData, this.testType, this.sno, this.course, this.subject,
-      this.unit, this.chapter);
-  int _index = 0,_currentPageIndex=0;
+  _TestState(this.testData, this.testType, this.sno, this.course, this.subject, this.unit, this.chapter);
+  int _index = 0, _currentPageIndex = 0;
   bool reviewLater = false;
   int selectedOptionIndex;
   Timer _timer;
@@ -36,10 +33,8 @@ class _TestState extends State<Test> with TickerProviderStateMixin {
   int _noOFQuestions;
   bool _isFirstQuestion = true;
   bool _isLastQuestion = false;
-  PageController _controller =
-      PageController(viewportFraction: 1, keepPage: true);
-  PageController _controllerList =
-      PageController(viewportFraction: 0.083, keepPage: true);
+  PageController _controller = PageController(viewportFraction: 1, keepPage: true);
+  PageController _controllerList = PageController(viewportFraction: 0.083, keepPage: true);
   AnimationController _controllerFloat;
   Map _answerMap = Map();
   Map _bookmarkMap = Map();
@@ -53,20 +48,13 @@ class _TestState extends State<Test> with TickerProviderStateMixin {
     Icons.info_outline,
     Icons.format_align_left_rounded,
   ];
-  static const List<String> iconsText = const [
-    "Submit",
-    "Current Section Instruction",
-    "Test Instruction"
-  ];
+  static const List<String> iconsText = const ["Submit", "Current Section Instruction", "Test Instruction"];
   DateTime _currentBackPressTime;
   Future<bool> _onWillPop() {
     DateTime now = DateTime.now();
-    if (_currentBackPressTime == null ||
-        now.difference(_currentBackPressTime) > Duration(seconds: 2)) {
+    if (_currentBackPressTime == null || now.difference(_currentBackPressTime) > Duration(seconds: 2)) {
       _currentBackPressTime = now;
-      Fluttertoast.showToast(
-          msg: 'Press BACK again to exit Test',
-          toastLength: Toast.LENGTH_SHORT);
+      Fluttertoast.showToast(msg: 'Press BACK again to exit Test', toastLength: Toast.LENGTH_SHORT);
       return Future.value(false);
     }
     return Future.value(true);
@@ -110,14 +98,10 @@ class _TestState extends State<Test> with TickerProviderStateMixin {
           } else {
             _totalSecond = _totalSecond + 1;
             _TEST_TIMER_INSECONDS = _TEST_TIMER_INSECONDS - 1;
-            _FORMATTED_TEST_DURATION =
-                _formatDuration(Duration(seconds: _TEST_TIMER_INSECONDS));
+            _FORMATTED_TEST_DURATION = _formatDuration(Duration(seconds: _TEST_TIMER_INSECONDS));
             // _questionTime = _questionTime + 1;
 
-              _questionTiming.update(_testQuestions[_currentPageIndex]['sno'].toString(),
-                      (value) => value + 1,
-                  ifAbsent: () => 1);
-
+            _questionTiming.update(_testQuestions[_currentPageIndex]['sno'].toString(), (value) => value + 1, ifAbsent: () => 1);
           }
         },
       ),
@@ -218,17 +202,14 @@ class _TestState extends State<Test> with TickerProviderStateMixin {
             child: new ScaleTransition(
                 scale: new CurvedAnimation(
                   parent: _controllerFloat,
-                  curve: new Interval(0.0, 1.0 - index / icons.length / 2.0,
-                      curve: Curves.fastOutSlowIn),
+                  curve: new Interval(0.0, 1.0 - index / icons.length / 2.0, curve: Curves.fastOutSlowIn),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Container(
                       padding: EdgeInsets.all(5),
-                      decoration: BoxDecoration(
-                          color: Colors.black54,
-                          borderRadius: BorderRadius.circular(5)),
+                      decoration: BoxDecoration(color: Colors.black54, borderRadius: BorderRadius.circular(5)),
                       child: Text(
                         iconsText[index],
                         style: TextStyle(color: Colors.white),
@@ -256,11 +237,9 @@ class _TestState extends State<Test> with TickerProviderStateMixin {
                 animation: _controllerFloat,
                 builder: (BuildContext context, Widget child) {
                   return new Transform(
-                    transform: new Matrix4.rotationZ(
-                        _controllerFloat.value * 0.5 * math.pi),
+                    transform: new Matrix4.rotationZ(_controllerFloat.value * 0.5 * math.pi),
                     alignment: FractionalOffset.center,
-                    child: new Icon(
-                        _controllerFloat.isDismissed ? Icons.add : Icons.close),
+                    child: new Icon(_controllerFloat.isDismissed ? Icons.add : Icons.close),
                   );
                 },
               ),
@@ -294,9 +273,7 @@ class _TestState extends State<Test> with TickerProviderStateMixin {
                 Container(
                   width: MediaQuery.of(context).size.width * 5 / 10,
                   padding: EdgeInsets.all(5),
-                  decoration: BoxDecoration(
-                      border: Border.all(color: firstColor),
-                      borderRadius: BorderRadius.circular(5)),
+                  decoration: BoxDecoration(border: Border.all(color: firstColor), borderRadius: BorderRadius.circular(5)),
                   margin: EdgeInsets.only(left: 10),
                   child: DropdownButtonHideUnderline(
                     child: DropdownButton<String>(
@@ -368,12 +345,10 @@ class _TestState extends State<Test> with TickerProviderStateMixin {
         scrollDirection: Axis.horizontal,
         itemCount: _noOFQuestions,
         onPageChanged: (i) {
-          _currentPageIndex=i;
+          _currentPageIndex = i;
           HapticFeedback.selectionClick();
           if (i > 10) {
-            _controllerList.animateToPage(i,
-                curve: Curves.decelerate,
-                duration: Duration(milliseconds: 300));
+            _controllerList.animateToPage(i, curve: Curves.decelerate, duration: Duration(milliseconds: 300));
           }
           setState(() {
             _index = i;
@@ -386,7 +361,6 @@ class _TestState extends State<Test> with TickerProviderStateMixin {
               _isLastQuestion = false;
             }
             //-------------------//
-
           });
         },
         itemBuilder: (context, i) {
@@ -408,16 +382,11 @@ class _TestState extends State<Test> with TickerProviderStateMixin {
                           Container(
                             height: 25,
                             width: 25,
-                            decoration: BoxDecoration(
-                                color: firstColor,
-                                border: Border.all(color: firstColor)),
+                            decoration: BoxDecoration(color: firstColor, border: Border.all(color: firstColor)),
                             child: Center(
                                 child: Text(
                               (i + 1).toString(),
-                              style: TextStyle(
-                                  color: whiteColor,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500),
+                              style: TextStyle(color: whiteColor, fontSize: 14, fontWeight: FontWeight.w500),
                             )),
                           ),
                           SizedBox(
@@ -441,9 +410,7 @@ class _TestState extends State<Test> with TickerProviderStateMixin {
                           ),
                           Text(
                             "4",
-                            style: TextStyle(
-                                color: Colors.black54,
-                                fontWeight: FontWeight.w600),
+                            style: TextStyle(color: Colors.black54, fontWeight: FontWeight.w600),
                           ),
                           SizedBox(
                             width: 5,
@@ -457,10 +424,7 @@ class _TestState extends State<Test> with TickerProviderStateMixin {
                             child: Center(
                                 child: Text(
                               'X',
-                              style: TextStyle(
-                                  color: whiteColor,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500),
+                              style: TextStyle(color: whiteColor, fontSize: 14, fontWeight: FontWeight.w500),
                             )),
                           ),
                           SizedBox(
@@ -468,33 +432,26 @@ class _TestState extends State<Test> with TickerProviderStateMixin {
                           ),
                           Text(
                             "1",
-                            style: TextStyle(
-                                color: Colors.black54,
-                                fontWeight: FontWeight.w600),
+                            style: TextStyle(color: Colors.black54, fontWeight: FontWeight.w600),
                           ),
                           Spacer(),
                           Text(
                             "Review Later",
-                            style: TextStyle(
-                                color: Colors.black87,
-                                fontWeight: FontWeight.w600),
+                            style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w600),
                           ),
                           SizedBox(
                             height: 25,
                             width: 25,
                             child: Checkbox(
-                              materialTapTargetSize:
-                                  MaterialTapTargetSize.shrinkWrap,
+                              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                               activeColor: firstColor,
                               checkColor: whiteColor,
                               onChanged: (value) {
                                 setState(() {
-                                  if (_bookmarkMap[_testQuestions[i]['sno']] ==
-                                      "true") {
+                                  if (_bookmarkMap[_testQuestions[i]['sno']] == "true") {
                                     reviewLater = false;
 //                                  _bookmarkMap.update(_testData[i]['sno'], (value) => "false",ifAbsent: () => "false",);
-                                    _bookmarkMap
-                                        .remove(_testQuestions[i]['sno']);
+                                    _bookmarkMap.remove(_testQuestions[i]['sno']);
                                   } else {
                                     reviewLater = true;
                                     _bookmarkMap.update(
@@ -506,10 +463,7 @@ class _TestState extends State<Test> with TickerProviderStateMixin {
                                   //
                                 });
                               },
-                              value: _bookmarkMap[_testQuestions[i]['sno']] ==
-                                      "true"
-                                  ? true
-                                  : false,
+                              value: _bookmarkMap[_testQuestions[i]['sno']] == "true" ? true : false,
                             ),
                           ),
                         ],
@@ -520,13 +474,7 @@ class _TestState extends State<Test> with TickerProviderStateMixin {
                           child: Row(
                             children: [
                               Expanded(
-                                child: Image.memory(
-                                    base64.decode(_testQuestions[i]
-                                                ['encodedImage'] ==
-                                            null
-                                        ? ""
-                                        : _testQuestions[i]['encodedImage']),
-                                    gaplessPlayback: true),
+                                child: Image.memory(base64.decode(_testQuestions[i]['encodedImage'] == null ? "" : _testQuestions[i]['encodedImage']), gaplessPlayback: true),
                               )
                             ],
                           ),
@@ -535,8 +483,7 @@ class _TestState extends State<Test> with TickerProviderStateMixin {
                       Expanded(
                         child: Center(
                           child: ListView.builder(
-                            itemCount:
-                                int.parse(_testQuestions[i]['noOfOptions']),
+                            itemCount: int.parse(_testQuestions[i]['noOfOptions']),
                             scrollDirection: Axis.horizontal,
                             shrinkWrap: true,
                             primary: false,
@@ -552,51 +499,32 @@ class _TestState extends State<Test> with TickerProviderStateMixin {
                                   });
                                 },
                                 child: Container(
-                                  width: MediaQuery.of(context).size.width *
-                                      2 /
-                                      10,
+                                  width: MediaQuery.of(context).size.width * 2 / 10,
                                   child: Column(
                                     children: [
                                       Container(
                                         padding: EdgeInsets.all(10),
                                         decoration: BoxDecoration(
-                                          border: Border.all(
-                                              color: _answerMap[
-                                                          _testQuestions[i]
-                                                              ['sno']] !=
-                                                      j + 1
-                                                  ? Colors.transparent
-                                                  : Colors.green),
+                                          border: Border.all(color: _answerMap[_testQuestions[i]['sno']] != j + 1 ? Colors.transparent : Colors.green),
                                           shape: BoxShape.circle,
                                         ),
                                         child: Container(
                                           child: CircleAvatar(
                                             radius: 30,
-                                            backgroundColor: _answerMap[
-                                                        _testQuestions[i]
-                                                            ['sno']] !=
-                                                    j + 1
-                                                ? Colors.white
-                                                : Colors.green,
+                                            backgroundColor: _answerMap[_testQuestions[i]['sno']] != j + 1 ? Colors.white : Colors.green,
                                             child: Text(
                                               (j + 1).toString(),
                                               style: TextStyle(
                                                 fontSize: 20,
                                                 fontWeight: FontWeight.bold,
-                                                color: _answerMap[
-                                                            _testQuestions[i]
-                                                                ['sno']] !=
-                                                        j + 1
-                                                    ? firstColor
-                                                    : whiteColor,
+                                                color: _answerMap[_testQuestions[i]['sno']] != j + 1 ? firstColor : whiteColor,
                                               ),
                                             ),
                                           ),
                                           decoration: new BoxDecoration(
                                             boxShadow: [
                                               BoxShadow(
-                                                color: Colors.black
-                                                    .withOpacity(0.2),
+                                                color: Colors.black.withOpacity(0.2),
                                                 offset: const Offset(
                                                   0.0,
                                                   5.0,
@@ -684,9 +612,7 @@ class _TestState extends State<Test> with TickerProviderStateMixin {
             padding: EdgeInsets.only(left: 5, top: 5),
             child: GestureDetector(
               onTap: () {
-                _controller.animateToPage(i,
-                    curve: Curves.decelerate,
-                    duration: Duration(milliseconds: 300));
+                _controller.animateToPage(i, curve: Curves.decelerate, duration: Duration(milliseconds: 300));
               },
               child: Container(
                 height: 25,
@@ -737,24 +663,16 @@ class _TestState extends State<Test> with TickerProviderStateMixin {
                 ),
                 Text(
                   "Previous",
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 0.8),
+                  style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 0.8),
                 ),
               ],
             ),
             onPressed: () {
               if (_isFirstQuestion) {
               } else {
-                _controller.animateToPage(_index - 1,
-                    curve: Curves.decelerate,
-                    duration: Duration(milliseconds: 300));
+                _controller.animateToPage(_index - 1, curve: Curves.decelerate, duration: Duration(milliseconds: 300));
                 if (_index > 10) {
-                  _controllerList.animateToPage(_index - 1,
-                      curve: Curves.decelerate,
-                      duration: Duration(milliseconds: 300));
+                  _controllerList.animateToPage(_index - 1, curve: Curves.decelerate, duration: Duration(milliseconds: 300));
                 }
               }
             },
@@ -814,11 +732,7 @@ class _TestState extends State<Test> with TickerProviderStateMixin {
               children: [
                 Text(
                   "Next",
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 0.8),
+                  style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 0.8),
                 ),
                 Icon(
                   Icons.arrow_forward,
@@ -830,13 +744,9 @@ class _TestState extends State<Test> with TickerProviderStateMixin {
             onPressed: () {
               if (_isLastQuestion) {
               } else {
-                _controller.animateToPage(_index + 1,
-                    curve: Curves.decelerate,
-                    duration: Duration(milliseconds: 300));
+                _controller.animateToPage(_index + 1, curve: Curves.decelerate, duration: Duration(milliseconds: 300));
                 if (_index > 10) {
-                  _controllerList.animateToPage(_index - 1,
-                      curve: Curves.decelerate,
-                      duration: Duration(milliseconds: 300));
+                  _controllerList.animateToPage(_index - 1, curve: Curves.decelerate, duration: Duration(milliseconds: 300));
                 }
               }
             },
@@ -887,35 +797,15 @@ class _TestState extends State<Test> with TickerProviderStateMixin {
   _floatingButtonClick(int index) async {
     _controllerFloat.reverse();
     if (index == 0) {
-
       Navigator.of(context).push(
         MaterialPageRoute(
-          builder: (context) => TestSummary(
-              _testQuestions,
-              _answerMap,
-              _bookmarkMap,
-              _FORMATTED_TEST_DURATION,
-              sno,
-              testType,
-              course,
-              subject,
-              unit,
-              chapter,
-              _totalSecond,
-              _questionTiming),
+          builder: (context) => TestSummary(_testQuestions, _answerMap, _bookmarkMap, _FORMATTED_TEST_DURATION, sno, testType, course, subject, unit, chapter, _totalSecond, _questionTiming),
         ),
       );
     }
   }
 
   void toastMethod(String message) {
-    Fluttertoast.showToast(
-        msg: message,
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        timeInSecForIosWeb: 1,
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-        fontSize: 12.0);
+    Fluttertoast.showToast(msg: message, toastLength: Toast.LENGTH_SHORT, gravity: ToastGravity.BOTTOM, timeInSecForIosWeb: 1, backgroundColor: Colors.red, textColor: Colors.white, fontSize: 12.0);
   }
 }

@@ -5,11 +5,11 @@ import 'package:path/path.dart' as Path;
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:lurnify/helper/DBHelper.dart';
+import 'package:lurnify/helper/db_helper.dart';
 import 'package:lurnify/ui/constant/constant.dart';
 import 'package:lurnify/ui/constant/routes.dart';
-import 'package:lurnify/ui/screen/myProgress/subject-unit.dart';
-import 'package:lurnify/ui/screen/socialGroup/social-group.dart';
+import 'package:lurnify/ui/screen/myProgress/subject_unit.dart';
+import 'package:lurnify/ui/screen/socialGroup/social_group.dart';
 import 'package:lurnify/widgets/componants/componants.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -24,58 +24,54 @@ class UserProfile extends StatefulWidget {
 }
 
 class _UserProfileState extends State<UserProfile> {
+  String _completedTopics = "0";
+  String _completedChapters = "0";
+  String _completedUnits = "0";
+  double _perDatStudyHour = 0;
+  List<Map<String, dynamic>> _streaks = [];
 
-  String _completedTopics="0";
-  String _completedChapters="0";
-  String _completedUnits="0";
-  double _perDatStudyHour=0;
-  List<Map<String,dynamic>> _streaks=[];
-
-
-  _getData()async{
+  _getData() async {
     DBHelper dbHelper = new DBHelper();
     Database db = await dbHelper.database;
-    db.transaction((txn) async{
-      String sql="select count(sno) as completedUnits from completed_units";
-      List<Map<String,dynamic>> list =await txn.rawQuery(sql);
+    db.transaction((txn) async {
+      String sql = "select count(sno) as completedUnits from completed_units";
+      List<Map<String, dynamic>> list = await txn.rawQuery(sql);
 
-      String sql2="select count(sno) as completedChapters from completed_chapters";
-      List<Map<String,dynamic>> list2 =await txn.rawQuery(sql2);
+      String sql2 = "select count(sno) as completedChapters from completed_chapters";
+      List<Map<String, dynamic>> list2 = await txn.rawQuery(sql2);
 
-      String sql3="select count(sno) as completedTopics from study"
+      String sql3 = "select count(sno) as completedTopics from study"
           " where topic_completion_status='Complete' "
           "and revision='0' "
           "group by topicSno";
-      List<Map<String,dynamic>> list3 =await txn.rawQuery(sql3);
+      List<Map<String, dynamic>> list3 = await txn.rawQuery(sql3);
 
-      String perDayStudyHour="0";
-      String sql4="select perDayStudyHour from pace";
-      List<Map<String,dynamic>> list4 =await txn.rawQuery(sql4);
-      for(var a in list4){
-        perDayStudyHour=a['perDayStudyHour'];
+      String perDayStudyHour = "0";
+      String sql4 = "select perDayStudyHour from pace";
+      List<Map<String, dynamic>> list4 = await txn.rawQuery(sql4);
+      for (var a in list4) {
+        perDayStudyHour = a['perDayStudyHour'];
       }
-      _perDatStudyHour=double.tryParse(perDayStudyHour);
+      _perDatStudyHour = double.tryParse(perDayStudyHour);
 
-      String sql5="SELECT sum(totalSecond)/3600 as totalSecond FROM study WHERE date > (SELECT DATETIME('now', '-7 day') group by date)";
+      String sql5 = "SELECT sum(totalSecond)/3600 as totalSecond FROM study WHERE date > (SELECT DATETIME('now', '-7 day') group by date)";
       _streaks = await txn.rawQuery(sql5);
 
-
-      for(var a in list){
-        _completedUnits=a['completedUnits'].toString();
+      for (var a in list) {
+        _completedUnits = a['completedUnits'].toString();
       }
 
-      for(var a in list2){
-        _completedChapters=a['completedChapters'].toString();
+      for (var a in list2) {
+        _completedChapters = a['completedChapters'].toString();
       }
 
-      for(var a in list3){
-        _completedTopics=a['completedTopics'].toString();
+      for (var a in list3) {
+        _completedTopics = a['completedTopics'].toString();
       }
 
       return null;
     });
   }
-
 
   @override
   void initState() {
@@ -99,8 +95,8 @@ class _UserProfileState extends State<UserProfile> {
       ),
       body: FutureBuilder(
         future: _getData(),
-        builder: (context,snapshot){
-          if(snapshot.connectionState==ConnectionState.done){
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
             return SingleChildScrollView(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -137,18 +133,14 @@ class _UserProfileState extends State<UserProfile> {
                                 padding: const EdgeInsets.only(bottom: 10),
                                 child: CircleAvatar(
                                   radius: 60,
-                                  backgroundImage:
-                                  AssetImage('assets/images/anshul.png'),
+                                  backgroundImage: AssetImage('assets/images/anshul.png'),
                                 ),
                               ),
                             ),
                           ),
                           Align(
                             alignment: Alignment.bottomCenter,
-                            child: SizedBox(
-                                height: 50,
-                                width: 50,
-                                child: Image.asset('assets/award.png')),
+                            child: SizedBox(height: 50, width: 50, child: Image.asset('assets/award.png')),
                           ),
                         ],
                       ),
@@ -171,13 +163,9 @@ class _UserProfileState extends State<UserProfile> {
                           alignment: Alignment.center,
                           children: [
                             Align(
-                              alignment: Alignment.lerp(
-                                  Alignment.centerLeft, Alignment.centerRight, 0.0),
+                              alignment: Alignment.lerp(Alignment.centerLeft, Alignment.centerRight, 0.0),
                               child: Container(
-                                child: CircleAvatar(
-                                    radius: 15,
-                                    backgroundImage:
-                                    AssetImage('assets/images/anshul.png')),
+                                child: CircleAvatar(radius: 15, backgroundImage: AssetImage('assets/images/anshul.png')),
                                 decoration: new BoxDecoration(
                                   shape: BoxShape.circle,
                                   border: new Border.all(
@@ -188,13 +176,9 @@ class _UserProfileState extends State<UserProfile> {
                               ),
                             ),
                             Align(
-                                alignment: Alignment.lerp(Alignment.centerLeft,
-                                    Alignment.centerRight, 0.15),
+                                alignment: Alignment.lerp(Alignment.centerLeft, Alignment.centerRight, 0.15),
                                 child: Container(
-                                  child: CircleAvatar(
-                                      radius: 15,
-                                      backgroundImage:
-                                      AssetImage('assets/images/anshul.png')),
+                                  child: CircleAvatar(radius: 15, backgroundImage: AssetImage('assets/images/anshul.png')),
                                   decoration: new BoxDecoration(
                                     shape: BoxShape.circle,
                                     border: new Border.all(
@@ -204,13 +188,9 @@ class _UserProfileState extends State<UserProfile> {
                                   ),
                                 )),
                             Align(
-                                alignment: Alignment.lerp(
-                                    Alignment.centerLeft, Alignment.centerRight, 0.3),
+                                alignment: Alignment.lerp(Alignment.centerLeft, Alignment.centerRight, 0.3),
                                 child: Container(
-                                  child: CircleAvatar(
-                                      radius: 15,
-                                      backgroundImage:
-                                      AssetImage('assets/images/anshul.png')),
+                                  child: CircleAvatar(radius: 15, backgroundImage: AssetImage('assets/images/anshul.png')),
                                   decoration: new BoxDecoration(
                                     shape: BoxShape.circle,
                                     border: new Border.all(
@@ -220,13 +200,9 @@ class _UserProfileState extends State<UserProfile> {
                                   ),
                                 )),
                             Align(
-                                alignment: Alignment.lerp(Alignment.centerLeft,
-                                    Alignment.centerRight, 0.45),
+                                alignment: Alignment.lerp(Alignment.centerLeft, Alignment.centerRight, 0.45),
                                 child: Container(
-                                  child: CircleAvatar(
-                                      radius: 15,
-                                      backgroundImage:
-                                      AssetImage('assets/images/anshul.png')),
+                                  child: CircleAvatar(radius: 15, backgroundImage: AssetImage('assets/images/anshul.png')),
                                   decoration: new BoxDecoration(
                                     shape: BoxShape.circle,
                                     border: new Border.all(
@@ -236,8 +212,7 @@ class _UserProfileState extends State<UserProfile> {
                                   ),
                                 )),
                             Align(
-                                alignment: Alignment.lerp(Alignment.centerLeft,
-                                    Alignment.centerRight, 0.60),
+                                alignment: Alignment.lerp(Alignment.centerLeft, Alignment.centerRight, 0.60),
                                 child: Container(
                                   child: CircleAvatar(
                                     foregroundColor: whiteColor,
@@ -267,8 +242,7 @@ class _UserProfileState extends State<UserProfile> {
                                   ),
                                 )),
                             Align(
-                              alignment: Alignment.lerp(
-                                  Alignment.centerLeft, Alignment.centerRight, 1.0),
+                              alignment: Alignment.lerp(Alignment.centerLeft, Alignment.centerRight, 1.0),
                               child: Icon(
                                 Icons.arrow_forward_ios_rounded,
                                 size: 18,
@@ -278,8 +252,7 @@ class _UserProfileState extends State<UserProfile> {
                         ),
                         decoration: new BoxDecoration(
                           borderRadius: BorderRadius.circular(50),
-                          border: new Border.all(
-                              width: 0.5, color: Colors.grey.withOpacity(0.5)),
+                          border: new Border.all(width: 0.5, color: Colors.grey.withOpacity(0.5)),
                         ),
                       ),
                     ),
@@ -309,8 +282,7 @@ class _UserProfileState extends State<UserProfile> {
                             ));
                           },
                           child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 20, horizontal: 8),
+                            padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 8),
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.end,
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -323,10 +295,7 @@ class _UserProfileState extends State<UserProfile> {
                                     children: [
                                       Text(
                                         _completedUnits,
-                                        style: TextStyle(
-                                            color: Colors.lightBlue,
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 18),
+                                        style: TextStyle(color: Colors.lightBlue, fontWeight: FontWeight.w600, fontSize: 18),
                                       ),
                                       SizedBox(
                                         height: 10,
@@ -352,10 +321,7 @@ class _UserProfileState extends State<UserProfile> {
                                     children: [
                                       Text(
                                         _completedChapters,
-                                        style: TextStyle(
-                                            color: Colors.lightGreen,
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 18),
+                                        style: TextStyle(color: Colors.lightGreen, fontWeight: FontWeight.w600, fontSize: 18),
                                       ),
                                       SizedBox(
                                         height: 10,
@@ -381,10 +347,7 @@ class _UserProfileState extends State<UserProfile> {
                                     children: [
                                       Text(
                                         _completedTopics,
-                                        style: TextStyle(
-                                            color: Colors.deepPurple[300],
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 18),
+                                        style: TextStyle(color: Colors.deepPurple[300], fontWeight: FontWeight.w600, fontSize: 18),
                                       ),
                                       SizedBox(
                                         height: 10,
@@ -406,8 +369,7 @@ class _UserProfileState extends State<UserProfile> {
                           thickness: 0.5,
                         ),
                         Padding(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 20, horizontal: 10),
+                          padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -420,10 +382,7 @@ class _UserProfileState extends State<UserProfile> {
                                   children: [
                                     Text(
                                       '2 Days',
-                                      style: TextStyle(
-                                          color: Colors.deepOrangeAccent,
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 18),
+                                      style: TextStyle(color: Colors.deepOrangeAccent, fontWeight: FontWeight.w600, fontSize: 18),
                                     ),
                                     SizedBox(
                                       height: 10,
@@ -455,8 +414,7 @@ class _UserProfileState extends State<UserProfile> {
                                 });
                           },
                           child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 5),
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -477,7 +435,7 @@ class _UserProfileState extends State<UserProfile> {
                 ],
               ),
             );
-          }else{
+          } else {
             return Center(
               child: CircularProgressIndicator(),
             );
@@ -489,13 +447,13 @@ class _UserProfileState extends State<UserProfile> {
         brdRds: 0,
         onPressed: () {
           Navigator.of(context).pop();
-          Navigator.of(context).pushNamed(select_pace);
+          Navigator.of(context).pushNamed(selectPace);
         },
       ),
     );
   }
 
-  Widget _customCircularIndicator(){
+  Widget _customCircularIndicator() {
     return SizedBox(
       height: 50,
       child: ListView.builder(
@@ -504,10 +462,10 @@ class _UserProfileState extends State<UserProfile> {
         primary: false,
         physics: NeverScrollableScrollPhysics(),
         itemCount: 7,
-        itemBuilder: (context,i){
-          double percent=0;
-          if(_streaks.asMap().containsKey(i)){
-            percent= _streaks[i]['totalSecond']/_perDatStudyHour;
+        itemBuilder: (context, i) {
+          double percent = 0;
+          if (_streaks.asMap().containsKey(i)) {
+            percent = _streaks[i]['totalSecond'] / _perDatStudyHour;
           }
           return Padding(
             padding: const EdgeInsets.only(left: 5),
@@ -516,14 +474,10 @@ class _UserProfileState extends State<UserProfile> {
               lineWidth: 3.0,
               animation: true,
               percent: percent,
-              backgroundColor:
-              Color.fromARGB(30, 128, 112, 254),
+              backgroundColor: Color.fromARGB(30, 128, 112, 254),
               circularStrokeCap: CircularStrokeCap.round,
               linearGradient: LinearGradient(
-                colors: <Color>[
-                  Colors.deepPurpleAccent,
-                  Colors.deepPurple
-                ],
+                colors: <Color>[Colors.deepPurpleAccent, Colors.deepPurple],
                 stops: <double>[0.25, 0.75],
               ),
             ),
@@ -532,8 +486,6 @@ class _UserProfileState extends State<UserProfile> {
       ),
     );
   }
-
-
 }
 
 class UserProfileEdit extends StatefulWidget {
@@ -550,7 +502,7 @@ class _UserProfileEditState extends State<UserProfileEdit> {
   final picker = ImagePicker();
 
   firebase_storage.Reference ref;
-  bool _savePressed=false;
+  bool _savePressed = false;
   CollectionReference _registerRef;
 
   @override
@@ -571,8 +523,7 @@ class _UserProfileEditState extends State<UserProfileEdit> {
       child: Container(
         clipBehavior: Clip.hardEdge,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+          borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
         ),
         height: MediaQuery.of(context).size.height * 8 / 10,
         child: Card(
@@ -621,17 +572,13 @@ class _UserProfileEditState extends State<UserProfileEdit> {
                             children: [
                               Text(
                                 'Name',
-                                style: TextStyle(
-                                    fontSize: 12,
-                                    color: _color2,
-                                    fontWeight: FontWeight.normal),
+                                style: TextStyle(fontSize: 12, color: _color2, fontWeight: FontWeight.normal),
                               ),
                               SizedBox(
                                 height: 8,
                               ),
                               Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   Expanded(
                                     child: Text(
@@ -643,9 +590,7 @@ class _UserProfileEditState extends State<UserProfileEdit> {
                                   ),
                                   GestureDetector(
                                       onTap: () {
-                                        Fluttertoast.showToast(
-                                            msg: 'Click edit name',
-                                            toastLength: Toast.LENGTH_SHORT);
+                                        Fluttertoast.showToast(msg: 'Click edit name', toastLength: Toast.LENGTH_SHORT);
                                       },
                                       child: Icon(
                                         Icons.edit,
@@ -658,17 +603,13 @@ class _UserProfileEditState extends State<UserProfileEdit> {
                               ),
                               Text(
                                 'Email',
-                                style: TextStyle(
-                                    fontSize: 12,
-                                    color: _color2,
-                                    fontWeight: FontWeight.normal),
+                                style: TextStyle(fontSize: 12, color: _color2, fontWeight: FontWeight.normal),
                               ),
                               SizedBox(
                                 height: 8,
                               ),
                               Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   Expanded(
                                     child: Text(
@@ -680,9 +621,7 @@ class _UserProfileEditState extends State<UserProfileEdit> {
                                   ),
                                   GestureDetector(
                                       onTap: () {
-                                        Fluttertoast.showToast(
-                                            msg: 'Click edit email',
-                                            toastLength: Toast.LENGTH_SHORT);
+                                        Fluttertoast.showToast(msg: 'Click edit email', toastLength: Toast.LENGTH_SHORT);
                                       },
                                       child: Icon(
                                         Icons.edit,
@@ -695,359 +634,279 @@ class _UserProfileEditState extends State<UserProfileEdit> {
                               ),
                               Text(
                                 'Phone Number',
-                                style: TextStyle(
-                                    fontSize: 12,
-                                    color: _color2,
-                                    fontWeight: FontWeight.normal),
+                                style: TextStyle(fontSize: 12, color: _color2, fontWeight: FontWeight.normal),
                               ),
                               SizedBox(height: 8),
-                              Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Expanded(
-                                      child: Text(
-                                        '0811888999',
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                        ),
-                                      ),
+                              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                                Expanded(
+                                  child: Text(
+                                    '0811888999',
+                                    style: TextStyle(
+                                      fontSize: 16,
                                     ),
-                                    GestureDetector(
-                                        onTap: () {
-                                          Fluttertoast.showToast(
-                                              msg: 'Click edit phone number',
-                                              toastLength: Toast.LENGTH_SHORT);
-                                        },
-                                        child: Icon(
-                                          Icons.edit,
-                                          size: 15,
-                                        )),
-                                  ]),
+                                  ),
+                                ),
+                                GestureDetector(
+                                    onTap: () {
+                                      Fluttertoast.showToast(msg: 'Click edit phone number', toastLength: Toast.LENGTH_SHORT);
+                                    },
+                                    child: Icon(
+                                      Icons.edit,
+                                      size: 15,
+                                    )),
+                              ]),
                               SizedBox(
                                 height: 24,
                               ),
                               Text(
                                 'Date of Birth',
-                                style: TextStyle(
-                                    fontSize: 12,
-                                    color: _color2,
-                                    fontWeight: FontWeight.normal),
+                                style: TextStyle(fontSize: 12, color: _color2, fontWeight: FontWeight.normal),
                               ),
                               SizedBox(
                                 height: 8,
                               ),
-                              Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Expanded(
-                                      child: Text(
-                                        '22/08/1996',
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                        ),
-                                      ),
+                              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                                Expanded(
+                                  child: Text(
+                                    '22/08/1996',
+                                    style: TextStyle(
+                                      fontSize: 16,
                                     ),
-                                    GestureDetector(
-                                        onTap: () {
-                                          Fluttertoast.showToast(
-                                              msg: 'Click edit email',
-                                              toastLength: Toast.LENGTH_SHORT);
-                                        },
-                                        child: Icon(
-                                          Icons.edit,
-                                          size: 15,
-                                        )),
-                                  ]),
+                                  ),
+                                ),
+                                GestureDetector(
+                                    onTap: () {
+                                      Fluttertoast.showToast(msg: 'Click edit email', toastLength: Toast.LENGTH_SHORT);
+                                    },
+                                    child: Icon(
+                                      Icons.edit,
+                                      size: 15,
+                                    )),
+                              ]),
                               SizedBox(
                                 height: 24,
                               ),
                               Text(
                                 'Father Name',
-                                style: TextStyle(
-                                    fontSize: 12,
-                                    color: _color2,
-                                    fontWeight: FontWeight.normal),
+                                style: TextStyle(fontSize: 12, color: _color2, fontWeight: FontWeight.normal),
                               ),
                               SizedBox(
                                 height: 8,
                               ),
-                              Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Expanded(
-                                      child: Text(
-                                        'Mr. Falcon John',
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                        ),
-                                      ),
+                              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                                Expanded(
+                                  child: Text(
+                                    'Mr. Falcon John',
+                                    style: TextStyle(
+                                      fontSize: 16,
                                     ),
-                                    GestureDetector(
-                                        onTap: () {
-                                          Fluttertoast.showToast(
-                                              msg: 'Click edit email',
-                                              toastLength: Toast.LENGTH_SHORT);
-                                        },
-                                        child: Icon(
-                                          Icons.edit,
-                                          size: 15,
-                                        )),
-                                  ]),
+                                  ),
+                                ),
+                                GestureDetector(
+                                    onTap: () {
+                                      Fluttertoast.showToast(msg: 'Click edit email', toastLength: Toast.LENGTH_SHORT);
+                                    },
+                                    child: Icon(
+                                      Icons.edit,
+                                      size: 15,
+                                    )),
+                              ]),
                               SizedBox(
                                 height: 24,
                               ),
                               Text(
                                 'Current Class',
-                                style: TextStyle(
-                                    fontSize: 12,
-                                    color: _color2,
-                                    fontWeight: FontWeight.normal),
+                                style: TextStyle(fontSize: 12, color: _color2, fontWeight: FontWeight.normal),
                               ),
                               SizedBox(
                                 height: 8,
                               ),
-                              Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Expanded(
-                                      child: Text(
-                                        'XI',
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                        ),
-                                      ),
+                              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                                Expanded(
+                                  child: Text(
+                                    'XI',
+                                    style: TextStyle(
+                                      fontSize: 16,
                                     ),
-                                    GestureDetector(
-                                        onTap: () {
-                                          Fluttertoast.showToast(
-                                              msg: 'Click edit email',
-                                              toastLength: Toast.LENGTH_SHORT);
-                                        },
-                                        child: Icon(
-                                          Icons.edit,
-                                          size: 15,
-                                        )),
-                                  ]),
+                                  ),
+                                ),
+                                GestureDetector(
+                                    onTap: () {
+                                      Fluttertoast.showToast(msg: 'Click edit email', toastLength: Toast.LENGTH_SHORT);
+                                    },
+                                    child: Icon(
+                                      Icons.edit,
+                                      size: 15,
+                                    )),
+                              ]),
                               SizedBox(
                                 height: 24,
                               ),
                               Text(
                                 'Target',
-                                style: TextStyle(
-                                    fontSize: 12,
-                                    color: _color2,
-                                    fontWeight: FontWeight.normal),
+                                style: TextStyle(fontSize: 12, color: _color2, fontWeight: FontWeight.normal),
                               ),
                               SizedBox(
                                 height: 8,
                               ),
-                              Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Expanded(
-                                      child: Text(
-                                        'JEE 2023',
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                        ),
-                                      ),
+                              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                                Expanded(
+                                  child: Text(
+                                    'JEE 2023',
+                                    style: TextStyle(
+                                      fontSize: 16,
                                     ),
-                                    GestureDetector(
-                                        onTap: () {
-                                          Fluttertoast.showToast(
-                                              msg: 'Click edit email',
-                                              toastLength: Toast.LENGTH_SHORT);
-                                        },
-                                        child: Icon(
-                                          Icons.edit,
-                                          size: 15,
-                                        )),
-                                  ]),
+                                  ),
+                                ),
+                                GestureDetector(
+                                    onTap: () {
+                                      Fluttertoast.showToast(msg: 'Click edit email', toastLength: Toast.LENGTH_SHORT);
+                                    },
+                                    child: Icon(
+                                      Icons.edit,
+                                      size: 15,
+                                    )),
+                              ]),
                               SizedBox(
                                 height: 24,
                               ),
                               Text(
                                 'School Name',
-                                style: TextStyle(
-                                    fontSize: 12,
-                                    color: _color2,
-                                    fontWeight: FontWeight.normal),
+                                style: TextStyle(fontSize: 12, color: _color2, fontWeight: FontWeight.normal),
                               ),
                               SizedBox(
                                 height: 8,
                               ),
-                              Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Expanded(
-                                      child: Text(
-                                        'Laowrence and Mayo',
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                        ),
-                                      ),
+                              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                                Expanded(
+                                  child: Text(
+                                    'Laowrence and Mayo',
+                                    style: TextStyle(
+                                      fontSize: 16,
                                     ),
-                                    GestureDetector(
-                                        onTap: () {
-                                          Fluttertoast.showToast(
-                                              msg: 'Click edit email',
-                                              toastLength: Toast.LENGTH_SHORT);
-                                        },
-                                        child: Icon(
-                                          Icons.edit,
-                                          size: 15,
-                                        )),
-                                  ]),
+                                  ),
+                                ),
+                                GestureDetector(
+                                    onTap: () {
+                                      Fluttertoast.showToast(msg: 'Click edit email', toastLength: Toast.LENGTH_SHORT);
+                                    },
+                                    child: Icon(
+                                      Icons.edit,
+                                      size: 15,
+                                    )),
+                              ]),
                               SizedBox(
                                 height: 24,
                               ),
                               Text(
                                 'Marks in 10th',
-                                style: TextStyle(
-                                    fontSize: 12,
-                                    color: _color2,
-                                    fontWeight: FontWeight.normal),
+                                style: TextStyle(fontSize: 12, color: _color2, fontWeight: FontWeight.normal),
                               ),
                               SizedBox(
                                 height: 8,
                               ),
-                              Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Expanded(
-                                      child: Text(
-                                        '9.2 CGPA',
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                        ),
-                                      ),
+                              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                                Expanded(
+                                  child: Text(
+                                    '9.2 CGPA',
+                                    style: TextStyle(
+                                      fontSize: 16,
                                     ),
-                                    GestureDetector(
-                                        onTap: () {
-                                          Fluttertoast.showToast(
-                                              msg: 'Click edit email',
-                                              toastLength: Toast.LENGTH_SHORT);
-                                        },
-                                        child: Icon(
-                                          Icons.edit,
-                                          size: 15,
-                                        )),
-                                  ]),
+                                  ),
+                                ),
+                                GestureDetector(
+                                    onTap: () {
+                                      Fluttertoast.showToast(msg: 'Click edit email', toastLength: Toast.LENGTH_SHORT);
+                                    },
+                                    child: Icon(
+                                      Icons.edit,
+                                      size: 15,
+                                    )),
+                              ]),
                               SizedBox(
                                 height: 24,
                               ),
                               Text(
                                 'Marks in 12th',
-                                style: TextStyle(
-                                    fontSize: 12,
-                                    color: _color2,
-                                    fontWeight: FontWeight.normal),
+                                style: TextStyle(fontSize: 12, color: _color2, fontWeight: FontWeight.normal),
                               ),
                               SizedBox(
                                 height: 8,
                               ),
-                              Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Expanded(
-                                      child: Text(
-                                        '- - -',
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                        ),
-                                      ),
+                              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                                Expanded(
+                                  child: Text(
+                                    '- - -',
+                                    style: TextStyle(
+                                      fontSize: 16,
                                     ),
-                                    GestureDetector(
-                                        onTap: () {
-                                          Fluttertoast.showToast(
-                                              msg: 'Click edit email',
-                                              toastLength: Toast.LENGTH_SHORT);
-                                        },
-                                        child: Icon(
-                                          Icons.edit,
-                                          size: 15,
-                                        )),
-                                  ]),
+                                  ),
+                                ),
+                                GestureDetector(
+                                    onTap: () {
+                                      Fluttertoast.showToast(msg: 'Click edit email', toastLength: Toast.LENGTH_SHORT);
+                                    },
+                                    child: Icon(
+                                      Icons.edit,
+                                      size: 15,
+                                    )),
+                              ]),
                               SizedBox(
                                 height: 24,
                               ),
                               Text(
                                 'Address',
-                                style: TextStyle(
-                                    fontSize: 12,
-                                    color: _color2,
-                                    fontWeight: FontWeight.normal),
+                                style: TextStyle(fontSize: 12, color: _color2, fontWeight: FontWeight.normal),
                               ),
                               SizedBox(
                                 height: 8,
                               ),
-                              Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Expanded(
-                                      child: Text(
-                                        'Kota, Rajasthan',
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                        ),
-                                      ),
+                              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                                Expanded(
+                                  child: Text(
+                                    'Kota, Rajasthan',
+                                    style: TextStyle(
+                                      fontSize: 16,
                                     ),
-                                    GestureDetector(
-                                        onTap: () {
-                                          Fluttertoast.showToast(
-                                              msg: 'Click edit email',
-                                              toastLength: Toast.LENGTH_SHORT);
-                                        },
-                                        child: Icon(
-                                          Icons.edit,
-                                          size: 15,
-                                        )),
-                                  ]),
+                                  ),
+                                ),
+                                GestureDetector(
+                                    onTap: () {
+                                      Fluttertoast.showToast(msg: 'Click edit email', toastLength: Toast.LENGTH_SHORT);
+                                    },
+                                    child: Icon(
+                                      Icons.edit,
+                                      size: 15,
+                                    )),
+                              ]),
                               SizedBox(
                                 height: 24,
                               ),
                               Text(
                                 'Email',
-                                style: TextStyle(
-                                    fontSize: 12,
-                                    color: _color2,
-                                    fontWeight: FontWeight.normal),
+                                style: TextStyle(fontSize: 12, color: _color2, fontWeight: FontWeight.normal),
                               ),
                               SizedBox(
                                 height: 8,
                               ),
-                              Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Expanded(
-                                      child: Text(
-                                        'robert.steven@ijteknologi.com',
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                        ),
-                                      ),
+                              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                                Expanded(
+                                  child: Text(
+                                    'robert.steven@ijteknologi.com',
+                                    style: TextStyle(
+                                      fontSize: 16,
                                     ),
-                                    GestureDetector(
-                                        onTap: () {
-                                          Fluttertoast.showToast(
-                                              msg: 'Click edit email',
-                                              toastLength: Toast.LENGTH_SHORT);
-                                        },
-                                        child: Icon(
-                                          Icons.edit,
-                                          size: 15,
-                                        )),
-                                  ]),
+                                  ),
+                                ),
+                                GestureDetector(
+                                    onTap: () {
+                                      Fluttertoast.showToast(msg: 'Click edit email', toastLength: Toast.LENGTH_SHORT);
+                                    },
+                                    child: Icon(
+                                      Icons.edit,
+                                      size: 15,
+                                    )),
+                              ]),
                             ],
                           ),
                         ),
@@ -1064,8 +923,7 @@ class _UserProfileEditState extends State<UserProfileEdit> {
   }
 
   Widget _createProfilePicture() {
-    final double profilePictureSize =
-        MediaQuery.of(context).size.width * 4 / 10;
+    final double profilePictureSize = MediaQuery.of(context).size.width * 4 / 10;
     return Align(
       alignment: Alignment.center,
       child: Container(
@@ -1080,7 +938,7 @@ class _UserProfileEditState extends State<UserProfileEdit> {
             children: [
               Container(
                 child: GestureDetector(
-                  onTap: (){
+                  onTap: () {
                     _chooseImage();
                   },
                   child: CircleAvatar(
@@ -1110,8 +968,7 @@ class _UserProfileEditState extends State<UserProfileEdit> {
               Container(
                 width: 30,
                 height: 30,
-                margin: EdgeInsets.only(
-                    top: 0, left: MediaQuery.of(context).size.width / 4),
+                margin: EdgeInsets.only(top: 0, left: MediaQuery.of(context).size.width / 4),
                 child: Card(
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
@@ -1140,9 +997,7 @@ class _UserProfileEditState extends State<UserProfileEdit> {
     Widget continueButton = TextButton(
         onPressed: () {
           Navigator.pop(context);
-          Fluttertoast.showToast(
-              msg: 'Click edit profile picture',
-              toastLength: Toast.LENGTH_SHORT);
+          Fluttertoast.showToast(msg: 'Click edit profile picture', toastLength: Toast.LENGTH_SHORT);
         },
         child: Text('Yes', style: TextStyle(color: firstColor)));
 
@@ -1155,8 +1010,7 @@ class _UserProfileEditState extends State<UserProfileEdit> {
         'Edit Profile Picture',
         style: TextStyle(fontSize: 18),
       ),
-      content: Text('Do you want to edit profile picture ?',
-          style: TextStyle(fontSize: 13, color: _color2)),
+      content: Text('Do you want to edit profile picture ?', style: TextStyle(fontSize: 13, color: _color2)),
       actions: [
         cancelButton,
         continueButton,
@@ -1173,9 +1027,11 @@ class _UserProfileEditState extends State<UserProfileEdit> {
   }
 
   _chooseImage() async {
-    final pickedFile = await picker.getImage(source: ImageSource.gallery,);
+    final pickedFile = await picker.getImage(
+      source: ImageSource.gallery,
+    );
     setState(() {
-      _selectedImage=File(pickedFile?.path);
+      _selectedImage = File(pickedFile?.path);
     });
     if (pickedFile.path == null) _retrieveLostData();
   }
@@ -1187,7 +1043,7 @@ class _UserProfileEditState extends State<UserProfileEdit> {
     }
     if (response.file != null) {
       setState(() {
-        _selectedImage=File(response.file.path);
+        _selectedImage = File(response.file.path);
       });
     } else {
       print(response.file);
@@ -1195,38 +1051,32 @@ class _UserProfileEditState extends State<UserProfileEdit> {
   }
 
   Future _uploadFile() async {
-    if(_savePressed){
-
-    }else if(_selectedImage==null){
+    if (_savePressed) {
+    } else if (_selectedImage == null) {
       Fluttertoast.showToast(msg: "Please select Image");
-    }else{
+    } else {
       setState(() {
-        _savePressed=true;
+        _savePressed = true;
       });
       SharedPreferences sp = await SharedPreferences.getInstance();
-      String register=sp.getString('studentSno');
-      ref = firebase_storage.FirebaseStorage.instance
-          .ref()
-          .child('images/${Path.basename(_selectedImage.path)}');
+      String register = sp.getString('studentSno');
+      ref = firebase_storage.FirebaseStorage.instance.ref().child('images/${Path.basename(_selectedImage.path)}');
       await ref.putFile(_selectedImage).whenComplete(() async {
         await ref.getDownloadURL().then((value) {
-          _registerRef.add({'url': value,'register':register}).whenComplete(() {
+          _registerRef.add({'url': value, 'register': register}).whenComplete(() {
             Fluttertoast.showToast(msg: "Saved");
             setState(() {
-              _savePressed=false;
+              _savePressed = false;
             });
           });
         });
       });
     }
-
   }
 }
 
 class _ProgressBar extends StatelessWidget {
-  const _ProgressBar(
-      {Key key, @required this.progressValue, @required this.task})
-      : super(key: key);
+  const _ProgressBar({Key key, @required this.progressValue, @required this.task}) : super(key: key);
 
   final double progressValue;
   final Widget task;
@@ -1262,9 +1112,7 @@ class _ProgressBar extends StatelessWidget {
               width: 0.1,
               sizeUnit: GaugeSizeUnit.factor,
               cornerStyle: CornerStyle.startCurve,
-              gradient: const SweepGradient(
-                  colors: <Color>[Colors.lightGreen, Colors.green],
-                  stops: <double>[0.25, 0.75])),
+              gradient: const SweepGradient(colors: <Color>[Colors.lightGreen, Colors.green], stops: <double>[0.25, 0.75])),
           MarkerPointer(
             markerHeight: 9,
             markerWidth: 9,
@@ -1277,4 +1125,3 @@ class _ProgressBar extends StatelessWidget {
     ]);
   }
 }
-

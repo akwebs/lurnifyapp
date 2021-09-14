@@ -2,16 +2,16 @@
 This is splash screen page
 Don't forget to add all images and sound used in this pages at the pubspec.yaml
  */
-
 import 'dart:async';
-
-import 'package:flutter/services.dart';
 import 'package:lurnify/ui/constant/routes.dart';
 import 'package:flutter/material.dart';
+import 'package:lurnify/ui/screen/screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 // import 'package:lottie/lottie.dart';
 
 class SplashScreenPage extends StatefulWidget {
+  const SplashScreenPage({Key key}) : super(key: key);
+
   @override
   _SplashScreenPageState createState() => _SplashScreenPageState();
 }
@@ -21,7 +21,7 @@ class _SplashScreenPageState extends State<SplashScreenPage> {
   int _second = 5; // set timer for 3 second and then direct to next page
   SharedPreferences sp;
   void _startTimer() {
-    const period = const Duration(seconds: 1);
+    const period = Duration(seconds: 1);
     _timer = Timer.periodic(period, (timer) {
       setState(() {
         _second--;
@@ -30,15 +30,12 @@ class _SplashScreenPageState extends State<SplashScreenPage> {
         _cancelFlashsaleTimer();
         if (sp.getBool("onboarding") != null) {
           if (sp.getString("studentSno") == null) {
-            Navigator.of(context)
-                .pushNamedAndRemoveUntil(Log_in, (route) => false);
+            Navigator.of(context).pushNamedAndRemoveUntil(logIn, (route) => false);
           } else {
-            Navigator.of(context)
-                .pushNamedAndRemoveUntil(home_page, (route) => false);
+            Navigator.of(context).pushNamedAndRemoveUntil(homePage, (route) => false);
           }
         } else {
-          Navigator.of(context)
-              .pushNamedAndRemoveUntil(on_boarding, (route) => false);
+          Navigator.of(context).pushNamedAndRemoveUntil(onBoarding, (route) => false);
         }
       }
     });
@@ -78,10 +75,8 @@ class _SplashScreenPageState extends State<SplashScreenPage> {
       onWillPop: () {
         return null;
       },
-      child: Container(
-        child: Center(
-          child: Image.asset('assets/images/logo_light.png', height: 200),
-        ),
+      child: Center(
+        child: Image.asset('assets/images/logo_light.png', height: 200),
       ),
     ));
   }

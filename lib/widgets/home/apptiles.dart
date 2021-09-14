@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:lurnify/config/data.dart';
-import 'package:lurnify/ui/screen/dareToDo/dareToDo.dart';
-import 'package:lurnify/ui/screen/myCourseContain/NewCourseContent.dart';
-import 'package:lurnify/ui/screen/myProgress/subject-unit.dart';
-import 'package:lurnify/ui/screen/myReport/my-report.dart';
-import 'package:lurnify/ui/screen/rankBooster/rankboosterHome.dart';
-import 'package:lurnify/ui/screen/selfstudy/selfstudy.dart';
-import 'package:lurnify/ui/screen/revisionZone/myRevision.dart';
-import 'package:lurnify/ui/screen/marketPlace/week-month.dart';
+import 'package:lurnify/ui/screen/dareToDo/dare_to_do.dart';
+import 'package:lurnify/ui/screen/myCourseContain/course_content.dart';
+import 'package:lurnify/ui/screen/myProgress/subject_unit.dart';
+import 'package:lurnify/ui/screen/myReport/my_report.dart';
+import 'package:lurnify/ui/screen/rankBooster/rank_booster_view.dart';
+import 'package:lurnify/ui/screen/selfstudy/self_study.dart';
+import 'package:lurnify/ui/screen/revisionZone/my_revision.dart';
+import 'package:lurnify/ui/screen/marketPlace/week_month.dart';
 
-import '../../ui/screen/marketPlace/purchased-item.dart';
+import '../../ui/screen/marketPlace/purchased_item.dart';
 
 class AppTiles extends StatelessWidget {
   final List pageKey;
@@ -103,8 +103,7 @@ class AppTiles extends StatelessWidget {
                                 // boxShadow: NewappColors.neumorpShadow,
                                 shape: BoxShape.circle,
                                 border: new Border.all(
-                                  color: AppColors.tileIconColors[index]
-                                      .withOpacity(0.2),
+                                  color: AppColors.tileIconColors[index].withOpacity(0.2),
                                   width: 1.0,
                                 ),
                               ),
@@ -114,8 +113,7 @@ class AppTiles extends StatelessWidget {
                           Expanded(
                             flex: 4,
                             child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 5),
+                              padding: const EdgeInsets.symmetric(horizontal: 5),
                               child: Text(
                                 AppTile.tileText[index],
                                 textAlign: TextAlign.center,

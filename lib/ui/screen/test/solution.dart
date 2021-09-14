@@ -5,16 +5,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lurnify/ui/constant/ApiConstant.dart';
 import 'package:lurnify/widgets/componants/custom-button.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class Solution extends StatefulWidget {
   final Map _answerMap, _bookmarkMap;
   final List _testData;
 
-  Solution(this._answerMap, this._bookmarkMap, this._testData);
+  const Solution(this._answerMap, this._bookmarkMap, this._testData, {Key key}) : super(key: key);
 
   @override
   _SolutionState createState() =>
+      // ignore: no_logic_in_create_state
       _SolutionState(_answerMap, _bookmarkMap, _testData);
 }
 
@@ -31,10 +31,8 @@ class _SolutionState extends State<Solution> {
   bool reviewLater = false;
   String _FORMATTED_TEST_DURATION;
   Map map = Map();
-  PageController _controller =
-      PageController(viewportFraction: 1, keepPage: true);
-  PageController _controllerList =
-      PageController(viewportFraction: 0.15, keepPage: true);
+  PageController _controller = PageController(viewportFraction: 1, keepPage: true);
+  PageController _controllerList = PageController(viewportFraction: 0.15, keepPage: true);
 
   @override
   void initState() {
@@ -55,41 +53,28 @@ class _SolutionState extends State<Solution> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            headingRow(),
-            questionRow(),
-            _questionNoRow(),
-            _buttonRow()
-          ],
-        ),
+    return SingleChildScrollView(
+      child: Column(
+        children: [headingRow(), questionRow(), _questionNoRow(), _buttonRow()],
       ),
     );
   }
 
   Widget headingRow() {
     return Container(
-      decoration: BoxDecoration(color: Colors.white, boxShadow: [
-        BoxShadow(
-            color: Colors.grey.withOpacity(0.4),
-            spreadRadius: 1,
-            blurRadius: 1,
-            offset: Offset(0, 1))
-      ]),
-      padding: EdgeInsets.all(10),
+      decoration: BoxDecoration(color: Colors.white, boxShadow: [BoxShadow(color: Colors.grey.withOpacity(0.4), spreadRadius: 1, blurRadius: 1, offset: const Offset(0, 1))]),
+      padding: const EdgeInsets.all(10),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Spacer(),
-          Icon(Icons.timer),
-          SizedBox(
+          const Spacer(),
+          const Icon(Icons.timer),
+          const SizedBox(
             width: 3,
           ),
           Text(
             _FORMATTED_TEST_DURATION,
-            style: TextStyle(
+            style: const TextStyle(
               color: Colors.red,
               fontSize: 15,
               fontWeight: FontWeight.w600,
@@ -102,20 +87,18 @@ class _SolutionState extends State<Solution> {
 
   Widget questionRow() {
     return Padding(
-      padding: EdgeInsets.all(0),
+      padding: const EdgeInsets.all(0),
       child: Container(
         height: MediaQuery.of(context).size.height * 6 / 10,
         width: MediaQuery.of(context).size.width,
-        padding: EdgeInsets.all(5),
+        padding: const EdgeInsets.all(5),
         child: PageView.builder(
           controller: _controller,
           scrollDirection: Axis.horizontal,
           itemCount: _noOFQuestions,
           onPageChanged: (i) {
             HapticFeedback.selectionClick();
-            _controllerList.animateToPage(i,
-                curve: Curves.decelerate,
-                duration: Duration(milliseconds: 300));
+            _controllerList.animateToPage(i, curve: Curves.decelerate, duration: const Duration(milliseconds: 300));
             setState(() {
               _index = i;
               if (i == 0) {
@@ -131,8 +114,7 @@ class _SolutionState extends State<Solution> {
           itemBuilder: (context, i) {
             bool _correction = false;
             if (_answerMap.containsKey(_testData[i]['sno'])) {
-              if (_answerMap[_testData[i]['sno']].toString() ==
-                  _testData[i]['answer']) {
+              if (_answerMap[_testData[i]['sno']].toString() == _testData[i]['answer']) {
                 _correction = true;
               } else {
                 _correction = false;
@@ -142,53 +124,43 @@ class _SolutionState extends State<Solution> {
               scale: i == _index ? 1 : 0.95,
               transformHitTests: true,
               child: Padding(
-                padding: EdgeInsets.all(5),
+                padding: const EdgeInsets.all(5),
                 child: Container(
-                  padding:
-                      EdgeInsets.only(left: 5, right: 5, top: 5, bottom: 5),
+                  padding: const EdgeInsets.only(left: 5, right: 5, top: 5, bottom: 5),
                   decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(5),
                       border: Border.all(color: Colors.white54),
-                      boxShadow: [
-                        BoxShadow(
-                            color: Colors.grey.withOpacity(0.4),
-                            blurRadius: 1,
-                            spreadRadius: 1,
-                            offset: Offset(0, 1))
-                      ]),
+                      boxShadow: [BoxShadow(color: Colors.grey.withOpacity(0.4), blurRadius: 1, spreadRadius: 1, offset: Offset(0, 1))]),
                   child: Column(
                     children: [
                       Row(
                         children: [
                           Container(
-                            padding: EdgeInsets.all(7),
-                            decoration: BoxDecoration(
+                            padding: const EdgeInsets.all(7),
+                            decoration: const BoxDecoration(
                               color: Colors.grey,
                             ),
                             child: Center(
                                 child: Text(
                               (i + 1).toString(),
-                              style: TextStyle(
-                                  fontSize: 14, fontWeight: FontWeight.w500),
+                              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                             )),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 5,
                           ),
-                          Icon(
+                          const Icon(
                             Icons.check,
                             color: Colors.green,
                             size: 18,
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 3,
                           ),
-                          Text(
+                          const Text(
                             "4",
-                            style: TextStyle(
-                                color: Colors.black54,
-                                fontWeight: FontWeight.w600),
+                            style: TextStyle(color: Colors.black54, fontWeight: FontWeight.w600),
                           ),
                           SizedBox(
                             width: 5,
@@ -203,9 +175,7 @@ class _SolutionState extends State<Solution> {
                           ),
                           Text(
                             "1",
-                            style: TextStyle(
-                                color: Colors.black54,
-                                fontWeight: FontWeight.w600),
+                            style: TextStyle(color: Colors.black54, fontWeight: FontWeight.w600),
                           ),
                           Spacer(),
 //                          Checkbox(
@@ -227,11 +197,8 @@ class _SolutionState extends State<Solution> {
 //                          ),
 //                          Text("Review Later",style: TextStyle(color: Colors.black54,fontWeight: FontWeight.w600),),
                           Text(
-                            _correction
-                                ? "Your answer was correct"
-                                : "Wrong Answer",
-                            style: TextStyle(
-                                color: _correction ? Colors.green : Colors.red),
+                            _correction ? "Your answer was correct" : "Wrong Answer",
+                            style: TextStyle(color: _correction ? Colors.green : Colors.red),
                           ),
                           SizedBox(
                             width: 10,
@@ -244,12 +211,7 @@ class _SolutionState extends State<Solution> {
                           child: Row(
                             children: [
                               Expanded(
-                                child: Image.memory(
-                                    base64.decode(
-                                        _testData[i]['encodedSolution'] == null
-                                            ? ""
-                                            : _testData[i]['encodedSolution']),
-                                    gaplessPlayback: true),
+                                child: Image.memory(base64.decode(_testData[i]['encodedSolution'] == null ? "" : _testData[i]['encodedSolution']), gaplessPlayback: true),
                               )
                             ],
                           ),
@@ -264,43 +226,23 @@ class _SolutionState extends State<Solution> {
                               children: [
                                 Text(
                                   "Correct Answer : ",
-                                  style: TextStyle(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w800),
+                                  style: TextStyle(color: Colors.black, fontWeight: FontWeight.w800),
                                 ),
-                                Text(
-                                    (int.parse(_testData[i]['answer']))
-                                        .toString(),
-                                    style: TextStyle(
-                                        color: Colors.green,
-                                        fontWeight: FontWeight.w800))
+                                Text((int.parse(_testData[i]['answer'])).toString(), style: TextStyle(color: Colors.green, fontWeight: FontWeight.w800))
                               ],
                             ),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Text("Your Answer : ",
-                                    style: TextStyle(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.w800)),
-                                Text(_answerMap.containsKey(_testData[i]['sno'])
-                                    ? (_answerMap[_testData[i]['sno']])
-                                        .toString()
-                                    : " Unanswered")
+                                Text("Your Answer : ", style: TextStyle(color: Colors.black, fontWeight: FontWeight.w800)),
+                                Text(_answerMap.containsKey(_testData[i]['sno']) ? (_answerMap[_testData[i]['sno']]).toString() : " Unanswered")
                               ],
                             ),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Text("Time taken : ",
-                                    style: TextStyle(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.w800)),
-                                Text(map.containsKey(
-                                        _testData[i]['sno'].toString())
-                                    ? (map[_testData[i]['sno'].toString()])
-                                        .toString()
-                                    : " 0")
+                                Text("Time taken : ", style: TextStyle(color: Colors.black, fontWeight: FontWeight.w800)),
+                                Text(map.containsKey(_testData[i]['sno'].toString()) ? (map[_testData[i]['sno'].toString()]).toString() : " 0")
                               ],
                             )
                           ],
@@ -321,9 +263,7 @@ class _SolutionState extends State<Solution> {
                                   });
                                 },
                                 child: Container(
-                                  width: MediaQuery.of(context).size.width *
-                                      2 /
-                                      10,
+                                  width: MediaQuery.of(context).size.width * 2 / 10,
                                   color: Colors.white,
                                   child: Column(
                                     children: [
@@ -333,14 +273,7 @@ class _SolutionState extends State<Solution> {
                                           children: [
                                             Container(
                                               padding: EdgeInsets.all(10),
-                                              decoration: BoxDecoration(
-                                                  border: Border.all(
-                                                      color: _answerMap[
-                                                                  _testData[i][
-                                                                      'sno']] !=
-                                                              j + 1
-                                                          ? Colors.white
-                                                          : Colors.green)),
+                                              decoration: BoxDecoration(border: Border.all(color: _answerMap[_testData[i]['sno']] != j + 1 ? Colors.white : Colors.green)),
                                               child: Row(
                                                 children: [
                                                   SizedBox(
@@ -349,23 +282,15 @@ class _SolutionState extends State<Solution> {
                                                   CircleAvatar(
                                                     child: Text(
                                                       (j + 1).toString(),
-                                                      style: TextStyle(
-                                                          color: Colors.white),
+                                                      style: TextStyle(color: Colors.white),
                                                     ),
                                                     radius: 15,
-                                                    backgroundColor: _answerMap[
-                                                                _testData[i]
-                                                                    ['sno']] !=
-                                                            j + 1
-                                                        ? Colors.grey
-                                                        : Colors.green,
+                                                    backgroundColor: _answerMap[_testData[i]['sno']] != j + 1 ? Colors.grey : Colors.green,
                                                   ),
                                                   SizedBox(
                                                     width: 5,
                                                   ),
-                                                  Expanded(
-                                                      child: Text(
-                                                          (j + 1).toString()))
+                                                  Expanded(child: Text((j + 1).toString()))
                                                 ],
                                               ),
                                             ),
@@ -427,11 +352,7 @@ class _SolutionState extends State<Solution> {
 //                      Icon(Icons.arrow_back,color: Colors.white,),
                       Text(
                         "Silly",
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 0.8),
+                        style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 0.8),
                       ),
                     ],
                   ),
@@ -456,12 +377,7 @@ class _SolutionState extends State<Solution> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text("Conceptual",
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: 0.8)),
+                      Text("Conceptual", style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 0.8)),
 //                      Icon(Icons.arrow_forward,color: Colors.white,),
                     ],
                   ),
@@ -491,9 +407,7 @@ class _SolutionState extends State<Solution> {
             padding: EdgeInsets.only(left: 10),
             child: GestureDetector(
               onTap: () {
-                _controller.animateToPage(i,
-                    curve: Curves.decelerate,
-                    duration: Duration(milliseconds: 300));
+                _controller.animateToPage(i, curve: Curves.decelerate, duration: Duration(milliseconds: 300));
               },
               child: Container(
                 width: 10,
@@ -518,10 +432,7 @@ class _SolutionState extends State<Solution> {
   }
 
   _solutionAlertBox(int i) {
-    String ImageUrl = imageUrl +
-        _testData[i]['solutionDirectory'] +
-        "/" +
-        _testData[i]['solutionFileName'];
+    String ImageUrl = imageUrl + _testData[i]['solutionDirectory'] + "/" + _testData[i]['solutionFileName'];
     print(imageUrl);
     return showGeneralDialog(
         barrierColor: Colors.black.withOpacity(0.5),
@@ -532,8 +443,7 @@ class _SolutionState extends State<Solution> {
             child: Opacity(
               opacity: a1.value,
               child: AlertDialog(
-                shape: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(16.0)),
+                shape: OutlineInputBorder(borderRadius: BorderRadius.circular(16.0)),
                 content: Container(
                     height: 300,
                     width: 100,

@@ -2,8 +2,8 @@ import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:lurnify/helper/DBHelper.dart';
-import 'package:lurnify/model/social-group-model.dart';
+import 'package:lurnify/helper/db_helper.dart';
+import 'package:lurnify/model/social_group_model.dart';
 import 'package:lurnify/ui/constant/ApiConstant.dart';
 import 'package:lurnify/ui/screen/userProfile/user-profile.dart';
 import 'package:lurnify/ui/constant/constant.dart';
@@ -19,79 +19,73 @@ class GroupBoard extends StatefulWidget {
 }
 
 class _GroupBoardState extends State<GroupBoard> {
-
-
-  List<SocialGroupModel> leadersList=[];
-  List<SocialGroupModel> followersList=[];
-  int _currentFollowerField=1;
-  int _currentLeaderField=1;
+  List<SocialGroupModel> leadersList = [];
+  List<SocialGroupModel> followersList = [];
+  int _currentFollowerField = 1;
+  int _currentLeaderField = 1;
   var _data;
 
-  _getData()async{
+  _getData() async {
     SharedPreferences sp = await SharedPreferences.getInstance();
-    var url=baseUrl+'getLeadersAndFollowers?register=${sp.getString('studentSno')}';
+    var url = baseUrl + 'getLeadersAndFollowers?register=${sp.getString('studentSno')}';
     http.Response response = await http.post(Uri.encodeFull(url));
-    if(response.statusCode>200){
-      var resBody=jsonDecode(response.body);
-      List leaderList= resBody['leader'];
-      List followerList= resBody['follower'];
-      int _check=0;
-      var _lastMonday = new DateTime.now();
-      var _lastSunday= new DateTime.now();
+    if (response.statusCode > 200) {
+      var resBody = jsonDecode(response.body);
+      List leaderList = resBody['leader'];
+      List followerList = resBody['follower'];
+      int _check = 0;
+      var _lastMonday = DateTime.now();
+      var _lastSunday = DateTime.now();
 
-      for(int i=0;i<15;i++){
-        if(_lastMonday.weekday==1){
+      for (int i = 0; i < 15; i++) {
+        if (_lastMonday.weekday == 1) {
           _check++;
         }
-        if(_check==2){
+        if (_check == 2) {
           break;
         }
-        _lastMonday=_lastMonday.subtract(new Duration(days: 1));
-
+        _lastMonday = _lastMonday.subtract(Duration(days: 1));
       }
 
-      for(int i=0;i<15;i++){
-        if(_lastSunday.weekday==1){
+      for (int i = 0; i < 15; i++) {
+        if (_lastSunday.weekday == 1) {
           _check++;
         }
-        if(_check==2){
+        if (_check == 2) {
           break;
         }
-        _lastSunday=_lastSunday.subtract(new Duration(days: 1));
+        _lastSunday = _lastSunday.subtract(Duration(days: 1));
       }
 
       //Getting self data
       SharedPreferences sp = await SharedPreferences.getInstance();
-      SocialGroupModel socialGroupModel = new SocialGroupModel();
-      socialGroupModel.sno= sp.getString('studentSno');
-      socialGroupModel.name="Need to update";
-      socialGroupModel.isUser=true;
+      SocialGroupModel socialGroupModel = SocialGroupModel();
+      socialGroupModel.sno = sp.getString('studentSno');
+      socialGroupModel.name = "Need to update";
+      socialGroupModel.isUser = true;
 
-      DBHelper dbHelper = new DBHelper();
+      DBHelper dbHelper = DBHelper();
       Database database = await dbHelper.database;
       database.transaction((txn) async {
-        List<Map<String,dynamic>> list =await txn.rawQuery(
-            "select ((correctQuestion/totalQuestion)*100) as testPercent"
-                "  from topic_test_result "
-                "where enteredDate>='$_lastMonday 00:00:00.0' "
-                "and enteredDate<='$_lastSunday 00:00:00.0'" );
-        for(var a in list){
-          socialGroupModel.testPercent=a['testPercent'];
+        List<Map<String, dynamic>> list = await txn.rawQuery("select ((correctQuestion/totalQuestion)*100) as testPercent"
+            "  from topic_test_result "
+            "where enteredDate>='$_lastMonday 00:00:00.0' "
+            "and enteredDate<='$_lastSunday 00:00:00.0'");
+        for (var a in list) {
+          socialGroupModel.testPercent = a['testPercent'];
         }
 
-        List<Map<String,dynamic>> list2 = await txn.rawQuery(
-            "select sum(credit) as totalDimes from dimes "
-                "where enteredDate>='$_lastMonday 00:00:00.0' "
-                "and enteredDate<='$_lastSunday 00:00:00.0'");
-        for(var a in list2){
-          socialGroupModel.totalDimes=a['totalDimes'];
+        List<Map<String, dynamic>> list2 = await txn.rawQuery("select sum(credit) as totalDimes from dimes "
+            "where enteredDate>='$_lastMonday 00:00:00.0' "
+            "and enteredDate<='$_lastSunday 00:00:00.0'");
+        for (var a in list2) {
+          socialGroupModel.totalDimes = a['totalDimes'];
         }
-        List<Map<String,dynamic>> list3 =await txn.rawQuery(
-            "select sum(totalSeconds)/3600 as totalStudyHour from study "
-                "where date>='$_lastMonday' "
-                "and date<='$_lastSunday'");
-        for(var a in list3){
-          socialGroupModel.totalStudyHour=a['totalStudyHour'];
+        List<Map<String, dynamic>> list3 = await txn.rawQuery("select sum(totalSeconds)/3600 as totalStudyHour from study "
+            "where date>='$_lastMonday' "
+            "and date<='$_lastSunday'");
+        for (var a in list3) {
+          socialGroupModel.totalStudyHour = a['totalStudyHour'];
         }
 
         leadersList.add(socialGroupModel);
@@ -100,123 +94,133 @@ class _GroupBoardState extends State<GroupBoard> {
         return null;
       });
 
-
-      for(var a in leaderList){
-        int totalStudySecond=0;
-        int totalDimes=0;
-        double testPercent=0;
-        int totalCorrectQuestion=0;
-        int totalQuestion=0;
-        await FirebaseFirestore.instance.collection('study')
-            .where('date',isGreaterThanOrEqualTo: _lastMonday.toString().split(" ")[0])
-            .where('date',isLessThanOrEqualTo: _lastSunday.toString().split(" ")[0])
-            .where('register',isEqualTo: a['usedBy']['sno']).get().then((QuerySnapshot snapshot) {
+      for (var a in leaderList) {
+        int totalStudySecond = 0;
+        int totalDimes = 0;
+        double testPercent = 0;
+        int totalCorrectQuestion = 0;
+        int totalQuestion = 0;
+        await FirebaseFirestore.instance
+            .collection('study')
+            .where('date', isGreaterThanOrEqualTo: _lastMonday.toString().split(" ")[0])
+            .where('date', isLessThanOrEqualTo: _lastSunday.toString().split(" ")[0])
+            .where('register', isEqualTo: a['usedBy']['sno'])
+            .get()
+            .then((QuerySnapshot snapshot) {
           snapshot.docs.forEach((element) {
-            totalStudySecond=totalStudySecond+int.tryParse(element.get('totalSecond'));
+            totalStudySecond = totalStudySecond + int.tryParse(element.get('totalSecond'));
           });
         });
 
-        await FirebaseFirestore.instance.collection('dimes')
-            .where('registerSno',isEqualTo: a['usedBy']['sno'])
-            .where('enteredDate',isGreaterThanOrEqualTo:  _lastMonday.toString().split(" ")[0] + ' 00:00:00.0')
-            .where('enteredDate',isLessThanOrEqualTo: _lastSunday.toString().split(" ")[0]+ ' 00:00:00.0')
-            .get().then((QuerySnapshot snapshot) {
+        await FirebaseFirestore.instance
+            .collection('dimes')
+            .where('registerSno', isEqualTo: a['usedBy']['sno'])
+            .where('enteredDate', isGreaterThanOrEqualTo: _lastMonday.toString().split(" ")[0] + ' 00:00:00.0')
+            .where('enteredDate', isLessThanOrEqualTo: _lastSunday.toString().split(" ")[0] + ' 00:00:00.0')
+            .get()
+            .then((QuerySnapshot snapshot) {
           snapshot.docs.forEach((element) {
-            totalDimes=totalDimes+int.tryParse(element.get('credit'));
+            totalDimes = totalDimes + int.tryParse(element.get('credit'));
           });
         });
 
-        await FirebaseFirestore.instance.collection('topicTestResult')
-            .where('regSno',isEqualTo: a['usedBy']['sno'])
-            .where('enteredDate',isGreaterThanOrEqualTo:  _lastMonday.toString().split(" ")[0] + ' 00:00:00.0')
-            .where('enteredDate',isLessThanOrEqualTo: _lastSunday.toString().split(" ")[0]+ ' 00:00:00.0')
-            .get().then((QuerySnapshot snapshot){
+        await FirebaseFirestore.instance
+            .collection('topicTestResult')
+            .where('regSno', isEqualTo: a['usedBy']['sno'])
+            .where('enteredDate', isGreaterThanOrEqualTo: _lastMonday.toString().split(" ")[0] + ' 00:00:00.0')
+            .where('enteredDate', isLessThanOrEqualTo: _lastSunday.toString().split(" ")[0] + ' 00:00:00.0')
+            .get()
+            .then((QuerySnapshot snapshot) {
           snapshot.docs.forEach((element) {
-            int correctQuestion=int.tryParse(element.get('correctQuestion'));
-            int tQuestion=int.tryParse(element.get('totalQuestion'));
-            totalCorrectQuestion=totalCorrectQuestion+correctQuestion;
-            totalQuestion=totalQuestion+tQuestion;
+            int correctQuestion = int.tryParse(element.get('correctQuestion'));
+            int tQuestion = int.tryParse(element.get('totalQuestion'));
+            totalCorrectQuestion = totalCorrectQuestion + correctQuestion;
+            totalQuestion = totalQuestion + tQuestion;
           });
         });
 
-        testPercent=(totalCorrectQuestion/totalQuestion)*100;
+        testPercent = (totalCorrectQuestion / totalQuestion) * 100;
 
-        SocialGroupModel socialGroupModel = new SocialGroupModel();
-        socialGroupModel.sno=a['usedBy']['sno'].toString();
-        socialGroupModel.name=a['usedBy']['name'];
-        socialGroupModel.testPercent=testPercent;
-        socialGroupModel.totalDimes=totalDimes;
-        socialGroupModel.totalStudyHour=(((totalStudySecond/3600)*100).ceilToDouble()/100);
-        socialGroupModel.isUser=false;
+        SocialGroupModel socialGroupModel = SocialGroupModel();
+        socialGroupModel.sno = a['usedBy']['sno'].toString();
+        socialGroupModel.name = a['usedBy']['name'];
+        socialGroupModel.testPercent = testPercent;
+        socialGroupModel.totalDimes = totalDimes;
+        socialGroupModel.totalStudyHour = (((totalStudySecond / 3600) * 100).ceilToDouble() / 100);
+        socialGroupModel.isUser = false;
 
         leadersList.add(socialGroupModel);
       }
 
-      leadersList.sort((a,b)=>a.totalStudyHour.compareTo(b.totalStudyHour));
+      leadersList.sort((a, b) => a.totalStudyHour.compareTo(b.totalStudyHour));
 
-
-      for(var a in followerList){
-        int totalStudySecond=0;
-        int totalDimes=0;
-        double testPercent=0;
-        int totalCorrectQuestion=0;
-        int totalQuestion=0;
-        await FirebaseFirestore.instance.collection('study')
-            .where('date',isGreaterThanOrEqualTo: _lastMonday.toString().split(" ")[0])
-            .where('date',isLessThanOrEqualTo: _lastSunday.toString().split(" ")[0])
-            .where('register',isEqualTo: a['usedBy']['sno']).get().then((QuerySnapshot snapshot) {
+      for (var a in followerList) {
+        int totalStudySecond = 0;
+        int totalDimes = 0;
+        double testPercent = 0;
+        int totalCorrectQuestion = 0;
+        int totalQuestion = 0;
+        await FirebaseFirestore.instance
+            .collection('study')
+            .where('date', isGreaterThanOrEqualTo: _lastMonday.toString().split(" ")[0])
+            .where('date', isLessThanOrEqualTo: _lastSunday.toString().split(" ")[0])
+            .where('register', isEqualTo: a['usedBy']['sno'])
+            .get()
+            .then((QuerySnapshot snapshot) {
           snapshot.docs.forEach((element) {
-            totalStudySecond=totalStudySecond+int.tryParse(element.get('totalSecond'));
+            totalStudySecond = totalStudySecond + int.tryParse(element.get('totalSecond'));
           });
         });
 
-        await FirebaseFirestore.instance.collection('dimes')
-            .where('registerSno',isEqualTo: a['usedBy']['sno'])
-            .where('enteredDate',isGreaterThanOrEqualTo:  _lastMonday.toString().split(" ")[0] + ' 00:00:00.0')
-            .where('enteredDate',isLessThanOrEqualTo: _lastSunday.toString().split(" ")[0]+ ' 00:00:00.0')
-            .get().then((QuerySnapshot snapshot) {
+        await FirebaseFirestore.instance
+            .collection('dimes')
+            .where('registerSno', isEqualTo: a['usedBy']['sno'])
+            .where('enteredDate', isGreaterThanOrEqualTo: _lastMonday.toString().split(" ")[0] + ' 00:00:00.0')
+            .where('enteredDate', isLessThanOrEqualTo: _lastSunday.toString().split(" ")[0] + ' 00:00:00.0')
+            .get()
+            .then((QuerySnapshot snapshot) {
           snapshot.docs.forEach((element) {
-            totalDimes=totalDimes+int.tryParse(element.get('credit'));
+            totalDimes = totalDimes + int.tryParse(element.get('credit'));
           });
         });
 
-        await FirebaseFirestore.instance.collection('topicTestResult')
-            .where('regSno',isEqualTo: a['usedBy']['sno'])
-            .where('enteredDate',isGreaterThanOrEqualTo:  _lastMonday.toString().split(" ")[0] + ' 00:00:00.0')
-            .where('enteredDate',isLessThanOrEqualTo: _lastSunday.toString().split(" ")[0]+ ' 00:00:00.0')
-            .get().then((QuerySnapshot snapshot){
+        await FirebaseFirestore.instance
+            .collection('topicTestResult')
+            .where('regSno', isEqualTo: a['usedBy']['sno'])
+            .where('enteredDate', isGreaterThanOrEqualTo: _lastMonday.toString().split(" ")[0] + ' 00:00:00.0')
+            .where('enteredDate', isLessThanOrEqualTo: _lastSunday.toString().split(" ")[0] + ' 00:00:00.0')
+            .get()
+            .then((QuerySnapshot snapshot) {
           snapshot.docs.forEach((element) {
-            int correctQuestion=int.tryParse(element.get('correctQuestion'));
-            int tQuestion=int.tryParse(element.get('totalQuestion'));
-            totalCorrectQuestion=totalCorrectQuestion+correctQuestion;
-            totalQuestion=totalQuestion+tQuestion;
+            int correctQuestion = int.tryParse(element.get('correctQuestion'));
+            int tQuestion = int.tryParse(element.get('totalQuestion'));
+            totalCorrectQuestion = totalCorrectQuestion + correctQuestion;
+            totalQuestion = totalQuestion + tQuestion;
           });
         });
 
-        testPercent=(totalCorrectQuestion/totalQuestion)*100;
+        testPercent = (totalCorrectQuestion / totalQuestion) * 100;
 
-        SocialGroupModel socialGroupModel = new SocialGroupModel();
-        socialGroupModel.sno=a['usedBy']['sno'].toString();
-        socialGroupModel.name=a['usedBy']['name'];
-        socialGroupModel.testPercent=testPercent;
-        socialGroupModel.totalDimes=totalDimes;
-        socialGroupModel.totalStudyHour=(((totalStudySecond/3600)*100).ceilToDouble()/100);
-        socialGroupModel.isUser=false;
+        SocialGroupModel socialGroupModel = SocialGroupModel();
+        socialGroupModel.sno = a['usedBy']['sno'].toString();
+        socialGroupModel.name = a['usedBy']['name'];
+        socialGroupModel.testPercent = testPercent;
+        socialGroupModel.totalDimes = totalDimes;
+        socialGroupModel.totalStudyHour = (((totalStudySecond / 3600) * 100).ceilToDouble() / 100);
+        socialGroupModel.isUser = false;
 
         followersList.add(socialGroupModel);
       }
 
-      followersList.sort((a,b)=>a.totalStudyHour.compareTo(b.totalStudyHour));
+      followersList.sort((a, b) => a.totalStudyHour.compareTo(b.totalStudyHour));
     }
   }
 
   @override
   void initState() {
-    _data=_getData();
+    _data = _getData();
     super.initState();
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -224,8 +228,8 @@ class _GroupBoardState extends State<GroupBoard> {
     double width = MediaQuery.of(context).size.width;
     return FutureBuilder(
       future: _data,
-      builder: (context,snapshot){
-        if(snapshot.connectionState==ConnectionState.done){
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
           return Stack(
             children: [
               Container(
@@ -269,13 +273,12 @@ class _GroupBoardState extends State<GroupBoard> {
                               padding: EdgeInsets.only(top: 8, right: 8),
                               child: Container(
                                 child: CircleAvatar(
-                                  backgroundImage:
-                                  AssetImage('assets/images/anshul.png'),
+                                  backgroundImage: AssetImage('assets/images/anshul.png'),
                                 ),
-                                decoration: new BoxDecoration(
+                                decoration: BoxDecoration(
                                   boxShadow: NewappColors.neumorpShadow,
                                   shape: BoxShape.circle,
-                                  border: new Border.all(
+                                  border: Border.all(
                                     color: Colors.deepPurple,
                                     width: 2.0,
                                   ),
@@ -293,9 +296,7 @@ class _GroupBoardState extends State<GroupBoard> {
                     height: topHeight,
                     clipBehavior: Clip.hardEdge,
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(20),
-                          topRight: Radius.circular(20)),
+                      borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
                     ),
                     child: Card(
                       margin: EdgeInsets.all(0),
@@ -308,21 +309,16 @@ class _GroupBoardState extends State<GroupBoard> {
                                 children: [
                                   Text(
                                     'You are the leader',
-                                    style: TextStyle(
-                                        shadows: <Shadow>[
-                                          Shadow(
-                                            offset: Offset(1.0, 1.0),
-                                            blurRadius: 3.0,
-                                            color: Colors.black.withOpacity(0.2),
-                                          ),
-                                        ],
-                                        fontSize: 22,
-                                        fontWeight: FontWeight.w600,
-                                        letterSpacing: -0.3),
+                                    style: TextStyle(shadows: <Shadow>[
+                                      Shadow(
+                                        offset: Offset(1.0, 1.0),
+                                        blurRadius: 3.0,
+                                        color: Colors.black.withOpacity(0.2),
+                                      ),
+                                    ], fontSize: 22, fontWeight: FontWeight.w600, letterSpacing: -0.3),
                                   ),
                                   Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 5, horizontal: 20),
+                                    padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
                                     child: Text(
                                       'For Completing the challenge you took 1st place. And get a 20% discount on Subcription.',
                                       textAlign: TextAlign.center,
@@ -342,11 +338,9 @@ class _GroupBoardState extends State<GroupBoard> {
                                       child: InkWell(
                                         onTap: () {},
                                         child: Padding(
-                                          padding:
-                                          const EdgeInsets.fromLTRB(8, 8, 0, 8),
+                                          padding: const EdgeInsets.fromLTRB(8, 8, 0, 8),
                                           child: Row(
-                                            mainAxisAlignment:
-                                            MainAxisAlignment.spaceEvenly,
+                                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                             children: [
                                               Text('Study Hours'),
                                               Icon(
@@ -366,16 +360,13 @@ class _GroupBoardState extends State<GroupBoard> {
                                       child: InkWell(
                                         onTap: () {},
                                         child: Padding(
-                                          padding:
-                                          const EdgeInsets.fromLTRB(0, 8, 0, 8),
+                                          padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
                                           child: Row(
-                                            mainAxisAlignment:
-                                            MainAxisAlignment.spaceEvenly,
+                                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                             children: [
                                               Text(
                                                 'Test Score',
-                                                style: TextStyle(
-                                                    fontWeight: FontWeight.w600),
+                                                style: TextStyle(fontWeight: FontWeight.w600),
                                               ),
                                               Icon(
                                                 Icons.swap_vertical_circle_sharp,
@@ -394,11 +385,9 @@ class _GroupBoardState extends State<GroupBoard> {
                                       child: InkWell(
                                         onTap: () {},
                                         child: Padding(
-                                          padding:
-                                          const EdgeInsets.fromLTRB(0, 8, 8, 8),
+                                          padding: const EdgeInsets.fromLTRB(0, 8, 8, 8),
                                           child: Row(
-                                            mainAxisAlignment:
-                                            MainAxisAlignment.spaceEvenly,
+                                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                             children: [
                                               Text('Coins Earned'),
                                               Icon(
@@ -425,11 +414,7 @@ class _GroupBoardState extends State<GroupBoard> {
                                       margin: EdgeInsets.fromLTRB(5, 5, 5, 0),
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(5),
-                                        border: i == 0
-                                            ? Border.all(
-                                            width: 1, color: Colors.blue[400])
-                                            : Border.all(
-                                            width: 1, color: Colors.transparent),
+                                        border: i == 0 ? Border.all(width: 1, color: Colors.blue[400]) : Border.all(width: 1, color: Colors.transparent),
                                       ),
                                       child: Stack(
                                         children: [
@@ -445,34 +430,29 @@ class _GroupBoardState extends State<GroupBoard> {
                                                   child: Row(
                                                     children: [
                                                       Stack(
-                                                        alignment:
-                                                        Alignment.bottomRight,
+                                                        alignment: Alignment.bottomRight,
                                                         children: [
                                                           Container(
                                                             child: CircleAvatar(
                                                               radius: 25,
-                                                              backgroundImage: AssetImage(
-                                                                  'assets/images/anshul.png'),
+                                                              backgroundImage: AssetImage('assets/images/anshul.png'),
                                                             ),
-                                                            decoration:
-                                                            new BoxDecoration(
+                                                            decoration: BoxDecoration(
                                                               shape: BoxShape.circle,
-                                                              border: new Border.all(
-                                                                color:
-                                                                Colors.deepPurple,
+                                                              border: Border.all(
+                                                                color: Colors.deepPurple,
                                                                 width: 2.0,
                                                               ),
                                                             ),
                                                           ),
                                                           i == 0
                                                               ? Align(
-                                                            child: SizedBox(
-                                                              height: 20,
-                                                              width: 20,
-                                                              child: Image.asset(
-                                                                  'assets/awesome-crown.png'),
-                                                            ),
-                                                          )
+                                                                  child: SizedBox(
+                                                                    height: 20,
+                                                                    width: 20,
+                                                                    child: Image.asset('assets/awesome-crown.png'),
+                                                                  ),
+                                                                )
                                                               : Container(),
                                                         ],
                                                       ),
@@ -481,42 +461,23 @@ class _GroupBoardState extends State<GroupBoard> {
                                                       ),
                                                       Expanded(
                                                         child: Padding(
-                                                          padding: const EdgeInsets
-                                                              .symmetric(
-                                                              vertical: 5,
-                                                              horizontal: 10),
+                                                          padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                                                           child: Column(
-                                                            crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .end,
-                                                            mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .spaceBetween,
+                                                            crossAxisAlignment: CrossAxisAlignment.end,
+                                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                             children: [
                                                               Row(
-                                                                crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .center,
-                                                                mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .spaceBetween,
+                                                                crossAxisAlignment: CrossAxisAlignment.center,
+                                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                                 children: [
                                                                   Text(
                                                                     'Anil Kumar Jangid',
                                                                     maxLines: 1,
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                        FontWeight
-                                                                            .w600),
+                                                                    style: TextStyle(fontWeight: FontWeight.w600),
                                                                   ),
                                                                   Text(
-                                                                    '#' +
-                                                                        (i + 1)
-                                                                            .toString(),
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                        FontWeight
-                                                                            .w600),
+                                                                    '#' + (i + 1).toString(),
+                                                                    style: TextStyle(fontWeight: FontWeight.w600),
                                                                   ),
                                                                 ],
                                                               ),
@@ -524,42 +485,20 @@ class _GroupBoardState extends State<GroupBoard> {
                                                                 height: 15,
                                                               ),
                                                               Row(
-                                                                crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .center,
-                                                                mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .spaceBetween,
+                                                                crossAxisAlignment: CrossAxisAlignment.center,
+                                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                                 children: [
                                                                   Text(
-                                                                    i <= 4
-                                                                        ? (8 - i)
-                                                                        .toString() +
-                                                                        '.00 hours'
-                                                                        : (4).toString() +
-                                                                        '.00 hours',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                        FontWeight
-                                                                            .w600),
+                                                                    i <= 4 ? (8 - i).toString() + '.00 hours' : (4).toString() + '.00 hours',
+                                                                    style: TextStyle(fontWeight: FontWeight.w600),
                                                                   ),
                                                                   Text(
-                                                                    (100 - (i))
-                                                                        .toString() +
-                                                                        ' %',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                        FontWeight
-                                                                            .w600),
+                                                                    (100 - (i)).toString() + ' %',
+                                                                    style: TextStyle(fontWeight: FontWeight.w600),
                                                                   ),
                                                                   Text(
-                                                                    (8000 - (i * 100))
-                                                                        .toString() +
-                                                                        ' Coins',
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                        FontWeight
-                                                                            .w600),
+                                                                    (8000 - (i * 100)).toString() + ' Coins',
+                                                                    style: TextStyle(fontWeight: FontWeight.w600),
                                                                   ),
                                                                 ],
                                                               ),
@@ -578,15 +517,14 @@ class _GroupBoardState extends State<GroupBoard> {
                                             child: Container(
                                               width: 8,
                                               height: 8,
-                                              margin:
-                                              EdgeInsets.only(top: 5, left: 5),
+                                              margin: EdgeInsets.only(top: 5, left: 5),
                                               decoration: BoxDecoration(
                                                 shape: BoxShape.circle,
                                                 color: _isActive
                                                     ? Colors.green
                                                     : _isOpened
-                                                    ? Colors.orange
-                                                    : Colors.grey,
+                                                        ? Colors.orange
+                                                        : Colors.grey,
                                               ),
                                             ),
                                           ),
@@ -604,7 +542,7 @@ class _GroupBoardState extends State<GroupBoard> {
               ),
             ],
           );
-        }else{
+        } else {
           return Center(
             child: CircularProgressIndicator(),
           );

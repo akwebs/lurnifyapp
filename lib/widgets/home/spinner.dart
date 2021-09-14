@@ -5,7 +5,7 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
 import 'package:lurnify/config/data.dart';
-import 'package:lurnify/helper/DBHelper.dart';
+import 'package:lurnify/helper/db_helper.dart';
 import 'package:lurnify/widgets/componants/custom-button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
@@ -30,8 +30,7 @@ class _SpinnerClassState extends State<SpinnerClass> {
         children: [
           Container(
             margin: EdgeInsets.symmetric(horizontal: 20),
-            decoration: BoxDecoration(
-                color: Colors.white, borderRadius: BorderRadius.circular(10)),
+            decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10)),
             child: Column(
               children: [
                 Container(
@@ -162,8 +161,7 @@ class _SpinnerClassState extends State<SpinnerClass> {
       List<Map<String, dynamic>> list = await database.rawQuery(sql);
       print("-----------------------------------$list");
       if (list.isEmpty) {
-        String sql2 =
-            "insert into daily_task_completion (registerSno,dailyTaskSno,spinDate,status,enteredDate,onlineStatus) "
+        String sql2 = "insert into daily_task_completion (registerSno,dailyTaskSno,spinDate,status,enteredDate,onlineStatus) "
             "values('${sp.getString("studentSno")}','${_spinData[_selected - 1]['sno'].toString()}',"
             "'${DateTime.now().toString().split(" ")[0]}',"
             "'spined','${DateTime.now().toString()}','new')";
@@ -189,8 +187,7 @@ class _SpinnerClassState extends State<SpinnerClass> {
 
   Future<void> _showSpinTask() async {
     String result = "";
-    List<Map<String, dynamic>> data =
-        _spinData[_selected - 1]['dailyTaskDatas'];
+    List<Map<String, dynamic>> data = _spinData[_selected - 1]['dailyTaskDatas'];
     for (int i = 0; i < data.length; i++) {
       result = result +
           "Your task type is" +

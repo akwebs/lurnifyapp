@@ -20,14 +20,14 @@ class TopicDtos {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['sno'] = this.sno;
-    data['topicName'] = this.topicName;
-    data['subtopic'] = this.subtopic;
-    data['duration'] = this.duration;
-    data['chapterSno'] = this.chapterSno;
-    data['topicImp'] = this.topicImp;
-    data['topicLabel'] = this.topicLabel;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['sno'] = sno;
+    data['topicName'] = topicName;
+    data['subtopic'] = subtopic;
+    data['duration'] = duration;
+    data['chapterSno'] = chapterSno;
+    data['topicImp'] = topicImp;
+    data['topicLabel'] = topicLabel;
     return data;
   }
 }

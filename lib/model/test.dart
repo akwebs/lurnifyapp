@@ -21,24 +21,24 @@ class Test {
 
   Test(
       {this.sno,
-        this.fileName,
-        this.directory,
-        this.filePath,
-        this.answer,
-        this.solutionFileName,
-        this.solutionDirectory,
-        this.solutionFilePath,
-        this.difficulty,
-        this.questionType,
-        this.noOfOptions,
-        this.uuid,
-        this.encodedImage,
-        this.enteredBy,
-        this.enteredDate,
-        this.updatedBy,
-        this.updatedDate,
-        this.encodedSolution,
-        this.testMain});
+      this.fileName,
+      this.directory,
+      this.filePath,
+      this.answer,
+      this.solutionFileName,
+      this.solutionDirectory,
+      this.solutionFilePath,
+      this.difficulty,
+      this.questionType,
+      this.noOfOptions,
+      this.uuid,
+      this.encodedImage,
+      this.enteredBy,
+      this.enteredDate,
+      this.updatedBy,
+      this.updatedDate,
+      this.encodedSolution,
+      this.testMain});
 
   Test.fromJson(Map<String, dynamic> json) {
     sno = json['sno'];
@@ -63,26 +63,26 @@ class Test {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['sno'] = this.sno;
-    data['fileName'] = this.fileName;
-    data['directory'] = this.directory;
-    data['filePath'] = this.filePath;
-    data['answer'] = this.answer;
-    data['solutionFileName'] = this.solutionFileName;
-    data['solutionDirectory'] = this.solutionDirectory;
-    data['solutionFilePath'] = this.solutionFilePath;
-    data['difficulty'] = this.difficulty;
-    data['questionType'] = this.questionType;
-    data['noOfOptions'] = this.noOfOptions;
-    data['uuid'] = this.uuid;
-    data['encodedImage'] = this.encodedImage;
-    data['enteredBy'] = this.enteredBy;
-    data['enteredDate'] = this.enteredDate;
-    data['updatedBy'] = this.updatedBy;
-    data['updatedDate'] = this.updatedDate;
-    data['testMain'] = this.testMain;
-    data['encodedSolution'] = this.encodedSolution;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['sno'] = sno;
+    data['fileName'] = fileName;
+    data['directory'] = directory;
+    data['filePath'] = filePath;
+    data['answer'] = answer;
+    data['solutionFileName'] = solutionFileName;
+    data['solutionDirectory'] = solutionDirectory;
+    data['solutionFilePath'] = solutionFilePath;
+    data['difficulty'] = difficulty;
+    data['questionType'] = questionType;
+    data['noOfOptions'] = noOfOptions;
+    data['uuid'] = uuid;
+    data['encodedImage'] = encodedImage;
+    data['enteredBy'] = enteredBy;
+    data['enteredDate'] = enteredDate;
+    data['updatedBy'] = updatedBy;
+    data['updatedDate'] = updatedDate;
+    data['testMain'] = testMain;
+    data['encodedSolution'] = encodedSolution;
     return data;
   }
 }

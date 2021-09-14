@@ -1,4 +1,4 @@
-class Remark{
+class Remark {
   int sno;
   String enteredBy;
   String enteredDate;
@@ -24,18 +24,16 @@ class Remark{
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['sno'] = this.sno;
-    data['enteredBy'] = this.enteredBy;
-    data['enteredDate'] = this.enteredDate;
-    data['message'] = this.message;
-    data['studentSno'] = this.studentSno;
-    data['subject'] = this.subject;
-    data['topicSno'] = this.topicSno;
-    data['updatedBy'] = this.updatedBy;
-    data['updatedDate'] = this.updatedDate;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['sno'] = sno;
+    data['enteredBy'] = enteredBy;
+    data['enteredDate'] = enteredDate;
+    data['message'] = message;
+    data['studentSno'] = studentSno;
+    data['subject'] = subject;
+    data['topicSno'] = topicSno;
+    data['updatedBy'] = updatedBy;
+    data['updatedDate'] = updatedDate;
     return data;
   }
-
-
 }

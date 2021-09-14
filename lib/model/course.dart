@@ -1,6 +1,6 @@
 import 'package:lurnify/model/subject.dart';
 
-class CourseDto{
+class CourseDto {
   int sno;
   String courseName;
   List<Subject> subjectDtos;
@@ -13,17 +13,17 @@ class CourseDto{
     if (json['subjectDtos'] != null) {
       subjectDtos = [];
       json['unitDtos'].forEach((v) {
-        subjectDtos.add(new Subject.fromJson(v));
+        subjectDtos.add(Subject.fromJson(v));
       });
     }
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['sno'] = this.sno;
-    data['courseName'] = this.courseName;
-    if (this.subjectDtos != null) {
-      data['unitDtos'] = this.subjectDtos.map((v) => v.toJson()).toList();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['sno'] = sno;
+    data['courseName'] = courseName;
+    if (subjectDtos != null) {
+      data['unitDtos'] = subjectDtos.map((v) => v.toJson()).toList();
     }
     return data;
   }

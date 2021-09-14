@@ -1,13 +1,12 @@
-import 'package:lurnify/helper/DBHelper.dart';
+import 'package:lurnify/helper/db_helper.dart';
 import 'package:sqflite/sqflite.dart';
 
 class DailyTaskCompletionRepo {
-  DBHelper dbHelper = new DBHelper();
+  DBHelper dbHelper = DBHelper();
 
-  Future<List<Map<String, dynamic>>> getDailyTaskForDareToDuo(
-      String regSno, txn) {
+  Future<List<Map<String, dynamic>>> getDailyTaskForDareToDuo(String regSno, txn) {
     Future<List<Map<String, dynamic>>> list;
-    String todayDate=DateTime.now().toString().split(" ")[0]+" 00:00:00";
+    String todayDate = DateTime.now().toString().split(" ")[0] + " 00:00:00";
     try {
       String sql = "select daily_task.taskName as taskName,daily_task_data.taskType as taskType,daily_task_data.taskUnit as taskUnit," +
           "cash,certificate,coins,noOfReferralCoupons as noOfRefferalCoupons,spinDate ," +
@@ -19,15 +18,15 @@ class DailyTaskCompletionRepo {
 
       list = txn.rawQuery(sql);
     } catch (e) {
-      print('getDailyTaskForDareToDuo ' + e.toString());
+      //print('getDailyTaskForDareToDuo ' + e.toString());
     }
     return list;
   }
 
-  Future<List<Map<String,dynamic>>> getNewDailyTaskCompletion()async{
-    Database db=await dbHelper.database;
-    String sql="select * from daily_task_completion where onlineStatus='new'";
-    var result=db.rawQuery(sql);
+  Future<List<Map<String, dynamic>>> getNewDailyTaskCompletion() async {
+    Database db = await dbHelper.database;
+    String sql = "select * from daily_task_completion where onlineStatus='new'";
+    var result = db.rawQuery(sql);
     return result;
   }
 }

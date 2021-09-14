@@ -1,4 +1,4 @@
-class DueTopicTest{
+class DueTopicTest {
   int sno;
   String enteredDate;
   String status;
@@ -27,17 +27,17 @@ class DueTopicTest{
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['sno'] = this.sno;
-    data['enteredDate'] = this.enteredDate;
-    data['status'] = this.status;
-    data['registerSno'] = this.registerSno;
-    data['topicSno'] = this.topicSno;
-    data['course'] = this.course;
-    data['subject'] = this.subject;
-    data['unit'] = this.unit;
-    data['chapter'] = this.chapter;
-    data['onlineStatus'] = this.onlineStatus;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['sno'] = sno;
+    data['enteredDate'] = enteredDate;
+    data['status'] = status;
+    data['registerSno'] = registerSno;
+    data['topicSno'] = topicSno;
+    data['course'] = course;
+    data['subject'] = subject;
+    data['unit'] = unit;
+    data['chapter'] = chapter;
+    data['onlineStatus'] = onlineStatus;
     return data;
   }
 }

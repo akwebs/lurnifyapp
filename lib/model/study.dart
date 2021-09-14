@@ -1,4 +1,4 @@
-class Study{
+class Study {
   int sno;
   String chapterSno;
   String courseSno;
@@ -73,29 +73,29 @@ class Study{
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['sno'] = this.sno;
-    data['chapterSno'] = this.chapterSno;
-    data['courseSno'] = this.courseSno;
-    data['date'] = this.date;
-    data['duration'] = this.duration;
-    data['effectivenessOfStudy'] = this.effectivenessOfStudy;
-    data['endDate'] = this.endDate;
-    data['enteredDate'] = this.enteredDate;
-    data['numericalPercent'] = this.numericalPercent;
-    data['revision'] = this.revision;
-    data['startDate'] = this.startDate;
-    data['subjectSno'] = this.subjectSno;
-    data['theoryPercent'] = this.theoryPercent;
-    data['timePunchedFrom'] = this.timePunchedFrom;
-    data['topicCompletionStatus'] = this.topicCompletionStatus;
-    data['topicSno'] = this.topicSno;
-    data['totalSecond'] = this.totalSecond;
-    data['totalTime'] = this.totalTime;
-    data['unitSno'] = this.unitSno;
-    data['updatedDate'] = this.updatedDate;
-    data['register'] = this.register;
-    data['status'] = this.status;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['sno'] = sno;
+    data['chapterSno'] = chapterSno;
+    data['courseSno'] = courseSno;
+    data['date'] = date;
+    data['duration'] = duration;
+    data['effectivenessOfStudy'] = effectivenessOfStudy;
+    data['endDate'] = endDate;
+    data['enteredDate'] = enteredDate;
+    data['numericalPercent'] = numericalPercent;
+    data['revision'] = revision;
+    data['startDate'] = startDate;
+    data['subjectSno'] = subjectSno;
+    data['theoryPercent'] = theoryPercent;
+    data['timePunchedFrom'] = timePunchedFrom;
+    data['topicCompletionStatus'] = topicCompletionStatus;
+    data['topicSno'] = topicSno;
+    data['totalSecond'] = totalSecond;
+    data['totalTime'] = totalTime;
+    data['unitSno'] = unitSno;
+    data['updatedDate'] = updatedDate;
+    data['register'] = register;
+    data['status'] = status;
     return data;
   }
 }

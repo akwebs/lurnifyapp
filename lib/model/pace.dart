@@ -33,17 +33,17 @@ class Pace {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['sno'] = this.sno;
-    data['expectedRank'] = this.expectedRank;
-    data['syllabusCompletionDate'] = this.syllabusCompletionDate;
-    data['perDayStudyHour'] = this.perDayStudyHour;
-    data['studentSno'] = this.studentSno;
-    data['courseSno'] = this.courseSno;
-    data['enteredDate'] = this.enteredDate;
-    data['updatedDate'] = this.updatedDate;
-    data['percentDifference'] = this.percentDifference;
-    data['register'] = this.register;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['sno'] = sno;
+    data['expectedRank'] = expectedRank;
+    data['syllabusCompletionDate'] = syllabusCompletionDate;
+    data['perDayStudyHour'] = perDayStudyHour;
+    data['studentSno'] = studentSno;
+    data['courseSno'] = courseSno;
+    data['enteredDate'] = enteredDate;
+    data['updatedDate'] = updatedDate;
+    data['percentDifference'] = percentDifference;
+    data['register'] = register;
     return data;
   }
 }

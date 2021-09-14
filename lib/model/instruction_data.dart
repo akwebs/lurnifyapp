@@ -1,4 +1,3 @@
-
 class InstructionData {
   int sno;
   String instructions;
@@ -7,13 +6,7 @@ class InstructionData {
   String updatedBy;
   String updatedDate;
 
-  InstructionData(
-      {this.sno,
-        this.instructions,
-        this.enteredBy,
-        this.enteredDate,
-        this.updatedBy,
-        this.updatedDate});
+  InstructionData({this.sno, this.instructions, this.enteredBy, this.enteredDate, this.updatedBy, this.updatedDate});
 
   InstructionData.fromJson(Map<String, dynamic> json) {
     sno = json['sno'];
@@ -25,13 +18,13 @@ class InstructionData {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['sno'] = this.sno;
-    data['instructions'] = this.instructions;
-    data['enteredBy'] = this.enteredBy;
-    data['enteredDate'] = this.enteredDate;
-    data['updatedBy'] = this.updatedBy;
-    data['updatedDate'] = this.updatedDate;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['sno'] = sno;
+    data['instructions'] = instructions;
+    data['enteredBy'] = enteredBy;
+    data['enteredDate'] = enteredDate;
+    data['updatedBy'] = updatedBy;
+    data['updatedDate'] = updatedDate;
     return data;
   }
 }

@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
-import '../../../helper/DBHelper.dart';
+import '../../../helper/db_helper.dart';
 import '../../../helper/recent_study_repo.dart';
-import 'starttimer.dart';
-import 'syncyourtime.dart';
+import 'start_timer.dart';
+import 'sync_your_time.dart';
 import '../../../widgets/componants/custom-button.dart';
 import '../../constant/constant.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'contentselect.dart';
+import 'content_select.dart';
 
 class Recent extends StatefulWidget {
   final String pageKey;
@@ -20,7 +20,7 @@ class Recent extends StatefulWidget {
 class _RecentState extends State<Recent> {
   String pageKey;
   _RecentState(this.pageKey);
-  List<Map<String,dynamic>> recentData = [];
+  List<Map<String, dynamic>> recentData = [];
   List nextData = [];
   bool lastTopicResult = false;
   var data;
@@ -167,18 +167,14 @@ class _RecentState extends State<Recent> {
                     aspectRatio: 4 / 2,
                     child: Card(
                       elevation: 0,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10)),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                       clipBehavior: Clip.antiAlias,
                       child: Stack(
                         children: [
                           Container(
                             decoration: BoxDecoration(
                               gradient: LinearGradient(
-                                colors: [
-                                  Colors.cyan[200].withOpacity(0.1),
-                                  Colors.purple[200].withOpacity(0.1)
-                                ],
+                                colors: [Colors.cyan[200].withOpacity(0.1), Colors.purple[200].withOpacity(0.1)],
                                 begin: Alignment.topRight,
                                 end: Alignment.bottomLeft,
                               ),
@@ -201,16 +197,13 @@ class _RecentState extends State<Recent> {
                                 //             color: Colors.green,
                                 //           ),
                                 title: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Expanded(
                                       flex: 1,
                                       child: Text(
                                         recentData[i]['subjectName'],
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold),
+                                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                                       ),
                                     ),
                                     // Flexible(
@@ -224,18 +217,15 @@ class _RecentState extends State<Recent> {
                                     Expanded(
                                         flex: 1,
                                         child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.end,
+                                          mainAxisAlignment: MainAxisAlignment.end,
                                           children: [
-                                            recentData[i]['studyType'] !=
-                                                    "Complete"
+                                            recentData[i]['studyType'] != "Complete"
                                                 ? Icon(
                                                     Icons.pending_actions,
                                                     color: Colors.red,
                                                   )
                                                 : Icon(
-                                                    Icons
-                                                        .check_circle_outline_rounded,
+                                                    Icons.check_circle_outline_rounded,
                                                     color: Colors.green,
                                                   ),
                                           ],
@@ -263,8 +253,7 @@ class _RecentState extends State<Recent> {
                                   padding: const EdgeInsets.all(8.0),
                                   child: Text(
                                     "Chapter : " + recentData[i]['chapterName'],
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.w600),
+                                    style: TextStyle(fontWeight: FontWeight.w600),
                                   ),
                                 ),
                               ),
@@ -275,15 +264,11 @@ class _RecentState extends State<Recent> {
                                     children: [
                                       Text(
                                         recentData[i]['topicName'] + ":  ",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 14),
+                                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
                                       ),
                                       Expanded(
                                         child: Text(
-                                          recentData[i]['subTopic'] == null
-                                              ? ""
-                                              : recentData[i]['subTopic'],
+                                          recentData[i]['subTopic'] == null ? "" : recentData[i]['subTopic'],
                                           style: TextStyle(fontSize: 13),
                                         ),
                                       ),
@@ -294,69 +279,31 @@ class _RecentState extends State<Recent> {
                               recentData[i]['studyType'] != "Complete"
                                   ? TextButton(
                                       onPressed: () {
-                                        String subjectSno = recentData[i]
-                                                ['subjectSno']
-                                            .toString();
-                                        String unitSno =
-                                            recentData[i]['unitSno'].toString();
-                                        String chapterSno = recentData[i]
-                                                ['chapterSno']
-                                            .toString();
-                                        String topicSno = recentData[i]
-                                                ['topicSno']
-                                            .toString();
-                                        String subTopic = recentData[i]
-                                                ['subTopic']
-                                            .toString();
-                                        String duration = recentData[i]
-                                                ['duration']
-                                            .toString();
+                                        String subjectSno = recentData[i]['subjectSno'].toString();
+                                        String unitSno = recentData[i]['unitSno'].toString();
+                                        String chapterSno = recentData[i]['chapterSno'].toString();
+                                        String topicSno = recentData[i]['topicSno'].toString();
+                                        String subTopic = recentData[i]['subTopic'].toString();
+                                        String duration = recentData[i]['duration'].toString();
                                         print("---------------1" + duration);
-                                        _goToNextScreen(
-                                            subjectSno,
-                                            unitSno,
-                                            chapterSno,
-                                            topicSno,
-                                            subTopic,
-                                            duration);
+                                        _goToNextScreen(subjectSno, unitSno, chapterSno, topicSno, subTopic, duration);
                                       },
                                       child: const Text('Start Study'),
                                     )
                                   : TextButton(
                                       onPressed: () {
-                                        String subjectSno = recentData[i]
-                                                ['subjectSno']
-                                            .toString();
-                                        String subjectName = recentData[i]
-                                                ['subjectName']
-                                            .toString();
-                                        String unitSno =
-                                            recentData[i]['unitSno'].toString();
-                                        String unitName = recentData[i]
-                                                ['unitName']
-                                            .toString();
-                                        String chapterSno = recentData[i]
-                                                ['chapterSno']
-                                            .toString();
-                                        String chapterName = recentData[i]
-                                                ['chapterName']
-                                            .toString();
-                                        String topicSno = recentData[i]
-                                                ['topicSno']
-                                            .toString();
-                                        _getNextTopic(
-                                            subjectSno,
-                                            subjectName,
-                                            unitSno,
-                                            unitName,
-                                            chapterSno,
-                                            chapterName,
-                                            topicSno);
+                                        String subjectSno = recentData[i]['subjectSno'].toString();
+                                        String subjectName = recentData[i]['subjectName'].toString();
+                                        String unitSno = recentData[i]['unitSno'].toString();
+                                        String unitName = recentData[i]['unitName'].toString();
+                                        String chapterSno = recentData[i]['chapterSno'].toString();
+                                        String chapterName = recentData[i]['chapterName'].toString();
+                                        String topicSno = recentData[i]['topicSno'].toString();
+                                        _getNextTopic(subjectSno, subjectName, unitSno, unitName, chapterSno, chapterName, topicSno);
                                       },
                                       child: const Text(
                                         "Study Next Topic",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.w600),
+                                        style: TextStyle(fontWeight: FontWeight.w600),
                                       ),
                                     ),
                               Container(
@@ -364,22 +311,15 @@ class _RecentState extends State<Recent> {
                                 padding: EdgeInsets.all(5),
                                 color: Colors.grey[50],
                                 child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
                                       "Last Studied : ",
-                                      style: TextStyle(
-                                          color: Colors.black54,
-                                          fontWeight: FontWeight.w800,
-                                          fontSize: 12),
+                                      style: TextStyle(color: Colors.black54, fontWeight: FontWeight.w800, fontSize: 12),
                                     ),
                                     Text(
                                       recentData[i]['enteredDate'],
-                                      style: TextStyle(
-                                          color: Colors.black54,
-                                          fontWeight: FontWeight.w800,
-                                          fontSize: 12),
+                                      style: TextStyle(color: Colors.black54, fontWeight: FontWeight.w800, fontSize: 12),
                                     ),
                                   ],
                                 ),
@@ -576,29 +516,19 @@ class _RecentState extends State<Recent> {
   //         );
   // }
 
-  _goToNextScreen(
-      subjectSno, unitSno, chapterSno, topicSno, subTopic, duration) async {
+  _goToNextScreen(subjectSno, unitSno, chapterSno, topicSno, subTopic, duration) async {
     SharedPreferences sp = await SharedPreferences.getInstance();
     String course = sp.getString("courseSno");
     print("---------------2" + duration);
     if (pageKey == "1") {
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => StartTimer(course, subjectSno, unitSno,
-                  chapterSno, topicSno, subTopic, duration)));
+      Navigator.push(context, MaterialPageRoute(builder: (context) => StartTimer(course, subjectSno, unitSno, chapterSno, topicSno, subTopic, duration)));
     } else if (pageKey == "2") {
       print("---------------3" + duration);
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => SyncYourTime(course, subjectSno, unitSno,
-                  chapterSno, topicSno, duration)));
+      Navigator.push(context, MaterialPageRoute(builder: (context) => SyncYourTime(course, subjectSno, unitSno, chapterSno, topicSno, duration)));
     }
   }
 
-  Future _getNextTopic(subjectSno, subjectName, unitSno, unitName, chapterSno,
-      chapterName, topicSno) async {
+  Future _getNextTopic(subjectSno, subjectName, unitSno, unitName, chapterSno, chapterName, topicSno) async {
     try {
       // var url = baseUrl +
       //     "getNextTopic?chapterSno=" +
@@ -624,16 +554,14 @@ class _RecentState extends State<Recent> {
       } else {
         lastTopicResult = false;
         print(lastTopicResult);
-        topicAlertBox(subjectSno, subjectName, unitSno, unitName, chapterSno,
-            chapterName, nextData);
+        topicAlertBox(subjectSno, subjectName, unitSno, unitName, chapterSno, chapterName, nextData);
       }
     } catch (e) {
       print(e);
     }
   }
 
-  Future topicAlertBox(subjectSno, subjectName, unitSno, unitName, chapterSno,
-      chapterName, nextData) {
+  Future topicAlertBox(subjectSno, subjectName, unitSno, unitName, chapterSno, chapterName, nextData) {
     return showGeneralDialog(
         barrierColor: Colors.black.withOpacity(0.5),
         transitionBuilder: (context, a1, a2, widget) {
@@ -645,8 +573,7 @@ class _RecentState extends State<Recent> {
               child: AlertDialog(
                 contentPadding: EdgeInsets.all(0),
                 backgroundColor: Colors.white70,
-                shape: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(5.0)),
+                shape: OutlineInputBorder(borderRadius: BorderRadius.circular(5.0)),
                 content: Container(
                     height: 300,
                     width: 100,
@@ -655,11 +582,7 @@ class _RecentState extends State<Recent> {
                       children: <Widget>[
                         Container(
                           padding: EdgeInsets.only(top: 5, bottom: 5),
-                          decoration: BoxDecoration(
-                              color: Colors.cyanAccent,
-                              borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(5),
-                                  topRight: Radius.circular(5))),
+                          decoration: BoxDecoration(color: Colors.cyanAccent, borderRadius: BorderRadius.only(topLeft: Radius.circular(5), topRight: Radius.circular(5))),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
@@ -667,14 +590,8 @@ class _RecentState extends State<Recent> {
                                 child: Padding(
                                     padding: EdgeInsets.only(left: 10),
                                     child: Text(
-                                      "'" +
-                                          nextData[0]['topicName'] +
-                                          "'" +
-                                          " is Your Next Topic. Do you want to study?",
-                                      style: TextStyle(
-                                          color: Colors.black87,
-                                          fontWeight: FontWeight.w800,
-                                          fontSize: 16),
+                                      "'" + nextData[0]['topicName'] + "'" + " is Your Next Topic. Do you want to study?",
+                                      style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w800, fontSize: 16),
                                     )),
                               ),
                               IconButton(
@@ -690,28 +607,19 @@ class _RecentState extends State<Recent> {
                             padding: EdgeInsets.all(6),
                             child: Text(
                               "Subject Name : " + subjectName,
-                              style: TextStyle(
-                                  color: Colors.black87,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 14),
+                              style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w600, fontSize: 14),
                             )),
                         Padding(
                             padding: EdgeInsets.all(6),
                             child: Text(
                               "Unit Name : " + unitName,
-                              style: TextStyle(
-                                  color: Colors.black87,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 14),
+                              style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w600, fontSize: 14),
                             )),
                         Padding(
                             padding: EdgeInsets.all(6),
                             child: Text(
                               "Subject Name : " + subjectName,
-                              style: TextStyle(
-                                  color: Colors.black87,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 14),
+                              style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w600, fontSize: 14),
                             )),
                         Row(
                           children: [
@@ -720,10 +628,7 @@ class _RecentState extends State<Recent> {
                                   padding: EdgeInsets.all(6),
                                   child: Text(
                                     "Topic Name : " + nextData[0]['topicName'],
-                                    style: TextStyle(
-                                        color: Colors.black87,
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 14),
+                                    style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w600, fontSize: 14),
                                   )),
                             ),
                           ],
@@ -734,10 +639,7 @@ class _RecentState extends State<Recent> {
                                 padding: EdgeInsets.all(6),
                                 child: Text(
                                   "SubTopic Name : " + nextData[0]['subTopic'],
-                                  style: TextStyle(
-                                      color: Colors.black87,
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 14),
+                                  style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w600, fontSize: 14),
                                 )),
                           ],
                         ),
@@ -750,13 +652,7 @@ class _RecentState extends State<Recent> {
                                 style: TextStyle(color: Colors.black87),
                               ),
                               onPressed: () {
-                                nextTopicStart(
-                                    subjectSno,
-                                    unitSno,
-                                    chapterSno,
-                                    nextData[0]['sno'].toString(),
-                                    nextData[0]['subTopic'],
-                                    nextData[0]['duration']);
+                                nextTopicStart(subjectSno, unitSno, chapterSno, nextData[0]['sno'].toString(), nextData[0]['subTopic'], nextData[0]['duration']);
                               },
                             ),
                           ],
@@ -787,8 +683,7 @@ class _RecentState extends State<Recent> {
               child: AlertDialog(
                 contentPadding: EdgeInsets.all(0),
                 backgroundColor: Colors.white70,
-                shape: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(5.0)),
+                shape: OutlineInputBorder(borderRadius: BorderRadius.circular(5.0)),
                 content: Container(
                     height: 300,
                     width: 100,
@@ -797,11 +692,7 @@ class _RecentState extends State<Recent> {
                       children: <Widget>[
                         Container(
                           padding: EdgeInsets.only(top: 5, bottom: 5),
-                          decoration: BoxDecoration(
-                              color: Colors.cyanAccent,
-                              borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(5),
-                                  topRight: Radius.circular(5))),
+                          decoration: BoxDecoration(color: Colors.cyanAccent, borderRadius: BorderRadius.only(topLeft: Radius.circular(5), topRight: Radius.circular(5))),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
@@ -810,10 +701,7 @@ class _RecentState extends State<Recent> {
                                     padding: EdgeInsets.only(left: 10),
                                     child: Text(
                                       "Congratulations! You have completed all the topics of this chapter. Please Select another chapter.",
-                                      style: TextStyle(
-                                          color: Colors.black87,
-                                          fontWeight: FontWeight.w800,
-                                          fontSize: 16),
+                                      style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w800, fontSize: 16),
                                     )),
                               ),
                               IconButton(
@@ -839,22 +727,13 @@ class _RecentState extends State<Recent> {
         pageBuilder: (context, animation1, animation2) {});
   }
 
-  nextTopicStart(
-      subjectSno, unitSno, chapterSno, topicSno, subTopic, duration) {
+  nextTopicStart(subjectSno, unitSno, chapterSno, topicSno, subTopic, duration) {
     Navigator.of(context).pop();
     if (pageKey == "1") {
-      Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-              builder: (context) => StartTimer("1", subjectSno, unitSno,
-                  chapterSno, topicSno, subTopic, duration)));
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => StartTimer("1", subjectSno, unitSno, chapterSno, topicSno, subTopic, duration)));
     } else if (pageKey == "2") {
       print("---------------" + duration);
-      Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-              builder: (context) => SyncYourTime(
-                  "1", subjectSno, unitSno, chapterSno, topicSno, duration)));
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => SyncYourTime("1", subjectSno, unitSno, chapterSno, topicSno, duration)));
     }
   }
 }

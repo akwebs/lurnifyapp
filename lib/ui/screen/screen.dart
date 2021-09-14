@@ -1,78 +1,75 @@
 // Dare To Do
-export 'dareToDo/dareToDo.dart';
+export 'dareToDo/dare_to_do.dart';
 
 // Login Screen
 export 'login/login.dart';
-export 'login/OtpScreen.dart';
-export 'login/courseSelection.dart';
-export 'login/referal-code.dart';
-export 'login/CourseGroup.dart';
+export 'login/otp_screen.dart';
+export 'login/course_selection.dart';
+export 'login/referal_code.dart';
+export 'login/course_group.dart';
 
 // Market Place
-export 'marketPlace/marketPlace.dart';
-export 'marketPlace/product-page.dart';
-export 'marketPlace/purchased-item.dart';
-export 'marketPlace/week-month.dart';
+export 'marketPlace/market_place.dart';
+export 'marketPlace/product_page.dart';
+export 'marketPlace/purchased_item.dart';
+export 'marketPlace/week_month.dart';
 
 // My Course Contain
-export 'myCourseContain/ClassNoteImagePreview.dart';
-export 'myCourseContain/ClassNotes.dart';
-export 'myCourseContain/FlashCard.dart';
-export 'myCourseContain/FlashCardImagePreview.dart';
-export 'myCourseContain/MicroVideo.dart';
-export 'myCourseContain/MicroVideoPlayer.dart';
-export 'myCourseContain/MyCourseContain.dart';
-export 'myCourseContain/NewCourseContent.dart';
-export 'myCourseContain/PreciseTheory.dart';
-export 'myCourseContain/PreciseTheoryImagePreview.dart';
+export 'myCourseContain/preview/class_note_preview.dart';
+export 'myCourseContain/class_notes.dart';
+export 'myCourseContain/flash_card.dart';
+export 'myCourseContain/preview/flash_card_preview.dart';
+export 'myCourseContain/micro_video.dart';
+export 'myCourseContain/preview/micro_video_player.dart';
+export 'myCourseContain/course_content.dart';
+export 'myCourseContain/course_content.dart';
+export 'myCourseContain/precise_theory.dart';
+export 'myCourseContain/preview/precise_theory_preview.dart';
 
 // My Progress
-export 'myProgress/chapter-progress.dart';
-export 'myProgress/subject-unit.dart';
-export 'myProgress/topic-progress.dart';
+export 'myProgress/chapter_progress.dart';
+export 'myProgress/subject_unit.dart';
+export 'myProgress/topic_progress.dart';
 
 // My Report
-export 'myReport/my-report-overall.dart';
-export 'myReport/my-report.dart';
+export 'myReport/my_report_overall.dart';
+export 'myReport/my_report.dart';
 
 // Payment
-export 'payment/make-payment.dart';
+export 'payment/make_payment.dart';
 
 // Rank Booster
-export 'rankBooster/createYourOwnTest.dart';
-export 'rankBooster/rankbooster-instruction.dart';
-export 'rankBooster/rankboosterHome.dart';
+export 'rankBooster/create_your_own_test.dart';
+export 'rankBooster/rankbooster_instruction.dart';
+export 'rankBooster/rank_booster_view.dart';
 
 // Eevision Zone
-export 'revisionZone/myRevision.dart';
-export 'revisionZone/RevisionZoneHome.dart';
+export 'revisionZone/my_revision.dart';
+export 'revisionZone/revision_zone_view.dart';
 
 // Self Study
-export 'selfstudy/contentselect.dart';
+export 'selfstudy/content_select.dart';
 export 'selfstudy/recent.dart';
-export 'selfstudy/selectpace.dart';
-export 'selfstudy/selfstudy.dart';
-export 'selfstudy/starttimer.dart';
-export 'selfstudy/studycomplete.dart';
-export 'selfstudy/syncyourtime.dart';
+export 'selfstudy/select_pace.dart';
+export 'selfstudy/self_study.dart';
+export 'selfstudy/start_timer.dart';
+export 'selfstudy/study_complete.dart';
+export 'selfstudy/sync_your_time.dart';
 
 // Social Group
 export 'socialGroup/group.dart';
-export 'socialGroup/social-group.dart';
+export 'socialGroup/social_group.dart';
 
 // Test
-export 'test/instructionPage.dart';
+export 'test/instruction_page.dart';
 export 'test/solution.dart';
 export 'test/test.dart';
-export 'test/testResult.dart';
-export 'test/testSummary.dart';
+export 'test/test_result.dart';
+export 'test/test_summary.dart';
 export 'test/topictest.dart';
 
 // user Profile
 export 'userProfile/user-profile.dart';
 
 // Self Study Section
-export 'selfstudysection/startSelfStudyLearnMore.dart';
-export 'selfstudysection/GoalsLearnMore.dart';
-export 'selfstudysection/statisticksLearnMore.dart';
-export 'selfstudysection/SyncStudyTimeLearnMore.dart';
+export 'selfstudysection/learn_more.dart';

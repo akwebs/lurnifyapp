@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 class AppTheme {
   AppTheme._();
 
-  static Color _iconColor = Colors.deepPurple;
-  static Color _lightNavigationColor = Colors.black45;
-  static Color _darkNavigationColor = Colors.white70;
+  static const Color _iconColor = Colors.deepPurple;
+  static final Color _lightNavigationColor = Colors.black45;
+  static final Color _darkNavigationColor = Colors.white70;
 
   static const Color _lightPrimaryColor = Colors.white;
   static const Color _lightPrimaryVariantColor = Color(0XFFFAFAFA);
@@ -20,22 +20,20 @@ class AppTheme {
 
   static final ThemeData lightTheme = ThemeData(
       scaffoldBackgroundColor: _lightPrimaryColor,
-      accentColor: _lightSeconderyColor,
+      // accentColor: _lightSeconderyColor,
       primaryColor: _darkSeconderyColor,
-      appBarTheme: AppBarTheme(
+      appBarTheme: const AppBarTheme(
         elevation: 2,
         color: _lightPrimaryColor,
-        textTheme: TextTheme(
-          headline6: TextStyle(
-            color: _lightSeconderyColor,
-            fontSize: 18,
-          ),
+        titleTextStyle: TextStyle(
+          color: _lightSeconderyColor,
+          fontSize: 18,
         ),
         iconTheme: IconThemeData(
           color: _lightSeconderyColor,
         ),
       ),
-      colorScheme: ColorScheme(
+      colorScheme: const ColorScheme(
         primary: _lightPrimaryColor,
         primaryVariant: _lightPrimaryVariantColor,
         secondary: _lightSeconderyColor,
@@ -50,15 +48,15 @@ class AppTheme {
         secondaryVariant: _lightSeconderyVariantColor,
         surface: _lightPrimaryColor,
       ),
-      iconTheme: IconThemeData(
+      iconTheme: const IconThemeData(
         color: _iconColor,
       ),
-      cardTheme: CardTheme(
+      cardTheme: const CardTheme(
         color: _lightPrimaryColor,
         elevation: 3,
         shadowColor: Colors.black38,
       ),
-      tabBarTheme: TabBarTheme(
+      tabBarTheme: const TabBarTheme(
         labelColor: _lightSeconderyColor,
         unselectedLabelColor: _lightOnPrimaryColor,
       ),
@@ -91,13 +89,13 @@ class AppTheme {
           ),
         ),
       ),
-      floatingActionButtonTheme: FloatingActionButtonThemeData(
+      floatingActionButtonTheme: const FloatingActionButtonThemeData(
         backgroundColor: _lightSeconderyColor,
         splashColor: _lightPrimaryVariantColor,
       ),
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
         selectedItemColor: _lightSeconderyColor,
-        selectedIconTheme: IconThemeData(
+        selectedIconTheme: const IconThemeData(
           color: _lightSeconderyColor,
         ),
         unselectedIconTheme: IconThemeData(
@@ -109,7 +107,7 @@ class AppTheme {
         color: _lightNavigationColor,
       ));
 
-  static final TextTheme _lightTextTheme = TextTheme(
+  static const TextTheme _lightTextTheme = TextTheme(
     headline5: _lightScreenHeadingTextStyle,
     headline6: _lightScreenHeadingTextStyle,
     bodyText1: _lightScreenHeadingTextStyle,
@@ -117,30 +115,28 @@ class AppTheme {
     button: _lightbuttonTextStyle,
   );
 
-  static final TextStyle _lightScreenHeadingTextStyle = TextStyle(
+  static const TextStyle _lightScreenHeadingTextStyle = TextStyle(
     fontFamily: 'Montserrat',
     color: _lightOnPrimaryColor,
     fontSize: 14,
   );
-  static final TextStyle _lightbuttonTextStyle = TextStyle(
+  // ignore: unnecessary_const
+  static const TextStyle _lightbuttonTextStyle = const TextStyle(
     color: _lightSeconderyColor,
   );
 
   static final ThemeData darkTheme = ThemeData(
       scaffoldBackgroundColor: _darkPrimaryVariantColor,
       primaryColor: _darkSeconderyColor,
-      accentColor: _darkSeconderyColor,
-      appBarTheme: AppBarTheme(
+      appBarTheme: const AppBarTheme(
         color: _darkPrimaryVariantColor,
         elevation: 0,
-        textTheme: TextTheme(
-          headline6: TextStyle(color: _darkSeconderyColor, fontSize: 20),
-        ),
+        titleTextStyle: TextStyle(color: _darkSeconderyColor, fontSize: 20),
         iconTheme: IconThemeData(
           color: _darkOnPrimaryColor,
         ),
       ),
-      colorScheme: ColorScheme(
+      colorScheme: const ColorScheme(
         primary: _darkPrimaryColor,
         primaryVariant: _darkPrimaryVariantColor,
         secondary: _darkSeconderyColor,
@@ -182,22 +178,22 @@ class AppTheme {
         ),
       ),
       canvasColor: _darkPrimaryColor,
-      tabBarTheme: TabBarTheme(
+      tabBarTheme: const TabBarTheme(
         labelColor: _darkSeconderyColor,
         unselectedLabelColor: _darkOnPrimaryColor,
       ),
       unselectedWidgetColor: _darkSeconderyColor,
-      iconTheme: IconThemeData(
+      iconTheme: const IconThemeData(
         color: _iconColor,
       ),
       textTheme: _darkTextTheme,
-      floatingActionButtonTheme: FloatingActionButtonThemeData(
+      floatingActionButtonTheme: const FloatingActionButtonThemeData(
         backgroundColor: _darkSeconderyColor,
         splashColor: _darkPrimaryVariantColor,
       ),
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
         selectedItemColor: _darkSeconderyColor,
-        selectedIconTheme: IconThemeData(
+        selectedIconTheme: const IconThemeData(
           color: _darkSeconderyColor,
         ),
         unselectedIconTheme: IconThemeData(
@@ -209,7 +205,7 @@ class AppTheme {
         color: _darkNavigationColor,
       ));
 
-  static final TextTheme _darkTextTheme = TextTheme(
+  static const TextTheme _darkTextTheme = TextTheme(
     headline5: _darkScreenHeadingTextStyle,
     headline6: _darkScreenHeadingTextStyle,
     bodyText1: _darkScreenHeadingTextStyle,
@@ -217,12 +213,12 @@ class AppTheme {
     button: _darkbuttonTextStyle,
   );
 
-  static final TextStyle _darkScreenHeadingTextStyle = TextStyle(
+  static const TextStyle _darkScreenHeadingTextStyle = TextStyle(
     fontFamily: 'Montserrat',
     color: _darkOnPrimaryColor,
     fontSize: 14,
   );
-  static final TextStyle _darkbuttonTextStyle = TextStyle(
+  static const TextStyle _darkbuttonTextStyle = TextStyle(
     color: _darkSeconderyColor,
   );
 }
