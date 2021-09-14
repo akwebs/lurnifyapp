@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lurnify/config/data.dart';
-import 'package:lurnify/helper/DBHelper.dart';
+import 'package:lurnify/helper/db_helper.dart';
 import 'package:lurnify/ui/constant/constant.dart';
 import 'package:lurnify/widgets/componants/custom-alert.dart';
 import 'package:lurnify/widgets/componants/custom-expantion-tile.dart';
@@ -37,14 +37,13 @@ class _MakePaymentState extends State<MakePayment> {
   String _discountedAmount = "";
   String validTill = "";
   String dateWithoutT = "";
-  String _courseName="";
-  String _mobile="";
+  String _courseName = "";
+  String _mobile = "";
 
   _getPayment() async {
     try {
       SharedPreferences sp = await SharedPreferences.getInstance();
-      var url =
-          baseUrl + "getPaymentByCourse?courseSno=" + sp.getString("courseSno");
+      var url = baseUrl + "getPaymentByCourse?courseSno=" + sp.getString("courseSno");
       print(url);
       http.Response response = await http.get(
         Uri.encodeFull(url),
@@ -58,14 +57,13 @@ class _MakePaymentState extends State<MakePayment> {
       }
 
       DBHelper dbHelper = new DBHelper();
-      Database database=await dbHelper.database;
-      String sql="select * from course";
-      List<Map<String,dynamic>> list=await database.rawQuery(sql);
-      for(var a in list){
-        _courseName=a['courseName'];
+      Database database = await dbHelper.database;
+      String sql = "select * from course";
+      List<Map<String, dynamic>> list = await database.rawQuery(sql);
+      for (var a in list) {
+        _courseName = a['courseName'];
       }
-      _mobile=sp.getString('mobile');
-
+      _mobile = sp.getString('mobile');
     } catch (e) {
       print(e);
     }
@@ -109,166 +107,151 @@ class _MakePaymentState extends State<MakePayment> {
 
   void _handlePaymentSuccess(PaymentSuccessResponse response) {
     _makePayment();
-    print("SUCCESS: " + response.paymentId,);
-    Fluttertoast.showToast(
-        msg: "SUCCESS: " + response.paymentId, toastLength: Toast.LENGTH_SHORT);
+    print(
+      "SUCCESS: " + response.paymentId,
+    );
+    Fluttertoast.showToast(msg: "SUCCESS: " + response.paymentId, toastLength: Toast.LENGTH_SHORT);
   }
 
   void _handlePaymentError(PaymentFailureResponse response) {
-    print("ERROR: " + response.code.toString() + " - " + response.message,);
-    Fluttertoast.showToast(
-        msg: "ERROR: " + response.code.toString() + " - " + response.message,
-        toastLength: Toast.LENGTH_SHORT);
+    print(
+      "ERROR: " + response.code.toString() + " - " + response.message,
+    );
+    Fluttertoast.showToast(msg: "ERROR: " + response.code.toString() + " - " + response.message, toastLength: Toast.LENGTH_SHORT);
   }
 
   void _handleExternalWallet(ExternalWalletResponse response) {
     print("EXTERNAL_WALLET: " + response.walletName);
-    Fluttertoast.showToast(
-        msg: "EXTERNAL_WALLET: " + response.walletName,
-        toastLength: Toast.LENGTH_SHORT);
+    Fluttertoast.showToast(msg: "EXTERNAL_WALLET: " + response.walletName, toastLength: Toast.LENGTH_SHORT);
   }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: _getPayment(),
-      builder: (context, snapshot) {
-        if(snapshot.connectionState==ConnectionState.done){
-          return Scaffold(
-            appBar: AppBar(
-              title: Text("Money Matters"),
-              centerTitle: true,
-              elevation: 0,
-            ),
-            body: SingleChildScrollView(
-              padding: EdgeInsets.all(10),
-              physics: BouncingScrollPhysics(),
-              child: Column(
-                children: [
-                  Card(
-                    child: CustomExpansionTile(
-                      childrenPadding: EdgeInsets.all(15),
-                      title: Column(
-                        children: [
-                          Text(
-                            'Course Name',
-                            style: TextStyle(
-                                color: Colors.amberAccent,
-                                fontSize: 25,
-                                fontWeight: FontWeight.w600),
-                          ),
-                          Text('Course features & Benefits'),
-                        ],
-                      ),
-                      children: [
-                        Text(''),
-                      ],
-                    ),
-                  ),
-                  Card(
-                    child: CustomExpansionTile(
-                      childrenPadding: EdgeInsets.all(15),
-                      title: Column(
-                        children: [
-                          Text(
-                            'Program Fee',
-                            style: TextStyle(
-                                color: Colors.amberAccent,
-                                fontSize: 25,
-                                fontWeight: FontWeight.w600),
-                          ),
-                          SizedBox(height: 8),
-                          Text(
-                            '\u20B9 $_totalAmount',
-                            style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.w600),
-                          ),
-                          SizedBox(height: 8),
-                          Text(
-                            'Valid Till ' + dateWithoutT,
-                            style: TextStyle(
-                                fontSize: 10, fontWeight: FontWeight.w600),
-                          )
-                        ],
-                      ),
-                      children: [
-                        Text(''),
-                      ],
-                    ),
-                  ),
-                  Card(
-                    child: CustomExpansionTile(
-                      childrenPadding: EdgeInsets.all(15),
-                      title: Column(
-                        children: [
-                          Text(
-                            'Your Earning',
-                            style: TextStyle(
-                                color: Colors.amberAccent,
-                                fontSize: 25,
-                                fontWeight: FontWeight.w600),
-                          ),
-                          Text('Referral Earning & Rewards'),
-                        ],
-                      ),
-                      children: [
-                        Text(''),
-                      ],
-                    ),
-                  ),
-                ],
+        future: _getPayment(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            return Scaffold(
+              appBar: AppBar(
+                title: Text("Money Matters"),
+                centerTitle: true,
+                elevation: 0,
               ),
-            ),
-            bottomNavigationBar: Container(
-              decoration: BoxDecoration(gradient: AppSlider.gradient[3]),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      'Net Payable Due = \u20B9 $_discountedAmount',
-                      style: TextStyle(color: whiteColor),
+              body: SingleChildScrollView(
+                padding: EdgeInsets.all(10),
+                physics: BouncingScrollPhysics(),
+                child: Column(
+                  children: [
+                    Card(
+                      child: CustomExpansionTile(
+                        childrenPadding: EdgeInsets.all(15),
+                        title: Column(
+                          children: [
+                            Text(
+                              'Course Name',
+                              style: TextStyle(color: Colors.amberAccent, fontSize: 25, fontWeight: FontWeight.w600),
+                            ),
+                            Text('Course features & Benefits'),
+                          ],
+                        ),
+                        children: [
+                          Text(''),
+                        ],
+                      ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: CustomButton(
-                      btnClr: Colors.orange,
-                      brdRds: 50,
-                      buttonText: 'Pay \u20B9 $_discountedAmount Now',
-                      verpad: EdgeInsets.symmetric(vertical: 5, horizontal: 40),
-                      onPressed: () {
-                        _openCheckout();
-                        if (_isPaymentDone) {
-                          toastMethod("Payment Already done");
-                        } else {
-
-                        }
-                      },
+                    Card(
+                      child: CustomExpansionTile(
+                        childrenPadding: EdgeInsets.all(15),
+                        title: Column(
+                          children: [
+                            Text(
+                              'Program Fee',
+                              style: TextStyle(color: Colors.amberAccent, fontSize: 25, fontWeight: FontWeight.w600),
+                            ),
+                            SizedBox(height: 8),
+                            Text(
+                              '\u20B9 $_totalAmount',
+                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                            ),
+                            SizedBox(height: 8),
+                            Text(
+                              'Valid Till ' + dateWithoutT,
+                              style: TextStyle(fontSize: 10, fontWeight: FontWeight.w600),
+                            )
+                          ],
+                        ),
+                        children: [
+                          Text(''),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                    Card(
+                      child: CustomExpansionTile(
+                        childrenPadding: EdgeInsets.all(15),
+                        title: Column(
+                          children: [
+                            Text(
+                              'Your Earning',
+                              style: TextStyle(color: Colors.amberAccent, fontSize: 25, fontWeight: FontWeight.w600),
+                            ),
+                            Text('Referral Earning & Rewards'),
+                          ],
+                        ),
+                        children: [
+                          Text(''),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          );
-        }else{
-          return Center(
-            child: CircularProgressIndicator(color: Colors.black,),
-          );
-        }
-
-      }
-    );
+              bottomNavigationBar: Container(
+                decoration: BoxDecoration(gradient: AppSlider.gradient[3]),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        'Net Payable Due = \u20B9 $_discountedAmount',
+                        style: TextStyle(color: whiteColor),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: CustomButton(
+                        btnClr: Colors.orange,
+                        brdRds: 50,
+                        buttonText: 'Pay \u20B9 $_discountedAmount Now',
+                        verpad: EdgeInsets.symmetric(vertical: 5, horizontal: 40),
+                        onPressed: () {
+                          _openCheckout();
+                          if (_isPaymentDone) {
+                            toastMethod("Payment Already done");
+                          } else {}
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          } else {
+            return Center(
+              child: CircularProgressIndicator(
+                color: Colors.black,
+              ),
+            );
+          }
+        });
   }
 
   _makePayment() async {
     try {
       _otpSentAlertBox(context);
       SharedPreferences sp = await SharedPreferences.getInstance();
-      var url =
-          baseUrl + "makePayment?registerSno=" + sp.getString("studentSno");
+      var url = baseUrl + "makePayment?registerSno=" + sp.getString("studentSno");
       print(url);
       http.Response response = await http.post(
         Uri.encodeFull(url),
@@ -288,13 +271,7 @@ class _MakePaymentState extends State<MakePayment> {
 
   void toastMethod(String message) {
     Fluttertoast.showToast(
-        msg: message,
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        timeInSecForIosWeb: 1,
-        backgroundColor: Colors.black54,
-        textColor: Colors.white,
-        fontSize: 18.0);
+        msg: message, toastLength: Toast.LENGTH_SHORT, gravity: ToastGravity.BOTTOM, timeInSecForIosWeb: 1, backgroundColor: Colors.black54, textColor: Colors.white, fontSize: 18.0);
   }
 
   _otpSentAlertBox(BuildContext context) {
