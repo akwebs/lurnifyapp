@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:lurnify/widgets/componants/custom-alert.dart';
+import 'package:lurnify/widgets/componants/custom_alert.dart';
 import '../../../helper/db_helper.dart';
 import '../../../model/chapters.dart';
 import '../../../model/course.dart';

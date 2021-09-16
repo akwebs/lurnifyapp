@@ -2,18 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:lurnify/ui/constant/constant.dart';
 
 class CustomAlert extends StatelessWidget {
+  const CustomAlert({Key key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      content: new Row(
+      content: Row(
         children: [
           CircularProgressIndicator(
-            valueColor: new AlwaysStoppedAnimation<Color>(firstColor),
+            valueColor: AlwaysStoppedAnimation<Color>(firstColor),
           ),
-          SizedBox(
+          const SizedBox(
             width: 20,
           ),
-          Text("Please Wait...")
+          const Text("Please Wait...")
         ],
       ),
     );

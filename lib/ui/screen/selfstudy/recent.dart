@@ -4,7 +4,7 @@ import '../../../helper/db_helper.dart';
 import '../../../helper/recent_study_repo.dart';
 import 'start_timer.dart';
 import 'sync_your_time.dart';
-import '../../../widgets/componants/custom-button.dart';
+import '../../../widgets/componants/custom_button.dart';
 import '../../constant/constant.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

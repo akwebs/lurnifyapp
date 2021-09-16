@@ -5,7 +5,7 @@ import 'package:lurnify/ui/constant/ApiConstant.dart';
 import 'package:lurnify/ui/constant/constant.dart';
 import 'package:lurnify/ui/screen/rankBooster/rankbooster_instruction.dart';
 import 'package:lurnify/ui/screen/test/test.dart';
-import 'package:lurnify/widgets/componants/custom-button.dart';
+import 'package:lurnify/widgets/componants/custom_button.dart';
 import 'package:material_switch/material_switch.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;

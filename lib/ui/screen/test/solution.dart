@@ -4,7 +4,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lurnify/ui/constant/ApiConstant.dart';
-import 'package:lurnify/widgets/componants/custom-button.dart';
+import 'package:lurnify/widgets/componants/custom_button.dart';
 
 class Solution extends StatefulWidget {
   final Map _answerMap, _bookmarkMap;

@@ -5,11 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:lurnify/ui/constant/constant.dart';
 import 'package:lurnify/ui/constant/routes.dart';
-import 'package:lurnify/ui/screen/screen.dart';
-import 'package:lurnify/widgets/widget.dart';
+import 'package:lurnify/widgets/componants/custom_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'recent.dart';
+
 class SelfStudySection extends StatefulWidget {
+  const SelfStudySection({Key key}) : super(key: key);
+
   @override
   _SelfStudySectionState createState() => _SelfStudySectionState();
 }
@@ -20,9 +23,7 @@ class _SelfStudySectionState extends State<SelfStudySection> {
   Future getCourseDate() async {
     SharedPreferences sp = await SharedPreferences.getInstance();
     _courseCompletetioDate = sp.getString("courseCompletionDate");
-    if (_courseCompletetioDate == null) {
-      _courseCompletetioDate = "Date not Selected";
-    }
+    _courseCompletetioDate ??= "Date not Selected";
   }
 
   @override

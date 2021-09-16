@@ -5,7 +5,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lurnify/config/data.dart';
 import 'package:http/http.dart' as http;
 import 'package:lurnify/ui/constant/constant.dart';
-import 'package:lurnify/widgets/componants/progressBar.dart';
+import 'package:lurnify/widgets/componants/progress_bar.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
@@ -35,10 +35,7 @@ class _DareToDoState extends State<DareToDo> {
   Map<String, dynamic> _weekData = Map();
   List _dailyTaskList = [];
   String _dailyTaskDetail = "";
-  int _totalStudyTime = 0,
-      _totalTests = 0,
-      _completedStudyTime = 0,
-      _completedTests = 0;
+  int _totalStudyTime = 0, _totalTests = 0, _completedStudyTime = 0, _completedTests = 0;
   double _netPercent = 0;
   //week variables
   int _completedWeekTests = 0, _weekTotalTests = 0;
@@ -66,8 +63,7 @@ class _DareToDoState extends State<DareToDo> {
         if (element['taskType'] == "study") {
           String reward = "";
           if (element['certificate'] != 0) {
-            reward =
-                reward + element['certificate'].toString() + " certificate\n";
+            reward = reward + element['certificate'].toString() + " certificate\n";
           }
           if (element['cash'] != 0) {
             reward = reward + element['cash'].toString() + " cash\n";
@@ -78,23 +74,15 @@ class _DareToDoState extends State<DareToDo> {
           }
 
           if (element['noOfRefferalCoupons'] != 0) {
-            reward = reward +
-                element['noOfRefferalCoupons'].toString() +
-                " Referral Coupons\n";
+            reward = reward + element['noOfRefferalCoupons'].toString() + " Referral Coupons\n";
           }
-          _dailyTaskDetail = _dailyTaskDetail +
-              "You need to study for " +
-              element['taskUnit'].toString() +
-              " minutes to complete daily challenge. And reward will be " +
-              reward +
-              "\n";
+          _dailyTaskDetail = _dailyTaskDetail + "You need to study for " + element['taskUnit'].toString() + " minutes to complete daily challenge. And reward will be " + reward + "\n";
           _totalStudyTime = _totalStudyTime + element['taskUnit'];
         }
         if (element['taskType'] == "test") {
           String reward = "";
           if (element['certificate'] != 0) {
-            reward =
-                reward + element['certificate'].toString() + " certificate\n";
+            reward = reward + element['certificate'].toString() + " certificate\n";
           }
           if (element['cash'] != 0) {
             reward = reward + element['cash'].toString() + " cash\n";
@@ -105,16 +93,9 @@ class _DareToDoState extends State<DareToDo> {
           }
 
           if (element['noOfRefferalCoupons'] != 0) {
-            reward = reward +
-                element['noOfRefferalCoupons'].toString() +
-                " Referral Coupons\n";
+            reward = reward + element['noOfRefferalCoupons'].toString() + " Referral Coupons\n";
           }
-          _dailyTaskDetail = _dailyTaskDetail +
-              "You need to pass " +
-              element['taskUnit'].toString() +
-              " tests to complete daily challenge. And reward will be " +
-              reward +
-              "\n";
+          _dailyTaskDetail = _dailyTaskDetail + "You need to pass " + element['taskUnit'].toString() + " tests to complete daily challenge. And reward will be " + reward + "\n";
           _totalTests = _totalTests + element['taskUnit'];
         }
         if (element['totalStudy'] != null) {
@@ -154,14 +135,8 @@ class _DareToDoState extends State<DareToDo> {
         _completedDays = _weekData['completedDailyStudy'];
       }
 
-      _overallPercent = ((_completedWeekTests / _weekTotalTests) +
-              (_totalStudyHour / _totalStudyHourInWeek) +
-              (_completedDays / _minimumStudyDaysInWeek)) *
-          100 /
-          3;
-      Fluttertoast.showToast(
-          msg: "Week k liye coins ki ui banani hai. data ye rha" +
-              _weekData['coins'].toString());
+      _overallPercent = ((_completedWeekTests / _weekTotalTests) + (_totalStudyHour / _totalStudyHourInWeek) + (_completedDays / _minimumStudyDaysInWeek)) * 100 / 3;
+      Fluttertoast.showToast(msg: "Week k liye coins ki ui banani hai. data ye rha" + _weekData['coins'].toString());
 
       // print(_completedWeekTests);
       //Week Daily Data
@@ -200,9 +175,7 @@ class _DareToDoState extends State<DareToDo> {
                             Text(
                               // _weekData['coins'].toString(),
                               '150',
-                              style: TextStyle(
-                                  color: firstColor,
-                                  fontWeight: FontWeight.bold),
+                              style: TextStyle(color: firstColor, fontWeight: FontWeight.bold),
                             ),
                             Icon(
                               Icons.monetization_on_rounded,
@@ -222,13 +195,7 @@ class _DareToDoState extends State<DareToDo> {
                           labelColor: Colors.white,
                           unselectedLabelColor: Colors.deepPurpleAccent,
                           indicatorSize: TabBarIndicatorSize.tab,
-                          indicator: BoxDecoration(
-                              gradient: LinearGradient(colors: [
-                                Colors.deepPurpleAccent,
-                                Colors.deepPurple
-                              ]),
-                              borderRadius: BorderRadius.circular(50),
-                              color: Colors.redAccent),
+                          indicator: BoxDecoration(gradient: LinearGradient(colors: [Colors.deepPurpleAccent, Colors.deepPurple]), borderRadius: BorderRadius.circular(50), color: Colors.redAccent),
                           tabs: [
                             Tab(
                               child: Align(
@@ -257,10 +224,7 @@ class _DareToDoState extends State<DareToDo> {
                   ),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [
-                        Colors.cyan[200].withOpacity(0.1),
-                        Colors.purple[200].withOpacity(0.1)
-                      ],
+                      colors: [Colors.cyan[200].withOpacity(0.1), Colors.purple[200].withOpacity(0.1)],
                       begin: Alignment.topRight,
                       end: Alignment.bottomLeft,
                     ),
@@ -281,22 +245,13 @@ class _DareToDoState extends State<DareToDo> {
                             child: Card(
                               elevation: 0,
                               clipBehavior: Clip.antiAlias,
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10)),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                               child: Container(
-                                padding: EdgeInsets.symmetric(
-                                    vertical: 8, horizontal: 20),
-                                child: ProgressBar(
-                                    taskText: 'Daily Tasks',
-                                    progressValue:
-                                        _netPercent.isNaN ? 0 : _netPercent,
-                                    taskText1: 'Overall Completed'),
+                                padding: EdgeInsets.symmetric(vertical: 8, horizontal: 20),
+                                child: ProgressBar(taskText: 'Daily Tasks', progressValue: _netPercent.isNaN ? 0 : _netPercent, taskText1: 'Overall Completed'),
                                 decoration: BoxDecoration(
                                   gradient: LinearGradient(
-                                    colors: [
-                                      Colors.cyan[200].withOpacity(0.1),
-                                      Colors.purple[200].withOpacity(0.1)
-                                    ],
+                                    colors: [Colors.cyan[200].withOpacity(0.1), Colors.purple[200].withOpacity(0.1)],
                                     begin: Alignment.topRight,
                                     end: Alignment.bottomLeft,
                                   ),
@@ -306,9 +261,7 @@ class _DareToDoState extends State<DareToDo> {
                           ),
                         ),
                         _DailyTaskInfo(
-                          dailyTaskDetail: _dailyTaskDetail == ''
-                              ? 'Please Spin the Spinner to Get Daily Task'
-                              : _dailyTaskDetail,
+                          dailyTaskDetail: _dailyTaskDetail == '' ? 'Please Spin the Spinner to Get Daily Task' : _dailyTaskDetail,
                         ),
                         Spacer(),
                         _WeekDays(),
@@ -321,10 +274,8 @@ class _DareToDoState extends State<DareToDo> {
                         children: [
                           Card(
                             elevation: 0,
-                            margin: EdgeInsets.symmetric(
-                                vertical: 8, horizontal: 14),
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10)),
+                            margin: EdgeInsets.symmetric(vertical: 8, horizontal: 14),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                             clipBehavior: Clip.antiAlias,
                             child: Container(
                               padding: const EdgeInsets.all(8.0),
@@ -332,25 +283,17 @@ class _DareToDoState extends State<DareToDo> {
                                 children: [
                                   AspectRatio(
                                     aspectRatio: 3.0 / 1.4,
-                                    child: ProgressBar(
-                                        taskText: 'Weekly Tasks',
-                                        progressValue: _overallPercent.isNaN
-                                            ? 0
-                                            : _overallPercent,
-                                        taskText1: 'Overall Completed'),
+                                    child: ProgressBar(taskText: 'Weekly Tasks', progressValue: _overallPercent.isNaN ? 0 : _overallPercent, taskText1: 'Overall Completed'),
                                   ),
                                   AspectRatio(
                                     aspectRatio: 7 / 2,
                                     child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
+                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                       children: [
                                         AspectRatio(
                                           aspectRatio: 1,
                                           child: _ProgressBar(
-                                            progressValue: _completedWeekTests *
-                                                100 /
-                                                _weekTotalTests,
+                                            progressValue: _completedWeekTests * 100 / _weekTotalTests,
                                             x: _completedWeekTests.toString(),
                                             y: _weekTotalTests.toString(),
                                             taskText: 'TEST',
@@ -359,24 +302,12 @@ class _DareToDoState extends State<DareToDo> {
                                         AspectRatio(
                                           aspectRatio: 1,
                                           child: _ProgressBar(
-                                              progressValue: _totalStudyHour *
-                                                  100 /
-                                                  _totalStudyHourInWeek,
-                                              x: _totalStudyHour.toString(),
-                                              y: _totalStudyHourInWeek
-                                                  .toString(),
-                                              taskText: 'HOURS'),
+                                              progressValue: _totalStudyHour * 100 / _totalStudyHourInWeek, x: _totalStudyHour.toString(), y: _totalStudyHourInWeek.toString(), taskText: 'HOURS'),
                                         ),
                                         AspectRatio(
                                           aspectRatio: 1,
                                           child: _ProgressBar(
-                                              progressValue: _completedDays *
-                                                  100 /
-                                                  _minimumStudyDaysInWeek,
-                                              x: _completedDays.toString(),
-                                              y: _minimumStudyDaysInWeek
-                                                  .toString(),
-                                              taskText: 'DAYS'),
+                                              progressValue: _completedDays * 100 / _minimumStudyDaysInWeek, x: _completedDays.toString(), y: _minimumStudyDaysInWeek.toString(), taskText: 'DAYS'),
                                         ),
                                       ],
                                     ),
@@ -385,10 +316,7 @@ class _DareToDoState extends State<DareToDo> {
                               ),
                               decoration: BoxDecoration(
                                 gradient: LinearGradient(
-                                  colors: [
-                                    Colors.cyan[200].withOpacity(0.1),
-                                    Colors.purple[200].withOpacity(0.1)
-                                  ],
+                                  colors: [Colors.cyan[200].withOpacity(0.1), Colors.purple[200].withOpacity(0.1)],
                                   begin: Alignment.topRight,
                                   end: Alignment.bottomLeft,
                                 ),
@@ -411,19 +339,14 @@ class _DareToDoState extends State<DareToDo> {
                               padding: const EdgeInsets.all(8.0),
                               child: Card(
                                 elevation: 0,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10)),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                                 clipBehavior: Clip.antiAlias,
                                 child: Stack(
                                   children: [
                                     Container(
                                       decoration: BoxDecoration(
                                         gradient: LinearGradient(
-                                          colors: [
-                                            Colors.limeAccent[200]
-                                                .withOpacity(0.1),
-                                            Colors.teal[200].withOpacity(0.1)
-                                          ],
+                                          colors: [Colors.limeAccent[200].withOpacity(0.1), Colors.teal[200].withOpacity(0.1)],
                                           begin: Alignment.topRight,
                                           end: Alignment.bottomLeft,
                                         ),
@@ -432,38 +355,25 @@ class _DareToDoState extends State<DareToDo> {
                                     Padding(
                                       padding: const EdgeInsets.all(8.0),
                                       child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceEvenly,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
                                           Text(
                                             'Complted Weeks',
-                                            style: TextStyle(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.w500),
+                                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                                           ),
                                           Text(
-                                            _completedWeeks.toString() +
-                                                '/' +
-                                                '4',
-                                            style: TextStyle(
-                                                color: firstColor,
-                                                fontSize: 50),
+                                            _completedWeeks.toString() + '/' + '4',
+                                            style: TextStyle(color: firstColor, fontSize: 50),
                                           ),
                                           Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 8),
+                                            padding: const EdgeInsets.symmetric(horizontal: 8),
                                             child: LinearPercentIndicator(
                                               padding: EdgeInsets.all(3),
                                               lineHeight: 10,
-                                              percent:
-                                                  ((_completedDays * 10) / 4) /
-                                                      10,
-                                              backgroundColor: Colors.deepPurple
-                                                  .withOpacity(0.4),
-                                              progressColor:
-                                                  Colors.deepPurpleAccent,
+                                              percent: ((_completedDays * 10) / 4) / 10,
+                                              backgroundColor: Colors.deepPurple.withOpacity(0.4),
+                                              progressColor: Colors.deepPurpleAccent,
                                             ),
                                           ),
                                         ],
@@ -483,16 +393,12 @@ class _DareToDoState extends State<DareToDo> {
                                     padding: const EdgeInsets.all(8.0),
                                     child: Card(
                                       elevation: 0,
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(10)),
+                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                                       clipBehavior: Clip.antiAlias,
                                       child: Stack(
                                         children: [
                                           Container(
-                                            decoration: BoxDecoration(
-                                                color: Colors.lightBlue[200]
-                                                    .withOpacity(0.1)
+                                            decoration: BoxDecoration(color: Colors.lightBlue[200].withOpacity(0.1)
                                                 // gradient: LinearGradient(
                                                 //   colors: [
                                                 //     Colors.cyan[200]
@@ -507,18 +413,15 @@ class _DareToDoState extends State<DareToDo> {
                                           ),
                                           Center(
                                             child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.spaceEvenly,
+                                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                               children: [
                                                 Text(
                                                   'Total Test',
-                                                  style:
-                                                      TextStyle(fontSize: 16),
+                                                  style: TextStyle(fontSize: 16),
                                                 ),
                                                 Text(
                                                   _totalTests.toString(),
-                                                  style:
-                                                      TextStyle(fontSize: 24),
+                                                  style: TextStyle(fontSize: 24),
                                                 ),
                                               ],
                                             ),
@@ -533,16 +436,12 @@ class _DareToDoState extends State<DareToDo> {
                                     padding: const EdgeInsets.all(8.0),
                                     child: Card(
                                       elevation: 0,
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(10)),
+                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                                       clipBehavior: Clip.antiAlias,
                                       child: Stack(
                                         children: [
                                           Container(
-                                            decoration: BoxDecoration(
-                                                color: Colors.lightBlue[200]
-                                                    .withOpacity(0.1)
+                                            decoration: BoxDecoration(color: Colors.lightBlue[200].withOpacity(0.1)
                                                 // gradient: LinearGradient(
                                                 //   colors: [
                                                 //     Colors.lightBlue[200]
@@ -557,19 +456,15 @@ class _DareToDoState extends State<DareToDo> {
                                           ),
                                           Center(
                                             child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.spaceEvenly,
+                                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                               children: [
                                                 Text(
                                                   'Study Hours',
-                                                  style:
-                                                      TextStyle(fontSize: 16),
+                                                  style: TextStyle(fontSize: 16),
                                                 ),
                                                 Text(
-                                                  _completedStudyTime
-                                                      .toString(),
-                                                  style:
-                                                      TextStyle(fontSize: 24),
+                                                  _completedStudyTime.toString(),
+                                                  style: TextStyle(fontSize: 24),
                                                 ),
                                               ],
                                             ),
@@ -589,10 +484,7 @@ class _DareToDoState extends State<DareToDo> {
                 ),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [
-                      Colors.deepPurple[200].withOpacity(0.2),
-                      Colors.lightBlue[200].withOpacity(0.1)
-                    ],
+                    colors: [Colors.deepPurple[200].withOpacity(0.2), Colors.lightBlue[200].withOpacity(0.1)],
                     begin: Alignment.topRight,
                     end: Alignment.bottomLeft,
                   ),
@@ -605,13 +497,7 @@ class _DareToDoState extends State<DareToDo> {
 }
 
 class _ProgressBar extends StatelessWidget {
-  const _ProgressBar(
-      {Key key,
-      @required this.progressValue,
-      @required this.taskText,
-      this.x,
-      this.y})
-      : super(key: key);
+  const _ProgressBar({Key key, @required this.progressValue, @required this.taskText, this.x, this.y}) : super(key: key);
 
   final double progressValue;
   final String taskText, x, y;
@@ -671,9 +557,7 @@ class _ProgressBar extends StatelessWidget {
               width: 0.1,
               sizeUnit: GaugeSizeUnit.factor,
               cornerStyle: CornerStyle.startCurve,
-              gradient: const SweepGradient(
-                  colors: <Color>[Colors.deepPurpleAccent, Colors.deepPurple],
-                  stops: <double>[0.25, 0.75])),
+              gradient: const SweepGradient(colors: <Color>[Colors.deepPurpleAccent, Colors.deepPurple], stops: <double>[0.25, 0.75])),
           MarkerPointer(
             markerHeight: 5,
             markerWidth: 5,
@@ -700,8 +584,7 @@ class _WeekDays extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Card(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           clipBehavior: Clip.antiAlias,
           child: Stack(
             children: [
@@ -710,9 +593,7 @@ class _WeekDays extends StatelessWidget {
                 child: Container(
                   decoration: BoxDecoration(
                     //color: AppColors.tileColors[1],
-                    image: DecorationImage(
-                        image: AssetImage('assets/bg/1-blue-bg.png'),
-                        fit: BoxFit.cover),
+                    image: DecorationImage(image: AssetImage('assets/bg/1-blue-bg.png'), fit: BoxFit.cover),
                   ),
                 ),
               ),
@@ -728,16 +609,13 @@ class _WeekDays extends StatelessWidget {
                     physics: BouncingScrollPhysics(),
                     scrollDirection: Axis.horizontal,
                     itemBuilder: (context, i) {
-                      String date = DateFormat('d').format(DateTime.now()
-                          .subtract(Duration(days: DateTime.now().weekday - 1))
-                          .add(Duration(days: i)));
+                      String date = DateFormat('d').format(DateTime.now().subtract(Duration(days: DateTime.now().weekday - 1)).add(Duration(days: i)));
                       return Padding(
                         padding: const EdgeInsets.all(2.0),
                         child: InkWell(
                           onTap: () {},
                           child: Card(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(50)),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
                             clipBehavior: Clip.antiAlias,
                             color: AppColors.tileColors[i],
                             child: AspectRatio(
@@ -748,12 +626,7 @@ class _WeekDays extends StatelessWidget {
                                   children: [
                                     Text(
                                       AppSlider.weekDays[i],
-                                      style: (isToday == date)
-                                          ? TextStyle(
-                                              fontSize: 12,
-                                              color: Colors.amber,
-                                              fontWeight: FontWeight.bold)
-                                          : TextStyle(fontSize: 10),
+                                      style: (isToday == date) ? TextStyle(fontSize: 12, color: Colors.amber, fontWeight: FontWeight.bold) : TextStyle(fontSize: 10),
                                     ),
                                     Text(
                                       date,
@@ -796,18 +669,14 @@ class _Weeks extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Card(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           clipBehavior: Clip.antiAlias,
           child: Stack(
             children: [
               Opacity(
                 opacity: 1,
                 child: Container(
-                  decoration: BoxDecoration(
-                      image: DecorationImage(
-                          image: AssetImage('assets/bg/1-blue-bg.png'),
-                          fit: BoxFit.cover)),
+                  decoration: BoxDecoration(image: DecorationImage(image: AssetImage('assets/bg/1-blue-bg.png'), fit: BoxFit.cover)),
                 ),
               ),
               Align(
@@ -823,13 +692,11 @@ class _Weeks extends StatelessWidget {
                     scrollDirection: Axis.horizontal,
                     itemBuilder: (context, i) {
                       return Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 2, horizontal: 10),
+                        padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 10),
                         child: InkWell(
                           onTap: () {},
                           child: Card(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(50)),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
                             clipBehavior: Clip.antiAlias,
                             color: AppColors.tileColors[i],
                             child: AspectRatio(
@@ -837,9 +704,7 @@ class _Weeks extends StatelessWidget {
                               child: Center(
                                 child: Text(
                                   AppSlider.weeks[i],
-                                  style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w600),
+                                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
                                 ),
                               ),
                             ),
@@ -870,8 +735,7 @@ class _DailyTaskInfo extends StatelessWidget {
         padding: const EdgeInsets.only(bottom: 8, left: 8, right: 8),
         child: Card(
           elevation: 0,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           clipBehavior: Clip.antiAlias,
           child: Container(
             child: Center(
@@ -886,10 +750,7 @@ class _DailyTaskInfo extends StatelessWidget {
             ),
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [
-                  Colors.purple[200].withOpacity(0.1),
-                  Colors.cyan[200].withOpacity(0.1)
-                ],
+                colors: [Colors.purple[200].withOpacity(0.1), Colors.cyan[200].withOpacity(0.1)],
                 begin: Alignment.topRight,
                 end: Alignment.bottomLeft,
               ),
@@ -914,8 +775,7 @@ class _WeekTaskInfo extends StatelessWidget {
         padding: const EdgeInsets.only(bottom: 8, left: 8, right: 8),
         child: Card(
           elevation: 0,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           clipBehavior: Clip.antiAlias,
           child: Container(
             padding: const EdgeInsets.only(top: 30.0),
@@ -925,10 +785,7 @@ class _WeekTaskInfo extends StatelessWidget {
             ),
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [
-                  Colors.cyan[200].withOpacity(0.1),
-                  Colors.purple[200].withOpacity(0.1)
-                ],
+                colors: [Colors.cyan[200].withOpacity(0.1), Colors.purple[200].withOpacity(0.1)],
                 begin: Alignment.topRight,
                 end: Alignment.bottomLeft,
               ),
@@ -947,8 +804,7 @@ class _BarChartNew extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Brightness brightnessValue =
-        MediaQuery.of(context).platformBrightness;
+    final Brightness brightnessValue = MediaQuery.of(context).platformBrightness;
     bool isDark = brightnessValue == Brightness.dark;
     return BarChart(
       BarChartData(
@@ -1016,9 +872,7 @@ class _BarChartNew extends StatelessWidget {
         ),
         barGroups: List.generate(7, (i) {
           double value = 0;
-          String date = DateFormat('yyyy-MM-dd').format(DateTime.now()
-              .subtract(Duration(days: DateTime.now().weekday - 1))
-              .add(Duration(days: i)));
+          String date = DateFormat('yyyy-MM-dd').format(DateTime.now().subtract(Duration(days: DateTime.now().weekday - 1)).add(Duration(days: i)));
           _weekDailyData.forEach((element) {
             if (element['date'] == date) {
               value = element['totalHour'].toDouble();

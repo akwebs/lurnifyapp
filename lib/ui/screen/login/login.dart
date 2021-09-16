@@ -2,9 +2,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:lurnify/ui/constant/constant.dart';
-import 'package:lurnify/ui/screen/screen.dart';
-import 'package:lurnify/widgets/widget.dart';
+import '../../constant/constant.dart';
+import '../../../widgets/componants/custom_alert.dart';
+import '../../../widgets/componants/custom_button.dart';
+
+import 'otp_screen.dart';
 
 class Login extends StatefulWidget {
   const Login({Key key}) : super(key: key);

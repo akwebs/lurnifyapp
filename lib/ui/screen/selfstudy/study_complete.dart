@@ -20,7 +20,7 @@ import '../../../model/study.dart';
 import '../../constant/constant.dart';
 import '../../home_page.dart';
 import '../test/instruction_page.dart';
-import '../../../widgets/componants/custom-button.dart';
+import '../../../widgets/componants/custom_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class StudyComplete extends StatefulWidget {

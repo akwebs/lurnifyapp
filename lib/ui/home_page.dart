@@ -5,35 +5,38 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
-import 'package:lurnify/config/data.dart';
-import 'package:lurnify/confitti.dart';
-import 'package:lurnify/helper/db_helper.dart';
-import 'package:lurnify/helper/daily_task_completion_repo.dart';
-import 'package:lurnify/helper/data_update_repo.dart';
-import 'package:lurnify/helper/dime_repo.dart';
-import 'package:lurnify/helper/due_topic_test_repo.dart';
-import 'package:lurnify/helper/recent_study_repo.dart';
-import 'package:lurnify/helper/study_repo.dart';
-import 'package:lurnify/helper/topic_test_result_repo.dart';
-import 'package:lurnify/model/data_update.dart';
-import 'package:lurnify/widgets/CustomDrawer.dart';
-import 'package:lurnify/widgets/home/apptiles.dart';
-import 'package:lurnify/widgets/home/bottom_slider.dart';
-import 'package:lurnify/widgets/home/cards_Slider.dart';
-import 'package:lurnify/widgets/home/cardwidget.dart';
-import 'package:lurnify/widgets/home/reviews.dart';
-import 'package:lurnify/widgets/home/spinner.dart';
+import 'package:velocity_x/velocity_x.dart';
+import '../widgets/homePageWidget/first_slider.dart';
+import '../config/data.dart';
+import '../confitti.dart';
+import '../helper/db_helper.dart';
+import '../helper/daily_task_completion_repo.dart';
+import '../helper/data_update_repo.dart';
+import '../helper/dime_repo.dart';
+import '../helper/due_topic_test_repo.dart';
+import '../helper/recent_study_repo.dart';
+import '../helper/study_repo.dart';
+import '../helper/topic_test_result_repo.dart';
+import '../model/data_update.dart';
+import '../widgets/custom_drawer.dart';
+import '../widgets/homePageWidget/app_tiles.dart';
+import '../widgets/homePageWidget/second_slider.dart';
+import '../widgets/homePageWidget/test_slider.dart';
+import '../widgets/homePageWidget/reviews.dart';
+import '../widgets/homePageWidget/spinner.dart';
 import 'package:share/share.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
-import 'package:lurnify/ui/constant/ApiConstant.dart';
+import 'constant/ApiConstant.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
-import 'package:lurnify/ui/screen/screen.dart';
 import 'dart:async';
 
 import 'constant/constant.dart';
 
 import 'package:sqflite/sqflite.dart';
+
+import 'screen/selfstudy/recent.dart';
+import 'screen/userProfile/user_profile.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key key}) : super(key: key);
@@ -462,7 +465,7 @@ class _HomePageState extends State<HomePage> {
     });
     if (index == 4) {
       Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) => UserProfile(),
+        builder: (context) => const UserProfile(),
       ));
     }
     if (index == 2) {
@@ -472,17 +475,7 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  static List pageKey = [
-    'self_study',
-    'rank_booster',
-    'my_report',
-    'course_content',
-    'syllbus_progress',
-    'revision_zone',
-    'dare_to_do',
-    'my_reward',
-    'money_matters',
-  ];
+  static List pageKey = ["selfStudy", "rankBooster", "myReport", "courseContent", "syllabusProgress", "revisionZone", "dareToDo", "myReward", "moneyMatters"];
 
   void handleClick(String value) {
     switch (value) {
@@ -502,6 +495,7 @@ class _HomePageState extends State<HomePage> {
             key: _scaffoldKey,
             resizeToAvoidBottomInset: false,
             appBar: AppBar(
+              elevation: 2,
               title: Image.asset(
                 logoUrl,
                 fit: BoxFit.contain,
@@ -550,40 +544,32 @@ class _HomePageState extends State<HomePage> {
                     end: Alignment.bottomLeft,
                   ),
                 ),
-                child: SingleChildScrollView(
-                  physics: const BouncingScrollPhysics(),
-                  child: Column(
-                    children: <Widget>[
-                      CardWidget(_selfStudyPercent, _testPercent),
-                      AppTiles(pageKey),
-                      BottomSlider(pageKey, _recentData),
-                      TestSlider(_dueTopicTestData),
-                      Container(
-                        color: Colors.grey.withOpacity(0.1),
-                        child: Column(
-                          children: [
-                            const Padding(
-                              padding: EdgeInsets.fromLTRB(8, 15, 8, 10),
-                              child: Text(
-                                'Hear from delighted users',
-                                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                              ),
-                            ),
-                            Reviews(
-                              clr: AppColors.cardHeader[2],
-                            ),
-                            Reviews(
-                              clr: AppColors.cardHeader[1],
-                            ),
-                            Reviews(
-                              clr: AppColors.cardHeader[0],
-                            ),
-                          ],
+                child: [
+                  FirstSlider(_selfStudyPercent, _testPercent),
+                  AppTiles(pageKey),
+                  SecondSlider(pageKey, _recentData),
+                  TestSlider(_dueTopicTestData),
+                  Column(
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.fromLTRB(8, 15, 8, 10),
+                        child: Text(
+                          'Hear from delighted users',
+                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                         ),
+                      ),
+                      Reviews(
+                        clr: AppColors.cardHeader[2],
+                      ),
+                      Reviews(
+                        clr: AppColors.cardHeader[1],
+                      ),
+                      Reviews(
+                        clr: AppColors.cardHeader[0],
                       ),
                     ],
                   ),
-                ),
+                ].vStack().scrollVertical(),
               ),
             ),
             // floatingActionButtonLocation:

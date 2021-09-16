@@ -5,7 +5,6 @@ Don't forget to add all images and sound used in this pages at the pubspec.yaml
 import 'dart:async';
 import 'package:lurnify/ui/constant/routes.dart';
 import 'package:flutter/material.dart';
-import 'package:lurnify/ui/screen/screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 // import 'package:lottie/lottie.dart';
 
@@ -30,7 +29,7 @@ class _SplashScreenPageState extends State<SplashScreenPage> {
         _cancelFlashsaleTimer();
         if (sp.getBool("onboarding") != null) {
           if (sp.getString("studentSno") == null) {
-            Navigator.of(context).pushNamedAndRemoveUntil(logIn, (route) => false);
+            Navigator.of(context).pushNamedAndRemoveUntil(homePage, (route) => false);
           } else {
             Navigator.of(context).pushNamedAndRemoveUntil(homePage, (route) => false);
           }

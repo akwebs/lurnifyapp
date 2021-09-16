@@ -6,12 +6,12 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lurnify/config/data.dart';
 import 'package:lurnify/helper/db_helper.dart';
 import 'package:lurnify/ui/constant/constant.dart';
-import 'package:lurnify/widgets/componants/custom-alert.dart';
-import 'package:lurnify/widgets/componants/custom-expantion-tile.dart';
+import 'package:lurnify/widgets/componants/custom_alert.dart';
+import 'package:lurnify/widgets/componants/custom_expantion_tile.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:lurnify/ui/constant/ApiConstant.dart';
-import 'package:lurnify/widgets/componants/custom-button.dart';
+import 'package:lurnify/widgets/componants/custom_button.dart';
 
 import 'package:http/http.dart' as http;
 import 'package:sqflite/sqflite.dart';

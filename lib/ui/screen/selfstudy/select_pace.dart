@@ -8,7 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:velocity_x/velocity_x.dart';
 import '../../../helper/db_helper.dart';
 import '../../../helper/pace_repo.dart';
-import '../../../widgets/componants/custom-button.dart';
+import '../../../widgets/componants/custom_button.dart';
 import '../../../model/pace.dart';
 import '../../constant/constant.dart';
 import '../../home_page.dart';

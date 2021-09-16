@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
 import 'package:lurnify/config/data.dart';
 import 'package:lurnify/helper/db_helper.dart';
-import 'package:lurnify/widgets/componants/custom-button.dart';
+import 'package:lurnify/widgets/componants/custom_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 

@@ -7,19 +7,24 @@ import '../../../model/subject.dart';
 import '../../../model/units.dart';
 import '../../constant/ApiConstant.dart';
 import '../../constant/constant.dart';
-import '../screen.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-class NewCourseContent extends StatefulWidget {
+import 'class_notes.dart';
+import 'flash_card.dart';
+import 'micro_video.dart';
+import 'precise_theory.dart';
+
+class MyCourseContent extends StatefulWidget {
+  const MyCourseContent({Key key}) : super(key: key);
+
   @override
-  _NewCourseContentState createState() => _NewCourseContentState();
+  _MyCourseContentState createState() => _MyCourseContentState();
 }
 
-class _NewCourseContentState extends State<NewCourseContent>
-    with SingleTickerProviderStateMixin {
+class _MyCourseContentState extends State<MyCourseContent> with SingleTickerProviderStateMixin {
   List<Subject> _subjects = [];
   // ignore: unused_field
   List<UnitDtos> _units = [];
@@ -27,13 +32,7 @@ class _NewCourseContentState extends State<NewCourseContent>
   List<Widget> _myTabs = [];
   // ignore: unused_field
   int _selectedIndex = 0;
-  String course = "",
-      subject = "",
-      unit = "",
-      chapter = "",
-      topic = "",
-      subTopic = "",
-      duration;
+  String course = "", subject = "", unit = "", chapter = "", topic = "", subTopic = "", duration;
   var _data;
   Color _backgroundColor = AppColors.tileIconColors[3];
   Color subColor(int i) {
@@ -56,16 +55,13 @@ class _NewCourseContentState extends State<NewCourseContent>
 
   Future _getSubjects() async {
     SharedPreferences sp = await SharedPreferences.getInstance();
-    var url =
-        baseUrl + "getSubjectsByCourse?courseSno=" + sp.getString("courseSno");
+    var url = baseUrl + "getSubjectsByCourse?courseSno=" + sp.getString("courseSno");
     course = sp.getString("courseSno");
     http.Response response = await http.get(
       Uri.encodeFull(url),
     );
 
-    _subjects = (jsonDecode(response.body) as List)
-        .map((e) => Subject.fromJson(e))
-        .toList();
+    _subjects = (jsonDecode(response.body) as List).map((e) => Subject.fromJson(e)).toList();
     if (_subjects.isNotEmpty) {
       _units = _subjects[0].unitDtos;
       subject = _subjects[0].sno.toString();
@@ -130,30 +126,18 @@ class _NewCourseContentState extends State<NewCourseContent>
                 body: Stack(
                   children: [
                     Positioned.fill(
-                      top: -Responsive.getPercent(
-                          100, ResponsiveSize.HEIGHT, context),
-                      left: -Responsive.getPercent(
-                          50, ResponsiveSize.WIDTH, context),
-                      right: -Responsive.getPercent(
-                          40, ResponsiveSize.WIDTH, context),
+                      top: -Responsive.getPercent(100, ResponsiveSize.HEIGHT, context),
+                      left: -Responsive.getPercent(50, ResponsiveSize.WIDTH, context),
+                      right: -Responsive.getPercent(40, ResponsiveSize.WIDTH, context),
                       child: Container(
                         decoration: BoxDecoration(boxShadow: [
-                          BoxShadow(
-                              color: Colors.black12,
-                              blurRadius: 50,
-                              spreadRadius: 2,
-                              offset: Offset(20, 0)),
-                          BoxShadow(
-                              color: Colors.white12,
-                              blurRadius: 0,
-                              spreadRadius: -2,
-                              offset: Offset(0, 0)),
+                          BoxShadow(color: Colors.black12, blurRadius: 50, spreadRadius: 2, offset: Offset(20, 0)),
+                          BoxShadow(color: Colors.white12, blurRadius: 0, spreadRadius: -2, offset: Offset(0, 0)),
                         ], shape: BoxShape.circle, color: _backgroundColor),
                       ),
                     ),
                     Container(
-                      height: Responsive.getPercent(
-                          35, ResponsiveSize.HEIGHT, context),
+                      height: Responsive.getPercent(35, ResponsiveSize.HEIGHT, context),
                       child: Container(
                         clipBehavior: Clip.antiAlias,
                         decoration: BoxDecoration(
@@ -168,21 +152,10 @@ class _NewCourseContentState extends State<NewCourseContent>
                               left: 150,
                               right: -100,
                               child: Container(
-                                decoration: BoxDecoration(
-                                    boxShadow: [
-                                      BoxShadow(
-                                          color: Colors.black12,
-                                          blurRadius: 50,
-                                          spreadRadius: 2,
-                                          offset: Offset(20, 0)),
-                                      BoxShadow(
-                                          color: Colors.white12,
-                                          blurRadius: 0,
-                                          spreadRadius: -2,
-                                          offset: Offset(0, 0)),
-                                    ],
-                                    shape: BoxShape.circle,
-                                    color: _backgroundColor.withOpacity(0.2)),
+                                decoration: BoxDecoration(boxShadow: [
+                                  BoxShadow(color: Colors.black12, blurRadius: 50, spreadRadius: 2, offset: Offset(20, 0)),
+                                  BoxShadow(color: Colors.white12, blurRadius: 0, spreadRadius: -2, offset: Offset(0, 0)),
+                                ], shape: BoxShape.circle, color: _backgroundColor.withOpacity(0.2)),
                               ),
                             ),
                             Positioned.fill(
@@ -190,21 +163,10 @@ class _NewCourseContentState extends State<NewCourseContent>
                               bottom: 50,
                               left: -300,
                               child: Container(
-                                decoration: BoxDecoration(
-                                    boxShadow: [
-                                      BoxShadow(
-                                          color: Colors.black12,
-                                          blurRadius: 50,
-                                          spreadRadius: 1,
-                                          offset: Offset(20, 0)),
-                                      BoxShadow(
-                                          color: Colors.white12,
-                                          blurRadius: 0,
-                                          spreadRadius: -2,
-                                          offset: Offset(0, 0)),
-                                    ],
-                                    shape: BoxShape.circle,
-                                    color: _backgroundColor.withOpacity(0.2)),
+                                decoration: BoxDecoration(boxShadow: [
+                                  BoxShadow(color: Colors.black12, blurRadius: 50, spreadRadius: 1, offset: Offset(20, 0)),
+                                  BoxShadow(color: Colors.white12, blurRadius: 0, spreadRadius: -2, offset: Offset(0, 0)),
+                                ], shape: BoxShape.circle, color: _backgroundColor.withOpacity(0.2)),
                               ),
                             ),
                           ],
@@ -212,8 +174,7 @@ class _NewCourseContentState extends State<NewCourseContent>
                       ),
                     ),
                     SafeArea(
-                      child: TabBarView(
-                          controller: _controller, children: _myTabs),
+                      child: TabBarView(controller: _controller, children: _myTabs),
                     ),
                   ],
                 ),
@@ -357,9 +318,7 @@ class _NewCourseContentState extends State<NewCourseContent>
     return ListView.builder(
       itemCount: _chapters.length,
       itemBuilder: (context, i) {
-        return _chapters == null
-            ? Container()
-            : _chapterSelect(_chapters[i], i);
+        return _chapters == null ? Container() : _chapterSelect(_chapters[i], i);
       },
     );
   }
@@ -427,14 +386,7 @@ class _NewCourseContentState extends State<NewCourseContent>
   }
 
   void toastMethod(String message) {
-    Fluttertoast.showToast(
-        msg: message,
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        timeInSecForIosWeb: 1,
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-        fontSize: 12.0);
+    Fluttertoast.showToast(msg: message, toastLength: Toast.LENGTH_SHORT, gravity: ToastGravity.BOTTOM, timeInSecForIosWeb: 1, backgroundColor: Colors.red, textColor: Colors.white, fontSize: 12.0);
   }
 
   void _showPopup(BuildContext context, topicDtos) {
@@ -549,18 +501,15 @@ class _StCardsState extends State<StCards> {
       _getClassNotes(topicDtos.sno, topicDtos.topicName, topicDtos.subTopic);
     } else if (widget.serial == "2") {
       Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) => PreciseTheory(
-            topicDtos.sno, topicDtos.topicName, topicDtos.subTopic),
+        builder: (context) => PreciseTheory(topicDtos.sno, topicDtos.topicName, topicDtos.subTopic),
       ));
     } else if (widget.serial == "3") {
       Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) =>
-            FlashCard(topicDtos.sno, topicDtos.topicName, topicDtos.subTopic),
+        builder: (context) => FlashCard(topicDtos.sno, topicDtos.topicName, topicDtos.subTopic),
       ));
     } else if (widget.serial == "4") {
       Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) =>
-            MicroVideo(topicDtos.sno, topicDtos.topicName, topicDtos.subTopic),
+        builder: (context) => MicroVideo(topicDtos.sno, topicDtos.topicName, topicDtos.subTopic),
       ));
     }
   }

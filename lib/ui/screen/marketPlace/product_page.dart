@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lurnify/ui/constant/constant.dart';
-import 'package:lurnify/widgets/widget.dart';
+import 'package:lurnify/widgets/componants/custom_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:http/http.dart' as http;
@@ -12,11 +12,11 @@ import 'package:lurnify/ui/constant/ApiConstant.dart';
 class ProductPage extends StatefulWidget {
   final String weekOrMonthSno;
   final String weekOrMonth;
-  ProductPage(this.weekOrMonthSno, this.weekOrMonth);
+  const ProductPage(this.weekOrMonthSno, this.weekOrMonth, {Key key}) : super(key: key);
 
   @override
-  _ProductPageState createState() =>
-      _ProductPageState(weekOrMonthSno, weekOrMonth);
+  // ignore: no_logic_in_create_state
+  _ProductPageState createState() => _ProductPageState(weekOrMonthSno, weekOrMonth);
 }
 
 class _ProductPageState extends State<ProductPage> {
@@ -30,17 +30,9 @@ class _ProductPageState extends State<ProductPage> {
       SharedPreferences sp = await SharedPreferences.getInstance();
       var url = "";
       if (weekOrMonth == "week") {
-        url = baseUrl +
-            "getProductsByWeek?registerSno=" +
-            sp.getString("studentSno") +
-            "&week=" +
-            weekOrMonthSno;
+        url = baseUrl + "getProductsByWeek?registerSno=" + sp.getString("studentSno") + "&week=" + weekOrMonthSno;
       } else if (weekOrMonth == "month") {
-        url = baseUrl +
-            "getProductsByMonth?registerSno=" +
-            sp.getString("studentSno") +
-            "&month=" +
-            weekOrMonthSno;
+        url = baseUrl + "getProductsByMonth?registerSno=" + sp.getString("studentSno") + "&month=" + weekOrMonthSno;
       }
 
       print(url);
@@ -69,10 +61,7 @@ class _ProductPageState extends State<ProductPage> {
                     alignment: Alignment.center,
                     child: Text(
                       "No Products",
-                      style: TextStyle(
-                          color: Colors.grey,
-                          fontSize: 40,
-                          fontWeight: FontWeight.w600),
+                      style: TextStyle(color: Colors.grey, fontSize: 40, fontWeight: FontWeight.w600),
                     ),
                   )
                 : Container(
@@ -81,51 +70,35 @@ class _ProductPageState extends State<ProductPage> {
                       itemCount: _products.length,
                       shrinkWrap: true,
                       primary: false,
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          crossAxisSpacing: 5,
-                          mainAxisSpacing: 5,
-                          childAspectRatio: 0.70),
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, crossAxisSpacing: 5, mainAxisSpacing: 5, childAspectRatio: 0.70),
                       itemBuilder: (context, i) {
                         String imageUrl = "";
                         if (_products[i]['status'] == "locked") {
                           //HERE COULD BE THE MISTAKE. I CHNAGE IMAGEURL WITH BASE URL
-                          imageUrl = baseUrl +
-                              _products[i]['disableDirectory'] +
-                              "/" +
-                              _products[i]['disableFileName'];
+                          imageUrl = baseUrl + _products[i]['disableDirectory'] + "/" + _products[i]['disableFileName'];
                         } else if (_products[i]['status'] == "active") {
-                          imageUrl = baseUrl +
-                              _products[i]['activeDirectory'] +
-                              "/" +
-                              _products[i]['activeFileName'];
+                          imageUrl = baseUrl + _products[i]['activeDirectory'] + "/" + _products[i]['activeFileName'];
                         } else {
-                          imageUrl = baseUrl +
-                              _products[i]['purchasedDirectory'] +
-                              "/" +
-                              _products[i]['purchasedFileName'];
+                          imageUrl = baseUrl + _products[i]['purchasedDirectory'] + "/" + _products[i]['purchasedFileName'];
                         }
                         print("------------------------------------------");
                         print(imageUrl);
                         double price = _products[i]['price'];
                         return Card(
                           elevation: 6,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10)),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                           clipBehavior: Clip.antiAlias,
                           child: Container(
                             height: MediaQuery.of(context).size.height * 3 / 10,
                             child: Stack(children: [
                               Column(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   Expanded(
                                     flex: 3,
                                     child: Center(
                                       child: FadeInImage(
-                                        placeholder: AssetImage(
-                                            "assets/images/dime.png"),
+                                        placeholder: AssetImage("assets/images/dime.png"),
                                         image: NetworkImage(imageUrl),
                                         fit: BoxFit.fill,
                                       ),
@@ -139,9 +112,7 @@ class _ProductPageState extends State<ProductPage> {
                                       child: Column(
                                         children: [
                                           Text(
-                                            _products[i]['productName']
-                                                .toString()
-                                                .toUpperCase(),
+                                            _products[i]['productName'].toString().toUpperCase(),
                                             style: TextStyle(
                                               fontWeight: FontWeight.w600,
                                               fontSize: 16,
@@ -151,8 +122,7 @@ class _ProductPageState extends State<ProductPage> {
                                             height: 5,
                                           ),
                                           Text(
-                                            _products[i]['description']
-                                                .toString(),
+                                            _products[i]['description'].toString(),
                                             maxLines: 2,
                                             textAlign: TextAlign.center,
                                           ),
@@ -200,8 +170,7 @@ class _ProductPageState extends State<ProductPage> {
                                 child: Align(
                                   alignment: Alignment.topRight,
                                   child: Container(
-                                    padding: EdgeInsets.symmetric(
-                                        vertical: 5, horizontal: 5),
+                                    padding: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
                                     decoration: BoxDecoration(
                                       color: Colors.amber.withOpacity(0.8),
                                       borderRadius: BorderRadius.circular(5),
@@ -215,29 +184,21 @@ class _ProductPageState extends State<ProductPage> {
                               Align(
                                 alignment: Alignment.bottomRight,
                                 child: IconButton(
-                                  color: _products[i]['status'] == "locked"
-                                      ? Colors.red
-                                      : firstColor,
+                                  color: _products[i]['status'] == "locked" ? Colors.red : firstColor,
                                   icon: (_products[i]['status'] == "locked")
                                       ? Icon(Icons.lock_outline_rounded)
                                       : (_products[i]['status'] == "purchased")
                                           ? Icon(Icons.check_box_outlined)
                                           : Icon(Icons.shopping_cart_outlined),
-                                  onPressed: (_products[i]['status'] ==
-                                          "locked")
+                                  onPressed: (_products[i]['status'] == "locked")
                                       ? () => showDialog<String>(
                                             context: context,
-                                            builder: (BuildContext context) =>
-                                                AlertDialog(
-                                              title: const Text(
-                                                  'Product Unavailable'),
-                                              content: const Text(
-                                                  'Please complete assigned tasks to get this product'),
+                                            builder: (BuildContext context) => AlertDialog(
+                                              title: const Text('Product Unavailable'),
+                                              content: const Text('Please complete assigned tasks to get this product'),
                                               actions: <Widget>[
                                                 TextButton(
-                                                  onPressed: () =>
-                                                      Navigator.pop(
-                                                          context, 'OK'),
+                                                  onPressed: () => Navigator.pop(context, 'OK'),
                                                   child: const Text('OK'),
                                                 ),
                                               ],
@@ -253,10 +214,7 @@ class _ProductPageState extends State<ProductPage> {
                             ]),
                             decoration: BoxDecoration(
                               gradient: LinearGradient(
-                                colors: [
-                                  Colors.blue[300].withOpacity(0.2),
-                                  Colors.deepPurple[200].withOpacity(0.2)
-                                ],
+                                colors: [Colors.blue[300].withOpacity(0.2), Colors.deepPurple[200].withOpacity(0.2)],
                                 begin: Alignment.topRight,
                                 end: Alignment.bottomLeft,
                               ),
@@ -284,10 +242,9 @@ class _ProductPageState extends State<ProductPage> {
           content: Text('Do you want to buy this product?'),
           actions: <Widget>[
             // ignore: deprecated_member_use
-            new FlatButton(
+            FlatButton(
               onPressed: () {
-                Navigator.of(context, rootNavigator: true)
-                    .pop(false); // dismisses only the dialog and returns false
+                Navigator.of(context, rootNavigator: true).pop(false); // dismisses only the dialog and returns false
               },
               child: Text(
                 'No',
@@ -297,8 +254,7 @@ class _ProductPageState extends State<ProductPage> {
             // ignore: deprecated_member_use
             FlatButton(
               onPressed: () {
-                Navigator.of(context, rootNavigator: true)
-                    .pop(true); // dismisses only the dialog and returns true
+                Navigator.of(context, rootNavigator: true).pop(true); // dismisses only the dialog and returns true
                 _buyProduct(i);
               },
               child: Text(
@@ -346,18 +302,11 @@ class _ProductPageState extends State<ProductPage> {
   }
 
   void _toast(String message) {
-    Fluttertoast.showToast(
-        msg: message,
-        toastLength: Toast.LENGTH_LONG,
-        gravity: ToastGravity.BOTTOM,
-        timeInSecForIosWeb: 1,
-        backgroundColor: Colors.black87,
-        textColor: Colors.white,
-        fontSize: 18.0);
+    Fluttertoast.showToast(msg: message, toastLength: Toast.LENGTH_LONG, gravity: ToastGravity.BOTTOM, timeInSecForIosWeb: 1, backgroundColor: Colors.black87, textColor: Colors.white, fontSize: 18.0);
   }
 
   _otpSentAlertBox(BuildContext context) {
-    var alert = CustomAlert();
+    var alert = const CustomAlert();
     showDialog(
       context: context,
       builder: (BuildContext context) {

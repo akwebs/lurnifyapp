@@ -13,7 +13,7 @@ import 'package:lurnify/helper/test_repo.dart';
 import 'package:lurnify/model/test_main.dart';
 import 'package:lurnify/ui/constant/ApiConstant.dart';
 import 'package:lurnify/ui/screen/test/test.dart';
-import 'package:lurnify/widgets/componants/custom-button.dart';
+import 'package:lurnify/widgets/componants/custom_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:awesome_dialog/awesome_dialog.dart';

@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:lurnify/helper/db_helper.dart';
 import 'package:lurnify/model/social_group_model.dart';
 import 'package:lurnify/ui/constant/ApiConstant.dart';
-import 'package:lurnify/ui/screen/userProfile/user-profile.dart';
+import 'package:lurnify/ui/screen/userProfile/user_profile.dart';
 import 'package:lurnify/ui/constant/constant.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;

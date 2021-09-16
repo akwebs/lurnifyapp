@@ -14,6 +14,8 @@ class BarChartSample1 extends StatefulWidget {
     Colors.redAccent,
   ];
 
+  BarChartSample1({Key key}) : super(key: key);
+
   @override
   State<StatefulWidget> createState() => BarChartSample1State();
 }
@@ -163,7 +165,7 @@ class BarChartSample1State extends State<BarChartSample1> {
               }
               return BarTooltipItem(
                 weekDay + '\n',
-                TextStyle(
+                const TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
                   fontSize: 18,
@@ -274,33 +276,19 @@ class BarChartSample1State extends State<BarChartSample1> {
       barGroups: List.generate(7, (i) {
         switch (i) {
           case 0:
-            return makeGroupData(0, Random().nextInt(15).toDouble() + 6,
-                barColor: widget.availableColors[
-                    Random().nextInt(widget.availableColors.length)]);
+            return makeGroupData(0, Random().nextInt(15).toDouble() + 6, barColor: widget.availableColors[Random().nextInt(widget.availableColors.length)]);
           case 1:
-            return makeGroupData(1, Random().nextInt(15).toDouble() + 6,
-                barColor: widget.availableColors[
-                    Random().nextInt(widget.availableColors.length)]);
+            return makeGroupData(1, Random().nextInt(15).toDouble() + 6, barColor: widget.availableColors[Random().nextInt(widget.availableColors.length)]);
           case 2:
-            return makeGroupData(2, Random().nextInt(15).toDouble() + 6,
-                barColor: widget.availableColors[
-                    Random().nextInt(widget.availableColors.length)]);
+            return makeGroupData(2, Random().nextInt(15).toDouble() + 6, barColor: widget.availableColors[Random().nextInt(widget.availableColors.length)]);
           case 3:
-            return makeGroupData(3, Random().nextInt(15).toDouble() + 6,
-                barColor: widget.availableColors[
-                    Random().nextInt(widget.availableColors.length)]);
+            return makeGroupData(3, Random().nextInt(15).toDouble() + 6, barColor: widget.availableColors[Random().nextInt(widget.availableColors.length)]);
           case 4:
-            return makeGroupData(4, Random().nextInt(15).toDouble() + 6,
-                barColor: widget.availableColors[
-                    Random().nextInt(widget.availableColors.length)]);
+            return makeGroupData(4, Random().nextInt(15).toDouble() + 6, barColor: widget.availableColors[Random().nextInt(widget.availableColors.length)]);
           case 5:
-            return makeGroupData(5, Random().nextInt(15).toDouble() + 6,
-                barColor: widget.availableColors[
-                    Random().nextInt(widget.availableColors.length)]);
+            return makeGroupData(5, Random().nextInt(15).toDouble() + 6, barColor: widget.availableColors[Random().nextInt(widget.availableColors.length)]);
           case 6:
-            return makeGroupData(6, Random().nextInt(15).toDouble() + 6,
-                barColor: widget.availableColors[
-                    Random().nextInt(widget.availableColors.length)]);
+            return makeGroupData(6, Random().nextInt(15).toDouble() + 6, barColor: widget.availableColors[Random().nextInt(widget.availableColors.length)]);
           default:
             return throw Error();
         }
@@ -310,8 +298,7 @@ class BarChartSample1State extends State<BarChartSample1> {
 
   Future<dynamic> refreshState() async {
     setState(() {});
-    await Future<dynamic>.delayed(
-        animDuration + const Duration(milliseconds: 50));
+    await Future<dynamic>.delayed(animDuration + const Duration(milliseconds: 50));
     if (isPlaying) {
       await refreshState();
     }

@@ -5,12 +5,12 @@ import 'package:path/path.dart' as Path;
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:lurnify/helper/db_helper.dart';
-import 'package:lurnify/ui/constant/constant.dart';
-import 'package:lurnify/ui/constant/routes.dart';
-import 'package:lurnify/ui/screen/myProgress/subject_unit.dart';
-import 'package:lurnify/ui/screen/socialGroup/social_group.dart';
-import 'package:lurnify/widgets/componants/componants.dart';
+import '../../../helper/db_helper.dart';
+import '../../constant/constant.dart';
+import '../../constant/routes.dart';
+import '../../../widgets/componants/custom_button.dart';
+import '../myProgress/subject_unit.dart';
+import '../socialGroup/social_group.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
@@ -19,6 +19,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
 class UserProfile extends StatefulWidget {
+  const UserProfile({Key key}) : super(key: key);
+
   @override
   _UserProfileState createState() => _UserProfileState();
 }

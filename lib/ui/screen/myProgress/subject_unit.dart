@@ -10,6 +10,8 @@ import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MyProgress extends StatefulWidget {
+  const MyProgress({Key key}) : super(key: key);
+
   @override
   _MyProgressState createState() => _MyProgressState();
 }
@@ -33,12 +35,12 @@ class _MyProgressState extends State<MyProgress> {
       //   Uri.encodeFull(url),
       // );
       // var resbody = jsonDecode(response.body);
-      MyProgressRepo myProgressRepo = new MyProgressRepo();
+      MyProgressRepo myProgressRepo = MyProgressRepo();
       List<Map<String, dynamic>> _mySubjectProgress = await myProgressRepo.getMyProgress('Complete', '0', registrationSno);
 
       List<SubjectModel> list = [];
       _mySubjectProgress.forEach((element) {
-        SubjectModel model = new SubjectModel();
+        SubjectModel model = SubjectModel();
         model.sno = element['subjectSno'];
         model.subjectName = element['subjectName'];
         model.completedTopicByUser = element['completedTopicByUser'];
@@ -244,7 +246,7 @@ class _MyProgressState extends State<MyProgress> {
                     //     borderRadius: BorderRadius.circular(10),
                     //     color: Colors.redAccent),
                     tabs: List.generate(result.length, (i) {
-                      return new Tab(
+                      return Tab(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -362,7 +364,7 @@ class SubjectModel {
   SubjectModel({this.sno, this.subjectName, this.units, this.completedTopicByUser, this.totalSubjectTopic});
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+    final Map<String, dynamic> data = Map<String, dynamic>();
     data['sno'] = this.sno;
     data['subjectName'] = this.subjectName;
     data['totalSubjectTopic'] = this.totalSubjectTopic;

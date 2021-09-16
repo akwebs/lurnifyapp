@@ -40,12 +40,7 @@ class AppColors {
     Colors.deepOrange[400],
     Colors.blue[400],
   ];
-  static List<BoxShadow> neumorpShadow = [
-    BoxShadow(
-        color: Colors.black26.withOpacity(.1),
-        offset: Offset(1, 1),
-        blurRadius: 5)
-  ];
+  static List<BoxShadow> neumorpShadow = [BoxShadow(color: Colors.black26.withOpacity(.1), offset: Offset(1, 1), blurRadius: 5)];
 }
 
 class AppSlider {
@@ -171,4 +166,37 @@ class AppTile {
     'assets/icons/8.png',
     'assets/icons/9.png',
   ];
+}
+
+String randomImg(int i) {
+  if (i % 3 == 0) {
+    return AppSlider.cardimage[0];
+  } else if (i % 3 == 1) {
+    return AppSlider.cardimage[2];
+  } else if (i % 3 == 2) {
+    return AppSlider.cardimage[1];
+  }
+  return AppSlider.cardimage[0];
+}
+
+Color randomColor(int i) {
+  if (i % 3 == 0) {
+    return AppColors.cardHeader[0];
+  } else if (i % 3 == 1) {
+    return AppColors.cardHeader[2];
+  } else if (i % 3 == 2) {
+    return AppColors.cardHeader[1];
+  }
+  return AppColors.cardHeader[0];
+}
+
+Gradient randomGradient(int i) {
+  if (i % 3 == 0) {
+    return AppSlider.sliderGradient[0];
+  } else if (i % 3 == 1) {
+    return AppSlider.sliderGradient[3];
+  } else if (i % 3 == 2) {
+    return AppSlider.sliderGradient[2];
+  }
+  return AppSlider.sliderGradient[1];
 }
