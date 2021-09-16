@@ -35,7 +35,9 @@ class AppTiles extends StatelessWidget {
             ).box.alignTopCenter.make())
                 .expand(),
           ),
-        ).elevation(5).make();
+        ).elevation(5).make().onInkTap(() {
+          Navigator.of(context).pushNamedAndRemoveUntil(pageKey[index], (route) => true);
+        });
       },
     );
   }
