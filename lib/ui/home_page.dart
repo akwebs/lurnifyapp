@@ -224,7 +224,7 @@ class _HomePageState extends State<HomePage> {
       }
       String registerSno = sp.getString("studentSno");
       var url = baseUrl + "getHomePageData?registerSno=" + registerSno;
-      //print(url);
+      print(url);
       http.Response response = await http.post(Uri.encodeFull(url), body: jsonEncode(dataUpdate.toJson()));
 
       resbody = jsonDecode(response.body);
@@ -234,7 +234,7 @@ class _HomePageState extends State<HomePage> {
       // _isSpinned = resbody['isSpinned'];
       DBHelper dbHelper = DBHelper();
       Database database = await dbHelper.database;
-
+      print(resbody);
       await database.transaction((txn) async {
         if (resbody.containsKey('reward')) {
           txn.delete('reward');
@@ -347,7 +347,6 @@ class _HomePageState extends State<HomePage> {
             _totalDimes = a['totalDimes'].toString();
           }
         });
-
         //Checking daily app opening
         String date = DateFormat('yyyy-MM-dd').format(DateTime.now());
         String sql = "select * from daily_app_opening where registerSno=${sp.getString("studentSno")} and appOpeningDate = $date";
@@ -403,14 +402,16 @@ class _HomePageState extends State<HomePage> {
         List<Map<String, dynamic>> list4 = await txn.rawQuery(sql3);
         for (var a in list4) {
           if (a['totalTopic'] != null && a['totalTopic'] != 0) {
-            _selfStudyPercent = a['totalTopic'] / a['totalTopic'];
+            var x=a['completedTopics'] ?? 0;
+            _selfStudyPercent = x.toDouble()??0 / a['totalTopic'];
           }
         }
-
+        print('resbody');
+        print(resbody);
         String sql4 = "select (sum(correctQuestion)/sum(totalQuestion)) as testPercent from topic_test_result";
         List<Map<String, dynamic>> list5 = await txn.rawQuery(sql4);
         for (var a in list5) {
-          _testPercent = a['testPercent'];
+          _testPercent = a['testPercent'] ?? 0;
         }
 
         //Getting recent data
@@ -491,127 +492,134 @@ class _HomePageState extends State<HomePage> {
     return FutureBuilder(
         future: _data,
         builder: (context, snapshot) {
-          return Scaffold(
-            key: _scaffoldKey,
-            resizeToAvoidBottomInset: false,
-            appBar: AppBar(
-              elevation: 2,
-              title: Image.asset(
-                logoUrl,
-                fit: BoxFit.contain,
-                height: 40,
-              ),
-              actions: <Widget>[
-                IconButton(
-                  icon: const Icon(Icons.notifications_outlined),
-                  onPressed: () {},
+          if(snapshot.connectionState==ConnectionState.done){
+            return Scaffold(
+              key: _scaffoldKey,
+              resizeToAvoidBottomInset: false,
+              appBar: AppBar(
+                elevation: 2,
+                title: Image.asset(
+                  logoUrl,
+                  fit: BoxFit.contain,
+                  height: 40,
                 ),
-                IconButton(
-                  icon: const Icon(Icons.share),
-                  onPressed: () {
-                    Share.share('Hey Check out this cool app, https://lurnify.in/');
-                  },
-                ),
-                PopupMenuButton<String>(
-                  onSelected: handleClick,
-                  itemBuilder: (BuildContext context) {
-                    return {'Settings', 'Logout'}.map((String choice) {
-                      return PopupMenuItem<String>(
-                        value: choice,
-                        child: Text(choice),
-                      );
-                    }).toList();
-                  },
-                ),
-              ],
-            ),
-            drawer: Theme(
-              data: Theme.of(context).copyWith(
-                canvasColor: Colors.white24,
-              ),
-              child: Drawer(
-                elevation: 0,
-                child: CustomDrawer(_isPaymentDone),
-              ),
-            ),
-            body: WillPopScope(
-              onWillPop: _onWillPop,
-              child: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Colors.purple[100].withOpacity(0.1), Colors.deepPurple[100].withOpacity(0.1)],
-                    begin: Alignment.topRight,
-                    end: Alignment.bottomLeft,
+                actions: <Widget>[
+                  IconButton(
+                    icon: const Icon(Icons.notifications_outlined),
+                    onPressed: () {},
                   ),
+                  IconButton(
+                    icon: const Icon(Icons.share),
+                    onPressed: () {
+                      Share.share('Hey Check out this cool app, https://lurnify.in/');
+                    },
+                  ),
+                  PopupMenuButton<String>(
+                    onSelected: handleClick,
+                    itemBuilder: (BuildContext context) {
+                      return {'Settings', 'Logout'}.map((String choice) {
+                        return PopupMenuItem<String>(
+                          value: choice,
+                          child: Text(choice),
+                        );
+                      }).toList();
+                    },
+                  ),
+                ],
+              ),
+              drawer: Theme(
+                data: Theme.of(context).copyWith(
+                  canvasColor: Colors.white24,
                 ),
-                child: [
-                  FirstSlider(_selfStudyPercent, _testPercent),
-                  AppTiles(pageKey),
-                  SecondSlider(pageKey, _recentData),
-                  TestSlider(_dueTopicTestData),
-                  Column(
-                    children: [
-                      const Padding(
-                        padding: EdgeInsets.fromLTRB(8, 15, 8, 10),
-                        child: Text(
-                          'Hear from delighted users',
-                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                child: Drawer(
+                  elevation: 0,
+                  child: CustomDrawer(_isPaymentDone),
+                ),
+              ),
+              body: WillPopScope(
+                onWillPop: _onWillPop,
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Colors.purple[100].withOpacity(0.1), Colors.deepPurple[100].withOpacity(0.1)],
+                      begin: Alignment.topRight,
+                      end: Alignment.bottomLeft,
+                    ),
+                  ),
+                  child: [
+                    FirstSlider(_selfStudyPercent, _testPercent),
+                    AppTiles(pageKey),
+                    _recentData.isEmpty?Container():SecondSlider(pageKey, _recentData),
+                    _dueTopicTestData.isEmpty?Container(): TestSlider(_dueTopicTestData),
+                    Column(
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.fromLTRB(8, 15, 8, 10),
+                          child: Text(
+                            'Hear from delighted users',
+                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                          ),
                         ),
-                      ),
-                      Reviews(
-                        clr: AppColors.cardHeader[2],
-                      ),
-                      Reviews(
-                        clr: AppColors.cardHeader[1],
-                      ),
-                      Reviews(
-                        clr: AppColors.cardHeader[0],
-                      ),
-                    ],
+                        Reviews(
+                          clr: AppColors.cardHeader[2],
+                        ),
+                        Reviews(
+                          clr: AppColors.cardHeader[1],
+                        ),
+                        Reviews(
+                          clr: AppColors.cardHeader[0],
+                        ),
+                      ],
+                    ),
+                  ].vStack().scrollVertical(),
+                ),
+              ),
+              // floatingActionButtonLocation:
+              //     FloatingActionButtonLocation.centerDocked,
+              floatingActionButton: FloatingActionButton(
+                onPressed: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => Recent('1'),
+                  ));
+                },
+                child: const Icon(
+                  Icons.add,
+                  color: Colors.white,
+                ),
+              ),
+              bottomNavigationBar: BottomNavigationBar(
+                onTap: onTabTapped,
+                currentIndex: _currentIndex,
+                items: const <BottomNavigationBarItem>[
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.home),
+                    label: 'Home',
                   ),
-                ].vStack().scrollVertical(),
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.store),
+                    label: 'Store',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.search),
+                    label: 'Search',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.group),
+                    label: 'Group',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.person),
+                    label: 'Account',
+                  ),
+                ],
               ),
-            ),
-            // floatingActionButtonLocation:
-            //     FloatingActionButtonLocation.centerDocked,
-            floatingActionButton: FloatingActionButton(
-              onPressed: () {
-                Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => Recent('1'),
-                ));
-              },
-              child: const Icon(
-                Icons.add,
-                color: Colors.white,
-              ),
-            ),
-            bottomNavigationBar: BottomNavigationBar(
-              onTap: onTabTapped,
-              currentIndex: _currentIndex,
-              items: const <BottomNavigationBarItem>[
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.home),
-                  label: 'Home',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.store),
-                  label: 'Store',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.search),
-                  label: 'Search',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.group),
-                  label: 'Group',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.person),
-                  label: 'Account',
-                ),
-              ],
-            ),
-          );
+            );
+          }else{
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+
         });
   }
 

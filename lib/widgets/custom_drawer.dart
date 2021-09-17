@@ -32,7 +32,39 @@ class _CustomDrawerState extends State<CustomDrawer> {
     sp.remove("totalWeeks");
     sp.remove("totalStudyHour");
     DBHelper dbHelper = new DBHelper();
-    dbHelper.deleteDb();
+    Database database = await dbHelper.database;
+    database.delete('course_group');
+    database.delete('course');
+    database.delete('subject');
+    database.delete('unit');
+    database.delete('chapter');
+    database.delete('topic');
+    database.delete('study');
+    database.delete('reward');
+    database.delete('dimes');
+    database.delete('recent_study');
+    database.delete('due_topic_tests');
+    database.delete('remark');
+    database.delete('pace');
+    database.delete('topic_test_result');
+    database.delete('test_main');
+    database.delete('test');
+    database.delete('instruction');
+    database.delete('instruction_data');
+    database.delete('register');
+    database.delete('weekly_task');
+    database.delete('daily_task_completion');
+    database.delete('daily_task');
+    database.delete('daily_task_data');
+    database.delete('data_update');
+    database.delete('beat_distraction');
+    database.delete('daily_app_opening');
+    database.delete('timer_page_message');
+    database.delete('challenge_accept');
+    database.delete('completed_chapters');
+    database.delete('completed_units');
+    database.delete('completed_subjects');
+
     Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Login()));
   }
 

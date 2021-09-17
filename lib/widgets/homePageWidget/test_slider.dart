@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:lurnify/config/data.dart';
 import 'package:lurnify/ui/screen/rankBooster/rank_booster_view.dart';
+import 'package:lurnify/ui/screen/test/instruction_page.dart';
 import 'package:velocity_x/velocity_x.dart';
 
 class TestSlider extends StatefulWidget {
@@ -29,7 +30,7 @@ class _TestSliderState extends State<TestSlider> {
           .px8(),
       VxSwiper.builder(
         viewportFraction: context.isMobile ? 1.0 : 0.4,
-        itemCount: 4,
+        itemCount: widget.dueTopicTest.length,
         aspectRatio: 5 / 2,
         autoPlay: true,
         pauseAutoPlayOnTouch: const Duration(seconds: 3),
@@ -39,8 +40,8 @@ class _TestSliderState extends State<TestSlider> {
             VxTwoRow(
               left: (Image.asset(randomImg(index))).box.alignCenter.make().expand(flex: 1),
               right: VxTwoColumn(
-                top: 'Subject Name'.text.xl.white.semiBold.make().box.alignTopLeft.makeCentered(),
-                bottom: '''You have 40 minutes to answer all 50 questions. '''.text.white.make().box.alignTopLeft.makeCentered(),
+                top: '${widget.dueTopicTest[index]['topicName']}'.text.xl.white.semiBold.make().box.alignTopLeft.makeCentered(),
+                bottom: '${widget.dueTopicTest[index]['subjectName']}, ${widget.dueTopicTest[index]['chapterName']}'.text.white.make().box.alignTopLeft.makeCentered(),
               ).p16().expand(flex: 3),
             ),
             const Icon(Icons.arrow_forward).box.p12.alignBottomRight.make(),
@@ -49,7 +50,11 @@ class _TestSliderState extends State<TestSlider> {
               .withGradient(AppSlider.sliderGradient[index])
               .make()
               .onInkTap(() {
-                print(index);
+            // Navigator.of(context).pushReplacement(MaterialPageRoute(
+            //   builder: (context) => InstructionPage(
+            //       widget.dueTopicTest[index]['course'].toString(), dueTests[i]['subject'].toString(), dueTests[i]['unit'].toString(), dueTests[i]['chapter'].toString(), dueTests[i]['topicSno'].toString()),
+            // ));
+              Navigator.of(context).push(MaterialPageRoute(builder: (context) => RankBoosterHome(sno: widget.dueTopicTest[index]['dueTopicTestSno'],),));
               })
               .card
               .elevation(5)

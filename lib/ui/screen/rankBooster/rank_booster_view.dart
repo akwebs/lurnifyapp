@@ -9,6 +9,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smooth_star_rating/smooth_star_rating.dart';
 
 class RankBoosterHome extends StatefulWidget {
+
+   RankBoosterHome({this.sno});
+  final int sno;
   @override
   _RankBoosterHomeState createState() => _RankBoosterHomeState();
 }
@@ -27,6 +30,7 @@ Color _randomColor(int i) {
 class _RankBoosterHomeState extends State<RankBoosterHome> {
   var _data;
   List<Map<String, dynamic>> _dueTests = [];
+  ScrollController _scrollController=  ScrollController();
 
   Future _search() async {
     try {
@@ -43,7 +47,16 @@ class _RankBoosterHomeState extends State<RankBoosterHome> {
       // });
       DueTopicTestRepo dueTopicTestRepo = new DueTopicTestRepo();
       _dueTests = await dueTopicTestRepo.getDueTopicTestByStatusAndRegister('INCOMPLETE', sp.getString("studentSno"), '0');
-      print(_dueTests);
+      double idx=0;
+      if(_dueTests.isNotEmpty){
+        for (var element in _dueTests) {
+          if(element['dueTopicTestSno']==widget.sno){
+            _scrollController.jumpTo(idx);
+          }else{
+            idx++;
+          }
+        }
+      }
     } catch (e) {
       print(e);
     }
@@ -52,6 +65,7 @@ class _RankBoosterHomeState extends State<RankBoosterHome> {
   @override
   void initState() {
     _data = _search();
+
     super.initState();
   }
 
@@ -115,6 +129,7 @@ class _RankBoosterHomeState extends State<RankBoosterHome> {
                               height: 10,
                             ),
                             ListView.builder(
+                              controller: _scrollController,
                               itemCount: _dueTests.length,
                               shrinkWrap: true,
                               primary: false,
@@ -164,7 +179,7 @@ class _RankBoosterHomeState extends State<RankBoosterHome> {
         ));
       },
       child: Card(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5), side: BorderSide(width: 1, color: firstColor)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5), side: BorderSide(width: 1, color: dueTests[i]['dueTopicTestSno']==widget.sno?firstColor:Colors.transparent)),
         elevation: 5,
         clipBehavior: Clip.antiAlias,
         child: Column(

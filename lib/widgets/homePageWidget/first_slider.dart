@@ -22,8 +22,8 @@ class FirstSlider extends StatefulWidget {
 }
 
 class _FirstSliderState extends State<FirstSlider> {
-  final double selfStudyPercent;
-  final double testPercent;
+   double selfStudyPercent;
+   double testPercent;
 
   @override
   _FirstSliderState(this.selfStudyPercent, this.testPercent);
@@ -48,9 +48,9 @@ class _FirstSliderState extends State<FirstSlider> {
                     bottom: LinearPercentIndicator(
                       padding: const EdgeInsets.symmetric(horizontal: 0),
                       percent: (index == 0)
-                          ? selfStudyPercent
+                          ? selfStudyPercent>1?selfStudyPercent=1:selfStudyPercent
                           : (index == 1)
-                              ? testPercent
+                              ? testPercent>1?testPercent=1:testPercent
                               : 0.5,
                       backgroundColor: Colors.grey,
                       progressColor: Colors.white,

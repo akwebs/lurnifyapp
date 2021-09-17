@@ -29,7 +29,7 @@ class _SplashScreenPageState extends State<SplashScreenPage> {
         _cancelFlashsaleTimer();
         if (sp.getBool("onboarding") != null) {
           if (sp.getString("studentSno") == null) {
-            Navigator.of(context).pushNamedAndRemoveUntil(homePage, (route) => false);
+            Navigator.of(context).pushNamedAndRemoveUntil(logIn, (route) => false);
           } else {
             Navigator.of(context).pushNamedAndRemoveUntil(homePage, (route) => false);
           }

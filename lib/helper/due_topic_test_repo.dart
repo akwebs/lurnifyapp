@@ -15,8 +15,8 @@ class DueTopicTestRepo {
 
   Future<List<Map<String, dynamic>>> getDueTopicTestByStatusAndRegister(String status, String register, String revision) async {
     Database db = await dbHelper.database;
-    String sql = "select dtt.sno as dueTopicTestSno,topic.sno as topicSno ,topic.topicName as topicName,topic.subTopic as subtopic,"
-            "dtt.course,dtt.subject,dtt.unit,dtt.chapter, " +
+    String sql = "select  dtt.sno as dueTopicTestSno,topic.sno as topicSno ,topic.topicName as topicName,topic.subTopic as subtopic,"
+            "dtt.course,dtt.subject,dtt.unit,dtt.chapter, "
         "sub.sno as subjectSno, sub.subjectName as subjectName,topicImp, u.unitName as unitName, c.chapterName as chapterName," +
         "(select count(DISTINCT topicSno) from study where register ='$register' and revision = $revision and topicSno=topic.sno and topicCompletionStatus='$status') as isUserStudied," +
         "(SELECT testPercent from topic_test_result where regSno=:Register and topicSno=topic.sno ORDER BY sno desc limit 1) as lastTestScore," +
@@ -63,7 +63,8 @@ class DueTopicTestRepo {
   }
 
   getHomePageDueTest(txn) async {
-    String sql = "select topicName,subjectName,topic.sno,chapterName from due_topic_tests "
+    String sql = "select topicName,subjectName,topic.sno,chapterName,due_topic_tests.sno as dueTopicTestSno"
+        " from due_topic_tests "
         "inner join topic on topicSno=topic.sno "
         "inner join chapter on chapter.sno=due_topic_tests.chapter "
         "inner join subject on due_topic_tests.subject=subject.sno";

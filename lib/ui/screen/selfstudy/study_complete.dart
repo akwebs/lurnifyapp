@@ -1,4 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+// import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -653,14 +653,14 @@ class _StudyCompleteState extends State<StudyComplete> {
           dueTopicTest.chapter = chapter;
           dueTopicTestRepo.insertIntoDueTopicTest(dueTopicTest);
           dueTopicTest.onlineStatus = 'new';
-          FirebaseFirestore.instance.collection('dueTopicTest').add(dueTopicTest.toJson());
+          // FirebaseFirestore.instance.collection('dueTopicTest').add(dueTopicTest.toJson());
           print("Due Topic test inserted");
         }
       }
 
-      FirebaseFirestore.instance.collection('study').add(study.toJson());
-      FirebaseFirestore.instance.collection('recentStudy').add(recentStudy.toJson());
-      FirebaseFirestore.instance.collection('dimes').add(dimes.toJson());
+      // FirebaseFirestore.instance.collection('study').add(study.toJson());
+      // FirebaseFirestore.instance.collection('recentStudy').add(recentStudy.toJson());
+      // FirebaseFirestore.instance.collection('dimes').add(dimes.toJson());
 
       toastMethod("Study Saved");
       if (completionStatus == "Complete") {

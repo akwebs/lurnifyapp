@@ -584,7 +584,7 @@ class _OtpScreenState extends State<OtpScreen> with SingleTickerProviderStateMix
           print("dimes inserted");
           await FirebaseFirestore.instance.collection("dueTopicTests").where('registerSno', isEqualTo: registerSno).get().then((QuerySnapshot snapshot) {
             for (var f in snapshot.docs) {
-              batch.insert('due_topic_test', f.data());
+              batch.insert('due_topic_tests', f.data());
             }
           });
           print("dueTopicTests inserted");

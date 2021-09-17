@@ -103,7 +103,8 @@ class _ReferalCodeState extends State<ReferalCode> {
                                   borderRadius: BorderRadius.circular(cirRds),
                                   borderSide: const BorderSide(),
                                 ),
-                                floatingLabelStyle: const TextStyle(color: Vx.black)),
+                                // floatingLabelStyle: const TextStyle(color: Vx.black)
+                            ),
                           )),
                     ).make().p16(),
                     TextButton(
