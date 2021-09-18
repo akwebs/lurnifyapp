@@ -70,17 +70,17 @@ class _SelfStudySectionState extends State<SelfStudySection> {
                 pace(context).p8().card.elevation(5).px12.make(),
                 10.heightBox,
                 _motivationCards(context),
-                const Spacer(),
-                CustomButton(
-                  brdRds: 10,
-                  icon: Icons.add,
-                  verpad: const EdgeInsets.symmetric(vertical: 5, horizontal: 30),
-                  onPressed: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => Recent("1"),
-                    ));
-                  },
-                ),
+
+                // CustomButton(
+                //   brdRds: 10,
+                //   icon: Icons.add,
+                //   verpad: const EdgeInsets.symmetric(vertical: 5, horizontal: 30),
+                //   onPressed: () {
+                //     Navigator.of(context).push(MaterialPageRoute(
+                //       builder: (context) => Recent("1"),
+                //     ));
+                //   },
+                // ),
                 10.heightBox
               ].vStack(),
             );

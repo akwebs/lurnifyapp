@@ -41,11 +41,10 @@ class _SelectThePaceState extends State<SelectThePace> {
   var _data;
   DateTime selectedDate = DateTime.now();
   double totalPerDayHours = 0;
-  List<int> _years=[];
-  List<String> _months=[];
-  List<int> _days=[];
-  int _selectedYear=0;
-
+  List<int> _years = [];
+  List<String> _months = [];
+  List<int> _days = [];
+  int _selectedYear = 0;
 
   Future getTotalTopicDuration() async {
     try {
@@ -82,8 +81,8 @@ class _SelectThePaceState extends State<SelectThePace> {
     super.initState();
     // completionDate = formatter.format(DateTime.now().add(Duration(days: 180)));
     _years.add(DateTime.now().year);
-    _years.add(DateTime.now().year+1);
-    _years.add(DateTime.now().year+2);
+    _years.add(DateTime.now().year + 1);
+    _years.add(DateTime.now().year + 2);
 
     _months.add('Jan');
     _months.add('Feb');
@@ -156,6 +155,7 @@ class _SelectThePaceState extends State<SelectThePace> {
       ),
     );
   }
+
   Widget _rankSelector() {
     return Builder(builder: (context) {
       return VxCard(
@@ -163,42 +163,41 @@ class _SelectThePaceState extends State<SelectThePace> {
           [
             ('Rank Challange'.text.white.xl.semiBold.makeCentered().p8()).box.color(Colors.deepPurple).make(),
             'You Challange yourself not to exceed your rank beyond'.text.sm.center.lineHeight(1.5).make().centered(),
-            (' $expectedRank'.text.bold.make().p16())
+            (' $expectedRank'.text.bold.make().px20().py12())
                 .onInkTap(() {
-              showCupertinoModalPopup(
-                  barrierColor: Colors.black54,
-                  context: context,
-                  builder: (context) {
-                    return [
-                      VxCard(VStack(
-                        [
-                          ('Rank Challange'.text.xl.medium.makeCentered().p8()).box.color(Colors.deepPurple[200]).make(),
-                          'You Challange yourself not to exceed your rank beyond'.text.sm.center.lineHeight(1.5).make().p8(),
-                          (expectedRank.text.bold.make().p16()).px12().card.elevation(10).roundedSM.make().centered().p4(),
-                          // todo place the student selected coursename in below bracket
-                          'in your (CourseName)'.text.sm.center.lineHeight(1.5).make().centered(),
-                          20.heightBox,
-                          Wrap(
-                            alignment: WrapAlignment.spaceEvenly,
-                            children: [
-                              _rankSelect('10'),
-                              _rankSelect('100'),
-                              _rankSelect('500'),
-                              _rankSelect('1000'),
-                              _rankSelect('2000'),
-                              _rankSelect('5000'),
-                              _rankSelect('10000'),
+                  showCupertinoModalPopup(
+                      barrierColor: Colors.black54,
+                      context: context,
+                      builder: (context) {
+                        return [
+                          VxCard(VStack(
+                            [
+                              ('Rank Challange'.text.xl.medium.makeCentered().p8()).box.color(Colors.deepPurple[200]).make(),
+                              'You Challange yourself not to exceed your rank beyond'.text.sm.center.lineHeight(1.5).make().p8(),
+                              (expectedRank.text.bold.make().p16()).px12().card.elevation(10).roundedSM.make().centered().p4(),
+                              // todo place the student selected coursename in below bracket
+                              'in your (CourseName)'.text.sm.center.lineHeight(1.5).make().centered(),
+                              20.heightBox,
+                              Wrap(
+                                alignment: WrapAlignment.spaceEvenly,
+                                children: [
+                                  _rankSelect('10'),
+                                  _rankSelect('100'),
+                                  _rankSelect('500'),
+                                  _rankSelect('1000'),
+                                  _rankSelect('2000'),
+                                  _rankSelect('5000'),
+                                  _rankSelect('10000'),
+                                ],
+                              ).wFull(context),
+                              20.heightBox,
                             ],
-                          ).wFull(context),
-                          20.heightBox,
-                        ],
-                        alignment: MainAxisAlignment.spaceBetween,
-                      )).make().p12().h60(context),
-                    ].vStack().centered().wFull(context).hFull(context);
-                  });
-            })
+                            alignment: MainAxisAlignment.spaceBetween,
+                          )).make().p12().h60(context),
+                        ].vStack().centered().wFull(context).hFull(context);
+                      });
+                })
                 .card
-                .color(Colors.deepPurple.shade200)
                 .elevation(5)
                 .roundedSM
                 .make()
@@ -220,127 +219,59 @@ class _SelectThePaceState extends State<SelectThePace> {
             10.heightBox,
             'You Challange yourself to Complete your syllabus at most by...'.text.sm.center.lineHeight(1.5).make().p8().centered(),
             10.heightBox,
-            [
-              (completionYear.text.bold.make().p16())
-                  .onInkTap(() {
-                    showCupertinoModalPopup(
-                        barrierColor: Colors.black54,
-                        context: context,
-                        builder: (context) {
-                          return [
-                            VxCard(VStack(
-                              [
-                                ('Select Target Year'.text.xl.medium.makeCentered().p8()).box.color(Colors.deepPurple[200]).make(),
-                                Wrap(
-                                  alignment: WrapAlignment.spaceEvenly,
-                                  children: [
-                                    for(var a in _years)
-                                    _yearSelect(a.toString()),
-                                  ],
-                                ).wFull(context).p4(),
-                                CustomButton(
-                                  buttonText: 'Select',
-                                  brdRds: 5,
-                                  verpad: const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
-                                  onPressed: () {
-                                    context.pop();
-                                  },
-                                ).centered(),
-                                10.heightBox,
-                              ],
-                              alignment: MainAxisAlignment.spaceBetween,
-                            )).make().p12().h40(context),
-                          ].vStack().centered().wFull(context).hFull(context);
-                        });
-                  })
-                  .card
-                  .color(Colors.deepPurple.shade200)
-                  .elevation(5)
-                  .roundedSM
-                  .make()
-                  .centered()
-                  .p8(),
-              (completionMonth.text.bold.make().p16())
-                  .onInkTap(() {
-                    showCupertinoModalPopup(
-                        barrierColor: Colors.black54,
-                        context: context,
-                        builder: (context) {
-                          return [
-                            VxCard(VStack(
-                              [
-                                ('Select Target Month'.text.xl.medium.makeCentered().p8()).box.color(Colors.deepPurple[200]).make(),
-                                Wrap(
-                                  alignment: WrapAlignment.spaceEvenly,
-                                  children: [
-                                    for(var a in _months)
-                                      _monthSelect(a),
-
-                                  ],
-                                ).wFull(context).p4(),
-                                CustomButton(
-                                  buttonText: 'Select',
-                                  brdRds: 5,
-                                  verpad: const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
-                                  onPressed: () {
-                                    context.pop();
-                                  },
-                                ).centered(),
-                                10.heightBox,
-                              ],
-                              alignment: MainAxisAlignment.spaceBetween,
-                            )).make().p12().h56(context),
-                          ].vStack().centered().wFull(context).hFull(context);
-                        });
-                  })
-                  .card
-                  .color(Colors.deepPurple.shade200)
-                  .elevation(5)
-                  .roundedSM
-                  .make()
-                  .centered()
-                  .p8(),
-              (completionDay.text.bold.make().p16())
-                  .onInkTap(() {
-                    showCupertinoModalPopup(
-                        barrierColor: Colors.black54,
-                        context: context,
-                        builder: (context) {
-                          return [
-                            VxCard(VStack(
-                              [
-                                ('Select Target Date'.text.xl.medium.makeCentered().p8()).box.color(Colors.deepPurple[200]).make(),
-                                Wrap(
-                                  alignment: WrapAlignment.spaceEvenly,
-                                  children: [
-                                    for(var a in _days)
-                                    _daySelect(a.toString()),
-
-                                  ],
-                                ).wFull(context).p4(),
-                                CustomButton(
-                                  buttonText: 'Select',
-                                  brdRds: 5,
-                                  verpad: const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
-                                  onPressed: () {
-                                    context.pop();
-                                  },
-                                ).centered(),
-                                10.heightBox,
-                              ],
-                              alignment: MainAxisAlignment.spaceBetween,
-                            )).make().p12().h40(context),
-                          ].vStack().centered().wFull(context).hFull(context);
-                        });
-                  })
-                  .card
-                  .color(Colors.deepPurple.shade200)
-                  .elevation(5)
-                  .roundedSM
-                  .make()
-                  .centered()
-                  .p8(),
-            ].hStack().centered(),
+            HStack([
+              PopupMenuButton(
+                  child: completionYear.text.bold.make().px20().py12(),
+                  elevation: 20,
+                  enabled: true,
+                  onSelected: (value) {
+                    setState(() {
+                      completionYear = value;
+                    });
+                  },
+                  itemBuilder: (context) => [
+                        for (var a in _years)
+                          PopupMenuItem(
+                            child: Text(a.toString()),
+                            value: a.toString(),
+                          )
+                      ]),
+              15.heightBox.box.width(1).color(Vx.black).make(),
+              PopupMenuButton(
+                  initialValue: completionMonth,
+                  child: completionMonth.text.bold.make().px20().py12(),
+                  elevation: 20,
+                  enabled: true,
+                  onSelected: (value) {
+                    setState(() {
+                      completionMonth = value;
+                    });
+                  },
+                  itemBuilder: (context) => [
+                        for (var a in _months)
+                          PopupMenuItem(
+                            child: Text(a.toString()),
+                            value: a.toString(),
+                          )
+                      ]),
+              15.heightBox.box.width(1).color(Vx.black).make(),
+              PopupMenuButton(
+                  child: completionDay.text.bold.make().px20().py12(),
+                  elevation: 20,
+                  enabled: true,
+                  onSelected: (value) {
+                    setState(() {
+                      completionDay = value;
+                    });
+                  },
+                  itemBuilder: (context) => [
+                        for (var a in _days)
+                          PopupMenuItem(
+                            child: Text(a.toString()),
+                            value: a.toString(),
+                          )
+                      ]),
+            ]).card.elevation(5).roundedSM.make().centered(),
             '(CourseName)'.text.sm.center.lineHeight(1.5).make().centered().py12(),
           ],
         ),
@@ -475,8 +406,6 @@ class _SelectThePaceState extends State<SelectThePace> {
     ).px12();
   }
 
-
-
   Widget _rankSelect(String rank) {
     return (rank.text.bold.make().p16())
         .onInkTap(() {
@@ -523,7 +452,7 @@ class _SelectThePaceState extends State<SelectThePace> {
         .onInkTap(() {
           setState(() {
             completionYear = year;
-            _selectedYear=int.parse(year);
+            _selectedYear = int.parse(year);
           });
         })
         .card
@@ -646,20 +575,18 @@ class _SelectThePaceState extends State<SelectThePace> {
     }
   }
 
-  void _getDays(int year, int monthIndex){
-    try{
-      _days=[];
-      int totalMonthDays= DateTime(year,monthIndex+2,0).day;
-      for(int i=1;i<=totalMonthDays;i++){
-        DateTime now= DateTime(year,monthIndex+1,i);
-        if(now.weekday==DateTime.sunday){
+  void _getDays(int year, int monthIndex) {
+    try {
+      _days = [];
+      int totalMonthDays = DateTime(year, monthIndex + 2, 0).day;
+      for (int i = 1; i <= totalMonthDays; i++) {
+        DateTime now = DateTime(year, monthIndex + 1, i);
+        if (now.weekday == DateTime.sunday) {
           _days.add(i);
         }
       }
-      setState(() {
-
-      });
-    }catch(e){
+      setState(() {});
+    } catch (e) {
       log(e);
     }
   }
