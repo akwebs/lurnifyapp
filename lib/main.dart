@@ -4,8 +4,8 @@ import 'package:lurnify/ui/constant/routes.dart';
 import 'package:lurnify/ui/home_page.dart';
 import 'package:lurnify/ui/library/flutter_overboard/onboarding/on_boarding.dart';
 import 'package:lurnify/ui/screen/dareToDo/dare_to_do.dart';
-import 'package:lurnify/ui/screen/marketPlace/market_place.dart';
 import 'package:lurnify/ui/screen/marketPlace/purchased_item.dart';
+import 'package:lurnify/ui/screen/marketPlace/week_month.dart';
 import 'package:lurnify/ui/screen/myCourseContain/course_content.dart';
 import 'package:lurnify/ui/screen/myProgress/subject_unit.dart';
 import 'package:lurnify/ui/screen/myReport/my_report.dart';
@@ -62,7 +62,7 @@ class _MyAppState extends State<MyApp> {
         syllabusProgress: (BuildContext context) => const MyProgress(),
         dareToDo: (BuildContext context) => DareToDo(),
         myReward: (BuildContext context) => PurchasedItem(),
-        moneyMatters: (BuildContext context) => const MarketPlace(),
+        moneyMatters: (BuildContext context) => WeekMonth(),
       },
       initialRoute: splashScreen,
     );
