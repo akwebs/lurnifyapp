@@ -41,6 +41,11 @@ class _SelectThePaceState extends State<SelectThePace> {
   var _data;
   DateTime selectedDate = DateTime.now();
   double totalPerDayHours = 0;
+  List<int> _years=[];
+  List<String> _months=[];
+  List<int> _days=[];
+  int _selectedYear=0;
+
 
   Future getTotalTopicDuration() async {
     try {
@@ -76,6 +81,22 @@ class _SelectThePaceState extends State<SelectThePace> {
   void initState() {
     super.initState();
     // completionDate = formatter.format(DateTime.now().add(Duration(days: 180)));
+    _years.add(DateTime.now().year);
+    _years.add(DateTime.now().year+1);
+    _years.add(DateTime.now().year+2);
+
+    _months.add('Jan');
+    _months.add('Feb');
+    _months.add('Mar');
+    _months.add('Apr');
+    _months.add('May');
+    _months.add('Jun');
+    _months.add('Jul');
+    _months.add('Aug');
+    _months.add('Sep');
+    _months.add('Oct');
+    _months.add('Nov');
+    _months.add('Dec');
     _data = getTotalTopicDuration();
   }
 
@@ -106,12 +127,12 @@ class _SelectThePaceState extends State<SelectThePace> {
               return Material(
                 color: Colors.transparent,
                 child: [
-                  rankSelector(),
-                  completionDateSet(),
+                  _rankSelector(),
+                  _completionDateSet(),
                   const SizedBox(
                     height: 10,
                   ),
-                  studyHoursPick(),
+                  _studyHoursPick(),
                   const SizedBox(
                     height: 10,
                   ),
@@ -135,8 +156,62 @@ class _SelectThePaceState extends State<SelectThePace> {
       ),
     );
   }
+  Widget _rankSelector() {
+    return Builder(builder: (context) {
+      return VxCard(
+        VStack(
+          [
+            ('Rank Challange'.text.white.xl.semiBold.makeCentered().p8()).box.color(Colors.deepPurple).make(),
+            'You Challange yourself not to exceed your rank beyond'.text.sm.center.lineHeight(1.5).make().centered(),
+            (' $expectedRank'.text.bold.make().p16())
+                .onInkTap(() {
+              showCupertinoModalPopup(
+                  barrierColor: Colors.black54,
+                  context: context,
+                  builder: (context) {
+                    return [
+                      VxCard(VStack(
+                        [
+                          ('Rank Challange'.text.xl.medium.makeCentered().p8()).box.color(Colors.deepPurple[200]).make(),
+                          'You Challange yourself not to exceed your rank beyond'.text.sm.center.lineHeight(1.5).make().p8(),
+                          (expectedRank.text.bold.make().p16()).px12().card.elevation(10).roundedSM.make().centered().p4(),
+                          // todo place the student selected coursename in below bracket
+                          'in your (CourseName)'.text.sm.center.lineHeight(1.5).make().centered(),
+                          20.heightBox,
+                          Wrap(
+                            alignment: WrapAlignment.spaceEvenly,
+                            children: [
+                              _rankSelect('10'),
+                              _rankSelect('100'),
+                              _rankSelect('500'),
+                              _rankSelect('1000'),
+                              _rankSelect('2000'),
+                              _rankSelect('5000'),
+                              _rankSelect('10000'),
+                            ],
+                          ).wFull(context),
+                          20.heightBox,
+                        ],
+                        alignment: MainAxisAlignment.spaceBetween,
+                      )).make().p12().h60(context),
+                    ].vStack().centered().wFull(context).hFull(context);
+                  });
+            })
+                .card
+                .color(Colors.deepPurple.shade200)
+                .elevation(5)
+                .roundedSM
+                .make()
+                .centered()
+                .p8(),
+            'in your (CourseName)'.text.sm.center.lineHeight(1.5).make().centered().py12(),
+          ],
+        ),
+      ).elevation(10).roundedSM.p8.make().centered().px12();
+    });
+  }
 
-  Widget completionDateSet() {
+  Widget _completionDateSet() {
     return Builder(builder: (context) {
       return VxCard(
         VStack(
@@ -159,9 +234,8 @@ class _SelectThePaceState extends State<SelectThePace> {
                                 Wrap(
                                   alignment: WrapAlignment.spaceEvenly,
                                   children: [
-                                    _yearSelect('2021'),
-                                    _yearSelect('2022'),
-                                    _yearSelect('2023'),
+                                    for(var a in _years)
+                                    _yearSelect(a.toString()),
                                   ],
                                 ).wFull(context).p4(),
                                 CustomButton(
@@ -199,18 +273,9 @@ class _SelectThePaceState extends State<SelectThePace> {
                                 Wrap(
                                   alignment: WrapAlignment.spaceEvenly,
                                   children: [
-                                    _monthSelect('JAN'),
-                                    _monthSelect('FEB'),
-                                    _monthSelect('MAR'),
-                                    _monthSelect('APR'),
-                                    _monthSelect('MAY'),
-                                    _monthSelect('JUN'),
-                                    _monthSelect('JUL'),
-                                    _monthSelect('AUG'),
-                                    _monthSelect('SEP'),
-                                    _monthSelect('OCT'),
-                                    _monthSelect('NOV'),
-                                    _monthSelect('DEC'),
+                                    for(var a in _months)
+                                      _monthSelect(a),
+
                                   ],
                                 ).wFull(context).p4(),
                                 CustomButton(
@@ -248,11 +313,9 @@ class _SelectThePaceState extends State<SelectThePace> {
                                 Wrap(
                                   alignment: WrapAlignment.spaceEvenly,
                                   children: [
-                                    _daySelect('02'),
-                                    _daySelect('09'),
-                                    _daySelect('16'),
-                                    _daySelect('23'),
-                                    _daySelect('30'),
+                                    for(var a in _days)
+                                    _daySelect(a.toString()),
+
                                   ],
                                 ).wFull(context).p4(),
                                 CustomButton(
@@ -285,7 +348,7 @@ class _SelectThePaceState extends State<SelectThePace> {
     });
   }
 
-  Widget studyHoursPick() {
+  Widget _studyHoursPick() {
     return Card(
       clipBehavior: Clip.antiAlias,
       shape: RoundedRectangleBorder(side: const BorderSide(color: Colors.deepPurple, width: 1), borderRadius: BorderRadius.circular(10)),
@@ -412,60 +475,7 @@ class _SelectThePaceState extends State<SelectThePace> {
     ).px12();
   }
 
-  Widget rankSelector() {
-    return Builder(builder: (context) {
-      return VxCard(
-        VStack(
-          [
-            ('Rank Challange'.text.white.xl.semiBold.makeCentered().p8()).box.color(Colors.deepPurple).make(),
-            'You Challange yourself not to exceed your rank beyond'.text.sm.center.lineHeight(1.5).make().centered(),
-            (' $expectedRank'.text.bold.make().p16())
-                .onInkTap(() {
-                  showCupertinoModalPopup(
-                      barrierColor: Colors.black54,
-                      context: context,
-                      builder: (context) {
-                        return [
-                          VxCard(VStack(
-                            [
-                              ('Rank Challange'.text.xl.medium.makeCentered().p8()).box.color(Colors.deepPurple[200]).make(),
-                              'You Challange yourself not to exceed your rank beyond'.text.sm.center.lineHeight(1.5).make().p8(),
-                              (expectedRank.text.bold.make().p16()).px12().card.elevation(10).roundedSM.make().centered().p4(),
-                              // todo place the student selected coursename in below bracket
-                              'in your (CourseName)'.text.sm.center.lineHeight(1.5).make().centered(),
-                              20.heightBox,
-                              Wrap(
-                                alignment: WrapAlignment.spaceEvenly,
-                                children: [
-                                  _rankSelect('10'),
-                                  _rankSelect('100'),
-                                  _rankSelect('500'),
-                                  _rankSelect('1000'),
-                                  _rankSelect('2000'),
-                                  _rankSelect('5000'),
-                                  _rankSelect('10000'),
-                                ],
-                              ).wFull(context),
-                              20.heightBox,
-                            ],
-                            alignment: MainAxisAlignment.spaceBetween,
-                          )).make().p12().h60(context),
-                        ].vStack().centered().wFull(context).hFull(context);
-                      });
-                })
-                .card
-                .color(Colors.deepPurple.shade200)
-                .elevation(5)
-                .roundedSM
-                .make()
-                .centered()
-                .p8(),
-            'in your (CourseName)'.text.sm.center.lineHeight(1.5).make().centered().py12(),
-          ],
-        ),
-      ).elevation(10).roundedSM.p8.make().centered().px12();
-    });
-  }
+
 
   Widget _rankSelect(String rank) {
     return (rank.text.bold.make().p16())
@@ -499,6 +509,7 @@ class _SelectThePaceState extends State<SelectThePace> {
         .onInkTap(() {
           setState(() {
             completionMonth = month;
+            _getDays(_selectedYear, _months.indexOf(month));
           });
         })
         .card
@@ -512,6 +523,7 @@ class _SelectThePaceState extends State<SelectThePace> {
         .onInkTap(() {
           setState(() {
             completionYear = year;
+            _selectedYear=int.parse(year);
           });
         })
         .card
@@ -631,6 +643,24 @@ class _SelectThePaceState extends State<SelectThePace> {
       }
     } catch (e) {
       toastMethod("123 " + e.toString());
+    }
+  }
+
+  void _getDays(int year, int monthIndex){
+    try{
+      _days=[];
+      int totalMonthDays= DateTime(year,monthIndex+2,0).day;
+      for(int i=1;i<=totalMonthDays;i++){
+        DateTime now= DateTime(year,monthIndex+1,i);
+        if(now.weekday==DateTime.sunday){
+          _days.add(i);
+        }
+      }
+      setState(() {
+
+      });
+    }catch(e){
+      log(e);
     }
   }
 

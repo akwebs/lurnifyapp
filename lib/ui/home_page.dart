@@ -411,7 +411,8 @@ class _HomePageState extends State<HomePage> {
         String sql4 = "select (sum(correctQuestion)/sum(totalQuestion)) as testPercent from topic_test_result";
         List<Map<String, dynamic>> list5 = await txn.rawQuery(sql4);
         for (var a in list5) {
-          _testPercent = a['testPercent'] ?? 0;
+          var x=a['testPercent'] ?? 0;
+          _testPercent = x.toDouble() ?? 0;
         }
 
         //Getting recent data
