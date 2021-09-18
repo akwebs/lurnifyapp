@@ -146,7 +146,7 @@ class _SelectThePaceState extends State<SelectThePace> {
         ),
         bottomNavigationBar: CustomButton(
           brdRds: 0,
-          buttonText: 'Start ',
+          buttonText: 'Done',
           onPressed: () {
             submit();
           },
@@ -420,47 +420,6 @@ class _SelectThePaceState extends State<SelectThePace> {
         .make();
   }
 
-  Widget _daySelect(String day) {
-    return (day.text.bold.make().p16())
-        .onInkTap(() {
-          setState(() {
-            completionDay = day;
-          });
-        })
-        .card
-        .elevation(5)
-        .roundedSM
-        .make();
-  }
-
-  Widget _monthSelect(String month) {
-    return (month.text.bold.make().p16())
-        .onInkTap(() {
-          setState(() {
-            completionMonth = month;
-            _getDays(_selectedYear, _months.indexOf(month));
-          });
-        })
-        .card
-        .elevation(5)
-        .roundedSM
-        .make();
-  }
-
-  Widget _yearSelect(String year) {
-    return (year.text.bold.make().p16())
-        .onInkTap(() {
-          setState(() {
-            completionYear = year;
-            _selectedYear = int.parse(year);
-          });
-        })
-        .card
-        .elevation(5)
-        .roundedSM
-        .make();
-  }
-
   void radioButtonChanges(String value) {
     setState(() {
       _radioValue = value;
@@ -567,7 +526,7 @@ class _SelectThePaceState extends State<SelectThePace> {
           sp.setString("courseStartingDate", sp.getString('firstMonday'));
           sp.setInt("totalWeeks", (selectedDate.difference(DateTime.now()).inDays / 7).round());
           sp.setDouble("totalStudyHour", totalTiming);
-          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (BuildContext context) => HomePage()), ModalRoute.withName('/'));
+          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (BuildContext context) => const HomePage()), ModalRoute.withName('/'));
         }
       }
     } catch (e) {
