@@ -3,7 +3,6 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import '../../../helper/db_helper.dart';
@@ -20,7 +19,6 @@ import '../../../widgets/componants/custom_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:velocity_x/velocity_x.dart';
-import 'package:flutter_open_whatsapp/flutter_open_whatsapp.dart';
 
 class CourseGroup extends StatefulWidget {
   final mobile;
@@ -39,7 +37,6 @@ class _CourseGroupState extends State<CourseGroup> {
   List<Map<String, dynamic>> _allData = [];
   var data;
   String selectedCourseSno = "0";
-  String _platformVersion = 'Unknown';
   Future _getCourse() async {
     try {
       var url = baseUrl + "getCourseGroup";
@@ -51,25 +48,6 @@ class _CourseGroupState extends State<CourseGroup> {
     } catch (e) {
       //print('_getCourseGroup : ' + e.toString());
     }
-  }
-
-  Future<void> initPlatformState() async {
-    String platformVersion;
-    // Platform messages may fail, so we use a try/catch PlatformException.
-    try {
-      platformVersion = await FlutterOpenWhatsapp.platformVersion;
-    } on PlatformException {
-      platformVersion = 'Failed to get platform version.';
-    }
-
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
-    if (!mounted) return;
-
-    setState(() {
-      _platformVersion = platformVersion;
-    });
   }
 
   @override
@@ -153,11 +131,8 @@ class _CourseGroupState extends State<CourseGroup> {
                       const SizedBox().hOneThird(context),
                       [
                         VxBox(child: 'Note :'.richText.withTextSpanChildren([' for assistance contact Lurnify team on'.textSpan.normal.make()]).sm.bold.center.makeCentered()).make().h4(context),
-                        VxBox(child: 'WhatsApp :'.richText.withTextSpanChildren([' Team Lurnify $_platformVersion\n'.textSpan.normal.make()]).sm.bold.center.makeCentered())
-                            .make()
-                            .h4(context)
-                            .onInkTap(() {
-                          FlutterOpenWhatsapp.sendSingleMessage("918505066587", "Hello");
+                        VxBox(child: 'WhatsApp :'.richText.withTextSpanChildren([' Team Lurnify'.textSpan.normal.make()]).sm.bold.center.makeCentered()).make().h4(context).onInkTap(() {
+                          toastMethod('WhatsApp : 8505066587');
                         }),
                       ].vStack(),
                     ],

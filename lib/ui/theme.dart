@@ -134,7 +134,7 @@ class AppTheme {
         systemOverlayStyle: SystemUiOverlayStyle(statusBarBrightness: Brightness.dark, statusBarIconBrightness: Brightness.light),
         color: _darkPrimaryVariantColor,
         elevation: 0,
-        titleTextStyle: TextStyle(color: _darkSeconderyColor, fontSize: 20),
+        titleTextStyle: TextStyle(color: _darkOnPrimaryColor, fontSize: 20),
         iconTheme: IconThemeData(
           color: _darkOnPrimaryColor,
         ),

@@ -24,10 +24,8 @@ class _TopicTestState extends State<TopicTest> {
   int _noOFQuestions;
   bool _isFirstQuestion = true;
   bool _isLastQuestion = false;
-  PageController _controller =
-      PageController(viewportFraction: 1, keepPage: true);
-  PageController _controllerList =
-      PageController(viewportFraction: 0.15, keepPage: true);
+  PageController _controller = PageController(viewportFraction: 1, keepPage: true);
+  PageController _controllerList = PageController(viewportFraction: 0.15, keepPage: true);
   Map<String, dynamic> _result = Map();
   List _testData = List();
   Map _answerMap = Map();
@@ -59,8 +57,7 @@ class _TopicTestState extends State<TopicTest> {
             timer.cancel();
           } else {
             _TEST_TIMER_INSECONDS = _TEST_TIMER_INSECONDS - 1;
-            _FORMATTED_TEST_DURATION =
-                _formatDuration(Duration(seconds: _TEST_TIMER_INSECONDS));
+            _FORMATTED_TEST_DURATION = _formatDuration(Duration(seconds: _TEST_TIMER_INSECONDS));
           }
         },
       ),
@@ -142,13 +139,7 @@ class _TopicTestState extends State<TopicTest> {
 
   Widget headingRow() {
     return Container(
-      decoration: BoxDecoration(color: Colors.white, boxShadow: [
-        BoxShadow(
-            color: Colors.grey.withOpacity(0.4),
-            spreadRadius: 1,
-            blurRadius: 1,
-            offset: Offset(0, 1))
-      ]),
+      decoration: BoxDecoration(color: Colors.white, boxShadow: [BoxShadow(color: Colors.grey.withOpacity(0.4), spreadRadius: 1, blurRadius: 1, offset: Offset(0, 1))]),
       padding: EdgeInsets.all(10),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -168,9 +159,7 @@ class _TopicTestState extends State<TopicTest> {
                   padding: EdgeInsets.only(left: 10),
                   child: GestureDetector(
                     onTap: () {
-                      _controller.animateToPage(i,
-                          curve: Curves.decelerate,
-                          duration: Duration(milliseconds: 300));
+                      _controller.animateToPage(i, curve: Curves.decelerate, duration: Duration(milliseconds: 300));
                     },
                     child: Container(
                       width: 10,
@@ -223,9 +212,7 @@ class _TopicTestState extends State<TopicTest> {
           itemCount: _noOFQuestions,
           onPageChanged: (i) {
             HapticFeedback.selectionClick();
-            _controllerList.animateToPage(i,
-                curve: Curves.decelerate,
-                duration: Duration(milliseconds: 300));
+            _controllerList.animateToPage(i, curve: Curves.decelerate, duration: Duration(milliseconds: 300));
             setState(() {
               _index = i;
               if (i == 0) {
@@ -251,13 +238,7 @@ class _TopicTestState extends State<TopicTest> {
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(5),
                       border: Border.all(color: Colors.white54),
-                      boxShadow: [
-                        BoxShadow(
-                            color: Colors.grey.withOpacity(0.4),
-                            blurRadius: 1,
-                            spreadRadius: 1,
-                            offset: Offset(0, 1))
-                      ]),
+                      boxShadow: [BoxShadow(color: Colors.grey.withOpacity(0.4), blurRadius: 1, spreadRadius: 1, offset: Offset(0, 1))]),
                   child: Column(
                     children: [
                       Row(
@@ -270,8 +251,7 @@ class _TopicTestState extends State<TopicTest> {
                             child: Center(
                                 child: Text(
                               (i + 1).toString(),
-                              style: TextStyle(
-                                  fontSize: 14, fontWeight: FontWeight.w500),
+                              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                             )),
                           ),
                           SizedBox(
@@ -287,9 +267,7 @@ class _TopicTestState extends State<TopicTest> {
                           ),
                           Text(
                             "4",
-                            style: TextStyle(
-                                color: Colors.black54,
-                                fontWeight: FontWeight.w600),
+                            style: TextStyle(color: Colors.black54, fontWeight: FontWeight.w600),
                           ),
                           SizedBox(
                             width: 5,
@@ -304,17 +282,14 @@ class _TopicTestState extends State<TopicTest> {
                           ),
                           Text(
                             "1",
-                            style: TextStyle(
-                                color: Colors.black54,
-                                fontWeight: FontWeight.w600),
+                            style: TextStyle(color: Colors.black54, fontWeight: FontWeight.w600),
                           ),
                           Spacer(),
                           Checkbox(
                             checkColor: Colors.white,
                             onChanged: (value) {
                               setState(() {
-                                if (_bookmarkMap[_testData[i]['sno']] ==
-                                    "true") {
+                                if (_bookmarkMap[_testData[i]['sno']] == "true") {
                                   reviewLater = false;
 //                                  _bookmarkMap.update(_testData[i]['sno'], (value) => "false",ifAbsent: () => "false",);
                                   _bookmarkMap.remove(_testData[i]['sno']);
@@ -329,15 +304,11 @@ class _TopicTestState extends State<TopicTest> {
                                 //
                               });
                             },
-                            value: _bookmarkMap[_testData[i]['sno']] == "true"
-                                ? true
-                                : false,
+                            value: _bookmarkMap[_testData[i]['sno']] == "true" ? true : false,
                           ),
                           Text(
                             "Review Later",
-                            style: TextStyle(
-                                color: Colors.black54,
-                                fontWeight: FontWeight.w600),
+                            style: TextStyle(color: Colors.black54, fontWeight: FontWeight.w600),
                           ),
                           SizedBox(
                             width: 10,
@@ -357,30 +328,17 @@ class _TopicTestState extends State<TopicTest> {
                                           primary: false,
                                           shrinkWrap: true,
                                           itemBuilder: (context, q) {
-                                            List data = jsonDecode(_result[
-                                                _testData[i]['sno']
-                                                    .toString()]);
+                                            List data = jsonDecode(_result[_testData[i]['sno'].toString()]);
                                             return Container(
                                               child: Row(
                                                 children: [
                                                   Text(
                                                     questionList[q],
-                                                    style: TextStyle(
-                                                        color: Colors.black87,
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                        fontSize: 15,
-                                                        letterSpacing: 0.7),
+                                                    style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w500, fontSize: 15, letterSpacing: 0.7),
                                                   ),
                                                   FadeInImage(
                                                     placeholder: AssetImage(""),
-                                                    image: NetworkImage(
-                                                        imageUrl +
-                                                            data[q]
-                                                                ['directory'] +
-                                                            "/" +
-                                                            data[q]
-                                                                ['imageName']),
+                                                    image: NetworkImage(imageUrl + data[q]['directory'] + "/" + data[q]['imageName']),
                                                     height: 100,
                                                     width: 100,
                                                   )
@@ -428,24 +386,15 @@ class _TopicTestState extends State<TopicTest> {
                                             CircleAvatar(
                                               child: Text(
                                                 (j + 1).toString(),
-                                                style: TextStyle(
-                                                    color: Colors.white),
+                                                style: TextStyle(color: Colors.white),
                                               ),
                                               radius: 15,
-                                              backgroundColor: _answerMap[
-                                                          _testData[i]
-                                                              ['sno']] !=
-                                                      j
-                                                  ? Colors.grey
-                                                  : Colors.black87,
+                                              backgroundColor: _answerMap[_testData[i]['sno']] != j ? Colors.grey : Colors.black87,
                                             ),
                                             SizedBox(
                                               width: 5,
                                             ),
-                                            Expanded(
-                                                child: Text(_testData[i][
-                                                    'option' +
-                                                        (j + 1).toString()]))
+                                            Expanded(child: Text(_testData[i]['option' + (j + 1).toString()]))
                                           ],
                                         ),
                                       ),
@@ -480,18 +429,11 @@ class _TopicTestState extends State<TopicTest> {
           Expanded(
             child: GestureDetector(
               onTap: () {
-                _controller.animateToPage(_index - 1,
-                    curve: Curves.decelerate,
-                    duration: Duration(milliseconds: 300));
-                _controllerList.animateToPage(_index - 1,
-                    curve: Curves.decelerate,
-                    duration: Duration(milliseconds: 300));
+                _controller.animateToPage(_index - 1, curve: Curves.decelerate, duration: Duration(milliseconds: 300));
+                _controllerList.animateToPage(_index - 1, curve: Curves.decelerate, duration: Duration(milliseconds: 300));
               },
               child: Container(
-                decoration: BoxDecoration(
-                    color: _isFirstQuestion
-                        ? Colors.deepPurpleAccent.withOpacity(0.6)
-                        : Colors.deepPurpleAccent),
+                decoration: BoxDecoration(color: _isFirstQuestion ? Colors.deepPurpleAccent.withOpacity(0.6) : Colors.deepPurpleAccent),
                 child: Center(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -502,11 +444,7 @@ class _TopicTestState extends State<TopicTest> {
                       ),
                       Text(
                         "Previous",
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 0.8),
+                        style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 0.8),
                       ),
                     ],
                   ),
@@ -520,28 +458,16 @@ class _TopicTestState extends State<TopicTest> {
           Expanded(
             child: GestureDetector(
               onTap: () {
-                _controller.animateToPage(_index + 1,
-                    curve: Curves.decelerate,
-                    duration: Duration(milliseconds: 300));
-                _controllerList.animateToPage(_index + 1,
-                    curve: Curves.decelerate,
-                    duration: Duration(milliseconds: 300));
+                _controller.animateToPage(_index + 1, curve: Curves.decelerate, duration: Duration(milliseconds: 300));
+                _controllerList.animateToPage(_index + 1, curve: Curves.decelerate, duration: Duration(milliseconds: 300));
               },
               child: Container(
-                decoration: BoxDecoration(
-                    color: _isLastQuestion
-                        ? Colors.deepPurpleAccent.withOpacity(0.6)
-                        : Colors.deepPurpleAccent),
+                decoration: BoxDecoration(color: _isLastQuestion ? Colors.deepPurpleAccent.withOpacity(0.6) : Colors.deepPurpleAccent),
                 child: Center(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text("Next",
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: 0.8)),
+                      Text("Next", style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 0.8)),
                       Icon(
                         Icons.arrow_forward,
                         color: Colors.white,

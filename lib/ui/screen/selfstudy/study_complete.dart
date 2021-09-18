@@ -29,9 +29,10 @@ class StudyComplete extends StatefulWidget {
   final startDate;
   final endDate;
   final course, subject, unit, chapter, topic, duration;
-  StudyComplete(this.time, this.second, this.startDate, this.endDate, this.course, this.subject, this.unit, this.chapter, this.topic, this.duration);
+  const StudyComplete(this.time, this.second, this.startDate, this.endDate, this.course, this.subject, this.unit, this.chapter, this.topic, this.duration, {Key key}) : super(key: key);
 
   @override
+  // ignore: no_logic_in_create_state
   _StudyCompleteState createState() => _StudyCompleteState(time, second, startDate, endDate, course, subject, unit, chapter, topic, duration);
 }
 
@@ -42,8 +43,8 @@ class _StudyCompleteState extends State<StudyComplete> {
   bool _isStudyCompleted = false;
   // List<String> switchOptions = ["Studying", "Complete"];
   // String selectedSwitchOption = "Studying";
-  TextEditingController remarkSubject = new TextEditingController();
-  TextEditingController remarkMessage = new TextEditingController();
+  TextEditingController remarkSubject = TextEditingController();
+  TextEditingController remarkMessage = TextEditingController();
   List<String> switchOptions2 = ["Min", "Hr"];
   String selectedSwitchOption2 = "Min";
   var data;
@@ -86,7 +87,7 @@ class _StudyCompleteState extends State<StudyComplete> {
     // var resbody = jsonDecode(response.body);
     // Map<String, dynamic> mapResult = resbody;
     // String sum = mapResult['totalSecondByDate'].toString();
-    DBHelper dbHelper = new DBHelper();
+    DBHelper dbHelper = DBHelper();
     List<Map<String, dynamic>> list = await dbHelper.totalSecondByDate(startDate.split(" ")[0]);
     double sum = 0;
     for (var a in list) {
@@ -95,7 +96,7 @@ class _StudyCompleteState extends State<StudyComplete> {
       sum = tSecond.toDouble() ?? 0;
     }
     // totalDimeEarns = mapResult['totalDimeEarns'];
-    RewardRepo repo = new RewardRepo();
+    RewardRepo repo = RewardRepo();
     List<Map<String, dynamic>> list2 = await repo.getReward();
     int reward = 0;
     for (var a in list2) {
@@ -111,7 +112,7 @@ class _StudyCompleteState extends State<StudyComplete> {
 
   Future getLeftStudyHour(double sum) async {
     SharedPreferences sp = await SharedPreferences.getInstance();
-    PaceRepo paceRepo = new PaceRepo();
+    PaceRepo paceRepo = PaceRepo();
     List<Map<String, dynamic>> pace = await paceRepo.getPace();
     String totalStudyHr = "0";
     for (var a in pace) {
@@ -562,9 +563,9 @@ class _StudyCompleteState extends State<StudyComplete> {
       completionStatus = "Studying";
     }
     try {
-      DueTopicTestRepo dueTopicTestRepo = new DueTopicTestRepo();
-      Study study = new Study();
-      RecentStudy recentStudy = new RecentStudy();
+      DueTopicTestRepo dueTopicTestRepo = DueTopicTestRepo();
+      Study study = Study();
+      RecentStudy recentStudy = RecentStudy();
 
       recentStudy.course = course;
       recentStudy.subject = subject;
@@ -610,7 +611,7 @@ class _StudyCompleteState extends State<StudyComplete> {
         String newStartDate = endDate.split(" ")[0] + " 00:00:00";
 
         study.endDate = newEndDate;
-        StudyRepo repo = new StudyRepo();
+        StudyRepo repo = StudyRepo();
         repo.insertIntoStudy(study);
         print("First Date Inserted");
         study.startDate = newStartDate;
@@ -618,16 +619,16 @@ class _StudyCompleteState extends State<StudyComplete> {
         repo.insertIntoStudy(study);
         print("Second Date Inserted");
       } else {
-        StudyRepo repo = new StudyRepo();
+        StudyRepo repo = StudyRepo();
         repo.insertIntoStudy(study);
         print("Study Inserted");
       }
 
-      RecentStudyRepo recentStudyRepo = new RecentStudyRepo();
+      RecentStudyRepo recentStudyRepo = RecentStudyRepo();
       recentStudyRepo.insertIntoRecentStudy(recentStudy);
       print("Recent Inserted");
 
-      Dimes dimes = new Dimes();
+      Dimes dimes = Dimes();
       dimes.credit = double.parse(totalDimeEarns ?? "0").round();
       dimes.enteredDate = DateTime.now().toString();
       dimes.debit = 0;
@@ -635,14 +636,14 @@ class _StudyCompleteState extends State<StudyComplete> {
       dimes.registerSno = studentSno;
       dimes.status = 'new';
 
-      DimeRepo dimeRepo = new DimeRepo();
+      DimeRepo dimeRepo = DimeRepo();
       dimeRepo.insertIntoDimes(dimes);
 
       print("Dimes Inserted");
       if (completionStatus == 'Complete') {
         List<Map<String, dynamic>> list2 = await dueTopicTestRepo.getDueTopicTestByStatusAndTopicAndRegister('Complete', topic, studentSno);
         if (list2.isEmpty) {
-          DueTopicTest dueTopicTest = new DueTopicTest();
+          DueTopicTest dueTopicTest = DueTopicTest();
           dueTopicTest.registerSno = studentSno;
           dueTopicTest.topicSno = topic;
           dueTopicTest.enteredDate = DateTime.now().toString();
@@ -739,7 +740,7 @@ class _StudyCompleteState extends State<StudyComplete> {
   }
 
   void _setContinueStudyAfterTime() {
-    var formatter = new DateFormat('hh:mm a');
+    var formatter = DateFormat('hh:mm a');
     printTime = formatter.format(DateTime.now().add(Duration(hours: printHr, minutes: printMin)));
   }
 
@@ -851,7 +852,7 @@ class _StudyCompleteState extends State<StudyComplete> {
       // );
       // var resbody2 = jsonDecode(response2.body);
       // Map<String, dynamic> result = resbody2;
-      Remark remark = new Remark();
+      Remark remark = Remark();
       remark.studentSno = sp.getString("studentSno");
       remark.enteredDate = DateTime.now().toString();
       remark.topicSno = topic;
@@ -859,7 +860,7 @@ class _StudyCompleteState extends State<StudyComplete> {
       remark.subject = remarkSubject.text;
       remark.message = remarkMessage.text;
 
-      RemarkRepo repo = new RemarkRepo();
+      RemarkRepo repo = RemarkRepo();
       repo.insertIntoRemark(remark);
 
       toastMethod("Remark Added");
@@ -877,7 +878,7 @@ class _StudyCompleteState extends State<StudyComplete> {
 
   _takeTestAlertBox(BuildContext context) {
     AlertDialog alert = AlertDialog(
-      content: new Column(
+      content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
@@ -918,7 +919,7 @@ class _StudyCompleteState extends State<StudyComplete> {
   // ignore: unused_element
   _acceptChallengeBox(BuildContext context) {
     AlertDialog alert = AlertDialog(
-      content: new Column(
+      content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(

@@ -552,7 +552,7 @@ class _SelectThePaceState extends State<SelectThePace> {
     });
   }
 
-  Future<Null> _selectDate(BuildContext context) async {
+  Future<void> _selectDate(BuildContext context) async {
     final DateTime picked = await showDatePicker(
       confirmText: 'Confirm',
       context: context,

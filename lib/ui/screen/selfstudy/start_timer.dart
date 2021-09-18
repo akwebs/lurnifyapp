@@ -27,9 +27,10 @@ import 'study_complete.dart';
 class StartTimer extends StatefulWidget {
   final course, subject, unit, chapter, topic, subtopic, duration;
 
-  StartTimer(this.course, this.subject, this.unit, this.chapter, this.topic, this.subtopic, this.duration);
+  const StartTimer(this.course, this.subject, this.unit, this.chapter, this.topic, this.subtopic, this.duration, {Key key}) : super(key: key);
 
   @override
+  // ignore: no_logic_in_create_state
   _StartTimerState createState() => _StartTimerState(course, subject, unit, chapter, topic, subtopic, duration);
 }
 
@@ -88,7 +89,7 @@ class _StartTimerState extends State<StartTimer> {
 
     List<TestMain> testMain = [];
     if (second == 10) {
-      TestMainRepo testMainRepo = new TestMainRepo();
+      TestMainRepo testMainRepo = TestMainRepo();
       List<Map<String, dynamic>> list = await testMainRepo.getTestMainByChapter(chapter);
       if (list.isEmpty) {
         var url3 = baseUrl + "getTestByChapter?chapterSno=" + chapter;
@@ -101,26 +102,26 @@ class _StartTimerState extends State<StartTimer> {
         print('request done');
         testMain = (jsonDecode(response2.body) as List).map((e) => TestMain.fromJson(e)).toList();
 
-        DBHelper dbHelper = new DBHelper();
+        DBHelper dbHelper = DBHelper();
         Database db = await dbHelper.database;
         await db.transaction((txn) async {
           for (var a in testMain) {
-            InstructionRepo instructionRepo = new InstructionRepo();
+            InstructionRepo instructionRepo = InstructionRepo();
             instructionRepo.insertIntoInstruction(a.instruction, txn);
             print("Instruction Inserted");
 
-            InstructionDataRepo instructionDataRepo = new InstructionDataRepo();
+            InstructionDataRepo instructionDataRepo = InstructionDataRepo();
             for (var b in a.instruction.instructionData) {
               instructionDataRepo.insertIntoInstructionData(b, a.instruction.sno.toString(), txn);
               print("Instruction Data Inserted");
             }
 
-            TestMainRepo testMainRepo = new TestMainRepo();
+            TestMainRepo testMainRepo = TestMainRepo();
             testMainRepo.insertIntoTestMain(a, txn);
             print("TestMain Inserted");
 
             for (var c in a.test) {
-              TestRepo testRepo = new TestRepo();
+              TestRepo testRepo = TestRepo();
               c.testMain = a.sno.toString();
               testRepo.insertIntoTest(c, txn);
               print("Test Inserted");
@@ -164,7 +165,7 @@ class _StartTimerState extends State<StartTimer> {
     });
     _ticker3 = Timer.periodic(Duration(seconds: BEEP_SOUND_DURATION), (_) {
       if (sound == "sound") {
-        AudioCache player = new AudioCache();
+        AudioCache player = AudioCache();
         const alarmAudioPath = "audio/beep.mp3";
         player.play(alarmAudioPath);
       }
@@ -187,26 +188,7 @@ class _StartTimerState extends State<StartTimer> {
 
   Future _getHeading() async {
     try {
-      // SharedPreferences sp = await SharedPreferences.getInstance();
-      // var url3 = baseUrl +
-      //     "getTimerPageMessage?registerSno=" +
-      //     sp.getString("studentSno") +
-      //     "&topicSno=" +
-      //     topic;
-      // print(url3);
-      // http.Response response2 = await http.get(
-      //   Uri.encodeFull(url3),
-      // );
-      // var resbody2 = jsonDecode(response2.body);
-      // heading = resbody2;
-      // List tempHead = heading['timepageMessage'];
-      // headingList = [];
-      // for (int i = 0; i < tempHead.length; i++) {
-      //   headingList
-      //       .add(utf8.decode(tempHead[i]['message'].toString().runes.toList()));
-      // }
-      // sum = double.parse(heading['totalSecondByRegistrationAndTopic']);
-      DBHelper dbHelper = new DBHelper();
+      DBHelper dbHelper = DBHelper();
       List<Map<String, dynamic>> list = await dbHelper.getTimerPageMessage(topic);
       for (var a in list) {
         int totalSecond = a['totalSecond'] ?? 0;
@@ -214,7 +196,7 @@ class _StartTimerState extends State<StartTimer> {
       }
 
       print("_alreadyStudiedTime $_alreadyStudiedTime");
-      TestMainRepo testMainRepo = new TestMainRepo();
+      TestMainRepo testMainRepo = TestMainRepo();
       List<Map<String, dynamic>> list2 = await testMainRepo.findByTopic(topic);
       for (var a in list2) {
         print("---------------------------------${a['topicTestTime']}");
@@ -225,7 +207,7 @@ class _StartTimerState extends State<StartTimer> {
         _topicTestTime = 20;
       }
       print("_topicTestTime $_topicTestTime");
-      PaceRepo paceRepo = new PaceRepo();
+      PaceRepo paceRepo = PaceRepo();
       List<Map<String, dynamic>> list3 = await paceRepo.getPace();
       double percentDifference = 0;
       for (var a in list3) {

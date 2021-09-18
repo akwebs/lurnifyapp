@@ -55,7 +55,6 @@ dependencies:
   firebase_storage: ^5.1.0
   audioplayers: ^0.15.1
   velocity_x: ^1.4.1
-  flutter_open_whatsapp: ^0.1.2
   razorpay_flutter: ^1.2.7
 
 dev_dependencies:
