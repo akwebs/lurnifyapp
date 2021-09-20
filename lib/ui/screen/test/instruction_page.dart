@@ -92,7 +92,8 @@ class _InstructionPageState extends State<InstructionPage> {
       RewardRepo rewardRepo = RewardRepo();
       List<Map<String, dynamic>> reward = await rewardRepo.getReward();
       for (var a in reward) {
-        _testAttempt = a['testAttempt'];
+        String tAttempt=a['testAttempt'] ?? '0';
+        _testAttempt = int.parse(tAttempt);
       }
       // if (responseBody['testAttempt'] != null) {
       //   _testAttempt = responseBody['testAttempt'];

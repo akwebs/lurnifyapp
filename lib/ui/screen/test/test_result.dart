@@ -1,32 +1,35 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:lurnify/helper/db_helper.dart';
 import 'package:lurnify/ui/home_page.dart';
 import 'package:lurnify/ui/screen/test/solution.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:share/share.dart';
+import 'package:sqflite/sqflite.dart';
 
 class TestResult extends StatefulWidget {
   final int _correctQuestion, _wrongAnswer, _resultNumber;
   final List _testData;
-  final Map _answerMap, _bookmarkMap, response;
-  TestResult(this._correctQuestion, this._wrongAnswer, this._resultNumber, this._testData, this._answerMap, this._bookmarkMap, this.response);
+  final Map _answerMap, _bookmarkMap;
+  final _FORMATTED_TEST_DURATION;
+  TestResult(this._correctQuestion, this._wrongAnswer, this._resultNumber, this._testData, this._answerMap, this._bookmarkMap,this._FORMATTED_TEST_DURATION);
   @override
-  _TestResultState createState() => _TestResultState(_correctQuestion, _wrongAnswer, _resultNumber, _testData, _answerMap, _bookmarkMap, response);
+  _TestResultState createState() => _TestResultState(_correctQuestion, _wrongAnswer, _resultNumber, _testData, _answerMap, _bookmarkMap);
 }
 
 class _TestResultState extends State<TestResult> with SingleTickerProviderStateMixin {
   final _correctQuestion, _wrongAnswer, _resultNumber;
   final List _testData;
-  final Map _answerMap, _bookmarkMap, _response;
-  _TestResultState(this._correctQuestion, this._wrongAnswer, this._resultNumber, this._testData, this._answerMap, this._bookmarkMap, this._response);
+  final Map _answerMap, _bookmarkMap;
+  _TestResultState(this._correctQuestion, this._wrongAnswer, this._resultNumber, this._testData, this._answerMap, this._bookmarkMap);
   TabController _tabController;
   Timer _timer;
 
   @override
   void initState() {
-    _tabController = new TabController(length: 2, vsync: this);
+    _tabController =  TabController(length: 2, vsync: this);
     super.initState();
     _timer = Timer(Duration(seconds: 1), () {
       _showDailyAppOpening();
@@ -84,7 +87,7 @@ class _TestResultState extends State<TestResult> with SingleTickerProviderStateM
               ),
             ),
           ),
-          Solution(_answerMap, _bookmarkMap, _testData),
+          Solution(_answerMap, _bookmarkMap, _testData,widget._FORMATTED_TEST_DURATION),
         ],
         controller: _tabController,
       ),
@@ -267,20 +270,23 @@ class _TestResultState extends State<TestResult> with SingleTickerProviderStateM
   }
 
   Future<void> _showDailyAppOpening() async {
+    String testAttempt="0";
+    String testScore="0";
+    DBHelper dbHelper= DBHelper();
+    Database db=await dbHelper.database;
+    List<Map<String,dynamic>> list =await db.rawQuery('select testAttempt,testScore from reward order by sno desc limit 1');
+    for(var a in list){
+      testAttempt=a['testAttempt'] ?? '0';
+      testScore=a['testScore'] ?? '0';
+    }
     return AwesomeDialog(
       context: context,
       dialogType: DialogType.SUCCES,
       animType: AnimType.BOTTOMSLIDE,
       title: 'Congratulations',
-      desc: "You earn " +
-          _response['testAttempt'].toString() +
-          " dimes for attempting "
-              "test and \n " +
-          _response['testScore'].toString() +
-          " for scoring in test.\n Total dimes "
-              "earn in this test is " +
-          (_response['testScore'] + _response['testAttempt']).toString() +
-          ".",
+      desc: "You earn $testAttempt dimes for attempting "
+              "test and \n $testScore for scoring in test.\n Total dimes "
+              "earn in this test is ${(int.parse(testScore) + int.parse(testAttempt)).toString()}.",
       dismissOnBackKeyPress: false,
       dismissOnTouchOutside: false,
       btnOkColor: Colors.black87,

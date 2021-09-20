@@ -5,7 +5,8 @@ import 'package:sqflite/sqflite.dart';
 class PaceRepo {
   DBHelper dbHelper = DBHelper();
 
-  insertIntoPace(Pace pace) async {
+  Future<int> insertIntoPace(Pace pace) async {
+    int sno=0;
     try {
       Database db = await dbHelper.database;
       // String sql ="select * from pace";
@@ -15,10 +16,11 @@ class PaceRepo {
       // }else{
       //
       // }
-      db.insert('pace', pace.toJson());
+      sno=await db.insert('pace', pace.toJson());
     } catch (e) {
       //print('insertIntoPace : ' + e.toString());
     }
+    return sno;
   }
 
   Future<List<Map<String, dynamic>>> getPace() async {

@@ -241,8 +241,8 @@ class _HomePageState extends State<HomePage> {
           print("reward deleted");
           txn.insert('reward', jsonDecode(resbody['reward']));
           print("reward inserted");
-          List<Map<String, dynamic>> list = await txn.rawQuery("select * from reward");
-          print("reward printing");
+          // List<Map<String, dynamic>> list = await txn.rawQuery("select * from reward");
+          // print("reward printing");
           print(list);
         }
 
@@ -254,8 +254,8 @@ class _HomePageState extends State<HomePage> {
             txn.insert('weekly_task', a);
           }
           print("weeklyTask inserted");
-          List<Map<String, dynamic>> list = await txn.rawQuery("select * from weekly_task");
-          print("weeklyTask printing");
+          // List<Map<String, dynamic>> list = await txn.rawQuery("select * from weekly_task");
+          // print("weeklyTask printing");
           print(list);
         }
 
@@ -267,9 +267,9 @@ class _HomePageState extends State<HomePage> {
             txn.insert('daily_task_completion', a);
           }
           print("daily_task_completion inserted");
-          List<Map<String, dynamic>> list = await txn.rawQuery("select * from daily_task_completion");
-          print("daily_task_completion printing");
-          print(list);
+          // List<Map<String, dynamic>> list = await txn.rawQuery("select * from daily_task_completion");
+          // print("daily_task_completion printing");
+          // print(list);
         }
 
         if (resbody.containsKey('dailyTask')) {
@@ -280,8 +280,8 @@ class _HomePageState extends State<HomePage> {
             txn.insert('daily_task', a);
           }
           print("dailyTask inserted");
-          List<Map<String, dynamic>> list = await txn.rawQuery("select * from daily_task");
-          print("daily_task printing");
+          // List<Map<String, dynamic>> list = await txn.rawQuery("select * from daily_task");
+          // print("daily_task printing");
         }
 
         if (resbody.containsKey('dailyTaskData')) {
@@ -292,8 +292,8 @@ class _HomePageState extends State<HomePage> {
             txn.insert('daily_task_data', a);
           }
           print("dailyTaskData inserted");
-          List<Map<String, dynamic>> list = await txn.rawQuery("select * from daily_task_data");
-          print("dailyTaskData printing");
+          // List<Map<String, dynamic>> list = await txn.rawQuery("select * from daily_task_data");
+          // print("dailyTaskData printing");
         }
 
         if (resbody.containsKey('beatDistraction')) {
@@ -304,8 +304,8 @@ class _HomePageState extends State<HomePage> {
             txn.insert('beat_distraction', a);
           }
           print("beat_distraction inserted");
-          List<Map<String, dynamic>> list = await txn.rawQuery("select * from beat_distraction");
-          print("beat_distraction printing");
+          // List<Map<String, dynamic>> list = await txn.rawQuery("select * from beat_distraction");
+          // print("beat_distraction printing");
         }
 
         if (resbody.containsKey('dailyAppOpening')) {
@@ -316,8 +316,8 @@ class _HomePageState extends State<HomePage> {
             txn.insert('daily_app_opening', a);
           }
           print("daily_app_opening inserted");
-          List<Map<String, dynamic>> list = await txn.rawQuery("select * from daily_app_opening");
-          print("daily_app_opening printing");
+          // List<Map<String, dynamic>> list = await txn.rawQuery("select * from daily_app_opening");
+          // print("daily_app_opening printing");
         }
 
         if (resbody.containsKey('timerPage')) {
@@ -328,8 +328,8 @@ class _HomePageState extends State<HomePage> {
             txn.insert('timer_page_message', a);
           }
           print("timer_page_message inserted");
-          List<Map<String, dynamic>> list = await txn.rawQuery("select * from timer_page_message");
-          print("timer_page_message printing");
+          // List<Map<String, dynamic>> list = await txn.rawQuery("select * from timer_page_message");
+          // print("timer_page_message printing");
         }
 
         if (resbody.containsKey("challengeAccept")) {
@@ -391,6 +391,7 @@ class _HomePageState extends State<HomePage> {
               _spinData.add(map);
             }
           }
+
         } else {
           _isSpinned = true;
         }
@@ -406,8 +407,6 @@ class _HomePageState extends State<HomePage> {
             _selfStudyPercent = x.toDouble()??0 / a['totalTopic'];
           }
         }
-        print('resbody');
-        print(resbody);
         String sql4 = "select (sum(correctQuestion)/sum(totalQuestion)) as testPercent from topic_test_result";
         List<Map<String, dynamic>> list5 = await txn.rawQuery(sql4);
         for (var a in list5) {
@@ -433,7 +432,6 @@ class _HomePageState extends State<HomePage> {
         _showMyDialog();
       }
     } catch (e) {
-      print("-----------------------");
       print(e);
     }
   }
@@ -671,11 +669,10 @@ class _HomePageState extends State<HomePage> {
         if (resbody['dailyReward'] == true) {
           _showDailyAppOpening();
         } else {
-          // print("---------------------------------------$_isSpinned");
-          if (_spinData.isNotEmpty && _isSpinned) {
+          if (_spinData.isNotEmpty && !_isSpinned) {
             _showSpinWheel();
           } else {
-            // print("SPIN DATA EMPTY");
+            print("SPIN DATA EMPTY");
           }
         }
       },

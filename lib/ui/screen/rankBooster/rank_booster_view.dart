@@ -187,7 +187,7 @@ class _RankBoosterHomeState extends State<RankBoosterHome> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Container(
-              padding: EdgeInsets.all(5),
+              padding:const EdgeInsets.all(5),
               child: Column(
                 children: [
                   Row(
@@ -209,11 +209,11 @@ class _RankBoosterHomeState extends State<RankBoosterHome> {
                       Expanded(
                         child: Text(
                           dueTests[i]['topicName'],
-                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                          style:const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
                           textAlign: TextAlign.center,
                         ),
                       ),
-                      Expanded(
+                      const Expanded(
                         child: Align(
                           alignment: Alignment.centerRight,
                           child: Icon(Icons.add_circle_outline),
@@ -226,12 +226,12 @@ class _RankBoosterHomeState extends State<RankBoosterHome> {
               decoration: BoxDecoration(color: _randomColor(i), border: Border(bottom: BorderSide(width: 0.5, color: firstColor))),
             ),
             Padding(
-              padding: EdgeInsets.all(8),
+              padding:const EdgeInsets.all(8),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(
+                  const Expanded(
                     flex: 1,
                     child: Text(
                       'Info :',
@@ -244,7 +244,7 @@ class _RankBoosterHomeState extends State<RankBoosterHome> {
                     flex: 3,
                     child: Text(
                       '${dueTests[i]['subjectName']} > ${dueTests[i]['unitName']} > ${dueTests[i]['chapterName']} ',
-                      style: TextStyle(
+                      style:const TextStyle(
                         fontSize: 12,
                       ),
                     ),
@@ -253,12 +253,12 @@ class _RankBoosterHomeState extends State<RankBoosterHome> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.all(8),
+              padding:const EdgeInsets.all(8),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(
+                  const Expanded(
                     flex: 1,
                     child: Text(
                       'Sub Topics :',
@@ -271,7 +271,7 @@ class _RankBoosterHomeState extends State<RankBoosterHome> {
                     flex: 3,
                     child: Text(
                       dueTests[i]['subtopic'],
-                      style: TextStyle(
+                      style:const TextStyle(
                         fontSize: 12,
                       ),
                     ),
@@ -279,7 +279,7 @@ class _RankBoosterHomeState extends State<RankBoosterHome> {
                 ],
               ),
             ),
-            Divider(
+            const Divider(
               height: 1,
               thickness: 1,
             ),
@@ -304,7 +304,7 @@ class _RankBoosterHomeState extends State<RankBoosterHome> {
                       child: _topicInfo(
                         i,
                         'Test Score',
-                        dueTests[i]['lastTestScore'].toString() + "%",
+                        dueTests[i]['lastTestScore']==null?'-':dueTests[i]['lastTestScore'].toString() + "%",
                       ),
                       decoration: BoxDecoration(
                         border: Border(right: BorderSide(width: 0.5, color: Colors.grey[500])),

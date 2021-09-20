@@ -238,7 +238,7 @@ class _StartTimerState extends State<StartTimer> {
     SharedPreferences sp = await SharedPreferences.getInstance();
     totalWeeks = sp.getInt("totalWeeks").toString();
     int completedDays = DateTime.now().difference(DateTime.parse(sp.getString("firstMonday"))).inDays;
-    int remainingDays = DateTime.parse(sp.getString("firstMonday")).difference(DateTime.now()).inDays;
+    int remainingDays = DateTime.parse(sp.getString("courseCompletionDate")).difference(DateTime.now()).inDays;
     if (remainingDays <= 100) {
       leftDaysOrWeek = remainingDays.toString() + "Days left";
     } else {

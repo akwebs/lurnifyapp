@@ -9,8 +9,9 @@ import 'package:lurnify/widgets/componants/custom_button.dart';
 class Solution extends StatefulWidget {
   final Map _answerMap, _bookmarkMap;
   final List _testData;
+  final _FORMATTED_TEST_DURATION;
 
-  const Solution(this._answerMap, this._bookmarkMap, this._testData, {Key key}) : super(key: key);
+  const Solution(this._answerMap, this._bookmarkMap, this._testData,this._FORMATTED_TEST_DURATION,{Key key}) : super(key: key);
 
   @override
   _SolutionState createState() =>
@@ -29,7 +30,6 @@ class _SolutionState extends State<Solution> {
   bool _isFirstQuestion = true;
   bool _isLastQuestion = false;
   bool reviewLater = false;
-  String _FORMATTED_TEST_DURATION;
   Map map = Map();
   PageController _controller = PageController(viewportFraction: 1, keepPage: true);
   PageController _controllerList = PageController(viewportFraction: 0.15, keepPage: true);
@@ -73,7 +73,7 @@ class _SolutionState extends State<Solution> {
             width: 3,
           ),
           Text(
-            _FORMATTED_TEST_DURATION,
+            widget._FORMATTED_TEST_DURATION ?? '',
             style: const TextStyle(
               color: Colors.red,
               fontSize: 15,
@@ -211,7 +211,7 @@ class _SolutionState extends State<Solution> {
                           child: Row(
                             children: [
                               Expanded(
-                                child: Image.memory(base64.decode(_testData[i]['encodedSolution'] == null ? "" : _testData[i]['encodedSolution']), gaplessPlayback: true),
+                                child: Image.memory(base64.decode(_testData[i]['encodedImage'] ?? ""), gaplessPlayback: true),
                               )
                             ],
                           ),
