@@ -32,6 +32,7 @@ class _TestSliderState extends State<TestSlider> {
         viewportFraction: context.isMobile ? 1.0 : 0.4,
         itemCount: widget.dueTopicTest.length,
         aspectRatio: 5 / 2,
+        enableInfiniteScroll: widget.dueTopicTest.length >= 2 ? true : false,
         autoPlay: true,
         pauseAutoPlayOnTouch: const Duration(seconds: 3),
         autoPlayInterval: const Duration(seconds: 6),
@@ -50,11 +51,15 @@ class _TestSliderState extends State<TestSlider> {
               .withGradient(AppSlider.sliderGradient[index])
               .make()
               .onInkTap(() {
-            // Navigator.of(context).pushReplacement(MaterialPageRoute(
-            //   builder: (context) => InstructionPage(
-            //       widget.dueTopicTest[index]['course'].toString(), dueTests[i]['subject'].toString(), dueTests[i]['unit'].toString(), dueTests[i]['chapter'].toString(), dueTests[i]['topicSno'].toString()),
-            // ));
-              Navigator.of(context).push(MaterialPageRoute(builder: (context) => RankBoosterHome(sno: widget.dueTopicTest[index]['dueTopicTestSno'],),));
+                // Navigator.of(context).pushReplacement(MaterialPageRoute(
+                //   builder: (context) => InstructionPage(
+                //       widget.dueTopicTest[index]['course'].toString(), dueTests[i]['subject'].toString(), dueTests[i]['unit'].toString(), dueTests[i]['chapter'].toString(), dueTests[i]['topicSno'].toString()),
+                // ));
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => RankBoosterHome(
+                    sno: widget.dueTopicTest[index]['dueTopicTestSno'],
+                  ),
+                ));
               })
               .card
               .elevation(5)
@@ -64,6 +69,6 @@ class _TestSliderState extends State<TestSlider> {
               .px4();
         },
       ),
-    ].vStack().py4();
+    ].vStack().py4().card.make().py4();
   }
 }

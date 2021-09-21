@@ -22,8 +22,8 @@ class FirstSlider extends StatefulWidget {
 }
 
 class _FirstSliderState extends State<FirstSlider> {
-   double selfStudyPercent;
-   double testPercent;
+  double selfStudyPercent;
+  double testPercent;
 
   @override
   _FirstSliderState(this.selfStudyPercent, this.testPercent);
@@ -34,7 +34,9 @@ class _FirstSliderState extends State<FirstSlider> {
       itemCount: 4,
       aspectRatio: 16 / 7,
       enlargeCenterPage: true,
+      viewportFraction: context.isMobile ? 0.9 : 0.45,
       autoPlay: true,
+      enableInfiniteScroll: false,
       itemBuilder: (context, index) {
         return VxTwoRow(
           left: (VxTwoColumn(
@@ -48,9 +50,13 @@ class _FirstSliderState extends State<FirstSlider> {
                     bottom: LinearPercentIndicator(
                       padding: const EdgeInsets.symmetric(horizontal: 0),
                       percent: (index == 0)
-                          ? selfStudyPercent>1?selfStudyPercent=1:selfStudyPercent
+                          ? selfStudyPercent > 1
+                              ? selfStudyPercent = 1
+                              : selfStudyPercent
                           : (index == 1)
-                              ? testPercent>1?testPercent=1:testPercent
+                              ? testPercent > 1
+                                  ? testPercent = 1
+                                  : testPercent
                               : 0.5,
                       backgroundColor: Colors.grey,
                       progressColor: Colors.white,

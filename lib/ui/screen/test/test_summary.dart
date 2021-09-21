@@ -212,7 +212,7 @@ class _TestSummaryState extends State<TestSummary> {
       TopicTestResultRepo topicTestResultRepo = new TopicTestResultRepo();
       result = await topicTestResultRepo.insertIntoTopicTestResult(topicTestResult);
 
-      FirebaseFirestore.instance.collection('topicTestResult').add(topicTestResult.toJson());
+      //FirebaseFirestore.instance.collection('topicTestResult').add(topicTestResult.toJson());
       if (_testPercent >= 50) {
         DueTopicTestRepo dueTopicTestRepo = new DueTopicTestRepo();
         List<Map<String, dynamic>> list2 = await dueTopicTestRepo.getDueTopicTestByStatusAndTopicAndRegister('INCOMPLETE', sno, sp.getString("studentSno"));

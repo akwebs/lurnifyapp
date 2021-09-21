@@ -153,11 +153,8 @@ flutter:
     - assets/icons/
     - assets/images/login/
     - assets/audio/beep.mp3
-    - assets/images/lang/
 
-    - assets/images/apps/food_delivery/
-    - assets/images/apps/ecommerce/
-
+    
     - assets/lang/en.json
     - assets/lang/id.json
     - assets/lang/ar.json

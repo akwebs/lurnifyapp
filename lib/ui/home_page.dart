@@ -8,7 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:velocity_x/velocity_x.dart';
 import '../widgets/homePageWidget/first_slider.dart';
 import '../config/data.dart';
-import '../confitti.dart';
+import '../feel_fresh.dart';
 import '../helper/db_helper.dart';
 import '../helper/daily_task_completion_repo.dart';
 import '../helper/data_update_repo.dart';
@@ -402,8 +402,8 @@ class _HomePageState extends State<HomePage> {
         List<Map<String, dynamic>> list4 = await txn.rawQuery(sql3);
         for (var a in list4) {
           if (a['totalTopic'] != null && a['totalTopic'] != 0) {
-            var x=a['completedTopics'] ?? 0;
-            _selfStudyPercent = x.toDouble()??0 / a['totalTopic'];
+            var x = a['completedTopics'] ?? 0;
+            _selfStudyPercent = x.toDouble() ?? 0 / a['totalTopic'];
           }
         }
         print('resbody');
@@ -411,7 +411,7 @@ class _HomePageState extends State<HomePage> {
         String sql4 = "select (sum(correctQuestion)/sum(totalQuestion)) as testPercent from topic_test_result";
         List<Map<String, dynamic>> list5 = await txn.rawQuery(sql4);
         for (var a in list5) {
-          var x=a['testPercent'] ?? 0;
+          var x = a['testPercent'] ?? 0;
           _testPercent = x.toDouble() ?? 0;
         }
 
@@ -472,7 +472,7 @@ class _HomePageState extends State<HomePage> {
     }
     if (index == 2) {
       Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) => Confetti(),
+        builder: (context) => FeelFresh(),
       ));
     }
   }
@@ -493,7 +493,7 @@ class _HomePageState extends State<HomePage> {
     return FutureBuilder(
         future: _data,
         builder: (context, snapshot) {
-          if(snapshot.connectionState==ConnectionState.done){
+          if (snapshot.connectionState == ConnectionState.done) {
             return Scaffold(
               key: _scaffoldKey,
               resizeToAvoidBottomInset: false,
@@ -550,8 +550,8 @@ class _HomePageState extends State<HomePage> {
                   child: [
                     FirstSlider(_selfStudyPercent, _testPercent),
                     AppTiles(pageKey),
-                    _recentData.isEmpty?Container():SecondSlider(pageKey, _recentData),
-                    _dueTopicTestData.isEmpty?Container(): TestSlider(_dueTopicTestData),
+                    _recentData.isEmpty ? Container() : SecondSlider(pageKey, _recentData),
+                    _dueTopicTestData.isEmpty ? Container() : TestSlider(_dueTopicTestData),
                     Column(
                       children: [
                         const Padding(
@@ -615,12 +615,11 @@ class _HomePageState extends State<HomePage> {
                 ],
               ),
             );
-          }else{
+          } else {
             return const Center(
               child: CircularProgressIndicator(),
             );
           }
-
         });
   }
 
