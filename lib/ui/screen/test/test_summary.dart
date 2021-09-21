@@ -212,7 +212,7 @@ class _TestSummaryState extends State<TestSummary> {
       TopicTestResultRepo topicTestResultRepo = new TopicTestResultRepo();
       result = await topicTestResultRepo.insertIntoTopicTestResult(topicTestResult);
 
-      //FirebaseFirestore.instance.collection('topicTestResult').add(topicTestResult.toJson());
+      // FirebaseFirestore.instance.collection('topicTestResult').add(topicTestResult.toJson());
       if (_testPercent >= 50) {
         DueTopicTestRepo dueTopicTestRepo = new DueTopicTestRepo();
         List<Map<String, dynamic>> list2 = await dueTopicTestRepo.getDueTopicTestByStatusAndTopicAndRegister('INCOMPLETE', sno, sp.getString("studentSno"));
@@ -271,7 +271,7 @@ class _TestSummaryState extends State<TestSummary> {
     if (result > 0) {
       toastMethod("Test Submitted Successful");
       Navigator.of(context).pushReplacement(MaterialPageRoute(
-        builder: (context) => TestResult(_correctQuestion, _wrongAnswer, _resultNumber, _testData, _answerMap, _bookmarkMap, {}), //yha pr response ko hataye hai
+        builder: (context) => TestResult(_correctQuestion, _wrongAnswer, _resultNumber, _testData, _answerMap, _bookmarkMap, _FORMATTED_TEST_DURATION), //yha pr response ko hataye hai
       ));
     } else {
       toastMethod("Failed.");

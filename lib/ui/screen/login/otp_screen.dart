@@ -609,6 +609,7 @@ class _OtpScreenState extends State<OtpScreen> with SingleTickerProviderStateMix
 
           await FirebaseFirestore.instance.collection("pace").where('register', isEqualTo: registerSno).get().then((QuerySnapshot snapshot) {
             for (var f in snapshot.docs) {
+
               batch.insert('pace', f.data());
             }
           });

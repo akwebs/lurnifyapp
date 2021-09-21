@@ -23,7 +23,7 @@ class _SelfStudySectionState extends State<SelfStudySection> {
   String _minAdd = "20";
   String _percent = "20";
 
-  Future getCourseDate() async {
+  Future _getCourseDate() async {
     SharedPreferences sp = await SharedPreferences.getInstance();
     _courseCompletetioDate = sp.getString("courseCompletionDate");
     _courseCompletetioDate ??= "Not Selected";
@@ -61,7 +61,7 @@ class _SelfStudySectionState extends State<SelfStudySection> {
         ],
       ),
       body: FutureBuilder(
-        future: getCourseDate(),
+        future: _getCourseDate(),
         builder: (BuildContext context, AsyncSnapshot s) {
           if (s.connectionState == ConnectionState.done) {
             return Material(

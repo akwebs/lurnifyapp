@@ -34,7 +34,7 @@ class _SelectThePaceState extends State<SelectThePace> {
   String customValue;
   String expectedRank = "100";
   String completionYear = "2022";
-  String completionMonth = "JAN";
+  String completionMonth = "Jan";
   String completionDay = "02";
   double totalTiming = 0.0;
   var formatter = DateFormat('dd MMM yyyy');
@@ -45,6 +45,9 @@ class _SelectThePaceState extends State<SelectThePace> {
   List<String> _months = [];
   List<int> _days = [];
   int _selectedYear = 0;
+  int _selectedDay=0;
+  int _selectedMonth=0;
+  
 
   Future getTotalTopicDuration() async {
     try {
@@ -62,14 +65,23 @@ class _SelectThePaceState extends State<SelectThePace> {
       String sql = "select * from pace order by sno desc limit 1";
       List<Map<String, dynamic>> list = await database.rawQuery(sql);
       for (var a in list) {
-        print(a);
         expectedRank = a['expectedRank'];
-        //completionDate = DateFormat('dd MMM yyyy').parse(a['syllabusCompletionDate']).toString();
+        String syllabusCompletionDate=a['syllabusCompletionDate'] ?? DateTime.now().toString().split(' ')[0];
+        List<String> list= syllabusCompletionDate.split('-');
+
+        completionDay=list[2];
+        completionMonth=_months[int.parse(list[1])];
+        completionYear=list[0];
+
         completionDate = '$completionDay + $completionMonth + $completionYear';
-        totalPerDayHours = a['perDayStudyHour'];
+
+        _selectedYear=int.parse(list[0]);
+        _selectedMonth=int.parse(list[1]);
+        _selectedDay=int.parse(list[2]);
+        String perDayStudyHour=a['perDayStudyHour'] ?? '0';
+        totalPerDayHours = double.parse(perDayStudyHour);
+        totalTiming=totalPerDayHours;
       }
-      // totalDuration = 0;
-      // toastMethod(totalDuration.toString());
     } catch (e) {
       print(e);
       toastMethod(e.toString());
@@ -148,7 +160,7 @@ class _SelectThePaceState extends State<SelectThePace> {
           brdRds: 0,
           buttonText: 'Done',
           onPressed: () {
-            submit();
+            _submit();
           },
           verpad: const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
         ),
@@ -225,8 +237,12 @@ class _SelectThePaceState extends State<SelectThePace> {
                   elevation: 20,
                   enabled: true,
                   onSelected: (value) {
-                    setState(() {
+                    setState(() async{
                       completionYear = value;
+                      _selectedYear=int.parse(value);
+                      await _getDays(_selectedYear, _selectedMonth);
+                      _selectedDay=_days[0];
+                      completionDay=_days[0].toString();
                     });
                   },
                   itemBuilder: (context) => [
@@ -243,8 +259,12 @@ class _SelectThePaceState extends State<SelectThePace> {
                   elevation: 20,
                   enabled: true,
                   onSelected: (value) {
-                    setState(() {
+                    setState(() async{
                       completionMonth = value;
+                      _selectedMonth=_months.indexOf(value);
+                      await _getDays(_selectedYear, _selectedMonth);
+                      _selectedDay=_days[0];
+                      completionDay=_days[0].toString();
                     });
                   },
                   itemBuilder: (context) => [
@@ -262,6 +282,8 @@ class _SelectThePaceState extends State<SelectThePace> {
                   onSelected: (value) {
                     setState(() {
                       completionDay = value;
+                      _selectedDay=int.parse(value);
+                      _dateSelected();
                     });
                   },
                   itemBuilder: (context) => [
@@ -378,7 +400,7 @@ class _SelectThePaceState extends State<SelectThePace> {
                       SizedBox(
                         width: 100,
                         child: TextField(
-                          decoration: const InputDecoration(hintText: "4.5"),
+                          decoration:  InputDecoration(hintText: totalPerDayHours==0?"4.5":totalPerDayHours.toString()),
                           enabled: customProgram,
                           keyboardType: TextInputType.number,
                           onChanged: (value) {
@@ -452,48 +474,90 @@ class _SelectThePaceState extends State<SelectThePace> {
     });
   }
 
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime picked = await showDatePicker(
-      confirmText: 'Confirm',
-      context: context,
-      initialDate: selectedDate,
-      firstDate: DateTime(2020, 1),
-      lastDate: DateTime(2023),
-    );
 
-    if (picked != null) selectedDate = picked;
-    if (DateFormat('EEEE').format(selectedDate) == "Sunday") {
-      completionDate = formatter.format(selectedDate);
-      print(completionDate);
-      SharedPreferences sp = await SharedPreferences.getInstance();
-      print(sp.getString('firstMonday'));
-      Duration inDays = selectedDate.difference(DateTime.parse(sp.getString('firstMonday')));
-      int convertedInDays = inDays.inDays;
-      print(convertedInDays);
-      print(totalDuration);
-      setState(() {
+
+  // void submit() async {
+  //   try {
+  //     if (selectedDate.toString().split(" ")[0] == DateTime.now().toString().split(" ")[0]) {
+  //       toastMethod("Please Select Syllabus Completion Date");
+  //     } else {
+  //       print(totalPerDayHours);
+  //       if (totalPerDayHours > 15) {
+  //         toastMethod("Too Less");
+  //       } else {
+  //         SharedPreferences sp = await SharedPreferences.getInstance();
+  //         String studentSno = sp.getString("studentSno");
+  //         String syllabusCompletionDate = selectedDate.toString();
+  //
+  //         totalTiming ??= totalPerDayHours;
+  //
+  //         String perDayStudyHour = totalTiming.toString();
+  //         double userStudyHourDifference = totalTiming - totalPerDayHours; //user selected-standard time
+  //         double percentDifference = (userStudyHourDifference * 100) / totalPerDayHours;
+  //         String courseSno = sp.get("courseSno");
+  //         Pace pace = Pace();
+  //         pace.courseSno = courseSno;
+  //         pace.enteredDate = DateTime.now().toString();
+  //         pace.studentSno = studentSno;
+  //         pace.expectedRank = expectedRank;
+  //         pace.perDayStudyHour = perDayStudyHour;
+  //         pace.syllabusCompletionDate = syllabusCompletionDate;
+  //         pace.percentDifference = percentDifference.toStringAsFixed(2);
+  //         pace.register = sp.getString('studentSno');
+  //
+  //         PaceRepo paceRepo = PaceRepo();
+  //         paceRepo.insertIntoPace(pace);
+  //
+  //         // FirebaseFirestore.instance.collection('pace').add(pace.toJson());
+  //
+  //         toastMethod("Data Saved Successfully");
+  //
+  //         sp.setString("courseCompletionDate", completionDate);
+  //         sp.setString("courseCompletionDateFormatted", selectedDate.toString().split(" ")[0]);
+  //
+  //         sp.setString("courseStartingDate", sp.getString('firstMonday'));
+  //         sp.setInt("totalWeeks", (selectedDate.difference(DateTime.now()).inDays / 7).round());
+  //         sp.setDouble("totalStudyHour", totalTiming);
+  //         Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (BuildContext context) => const HomePage()), ModalRoute.withName('/'));
+  //       }
+  //     }
+  //   } catch (e) {
+  //     toastMethod("123 " + e.toString());
+  //   }
+  // }
+  
+  void _submit()async{
+    if(_selectedDay==0){
+      toastMethod("Please Select Syllabus Completion Date");
+    }else if(totalTiming==0.0){
+      toastMethod("Please enter correct study hour");
+    }else{
+      try{
+        SharedPreferences sp = await SharedPreferences.getInstance();
+        String selectedMon=_selectedMonth.toString();
+        String selectedDay=_selectedDay.toString();
+        if(selectedMon.length==1){
+          selectedMon='0$selectedMon';
+        }
+        if(selectedDay.length==1){
+          selectedDay='0$selectedDay';
+        }
+        String selectedDate='$_selectedYear-$selectedMon-$selectedDay';
+
+        completionDate = selectedDate;
+
+        int convertedInDays= DateTime.parse(selectedDate).difference(DateTime.parse(sp.getString('firstMonday'))).inDays;
+
         if (customValue == null) {
           totalPerDayHours = (totalDuration / 60).round() / convertedInDays;
         } else {
           totalPerDayHours = double.parse(customValue);
         }
-        print(totalPerDayHours);
-      });
-    } else {
-      Fluttertoast.showToast(msg: 'Selected Date should be sunday');
-    }
-  }
 
-  void submit() async {
-    try {
-      if (selectedDate.toString().split(" ")[0] == DateTime.now().toString().split(" ")[0]) {
-        toastMethod("Please Select Syllabus Completion Date");
-      } else {
-        print(totalPerDayHours);
         if (totalPerDayHours > 15) {
           toastMethod("Too Less");
         } else {
-          SharedPreferences sp = await SharedPreferences.getInstance();
+
           String studentSno = sp.getString("studentSno");
           String syllabusCompletionDate = selectedDate.toString();
 
@@ -514,8 +578,9 @@ class _SelectThePaceState extends State<SelectThePace> {
           pace.register = sp.getString('studentSno');
 
           PaceRepo paceRepo = PaceRepo();
-          paceRepo.insertIntoPace(pace);
-
+          int sno=await paceRepo.insertIntoPace(pace);
+          print("-----------------------------------$sno");
+          pace.sno=sno;
           FirebaseFirestore.instance.collection('pace').add(pace.toJson());
 
           toastMethod("Data Saved Successfully");
@@ -524,17 +589,40 @@ class _SelectThePaceState extends State<SelectThePace> {
           sp.setString("courseCompletionDateFormatted", selectedDate.toString().split(" ")[0]);
           //
           sp.setString("courseStartingDate", sp.getString('firstMonday'));
-          sp.setInt("totalWeeks", (selectedDate.difference(DateTime.now()).inDays / 7).round());
+          sp.setInt("totalWeeks", (DateTime.parse(selectedDate).difference(DateTime.now()).inDays / 7).round());
           sp.setDouble("totalStudyHour", totalTiming);
           Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (BuildContext context) => const HomePage()), ModalRoute.withName('/'));
         }
+      }catch(e){
+        print(e);
       }
-    } catch (e) {
-      toastMethod("123 " + e.toString());
     }
   }
 
-  void _getDays(int year, int monthIndex) {
+  _dateSelected()async{
+    SharedPreferences sp = await SharedPreferences.getInstance();
+    String selectedMon=_selectedMonth.toString();
+    String selectedDay=_selectedDay.toString();
+    if(selectedMon.length==1){
+      selectedMon='0$selectedMon';
+    }
+    if(selectedDay.length==1){
+      selectedDay='0$selectedDay';
+    }
+    String selectedDate='$_selectedYear-$selectedMon-$selectedDay';
+
+    int convertedInDays= DateTime.parse(selectedDate).difference(DateTime.parse(sp.getString('firstMonday'))).inDays;
+
+    if (customValue == null) {
+      totalPerDayHours = (totalDuration / 60).round() / convertedInDays;
+    } else {
+      totalPerDayHours = double.parse(customValue);
+    }
+
+    toastMethod(totalPerDayHours.toString());
+  }
+
+  Future _getDays(int year, int monthIndex) {
     try {
       _days = [];
       int totalMonthDays = DateTime(year, monthIndex + 2, 0).day;
@@ -548,6 +636,7 @@ class _SelectThePaceState extends State<SelectThePace> {
     } catch (e) {
       log(e);
     }
+    return null;
   }
 
   void toastMethod(String message) {
@@ -555,3 +644,37 @@ class _SelectThePaceState extends State<SelectThePace> {
         msg: message, toastLength: Toast.LENGTH_SHORT, gravity: ToastGravity.BOTTOM, timeInSecForIosWeb: 1, backgroundColor: Colors.black54, textColor: Colors.white, fontSize: 18.0);
   }
 }
+
+
+
+
+// Future<void> _selectDate(BuildContext context) async {
+//   final DateTime picked = await showDatePicker(
+//     confirmText: 'Confirm',
+//     context: context,
+//     initialDate: selectedDate,
+//     firstDate: DateTime(2020, 1),
+//     lastDate: DateTime(2023),
+//   );
+//
+//   if (picked != null) selectedDate = picked;
+//   if (DateFormat('EEEE').format(selectedDate) == "Sunday") {
+//     completionDate = formatter.format(selectedDate);
+//
+//     SharedPreferences sp = await SharedPreferences.getInstance();
+//
+//     Duration inDays = selectedDate.difference(DateTime.parse(sp.getString('firstMonday')));
+//     int convertedInDays = inDays.inDays;
+//
+//     setState(() {
+//       if (customValue == null) {
+//         totalPerDayHours = (totalDuration / 60).round() / convertedInDays;
+//       } else {
+//         totalPerDayHours = double.parse(customValue);
+//       }
+//       print(totalPerDayHours);
+//     });
+//   } else {
+//     Fluttertoast.showToast(msg: 'Selected Date should be sunday');
+//   }
+// }

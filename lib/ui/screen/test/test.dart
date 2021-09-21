@@ -88,13 +88,18 @@ class _TestState extends State<Test> with TickerProviderStateMixin {
   // }
 
   void startTimer() {
-    const oneSec = const Duration(seconds: 1);
-    _timer = new Timer.periodic(
+    const oneSec =  Duration(seconds: 1);
+    _timer =  Timer.periodic(
       oneSec,
       (Timer timer) => setState(
         () {
           if (_TEST_TIMER_INSECONDS < 1) {
             timer.cancel();
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(
+                builder: (context) => TestSummary(_testQuestions, _answerMap, _bookmarkMap, _FORMATTED_TEST_DURATION, sno, testType, course, subject, unit, chapter, _totalSecond, _questionTiming),
+              ),
+            );
           } else {
             _totalSecond = _totalSecond + 1;
             _TEST_TIMER_INSECONDS = _TEST_TIMER_INSECONDS - 1;

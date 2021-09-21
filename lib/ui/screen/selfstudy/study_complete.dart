@@ -72,60 +72,68 @@ class _StudyCompleteState extends State<StudyComplete> {
 
   get fullWidth => Responsive.getPercent(100, ResponsiveSize.WIDTH, context);
   Future _getTotalSecondByDate() async {
-    // SharedPreferences sp = await SharedPreferences.getInstance();
-    // var url = baseUrl +
-    //     "getTotalSecondByDate?date=" +
-    //     startDate.split(" ")[0] +
-    //     "&registrationSno=" +
-    //     sp.getString("studentSno") +
-    //     "&totalSeconds=" +
-    //     second;
-    // print(url);
-    // http.Response response = await http.get(
-    //   Uri.encodeFull(url),
-    // );
-    // var resbody = jsonDecode(response.body);
-    // Map<String, dynamic> mapResult = resbody;
-    // String sum = mapResult['totalSecondByDate'].toString();
-    DBHelper dbHelper = DBHelper();
-    List<Map<String, dynamic>> list = await dbHelper.totalSecondByDate(startDate.split(" ")[0]);
-    double sum = 0;
-    for (var a in list) {
-      print(a);
-      int tSecond = a['totalSecond'] ?? 0;
-      sum = tSecond.toDouble() ?? 0;
+    try{
+      // SharedPreferences sp = await SharedPreferences.getInstance();
+      // var url = baseUrl +
+      //     "getTotalSecondByDate?date=" +
+      //     startDate.split(" ")[0] +
+      //     "&registrationSno=" +
+      //     sp.getString("studentSno") +
+      //     "&totalSeconds=" +
+      //     second;
+      // print(url);
+      // http.Response response = await http.get(
+      //   Uri.encodeFull(url),
+      // );
+      // var resbody = jsonDecode(response.body);
+      // Map<String, dynamic> mapResult = resbody;
+      // String sum = mapResult['totalSecondByDate'].toString();
+      DBHelper dbHelper = DBHelper();
+      List<Map<String, dynamic>> list = await dbHelper.totalSecondByDate(startDate.split(" ")[0]);
+      double sum = 0;
+      for (var a in list) {
+        int tSecond = a['totalSecond'] ?? 0;
+        sum = tSecond.toDouble() ?? 0;
+      }
+      // totalDimeEarns = mapResult['totalDimeEarns'];
+      RewardRepo repo = RewardRepo();
+      List<Map<String, dynamic>> list2 = await repo.getReward();
+      String reward = '0';
+      for (var a in list2) {
+        reward = a['studyTime'] ?? '0';
+      }
+      double totalDimeEarn = int.parse(reward) * (int.parse(second ?? "0") / 60);
+      totalDimeEarns = totalDimeEarn.toStringAsFixed(2) ?? "0";
+      if (totalDimeEarns == null) {
+        totalDimeEarns = "0";
+      }
+      await getLeftStudyHour(sum);
+    }catch(e){
+      print(e);
     }
-    // totalDimeEarns = mapResult['totalDimeEarns'];
-    RewardRepo repo = RewardRepo();
-    List<Map<String, dynamic>> list2 = await repo.getReward();
-    int reward = 0;
-    for (var a in list2) {
-      reward = a['studyTime'] ?? 0;
-    }
-    double totalDimeEarn = reward * (int.parse(second ?? "0") / 60);
-    totalDimeEarns = totalDimeEarn.toStringAsFixed(2) ?? "0";
-    if (totalDimeEarns == null) {
-      totalDimeEarns = "0";
-    }
-    getLeftStudyHour(sum);
   }
 
   Future getLeftStudyHour(double sum) async {
-    SharedPreferences sp = await SharedPreferences.getInstance();
-    PaceRepo paceRepo = PaceRepo();
-    List<Map<String, dynamic>> pace = await paceRepo.getPace();
-    String totalStudyHr = "0";
-    for (var a in pace) {
-      totalStudyHr = a['perDayStudyHour'] ?? "0";
+    try{
+      SharedPreferences sp = await SharedPreferences.getInstance();
+      PaceRepo paceRepo = PaceRepo();
+      List<Map<String, dynamic>> pace = await paceRepo.getPace();
+      String totalStudyHr = "0";
+      for (var a in pace) {
+        totalStudyHr = a['perDayStudyHour'] ?? "0";
+      }
+      double tStudyHr = double.parse(totalStudyHr) ?? 0;
+
+      totalStudyHour = sp.getDouble("totalStudyHour");
+      double totalStudyHourInSeconds = tStudyHr*3600;
+      double totalLefSecond = totalStudyHourInSeconds - int.parse(second ?? "0") - sum;
+      String twoDigits(int n) => n.toString().padLeft(2, "0");
+      String twoDigitMinutes = twoDigits(Duration(seconds: totalLefSecond.toInt()).inMinutes.remainder(60));
+      String twoDigitSeconds = twoDigits(Duration(seconds: totalLefSecond.toInt()).inSeconds.remainder(60));
+      leftStudyHour = "${twoDigits(Duration(seconds: totalLefSecond.toInt()).inHours)}:$twoDigitMinutes:$twoDigitSeconds";
+    }catch(e){
+      print(e);
     }
-    int tStudyHr = int.tryParse(totalStudyHr) ?? 0;
-    totalStudyHour = sp.getDouble("totalStudyHour");
-    int totalStudyHourInSeconds = Duration(hours: tStudyHr).inSeconds;
-    double totalLefSecond = totalStudyHourInSeconds - int.parse(second ?? "0") - sum;
-    String twoDigits(int n) => n.toString().padLeft(2, "0");
-    String twoDigitMinutes = twoDigits(Duration(seconds: totalLefSecond.toInt()).inMinutes.remainder(60));
-    String twoDigitSeconds = twoDigits(Duration(seconds: totalLefSecond.toInt()).inSeconds.remainder(60));
-    leftStudyHour = "${twoDigits(Duration(seconds: totalLefSecond.toInt()).inHours)}:$twoDigitMinutes:$twoDigitSeconds";
   }
 
   @override
