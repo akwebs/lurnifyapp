@@ -65,107 +65,95 @@ class _CustomDrawerState extends State<CustomDrawer> {
     database.delete('completed_units');
     database.delete('completed_subjects');
 
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Login()));
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const Login()));
   }
 
   @override
   Widget build(BuildContext context) {
     return Drawer(
         elevation: 0,
-        child: Container(
-          clipBehavior: Clip.antiAlias,
-          width: double.infinity,
-          decoration: BoxDecoration(boxShadow: NewappColors.neumorpShadow),
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-            child: ListView(
-              children: <Widget>[
-                UserAccountsDrawerHeader(
-                  decoration: BoxDecoration(color: Colors.transparent),
-                  accountName: Text('Anil Kumar Jangid'),
-                  accountEmail: Text('me@akwebs.in'),
-                  currentAccountPicture: Container(
-                    child: CircleAvatar(
-                      backgroundImage: AssetImage('assets/images/anshul.png'),
-                    ),
-                    decoration: new BoxDecoration(
-                      boxShadow: NewappColors.neumorpShadow,
-                      shape: BoxShape.circle,
-                      border: new Border.all(
-                        color: Colors.deepPurple,
-                        width: 2.0,
-                      ),
-                    ),
+        child: ListView(
+          children: <Widget>[
+            UserAccountsDrawerHeader(
+              // decoration: const BoxDecoration(color: Colors.transparent),
+              accountName: const Text('Anil Kumar Jangid'),
+              accountEmail: const Text('me@akwebs.in'),
+              currentAccountPicture: Container(
+                child: const CircleAvatar(
+                  backgroundImage: AssetImage('assets/images/anshul.png'),
+                ),
+                decoration: BoxDecoration(
+                  boxShadow: NewappColors.neumorpShadow,
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: Colors.white,
+                    width: 2.0,
                   ),
                 ),
-                ListTile(
-                  leading: Icon(
-                    Icons.home,
-                  ),
-                  title: Text('Home'),
-                  contentPadding: EdgeInsets.fromLTRB(20, 0, 0, 0),
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => HomePage(),
-                    ));
-                  },
-                ),
-                ListTile(
-                  title: Text("Make Payment"),
-                  leading: Icon(Icons.person),
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => MakePayment(isPaymentDone),
-                    ));
-                  },
-                ),
-                ListTile(
-                  title: Text("Purchased Items"),
-                  leading: Icon(Icons.person),
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => PurchasedItem(),
-                    ));
-                  },
-                ),
-                ListTile(
-                  leading: Icon(
-                    Icons.home,
-                  ),
-                  title: Text('Home'),
-                  contentPadding: EdgeInsets.fromLTRB(20, 0, 0, 0),
-                  onTap: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-                ListTile(
-                  leading: Icon(
-                    Icons.home,
-                  ),
-                  title: Text('Home'),
-                  contentPadding: EdgeInsets.fromLTRB(20, 0, 0, 0),
-                  onTap: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-                Divider(),
-                ListTile(
-                  leading: Icon(
-                    Icons.login_outlined,
-                  ),
-                  title: Text('Log Out'),
-                  contentPadding: EdgeInsets.fromLTRB(20, 0, 0, 0),
-                  onTap: () {
-                    Navigator.pop(context);
-                    logout();
-                  },
-                ),
-              ],
+              ),
             ),
-          ),
+            ListTile(
+              leading: Icon(
+                Icons.home,
+              ),
+              title: Text('Home'),
+              onTap: () {
+                Navigator.of(context).pop();
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => HomePage(),
+                ));
+              },
+            ),
+            ListTile(
+              title: Text("Make Payment"),
+              leading: Icon(Icons.person),
+              onTap: () {
+                Navigator.of(context).pop();
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => MakePayment(isPaymentDone),
+                ));
+              },
+            ),
+            ListTile(
+              title: Text("Purchased Items"),
+              leading: Icon(Icons.person),
+              onTap: () {
+                Navigator.of(context).pop();
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => PurchasedItem(),
+                ));
+              },
+            ),
+            ListTile(
+              leading: Icon(
+                Icons.home,
+              ),
+              title: Text('Home'),
+              onTap: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            ListTile(
+              leading: Icon(
+                Icons.home,
+              ),
+              title: Text('Home'),
+              onTap: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            Divider(),
+            ListTile(
+              leading: Icon(
+                Icons.login_outlined,
+              ),
+              title: Text('Log Out'),
+              onTap: () {
+                Navigator.pop(context);
+                logout();
+              },
+            ),
+          ],
         ));
   }
 }

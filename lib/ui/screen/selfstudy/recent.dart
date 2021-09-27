@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
+import 'package:lurnify/config/data.dart';
+import 'package:lurnify/ui/screen/selfstudy/timer_page.dart';
 import '../../../helper/db_helper.dart';
 import '../../../helper/recent_study_repo.dart';
 import 'start_timer.dart';
@@ -65,6 +68,7 @@ class _RecentState extends State<Recent> {
       _title = 'Goals';
       _fabText = 'Sync Study';
     }
+
     double _width = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: AppBar(
@@ -105,6 +109,8 @@ class _RecentState extends State<Recent> {
   }
 
   Widget sHistory(context, _width) {
+    final Brightness brightnessValue = MediaQuery.of(context).platformBrightness;
+    bool isDark = brightnessValue == Brightness.dark;
     return recentData == null
         ? Container()
         : ListView.builder(
@@ -113,9 +119,12 @@ class _RecentState extends State<Recent> {
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemBuilder: (context, i) {
+              String subTopic = recentData[i]['subTopic'];
+              String lastSudied = recentData[i]['enteredDate'];
+              DateTime tempDate = new DateFormat("yyyy-MM-dd hh:mm:ss").parse(lastSudied);
               return [
                 [
-                  Text(recentData[i]['subjectName']).text.lg.white.semiBold.make(),
+                  Text(recentData[i]['subjectName']).text.lg.semiBold.make(),
                   const Spacer(),
                   recentData[i]['studyType'] != "Complete"
                       ? const Icon(
@@ -126,9 +135,63 @@ class _RecentState extends State<Recent> {
                           Icons.check_circle_outline_rounded,
                           color: Colors.green,
                         ),
-                ].hStack().p8().box.color(firstColor).make(),
+                ].hStack().p8().box.color(randomColor(i)).make(),
+                [
+                  Text(
+                    "Chapter : " + recentData[i]['chapterName'],
+                  ).text.semiBold.make().p8(),
+                  [
+                    Text(
+                      recentData[i]['topicName'] + " :  ",
+                    ),
+                    VxBox(
+                      child: recentData[i]['subTopic'] == null ? "".text.make() : subTopic.text.make().w64(context),
+                    ).make(),
+                  ].hStack(crossAlignment: CrossAxisAlignment.start).p8(),
+                  8.heightBox,
+                  [
+                    recentData[i]['studyType'] != "Complete"
+                        ? TextButton(
+                            onPressed: () {
+                              String subjectSno = recentData[i]['subjectSno'].toString();
+                              String unitSno = recentData[i]['unitSno'].toString();
+                              String chapterSno = recentData[i]['chapterSno'].toString();
+                              String topicSno = recentData[i]['topicSno'].toString();
+                              String subTopic = recentData[i]['subTopic'].toString();
+                              String duration = recentData[i]['duration'].toString();
+                              //print("---------------1" + duration);
+                              _goToNextScreen(subjectSno, unitSno, chapterSno, topicSno, subTopic, duration);
+                            },
+                            child: const Text('Start Study'),
+                          )
+                        : TextButton(
+                            onPressed: () {
+                              String subjectSno = recentData[i]['subjectSno'].toString();
+                              String subjectName = recentData[i]['subjectName'].toString();
+                              String unitSno = recentData[i]['unitSno'].toString();
+                              String unitName = recentData[i]['unitName'].toString();
+                              String chapterSno = recentData[i]['chapterSno'].toString();
+                              String chapterName = recentData[i]['chapterName'].toString();
+                              String topicSno = recentData[i]['topicSno'].toString();
+                              _getNextTopic(subjectSno, subjectName, unitSno, unitName, chapterSno, chapterName, topicSno);
+                            },
+                            child: const Text(
+                              "Study Next Topic",
+                              style: TextStyle(fontWeight: FontWeight.w600),
+                            ),
+                          ),
+                  ].hStack(alignment: MainAxisAlignment.end).wFull(context),
+                  [
+                    const Text(
+                      "Last Studied : ",
+                    ).text.sm.color(Vx.black).make(),
+                    Text(
+                      tempDate.timeAgo(),
+                    ).text.sm.color(Vx.black).make(),
+                  ].hStack(alignment: MainAxisAlignment.spaceBetween).wFull(context).box.p4.color(Vx.blue100).make(),
+                ].vStack(crossAlignment: CrossAxisAlignment.start),
               ]
-                  .vStack()
+                  .vStack(crossAlignment: CrossAxisAlignment.start)
                   .box
                   .withGradient(
                     LinearGradient(
@@ -139,367 +202,19 @@ class _RecentState extends State<Recent> {
                   )
                   .make()
                   .card
+                  .elevation(5)
                   .make()
-                  .p8();
+                  .px8()
+                  .py4();
             });
   }
-
-// AspectRatio(
-//                 aspectRatio: 4 / 2,
-//                 child: Card(
-//                   elevation: 0,
-//                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-//                   clipBehavior: Clip.antiAlias,
-//                   child: Stack(
-//                     children: [
-//                       Container(
-//                         decoration: BoxDecoration(
-//                           gradient: LinearGradient(
-//                             colors: [Colors.cyan[200].withOpacity(0.1), Colors.purple[200].withOpacity(0.1)],
-//                             begin: Alignment.topRight,
-//                             end: Alignment.bottomLeft,
-//                           ),
-//                         ),
-//                       ),
-//                       Column(
-//                         mainAxisAlignment: MainAxisAlignment.start,
-//                         crossAxisAlignment: CrossAxisAlignment.start,
-//                         children: [
-//                           ListTile(
-//                             tileColor: firstColor,
-//                             // leading:
-//                             //     recentData[i]['studyType'] != "Complete"
-//                             //         ? Icon(
-//                             //             Icons.pending_actions,
-//                             //             color: Colors.red,
-//                             //           )
-//                             //         : Icon(
-//                             //             Icons.check_circle_outline_rounded,
-//                             //             color: Colors.green,
-//                             //           ),
-//                             title: Row(
-//                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                               children: [
-//                                 Expanded(
-//                                   flex: 1,
-//                                   child: Text(
-//                                     recentData[i]['subjectName'],
-//                                     style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-//                                   ),
-//                                 ),
-//                                 // Flexible(
-//                                 //   flex: 2,
-//                                 //   child: Text(
-//                                 //     "Unit : " + recentData[i]['unitName'],
-//                                 //     style: TextStyle(color: Colors.white),
-//                                 //     textAlign: TextAlign.center,
-//                                 //   ),
-//                                 // ),
-//                                 Expanded(
-//                                     flex: 1,
-//                                     child: Row(
-//                                       mainAxisAlignment: MainAxisAlignment.end,
-//                                       children: [
-//                                         recentData[i]['studyType'] != "Complete"
-//                                             ? Icon(
-//                                                 Icons.pending_actions,
-//                                                 color: Colors.red,
-//                                               )
-//                                             : Icon(
-//                                                 Icons.check_circle_outline_rounded,
-//                                                 color: Colors.green,
-//                                               ),
-//                                       ],
-//                                     )),
-//                                 // Container(
-//                                 //   padding: EdgeInsets.all(5),
-//                                 //   decoration: BoxDecoration(
-//                                 //     borderRadius: BorderRadius.circular(5),
-//                                 //     color: Colors.white,
-//                                 //   ),
-//                                 //   child: Text(
-//                                 //     recentData[i]['studyType'],
-//                                 //     style: TextStyle(color: Colors.black),
-//                                 //   ),
-//                                 // )
-//                               ],
-//                             ),
-//                             // subtitle: Text(
-//                             //   "Unit : " + recentData[i]['unitName'],
-//                             //   style: TextStyle(color: Colors.white),
-//                             // ),
-//                           ),
-//                           Flexible(
-//                             child: Padding(
-//                               padding: const EdgeInsets.all(8.0),
-//                               child: Text(
-//                                 "Chapter : " + recentData[i]['chapterName'],
-//                                 style: TextStyle(fontWeight: FontWeight.w600),
-//                               ),
-//                             ),
-//                           ),
-//                           Flexible(
-//                             child: Padding(
-//                               padding: const EdgeInsets.all(8.0),
-//                               child: Row(
-//                                 children: [
-//                                   Text(
-//                                     recentData[i]['topicName'] + ":  ",
-//                                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-//                                   ),
-//                                   Expanded(
-//                                     child: Text(
-//                                       recentData[i]['subTopic'] == null ? "" : recentData[i]['subTopic'],
-//                                       style: TextStyle(fontSize: 13),
-//                                     ),
-//                                   ),
-//                                 ],
-//                               ),
-//                             ),
-//                           ),
-//                           recentData[i]['studyType'] != "Complete"
-//                               ? TextButton(
-//                                   onPressed: () {
-//                                     String subjectSno = recentData[i]['subjectSno'].toString();
-//                                     String unitSno = recentData[i]['unitSno'].toString();
-//                                     String chapterSno = recentData[i]['chapterSno'].toString();
-//                                     String topicSno = recentData[i]['topicSno'].toString();
-//                                     String subTopic = recentData[i]['subTopic'].toString();
-//                                     String duration = recentData[i]['duration'].toString();
-//                                     print("---------------1" + duration);
-//                                     _goToNextScreen(subjectSno, unitSno, chapterSno, topicSno, subTopic, duration);
-//                                   },
-//                                   child: const Text('Start Study'),
-//                                 )
-//                               : TextButton(
-//                                   onPressed: () {
-//                                     String subjectSno = recentData[i]['subjectSno'].toString();
-//                                     String subjectName = recentData[i]['subjectName'].toString();
-//                                     String unitSno = recentData[i]['unitSno'].toString();
-//                                     String unitName = recentData[i]['unitName'].toString();
-//                                     String chapterSno = recentData[i]['chapterSno'].toString();
-//                                     String chapterName = recentData[i]['chapterName'].toString();
-//                                     String topicSno = recentData[i]['topicSno'].toString();
-//                                     _getNextTopic(subjectSno, subjectName, unitSno, unitName, chapterSno, chapterName, topicSno);
-//                                   },
-//                                   child: const Text(
-//                                     "Study Next Topic",
-//                                     style: TextStyle(fontWeight: FontWeight.w600),
-//                                   ),
-//                                 ),
-//                           Container(
-//                             width: fullWidth,
-//                             padding: EdgeInsets.all(5),
-//                             color: Colors.grey[50],
-//                             child: Row(
-//                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                               children: [
-//                                 Text(
-//                                   "Last Studied : ",
-//                                   style: TextStyle(color: Colors.black54, fontWeight: FontWeight.w800, fontSize: 12),
-//                                 ),
-//                                 Text(
-//                                   recentData[i]['enteredDate'],
-//                                   style: TextStyle(color: Colors.black54, fontWeight: FontWeight.w800, fontSize: 12),
-//                                 ),
-//                               ],
-//                             ),
-//                           )
-//                         ],
-//                       ),
-//                     ],
-//                   ),
-//                 ),
-//               )
-
-  // Widget sHistory(context, _width) {
-  //   return recentData == null
-  //       ? Container()
-  //       : Container(
-  //           padding: EdgeInsets.all(5),
-  //           child: ListView.builder(
-  //             itemCount: recentData.length,
-  //             primary: false,
-  //             shrinkWrap: true,
-  //             physics: NeverScrollableScrollPhysics(),
-  //             itemBuilder: (context, i) {
-  //               return Card(
-  //                 elevation: 10,
-  //                 clipBehavior: Clip.antiAlias,
-  //                 child: Column(
-  //                   children: [
-  //                     ListTile(
-  //                       tileColor: firstColor,
-  //                       leading: recentData[i]['studyType'] != "Complete"
-  //                           ? Icon(
-  //                               Icons.pending_actions,
-  //                               color: Colors.red,
-  //                             )
-  //                           : Icon(
-  //                               Icons.check_circle_outline_rounded,
-  //                               color: Colors.green,
-  //                             ),
-  //                       title: Row(
-  //                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //                         children: [
-  //                           Text(
-  //                             recentData[i]['subjectName'],
-  //                             style: TextStyle(
-  //                                 color: Colors.white,
-  //                                 fontWeight: FontWeight.bold),
-  //                           ),
-  //                           Container(
-  //                             padding: EdgeInsets.all(5),
-  //                             decoration: BoxDecoration(
-  //                               borderRadius: BorderRadius.circular(5),
-  //                               color: Colors.white,
-  //                             ),
-  //                             child: Text(
-  //                               recentData[i]['studyType'],
-  //                               style: TextStyle(color: Colors.black),
-  //                             ),
-  //                           )
-  //                         ],
-  //                       ),
-  //                       subtitle: Text(
-  //                         "Unit : " + recentData[i]['unitName'],
-  //                         style: TextStyle(color: Colors.white),
-  //                       ),
-  //                     ),
-  //                     Padding(
-  //                       padding: const EdgeInsets.all(16.0),
-  //                       child: Text(
-  //                         "Chapter : " + recentData[i]['chapterName'],
-  //                         style: TextStyle(fontWeight: FontWeight.w600),
-  //                       ),
-  //                     ),
-  //                     Padding(
-  //                       padding: const EdgeInsets.all(16.0),
-  //                       child: Row(
-  //                         children: [
-  //                           Text(
-  //                             recentData[i]['topicName'] + ":  ",
-  //                             style: TextStyle(
-  //                                 fontWeight: FontWeight.bold, fontSize: 14),
-  //                           ),
-  //                           Expanded(
-  //                             child: Text(
-  //                               recentData[i]['subTopic'] == null
-  //                                   ? ""
-  //                                   : recentData[i]['subTopic'],
-  //                               style: TextStyle(fontSize: 13),
-  //                             ),
-  //                           ),
-  //                         ],
-  //                       ),
-  //                     ),
-  //                     ButtonBar(
-  //                       alignment: MainAxisAlignment.end,
-  //                       children: [
-  //                         recentData[i]['studyType'] != "Complete"
-  //                             ? TextButton(
-  //                                 onPressed: () {
-  //                                   String subjectSno =
-  //                                       recentData[i]['subjectSno'].toString();
-  //                                   String unitSno =
-  //                                       recentData[i]['unitSno'].toString();
-  //                                   String chapterSno =
-  //                                       recentData[i]['chapterSno'].toString();
-  //                                   String topicSno =
-  //                                       recentData[i]['topicSno'].toString();
-  //                                   String subTopic =
-  //                                       recentData[i]['subTopic'].toString();
-  //                                   String duration =
-  //                                       recentData[i]['duration'].toString();
-  //                                   print("---------------1" + duration);
-  //                                   _goToNextScreen(
-  //                                       subjectSno,
-  //                                       unitSno,
-  //                                       chapterSno,
-  //                                       topicSno,
-  //                                       subTopic,
-  //                                       duration);
-  //                                 },
-  //                                 child: const Text('Start Study'),
-  //                               )
-  //                             : TextButton(
-  //                                 onPressed: () {
-  //                                   String subjectSno =
-  //                                       recentData[i]['subjectSno'].toString();
-  //                                   String subjectName =
-  //                                       recentData[i]['subjectName'].toString();
-  //                                   String unitSno =
-  //                                       recentData[i]['unitSno'].toString();
-  //                                   String unitName =
-  //                                       recentData[i]['unitName'].toString();
-  //                                   String chapterSno =
-  //                                       recentData[i]['chapterSno'].toString();
-  //                                   String chapterName =
-  //                                       recentData[i]['chapterName'].toString();
-  //                                   String topicSno =
-  //                                       recentData[i]['topicSno'].toString();
-  //                                   _getNextTopic(
-  //                                       subjectSno,
-  //                                       subjectName,
-  //                                       unitSno,
-  //                                       unitName,
-  //                                       chapterSno,
-  //                                       chapterName,
-  //                                       topicSno);
-  //                                 },
-  //                                 child: const Text(
-  //                                   "Study Next Topic",
-  //                                   style:
-  //                                       TextStyle(fontWeight: FontWeight.w600),
-  //                                 ),
-  //                               ),
-  //                       ],
-  //                     ),
-  //                     Container(
-  //                       width: fullWidth,
-  //                       padding: EdgeInsets.all(5),
-  //                       color: Colors.grey[50],
-  //                       child: Row(
-  //                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //                         children: [
-  //                           Text(
-  //                             "Last Studied : ",
-  //                             style: TextStyle(
-  //                                 color: Colors.black54,
-  //                                 fontWeight: FontWeight.w800,
-  //                                 fontSize: 12),
-  //                           ),
-  //                           Text(
-  //                             recentData[i]['enteredDate'].substring(0, 10),
-  //                             style: TextStyle(
-  //                                 color: Colors.black54,
-  //                                 fontWeight: FontWeight.w800,
-  //                                 fontSize: 12),
-  //                           ),
-  //                           Text(
-  //                             recentData[i]['enteredDate'].substring(11, 19),
-  //                             style: TextStyle(
-  //                                 color: Colors.black54,
-  //                                 fontWeight: FontWeight.w800,
-  //                                 fontSize: 12),
-  //                           ),
-  //                         ],
-  //                       ),
-  //                     )
-  //                   ],
-  //                 ),
-  //               );
-  //             },
-  //           ),
-  //         );
-  // }
 
   _goToNextScreen(subjectSno, unitSno, chapterSno, topicSno, subTopic, duration) async {
     SharedPreferences sp = await SharedPreferences.getInstance();
     String course = sp.getString("courseSno");
     print("---------------2" + duration);
     if (pageKey == "1") {
-      Navigator.push(context, MaterialPageRoute(builder: (context) => StartTimer(course, subjectSno, unitSno, chapterSno, topicSno, subTopic, duration)));
+      Navigator.push(context, MaterialPageRoute(builder: (context) => TimerPage(course, subjectSno, unitSno, chapterSno, topicSno, subTopic, duration)));
     } else if (pageKey == "2") {
       print("---------------3" + duration);
       Navigator.push(context, MaterialPageRoute(builder: (context) => SyncYourTime(course, subjectSno, unitSno, chapterSno, topicSno, duration)));
@@ -662,19 +377,19 @@ class _RecentState extends State<Recent> {
                 contentPadding: EdgeInsets.all(0),
                 backgroundColor: Colors.white70,
                 shape: OutlineInputBorder(borderRadius: BorderRadius.circular(5.0)),
-                content: Container(
+                content: SizedBox(
                     height: 300,
                     width: 100,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Container(
-                          padding: EdgeInsets.only(top: 5, bottom: 5),
-                          decoration: BoxDecoration(color: Colors.cyanAccent, borderRadius: BorderRadius.only(topLeft: Radius.circular(5), topRight: Radius.circular(5))),
+                          padding: const EdgeInsets.only(top: 5, bottom: 5),
+                          decoration: const BoxDecoration(color: Colors.cyanAccent, borderRadius: BorderRadius.only(topLeft: Radius.circular(5), topRight: Radius.circular(5))),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              Expanded(
+                              const Expanded(
                                 child: Padding(
                                     padding: EdgeInsets.only(left: 10),
                                     child: Text(
@@ -683,7 +398,7 @@ class _RecentState extends State<Recent> {
                                     )),
                               ),
                               IconButton(
-                                icon: Icon(Icons.cancel),
+                                icon: const Icon(Icons.cancel),
                                 onPressed: () {
                                   Navigator.of(context).pop();
                                 },
@@ -697,7 +412,7 @@ class _RecentState extends State<Recent> {
             ),
           );
         },
-        transitionDuration: Duration(milliseconds: 200),
+        transitionDuration: const Duration(milliseconds: 200),
         barrierDismissible: true,
         barrierLabel: '',
         context: context,

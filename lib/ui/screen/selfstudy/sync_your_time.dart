@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+import 'package:lurnify/widgets/componants/custom_button.dart';
 import '../../../helper/study_repo.dart';
 import '../../constant/constant.dart';
+import 'package:velocity_x/velocity_x.dart';
 import 'study_complete.dart';
 import 'package:material_switch/material_switch.dart';
 import 'package:flutter/material.dart';
@@ -34,6 +36,10 @@ class _SyncYourTime extends State<SyncYourTime> {
   String selectedStartDays = "Today";
   List<String> endDays = ["Yesterday", "Today"];
   String selectedEndDays = "Today";
+  TimeOfDay startTime = TimeOfDay.fromDateTime(DateTime.now());
+  TimeOfDay endTime = TimeOfDay.fromDateTime(DateTime.now());
+  String newStartTime = "07:00 AM";
+  String newEndTime = "08:00 AM";
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +56,7 @@ class _SyncYourTime extends State<SyncYourTime> {
                 questionAlertBox(context);
               })
         ],
-        elevation: 5,
+        elevation: 0,
       ),
       body: Material(
         child: SingleChildScrollView(
@@ -67,7 +73,7 @@ class _SyncYourTime extends State<SyncYourTime> {
                 height: 10,
               ),
               startTimeCard(),
-              endTimeCard(),
+              // endTimeCard(),
               SizedBox(
                 height: 80,
               ),
@@ -75,28 +81,27 @@ class _SyncYourTime extends State<SyncYourTime> {
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        foregroundColor: Colors.white,
-        onPressed: () {
-          _endSession();
-        },
-        label: Row(
-          children: [
-            Text(
-              'SYNC',
-              style: TextStyle(fontSize: 20),
-            ),
-            SizedBox(
-              width: 10,
-            ),
-            Icon(
-              Icons.sync_outlined,
-              size: 20,
-            ),
-          ],
-        ),
+      bottomNavigationBar: CustomButton(
+        brdRds: 0,
+        buttonText: 'SYNC',
+        verpad: const EdgeInsets.symmetric(vertical: 5),
+        onPressed: () => _endSession(),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      // floatingActionButton: FloatingActionButton.extended(
+      //   foregroundColor: Colors.white,
+      //   onPressed: () {
+      //     _endSession();
+      //   },
+      //   label: [
+      //     'SYNC'.text.lg.make(),
+      //     10.widthBox,
+      //     const Icon(
+      //       Icons.sync_outlined,
+      //       size: 18,
+      //     ),
+      //   ].hStack(),
+      // ),
+      // floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 
@@ -153,24 +158,16 @@ class _SyncYourTime extends State<SyncYourTime> {
             ),
             child: Text(
               "Duration of Study Session",
-              style: TextStyle(color: whiteColor, fontWeight: FontWeight.w800, fontSize: 20),
+              style: TextStyle(color: whiteColor, fontWeight: FontWeight.w600, fontSize: 18),
               textAlign: TextAlign.center,
             ),
           ),
           SizedBox(
             height: 10,
           ),
-          Text(
-            "2:30 hours",
-            style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
-          ),
-          Text(
-            "Studied in this purchased session",
-            style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
-          ),
-          SizedBox(
-            height: 20,
-          ),
+          "2:30".text.xl6.make(),
+          "Hours".text.make(),
+          "Studied in this purchased session".text.semiBold.make().py20(),
         ],
       ),
     );
@@ -191,23 +188,24 @@ class _SyncYourTime extends State<SyncYourTime> {
             ),
             child: Text(
               "Self Study Starting Time",
-              style: TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 20),
+              style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 18),
               textAlign: TextAlign.center,
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text('I started self study session  '),
-              Text(
-                'at ' + startHr.round().toString() + ' Hr : ' + startMin.round().toString() + ' Min' + ' $selectedStartDays',
-                style: TextStyle(color: Colors.deepPurple, fontWeight: FontWeight.w800, fontSize: 13),
-              ),
-            ],
-          ),
+          Text('Please Select time Range when you studied'),
+          // Row(
+          //   mainAxisAlignment: MainAxisAlignment.center,
+          //   children: [
+
+          //     // Text(
+          //     //   'at ' + startHr.round().toString() + ' Hr : ' + startMin.round().toString() + ' Min' + ' $selectedStartDays',
+          //     //   style: TextStyle(color: Colors.deepPurple, fontWeight: FontWeight.w800, fontSize: 13),
+          //     // ),
+          //   ],
+          // ),
           Padding(
             padding: EdgeInsets.all(15),
             child: Row(
@@ -229,299 +227,394 @@ class _SyncYourTime extends State<SyncYourTime> {
               ],
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Card(
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
-              child: Container(
-                width: MediaQuery.of(context).size.width,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text(
-                      "Hr",
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
-                    ),
-                    Container(
-                      width: MediaQuery.of(context).size.width / 1.5,
-                      child: SliderTheme(
-                        data: SliderTheme.of(context).copyWith(
-                          activeTrackColor: Colors.green,
-                          inactiveTrackColor: Colors.green[100],
-                          trackShape: RoundedRectSliderTrackShape(),
-                          trackHeight: 4.0,
-                          thumbShape: RoundSliderThumbShape(enabledThumbRadius: 12.0),
-                          thumbColor: Colors.white,
-                          overlayColor: Colors.white.withAlpha(32),
-                          overlayShape: RoundSliderOverlayShape(overlayRadius: 28.0),
-                          tickMarkShape: RoundSliderTickMarkShape(),
-                          activeTickMarkColor: Colors.green,
-                          inactiveTickMarkColor: Colors.green[100],
-                          valueIndicatorShape: PaddleSliderValueIndicatorShape(),
-                          valueIndicatorColor: Colors.green,
-                          valueIndicatorTextStyle: TextStyle(
-                            color: Colors.white,
-                          ),
-                        ),
-                        child: Slider(
-                          value: startHr,
-                          min: 0,
-                          max: 23,
-                          divisions: 23,
-                          label: startHr.round().toString(),
-                          onChanged: (value) {
-                            setState(() {
-                              startHr = value;
-                              if (startHr != 23) {
-                                endHr = startHr + 1;
-                              }
-                            });
-                          },
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.all(8),
-            child: Card(
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    width: MediaQuery.of(context).size.width,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Text(
-                          "Min",
-                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
-                        ),
-                        Container(
-                          width: MediaQuery.of(context).size.width / 1.5,
-                          child: SliderTheme(
-                            data: SliderTheme.of(context).copyWith(
-                              activeTrackColor: Colors.orange[700],
-                              inactiveTrackColor: Colors.orange[100],
-                              trackShape: RoundedRectSliderTrackShape(),
-                              trackHeight: 4.0,
-                              thumbShape: RoundSliderThumbShape(enabledThumbRadius: 12.0),
-                              thumbColor: Colors.white,
-                              overlayColor: Colors.orange.withAlpha(32),
-                              overlayShape: RoundSliderOverlayShape(overlayRadius: 28.0),
-                              tickMarkShape: RoundSliderTickMarkShape(),
-                              activeTickMarkColor: Colors.orange[700],
-                              inactiveTickMarkColor: Colors.orange[100],
-                              valueIndicatorShape: PaddleSliderValueIndicatorShape(),
-                              valueIndicatorColor: Colors.orange,
-                              valueIndicatorTextStyle: TextStyle(
-                                color: Colors.white,
-                              ),
-                            ),
-                            child: Slider(
-                              value: startMin,
-                              min: 0,
-                              max: 59,
-                              divisions: 59,
-                              label: startMin.round().toString(),
-                              onChanged: (value) {
-                                setState(() {
-                                  startMin = value;
-                                });
-                              },
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          SizedBox(
-            height: 10,
-          ),
+          [
+            Text(newStartTime)
+                .text
+                .xl2
+                .semiBold
+                .widest
+                .make()
+                .p8()
+                .onTap(() {
+                  _startTime(context);
+                })
+                .box
+                .roundedSM
+                .shadowSm
+                .color(Vx.white)
+                .border(width: 1, color: Vx.black)
+                .p4
+                .make(),
+            10.widthBox,
+            Text(newEndTime)
+                .text
+                .xl2
+                .semiBold
+                .widest
+                .make()
+                .p8()
+                .onTap(() {
+                  _endTime(context);
+                })
+                .box
+                .roundedSM
+                .shadowSm
+                .color(Vx.white)
+                .border(width: 1, color: Vx.black)
+                .p4
+                .make(),
+          ].hStack().py12(),
+          // Padding(
+          //   padding: const EdgeInsets.all(8.0),
+          //   child: Card(
+          //     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+          //     child: Container(
+          //       width: MediaQuery.of(context).size.width,
+          //       child: Row(
+          //         mainAxisAlignment: MainAxisAlignment.center,
+          //         children: <Widget>[
+
+          //           Text(
+          //             "Hr",
+          //             style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+          //           ),
+          //           Container(
+          //             width: MediaQuery.of(context).size.width / 1.5,
+          //             child: SliderTheme(
+          //               data: SliderTheme.of(context).copyWith(
+          //                 activeTrackColor: Colors.green,
+          //                 inactiveTrackColor: Colors.green[100],
+          //                 trackShape: RoundedRectSliderTrackShape(),
+          //                 trackHeight: 4.0,
+          //                 thumbShape: RoundSliderThumbShape(enabledThumbRadius: 12.0),
+          //                 thumbColor: Colors.white,
+          //                 overlayColor: Colors.white.withAlpha(32),
+          //                 overlayShape: RoundSliderOverlayShape(overlayRadius: 28.0),
+          //                 tickMarkShape: RoundSliderTickMarkShape(),
+          //                 activeTickMarkColor: Colors.green,
+          //                 inactiveTickMarkColor: Colors.green[100],
+          //                 valueIndicatorShape: PaddleSliderValueIndicatorShape(),
+          //                 valueIndicatorColor: Colors.green,
+          //                 valueIndicatorTextStyle: TextStyle(
+          //                   color: Colors.white,
+          //                 ),
+          //               ),
+          //               child: Slider(
+          //                 value: startHr,
+          //                 min: 0,
+          //                 max: 23,
+          //                 divisions: 23,
+          //                 label: startHr.round().toString(),
+          //                 onChanged: (value) {
+          //                   setState(() {
+          //                     startHr = value;
+          //                     if (startHr != 23) {
+          //                       endHr = startHr + 1;
+          //                     }
+          //                   });
+          //                 },
+          //               ),
+          //             ),
+          //           ),
+          //         ],
+          //       ),
+          //     ),
+          //   ),
+          // ),
+          // Padding(
+          //   padding: EdgeInsets.all(8),
+          //   child: Card(
+          //     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+          //     child: Column(
+          //       crossAxisAlignment: CrossAxisAlignment.start,
+          //       children: [
+          //         Container(
+          //           width: MediaQuery.of(context).size.width,
+          //           child: Row(
+          //             mainAxisAlignment: MainAxisAlignment.center,
+          //             children: <Widget>[
+          //               Text(
+          //                 "Min",
+          //                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+          //               ),
+          //               Container(
+          //                 width: MediaQuery.of(context).size.width / 1.5,
+          //                 child: SliderTheme(
+          //                   data: SliderTheme.of(context).copyWith(
+          //                     activeTrackColor: Colors.orange[700],
+          //                     inactiveTrackColor: Colors.orange[100],
+          //                     trackShape: RoundedRectSliderTrackShape(),
+          //                     trackHeight: 4.0,
+          //                     thumbShape: RoundSliderThumbShape(enabledThumbRadius: 12.0),
+          //                     thumbColor: Colors.white,
+          //                     overlayColor: Colors.orange.withAlpha(32),
+          //                     overlayShape: RoundSliderOverlayShape(overlayRadius: 28.0),
+          //                     tickMarkShape: RoundSliderTickMarkShape(),
+          //                     activeTickMarkColor: Colors.orange[700],
+          //                     inactiveTickMarkColor: Colors.orange[100],
+          //                     valueIndicatorShape: PaddleSliderValueIndicatorShape(),
+          //                     valueIndicatorColor: Colors.orange,
+          //                     valueIndicatorTextStyle: TextStyle(
+          //                       color: Colors.white,
+          //                     ),
+          //                   ),
+          //                   child: Slider(
+          //                     value: startMin,
+          //                     min: 0,
+          //                     max: 59,
+          //                     divisions: 59,
+          //                     label: startMin.round().toString(),
+          //                     onChanged: (value) {
+          //                       setState(() {
+          //                         startMin = value;
+          //                       });
+          //                     },
+          //                   ),
+          //                 ),
+          //               ),
+          //             ],
+          //           ),
+          //         ),
+          //       ],
+          //     ),
+          //   ),
+          // ),
         ],
       ),
     );
   }
 
-  Widget endTimeCard() {
-    return Card(
-      elevation: 10,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          Container(
-            padding: EdgeInsets.only(top: 5, bottom: 5),
-            width: MediaQuery.of(context).size.width,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.only(topLeft: Radius.circular(5), topRight: Radius.circular(5)),
-              color: firstColor,
-            ),
-            child: Text(
-              "Self Study End Time",
-              style: TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 20),
-              textAlign: TextAlign.center,
-            ),
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text('I started self study session  '),
-              Text(
-                'at ' + endHr.round().toString() + ' Hr : ' + endMin.round().toString() + ' Min' + ' $selectedEndDays',
-                style: TextStyle(color: Colors.deepPurple, fontWeight: FontWeight.w800, fontSize: 13),
-              ),
-            ],
-          ),
-          Padding(
-            padding: EdgeInsets.all(15),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Expanded(
-                  child: MaterialSwitch(
-                    selectedOption: selectedEndDays,
-                    options: endDays,
-                    selectedBackgroundColor: Colors.deepPurple,
-                    selectedTextColor: Colors.white,
-                    onSelect: (String selectedOption) {
-                      setState(() {
-                        selectedEndDays = selectedOption;
-                      });
-                    },
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Card(
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
-              child: Container(
-                width: MediaQuery.of(context).size.width,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text(
-                      "Hr",
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
-                    ),
-                    Container(
-                      width: MediaQuery.of(context).size.width / 1.5,
-                      child: SliderTheme(
-                        data: SliderTheme.of(context).copyWith(
-                          activeTrackColor: Colors.green,
-                          inactiveTrackColor: Colors.green[100],
-                          trackShape: RoundedRectSliderTrackShape(),
-                          trackHeight: 4.0,
-                          thumbShape: RoundSliderThumbShape(enabledThumbRadius: 12.0),
-                          thumbColor: Colors.white,
-                          overlayColor: Colors.white.withAlpha(32),
-                          overlayShape: RoundSliderOverlayShape(overlayRadius: 28.0),
-                          tickMarkShape: RoundSliderTickMarkShape(),
-                          activeTickMarkColor: Colors.green,
-                          inactiveTickMarkColor: Colors.green[100],
-                          valueIndicatorShape: PaddleSliderValueIndicatorShape(),
-                          valueIndicatorColor: Colors.green,
-                          valueIndicatorTextStyle: TextStyle(
-                            color: Colors.white,
-                          ),
-                        ),
-                        child: Slider(
-                          value: endHr,
-                          min: 0,
-                          max: 23,
-                          divisions: 23,
-                          label: endHr.round().toString(),
-                          onChanged: (value) {
-                            setState(() {
-                              endHr = value;
-                            });
-                          },
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.all(8),
-            child: Card(
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    width: MediaQuery.of(context).size.width,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Text(
-                          "Min",
-                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
-                        ),
-                        Container(
-                          width: MediaQuery.of(context).size.width / 1.5,
-                          child: SliderTheme(
-                            data: SliderTheme.of(context).copyWith(
-                              activeTrackColor: Colors.orange[700],
-                              inactiveTrackColor: Colors.orange[100],
-                              trackShape: RoundedRectSliderTrackShape(),
-                              trackHeight: 4.0,
-                              thumbShape: RoundSliderThumbShape(enabledThumbRadius: 12.0),
-                              thumbColor: Colors.white,
-                              overlayColor: Colors.orange.withAlpha(32),
-                              overlayShape: RoundSliderOverlayShape(overlayRadius: 28.0),
-                              tickMarkShape: RoundSliderTickMarkShape(),
-                              activeTickMarkColor: Colors.orange[700],
-                              inactiveTickMarkColor: Colors.orange[100],
-                              valueIndicatorShape: PaddleSliderValueIndicatorShape(),
-                              valueIndicatorColor: Colors.orange,
-                              valueIndicatorTextStyle: TextStyle(
-                                color: Colors.white,
-                              ),
-                            ),
-                            child: Slider(
-                              value: endMin,
-                              min: 0,
-                              max: 59,
-                              divisions: 59,
-                              label: endMin.round().toString(),
-                              onChanged: (value) {
-                                setState(() {
-                                  endMin = value;
-                                });
-                              },
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          SizedBox(
-            height: 10,
-          ),
-        ],
-      ),
-    );
+  _startTime(BuildContext context) async {
+    final TimeOfDay timeOfDay = await showTimePicker(
+        context: context,
+        initialTime: startTime,
+        builder: (context, child) {
+          return MediaQuery(
+              data: MediaQuery.of(context).copyWith(
+                  // Using 12-Hour format
+
+                  alwaysUse24HourFormat: false),
+              // If you want 24-Hour format, just change alwaysUse24HourFormat to true
+              child: child);
+        });
+    if (timeOfDay != null && timeOfDay != startTime) {
+      setState(() {
+        startTime = timeOfDay;
+        newStartTime = timeOfDay.format(context);
+      });
+    }
   }
+
+  _endTime(BuildContext context) async {
+    final TimeOfDay timeOfDay = await showTimePicker(
+        context: context,
+        initialTime: endTime,
+        builder: (context, child) {
+          return MediaQuery(
+              data: MediaQuery.of(context).copyWith(
+                  // Using 12-Hour format
+
+                  alwaysUse24HourFormat: false),
+              // If you want 24-Hour format, just change alwaysUse24HourFormat to true
+              child: child);
+        });
+    if (timeOfDay != null && timeOfDay != endTime) {
+      setState(() {
+        endTime = timeOfDay;
+        newEndTime = timeOfDay.format(context);
+      });
+    }
+  }
+
+  // Widget endTimeCard() {
+  //   return Card(
+  //     elevation: 10,
+  //     child: Column(
+  //       crossAxisAlignment: CrossAxisAlignment.center,
+  //       children: <Widget>[
+  //         Container(
+  //           padding: EdgeInsets.only(top: 5, bottom: 5),
+  //           width: MediaQuery.of(context).size.width,
+  //           decoration: BoxDecoration(
+  //             borderRadius: BorderRadius.only(topLeft: Radius.circular(5), topRight: Radius.circular(5)),
+  //             color: firstColor,
+  //           ),
+  //           child: Text(
+  //             "Self Study End Time",
+  //             style: TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 20),
+  //             textAlign: TextAlign.center,
+  //           ),
+  //         ),
+  //         SizedBox(
+  //           height: 10,
+  //         ),
+  //         Row(
+  //           mainAxisAlignment: MainAxisAlignment.center,
+  //           children: [
+  //             Text('I completed self study session  '),
+  //             // Text(
+  //             //   'at ' + endHr.round().toString() + ' Hr : ' + endMin.round().toString() + ' Min' + ' $selectedEndDays',
+  //             //   style: TextStyle(color: Colors.deepPurple, fontWeight: FontWeight.w800, fontSize: 13),
+  //             // ),
+  //           ],
+  //         ),
+  //         Padding(
+  //           padding: EdgeInsets.all(15),
+  //           child: Row(
+  //             mainAxisAlignment: MainAxisAlignment.center,
+  //             children: <Widget>[
+  //               Expanded(
+  //                 child: MaterialSwitch(
+  //                   selectedOption: selectedEndDays,
+  //                   options: endDays,
+  //                   selectedBackgroundColor: Colors.deepPurple,
+  //                   selectedTextColor: Colors.white,
+  //                   onSelect: (String selectedOption) {
+  //                     setState(() {
+  //                       selectedEndDays = selectedOption;
+  //                     });
+  //                   },
+  //                 ),
+  //               ),
+  //             ],
+  //           ),
+  //         ),
+  //         Text(newEndTime)
+  //             .text
+  //             .xl3
+  //             .semiBold
+  //             .widest
+  //             .make()
+  //             .px12()
+  //             .py8()
+  //             .onTap(() {
+  //               _endTime(context);
+  //             })
+  //             .box
+  //             .roundedSM
+  //             .shadowSm
+  //             .color(Vx.white)
+  //             .border(width: 1, color: Vx.black)
+  //             .p4
+  //             .make(),
+  //         // Padding(
+  //         //   padding: const EdgeInsets.all(8.0),
+  //         //   child: Card(
+  //         //     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+  //         //     child: Container(
+  //         //       width: MediaQuery.of(context).size.width,
+  //         //       child: Row(
+  //         //         mainAxisAlignment: MainAxisAlignment.center,
+  //         //         children: <Widget>[
+  //         //           Text(
+  //         //             "Hr",
+  //         //             style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+  //         //           ),
+  //         //           Container(
+  //         //             width: MediaQuery.of(context).size.width / 1.5,
+  //         //             child: SliderTheme(
+  //         //               data: SliderTheme.of(context).copyWith(
+  //         //                 activeTrackColor: Colors.green,
+  //         //                 inactiveTrackColor: Colors.green[100],
+  //         //                 trackShape: RoundedRectSliderTrackShape(),
+  //         //                 trackHeight: 4.0,
+  //         //                 thumbShape: RoundSliderThumbShape(enabledThumbRadius: 12.0),
+  //         //                 thumbColor: Colors.white,
+  //         //                 overlayColor: Colors.white.withAlpha(32),
+  //         //                 overlayShape: RoundSliderOverlayShape(overlayRadius: 28.0),
+  //         //                 tickMarkShape: RoundSliderTickMarkShape(),
+  //         //                 activeTickMarkColor: Colors.green,
+  //         //                 inactiveTickMarkColor: Colors.green[100],
+  //         //                 valueIndicatorShape: PaddleSliderValueIndicatorShape(),
+  //         //                 valueIndicatorColor: Colors.green,
+  //         //                 valueIndicatorTextStyle: TextStyle(
+  //         //                   color: Colors.white,
+  //         //                 ),
+  //         //               ),
+  //         //               child: Slider(
+  //         //                 value: endHr,
+  //         //                 min: 0,
+  //         //                 max: 23,
+  //         //                 divisions: 23,
+  //         //                 label: endHr.round().toString(),
+  //         //                 onChanged: (value) {
+  //         //                   setState(() {
+  //         //                     endHr = value;
+  //         //                   });
+  //         //                 },
+  //         //               ),
+  //         //             ),
+  //         //           ),
+  //         //         ],
+  //         //       ),
+  //         //     ),
+  //         //   ),
+  //         // ),
+  //         // Padding(
+  //         //   padding: EdgeInsets.all(8),
+  //         //   child: Card(
+  //         //     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+  //         //     child: Column(
+  //         //       crossAxisAlignment: CrossAxisAlignment.start,
+  //         //       children: [
+  //         //         Container(
+  //         //           width: MediaQuery.of(context).size.width,
+  //         //           child: Row(
+  //         //             mainAxisAlignment: MainAxisAlignment.center,
+  //         //             children: <Widget>[
+  //         //               Text(
+  //         //                 "Min",
+  //         //                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+  //         //               ),
+  //         //               Container(
+  //         //                 width: MediaQuery.of(context).size.width / 1.5,
+  //         //                 child: SliderTheme(
+  //         //                   data: SliderTheme.of(context).copyWith(
+  //         //                     activeTrackColor: Colors.orange[700],
+  //         //                     inactiveTrackColor: Colors.orange[100],
+  //         //                     trackShape: RoundedRectSliderTrackShape(),
+  //         //                     trackHeight: 4.0,
+  //         //                     thumbShape: RoundSliderThumbShape(enabledThumbRadius: 12.0),
+  //         //                     thumbColor: Colors.white,
+  //         //                     overlayColor: Colors.orange.withAlpha(32),
+  //         //                     overlayShape: RoundSliderOverlayShape(overlayRadius: 28.0),
+  //         //                     tickMarkShape: RoundSliderTickMarkShape(),
+  //         //                     activeTickMarkColor: Colors.orange[700],
+  //         //                     inactiveTickMarkColor: Colors.orange[100],
+  //         //                     valueIndicatorShape: PaddleSliderValueIndicatorShape(),
+  //         //                     valueIndicatorColor: Colors.orange,
+  //         //                     valueIndicatorTextStyle: TextStyle(
+  //         //                       color: Colors.white,
+  //         //                     ),
+  //         //                   ),
+  //         //                   child: Slider(
+  //         //                     value: endMin,
+  //         //                     min: 0,
+  //         //                     max: 59,
+  //         //                     divisions: 59,
+  //         //                     label: endMin.round().toString(),
+  //         //                     onChanged: (value) {
+  //         //                       setState(() {
+  //         //                         endMin = value;
+  //         //                       });
+  //         //                     },
+  //         //                   ),
+  //         //                 ),
+  //         //               ),
+  //         //             ],
+  //         //           ),
+  //         //         ),
+  //         //       ],
+  //         //     ),
+  //         //   ),
+  //         // ),
+  //         SizedBox(
+  //           height: 10,
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   // Widget endTimeCardX() {
   //   return Padding(

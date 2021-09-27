@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter/services.dart';
 import 'package:lottie/lottie.dart';
+import 'package:lurnify/widgets/componants/custom_button.dart';
 import '../../../helper/db_helper.dart';
 import '../../../helper/instruction_repo.dart';
 import '../../../helper/instruction_repo_data.dart';
@@ -252,10 +253,7 @@ class _StartTimerState extends State<StartTimer> {
     _width = MediaQuery.of(context).size.width;
     return WillPopScope(
       onWillPop: _onWillPop,
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: AppTheme.darkTheme,
-        home: Scaffold(
+      child: Scaffold(
           appBar: AppBar(
             actionsIconTheme: IconThemeData(color: whiteColor),
             // leading: IconButton(
@@ -315,7 +313,7 @@ class _StartTimerState extends State<StartTimer> {
                           padding: EdgeInsets.all(10),
                           child: FadeAnimatedTextKit(
                             onTap: () {},
-                            text: headingList.isEmpty || headingList.length < 1 || headingList == null ? ["Welcome To Lurnify"] : headingList,
+                            text: headingList.isEmpty || headingList == null ? ["Welcome To Lurnify"] : headingList,
                             textStyle: TextStyle(
                               fontSize: 16.0,
                             ),
@@ -331,7 +329,7 @@ class _StartTimerState extends State<StartTimer> {
                         ),
                         // ignore: deprecated_member_use
                         RaisedButton(
-                          child: Text('Beat Distraction'),
+                          child: const Text('Beat Distraction'),
                           onPressed: () => beatDistraction(),
                           padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
                           color: Colors.green,
@@ -340,81 +338,79 @@ class _StartTimerState extends State<StartTimer> {
                         Container(
                           height: _height / 2.2,
                           child: Padding(
-                            padding: EdgeInsets.only(left: 20, right: 20),
-                            child: Container(
-                              child: Column(
-                                children: [
-                                  // ignore: deprecated_member_use
-                                  RaisedButton(
-                                    onPressed: () => showSubTopic(context),
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          "Studying Topic-1",
-                                          style: TextStyle(fontSize: 18),
-                                        ),
-                                        Spacer(),
-                                        Icon(
-                                          Icons.arrow_forward_ios_rounded,
-                                          size: 18,
-                                        ),
-                                      ],
-                                    ),
-                                    color: Colors.transparent,
-                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18.0), side: BorderSide(color: whiteColor)),
+                            padding: const EdgeInsets.only(left: 20, right: 20),
+                            child: Column(
+                              children: [
+                                // ignore: deprecated_member_use
+                                RaisedButton(
+                                  onPressed: () => showSubTopic(context),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Studying Topic-1",
+                                        style: TextStyle(fontSize: 18),
+                                      ),
+                                      Spacer(),
+                                      Icon(
+                                        Icons.arrow_forward_ios_rounded,
+                                        size: 18,
+                                      ),
+                                    ],
                                   ),
-                                  SizedBox(
-                                    width: _width,
-                                    height: _height / 4,
-                                    child: Container(
-                                        decoration: BoxDecoration(
-                                          border: Border.all(width: 2, color: firstColor),
-                                          borderRadius: BorderRadius.circular(18.0),
+                                  color: Colors.transparent,
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18.0), side: BorderSide(color: whiteColor)),
+                                ),
+                                SizedBox(
+                                  width: _width,
+                                  height: _height / 4,
+                                  child: Container(
+                                      decoration: BoxDecoration(
+                                        border: Border.all(width: 2, color: firstColor),
+                                        borderRadius: BorderRadius.circular(18.0),
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            dateRow(),
+                                            Spacer(),
+                                            Center(
+                                                child: Text(
+                                              _pressDuration,
+                                              style: Theme.of(context).textTheme.headline2,
+                                            )),
+                                            Spacer(),
+                                          ],
                                         ),
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Column(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              dateRow(),
-                                              Spacer(),
-                                              Center(
-                                                  child: Text(
-                                                _pressDuration,
-                                                style: Theme.of(context).textTheme.headline2,
-                                              )),
-                                              Spacer(),
-                                            ],
-                                          ),
-                                        )),
+                                      )),
+                                ),
+                                // ignore: deprecated_member_use
+                                RaisedButton(
+                                  onPressed: () => remainingAlertBox(),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        remainingMessage + "/" + duration,
+                                        style: TextStyle(
+                                          color: remainingDuration < 0 ? Colors.red : Colors.white,
+                                          fontSize: 18,
+                                        ),
+                                      ),
+                                      Spacer(),
+                                      Icon(
+                                        Icons.arrow_forward_ios_rounded,
+                                        size: 18,
+                                        color: Colors.red,
+                                      ),
+                                    ],
                                   ),
-                                  // ignore: deprecated_member_use
-                                  RaisedButton(
-                                    onPressed: () => remainingAlertBox(),
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          remainingMessage,
-                                          style: TextStyle(
-                                            color: remainingDuration < 0 ? Colors.red : Colors.white,
-                                            fontSize: 18,
-                                          ),
-                                        ),
-                                        Spacer(),
-                                        Icon(
-                                          Icons.arrow_forward_ios_rounded,
-                                          size: 18,
-                                          color: Colors.red,
-                                        ),
-                                      ],
-                                    ),
-                                    color: Colors.transparent,
-                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18.0), side: BorderSide(color: Colors.red)),
-                                  ),
-                                ],
-                              ),
+                                  color: Colors.transparent,
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18.0), side: BorderSide(color: Colors.red)),
+                                ),
+                              ],
                             ),
                           ),
                         ),
@@ -459,39 +455,22 @@ class _StartTimerState extends State<StartTimer> {
                     ),
                   );
                 } else {
-                  return Center(
-                    child: SizedBox(
-                      height: 150,
-                      width: 150,
-                      child: Lottie.asset(
-                        'assets/lottie/56446-walk.json',
-                      ),
-                    ),
+                  return const Center(
+                    child: CircularProgressIndicator(),
                   );
                 }
               },
             ),
           ),
-          bottomNavigationBar: Container(
-            child: TextButton(
-              child: Text(
-                'END',
-                style: TextStyle(fontSize: 30, color: whiteColor),
-              ),
-              style: ButtonStyle(
-                elevation: MaterialStateProperty.resolveWith<double>(
-                  (Set<MaterialState> states) => 3.0,
-                ),
-                backgroundColor: MaterialStateProperty.resolveWith<Color>(
-                  (Set<MaterialState> states) => Colors.red,
-                ),
-                overlayColor: MaterialStateProperty.all(Colors.black26),
-              ),
-              onPressed: () => endSession(),
-            ),
-          ),
-        ),
-      ),
+          bottomNavigationBar: CustomButton(
+            btnClr: Colors.red,
+            buttonText: "END",
+            brdRds: 0,
+            verpad: const EdgeInsets.symmetric(vertical: 5),
+            onPressed: () {
+              endSession();
+            },
+          )),
     );
   }
 

@@ -36,6 +36,7 @@ import 'constant/constant.dart';
 import 'package:sqflite/sqflite.dart';
 
 import 'screen/selfstudy/recent.dart';
+import 'screen/selfstudy/timer_page.dart';
 import 'screen/userProfile/user_profile.dart';
 
 class HomePage extends StatefulWidget {
@@ -391,7 +392,6 @@ class _HomePageState extends State<HomePage> {
               _spinData.add(map);
             }
           }
-
         } else {
           _isSpinned = true;
         }
@@ -493,6 +493,7 @@ class _HomePageState extends State<HomePage> {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             return Scaffold(
+              drawerEdgeDragWidth: 60,
               key: _scaffoldKey,
               resizeToAvoidBottomInset: false,
               appBar: AppBar(
@@ -526,15 +527,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ],
               ),
-              drawer: Theme(
-                data: Theme.of(context).copyWith(
-                  canvasColor: Colors.white24,
-                ),
-                child: Drawer(
-                  elevation: 0,
-                  child: CustomDrawer(_isPaymentDone),
-                ),
-              ),
+              drawer: CustomDrawer(_isPaymentDone),
               body: WillPopScope(
                 onWillPop: _onWillPop,
                 child: Container(
@@ -655,27 +648,27 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _showMyDialog() async {
     return AwesomeDialog(
-      context: context,
-      dialogType: DialogType.INFO,
-      animType: AnimType.BOTTOMSLIDE,
-      title: 'Welcome to lurnify',
-      desc: "Study for only one hour this week and start earning real money.\n To know more about lurnify's digital coin please click on know more.",
-      dismissOnBackKeyPress: false,
-      dismissOnTouchOutside: false,
-      btnOkColor: Colors.black87,
-      btnOkText: "Know More",
-      btnOkOnPress: () {
-        if (resbody['dailyReward'] == true) {
-          _showDailyAppOpening();
-        } else {
-          if (_spinData.isNotEmpty && !_isSpinned) {
-            _showSpinWheel();
+        context: context,
+        dialogType: DialogType.INFO,
+        animType: AnimType.BOTTOMSLIDE,
+        title: 'Welcome to lurnify',
+        desc: "Study for only one hour this week and start earning real money.\n To know more about lurnify's digital coin please click on know more.",
+        dismissOnBackKeyPress: false,
+        dismissOnTouchOutside: false,
+        btnOkColor: Colors.black87,
+        btnOkText: "Know More",
+        btnOkOnPress: () {
+          if (resbody['dailyReward'] == true) {
+            _showDailyAppOpening();
           } else {
-            print("SPIN DATA EMPTY");
+            if (_spinData.isNotEmpty && !_isSpinned) {
+              _showSpinWheel();
+            } else {
+              print("SPIN DATA EMPTY");
+            }
           }
-        }
-      },
-    )..show();
+        })
+      ..show();
   }
 
   Future<void> _showDailyAppOpening() async {
@@ -700,10 +693,15 @@ class _HomePageState extends State<HomePage> {
   }
 
   _showSpinWheel() async {
-    showCupertinoModalPopup(
+    showModalBottomSheet(
+        enableDrag: false,
+        isDismissible: false,
+        isScrollControlled: true,
+        clipBehavior: Clip.antiAlias,
+        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10))),
         context: context,
         builder: (builder) {
-          return SpinnerClass(_spinData);
+          return SpinnerClass(_spinData).box.bgImage(const DecorationImage(image: AssetImage('assets/bg-1.png'), fit: BoxFit.cover)).make();
         });
   }
 

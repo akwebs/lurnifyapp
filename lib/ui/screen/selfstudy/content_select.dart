@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:lurnify/ui/screen/selfstudy/timer_page.dart';
 import '../../../helper/db_helper.dart';
 import '../../../config/data.dart';
 import '../../../model/chapters.dart';
@@ -11,7 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:lottie/lottie.dart';
 import 'package:sqflite/sqflite.dart';
 import 'dart:math' as math;
-
+import 'package:velocity_x/velocity_x.dart';
 import '../../../model/units.dart';
 import 'start_timer.dart';
 import 'sync_your_time.dart';
@@ -404,30 +405,25 @@ class _ContentSelectState extends State<ContentSelect> {
     List<Widget> list = [];
     if (_chapter.topicDtos != null) {
       for (var TopicDtos in _chapter.topicDtos) {
-        list.add(Container(
-          child: ListTile(
-            title: Text(TopicDtos.topicName),
-            onTap: () {
-              topic = TopicDtos.sno.toString();
-              if (TopicDtos.subtopic != null) {
-                subTopic = TopicDtos.subtopic;
-              }
-              if (TopicDtos.duration != null) {
-                duration = TopicDtos.duration;
-              }
+        list.add(ListTile(
+          title: Text(TopicDtos.topicName).text.make(),
+          onTap: () {
+            topic = TopicDtos.sno.toString();
+            if (TopicDtos.subtopic != null) {
+              subTopic = TopicDtos.subtopic;
+            }
+            if (TopicDtos.duration != null) {
+              duration = TopicDtos.duration;
+            }
 
-              _pageNavigation();
-            },
-          ),
+            _pageNavigation();
+          },
         ));
       }
     }
     return ExpansionTile(
       title: Text(
         _chapter.chapterName,
-        style: TextStyle(
-          fontSize: 18,
-        ),
       ),
       leading: CircleAvatar(
         backgroundColor: whiteColor,
@@ -460,7 +456,7 @@ class _ContentSelectState extends State<ContentSelect> {
     } else {
       print(course);
       if (pageKey == "1") {
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => StartTimer(course, subject, unit, chapter, topic, subTopic, duration)));
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => TimerPage(course, subject, unit, chapter, topic, subTopic, duration)));
       } else if (pageKey == "2") {
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => SyncYourTime(course, subject, unit, chapter, topic, duration)));
       }

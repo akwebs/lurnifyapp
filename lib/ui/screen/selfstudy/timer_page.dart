@@ -1,8 +1,15 @@
+// ignore_for_file: prefer_typing_uninitialized_variables
+
 import 'dart:async';
+import 'dart:ui';
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:audioplayers/audio_cache.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:lurnify/ui/constant/constant.dart';
+import '../../../widgets/componants/custom_button.dart';
 import '../../../helper/db_helper.dart';
 import '../../../helper/instruction_repo.dart';
 import '../../../helper/instruction_repo_data.dart';
@@ -14,6 +21,7 @@ import '../../constant/ApiConstant.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:velocity_x/velocity_x.dart';
 
 import 'package:sqflite/sqflite.dart';
 
@@ -26,16 +34,15 @@ class TimerPage extends StatefulWidget {
 
   @override
   // ignore: no_logic_in_create_state
+  // course, subject, unit, chapter, topic, subtopic, duration
   _TimerPageState createState() => _TimerPageState(course, subject, unit, chapter, topic, subtopic, duration);
 }
 
 class _TimerPageState extends State<TimerPage> {
   String course, subject, unit, chapter, topic, subtopic, duration;
-
+//
   _TimerPageState(this.course, this.subject, this.unit, this.chapter, this.topic, this.subtopic, this.duration);
 
-  double _height;
-  double _width;
   var data;
   DateTime _lastButtonPress;
   String _pressDuration;
@@ -51,6 +58,11 @@ class _TimerPageState extends State<TimerPage> {
   String leftDaysOrWeek = "";
   int BEEP_SOUND_DURATION = 600;
   int _topicTestTime = 0;
+  bool isDark = false;
+  Color color;
+  Color textColor;
+  String bgImg;
+  var value;
 
   void _updateTimer() {
     final duration = DateTime.now().difference(_lastButtonPress);
@@ -152,7 +164,7 @@ class _TimerPageState extends State<TimerPage> {
       setState(() {
         remainingDuration = remainingDuration - 1;
         if (remainingDuration > 0) {
-          remainingMessage = Duration(seconds: remainingDuration.round()).inMinutes.toString() + " min to complete the topic";
+          remainingMessage = Duration(seconds: remainingDuration.round()).inMinutes.toString() + " min to complete";
         } else {
           remainingMessage = Duration(seconds: remainingDuration.round()).inMinutes.toString() + " min taking more.";
         }
@@ -180,7 +192,7 @@ class _TimerPageState extends State<TimerPage> {
   List<String> headingList = [];
   double _alreadyStudiedTime = 0;
   String remainingMessage = "";
-
+  int alreadyStudied = 0;
   Future _getHeading() async {
     try {
       DBHelper dbHelper = DBHelper();
@@ -221,6 +233,7 @@ class _TimerPageState extends State<TimerPage> {
 
   void calculateRemainingDuration() {
     getDatesForDateRow();
+    alreadyStudied = Duration(seconds: double.parse(_alreadyStudiedTime.toString()).round()).inMinutes;
     remainingDuration = Duration(minutes: double.parse(duration).round()).inSeconds - _alreadyStudiedTime;
     if (remainingDuration > 0) {
       remainingMessage = Duration(seconds: remainingDuration.round()).inMinutes.toString() + " min to complete the topic";
@@ -234,8 +247,8 @@ class _TimerPageState extends State<TimerPage> {
     totalWeeks = sp.getInt("totalWeeks").toString();
     int completedDays = DateTime.now().difference(DateTime.parse(sp.getString("firstMonday"))).inDays;
     int remainingDays = DateTime.parse(sp.getString("firstMonday")).difference(DateTime.now()).inDays;
-    if (remainingDays <= 100) {
-      leftDaysOrWeek = remainingDays.toString() + "Days left";
+    if (remainingDays <= 30) {
+      leftDaysOrWeek = remainingDays.toString() + " Days left";
     } else {
       leftDaysOrWeek = ((completedDays / 7).round() + 1).toString() + "/" + totalWeeks + " Weeks";
     }
@@ -243,9 +256,141 @@ class _TimerPageState extends State<TimerPage> {
 
   @override
   Widget build(BuildContext context) {
-    _height = MediaQuery.of(context).size.height;
-    _width = MediaQuery.of(context).size.width;
-    return WillPopScope(onWillPop: _onWillPop, child: Container());
+    if (isDark == true) {
+      bgImg = "assets/bg/night_1.jpg";
+      color = Vx.black;
+      textColor = Vx.white;
+      value = SystemUiOverlayStyle.light;
+    } else {
+      bgImg = "assets/bg/day_1.jpg";
+      color = Vx.white;
+      textColor = Vx.black;
+      value = SystemUiOverlayStyle.dark;
+    }
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: AnnotatedRegion<SystemUiOverlayStyle>(
+        value: value,
+        child: Scaffold(
+          extendBody: true,
+          body: FutureBuilder(
+            future: data,
+            builder: (BuildContext context, AsyncSnapshot snapshot) {
+              if (snapshot.connectionState == ConnectionState.done) {
+                return [
+                  VxBox(
+                    child: [
+                      "Studied $alreadyStudied Min".text.xl.semiBold.color(firstColor).make(),
+                      10.heightBox,
+                      _pressDuration.text.semiBold.xl5.color(textColor).make(),
+                      10.heightBox,
+                      remainingMessage.text.semiBold.color(Vx.red500).make(),
+                    ].vStack().box.shadowMd.roundedFull.p64.color(color.withOpacity(0.8)).make().centered(),
+                  ).bgImage(DecorationImage(image: AssetImage(bgImg), fit: BoxFit.cover)).make().whFull(context),
+                  SafeArea(
+                    child: [
+                      [
+                        IconButton(
+                          icon: sound == "sound"
+                              ? Icon(
+                                  Icons.volume_up,
+                                  color: textColor,
+                                )
+                              : Icon(
+                                  Icons.volume_off,
+                                  color: textColor,
+                                ),
+                          onPressed: () {
+                            setState(() {
+                              if (sound == "sound") {
+                                sound = "mute";
+                              } else {
+                                sound = "sound";
+                              }
+                            });
+                          },
+                        ).box.roundedFull.shadowMd.color(color).make(),
+                        const Spacer(),
+                        IconButton(
+                          icon: isDark == false
+                              ? Icon(
+                                  Icons.brightness_4,
+                                  color: textColor,
+                                )
+                              : Icon(
+                                  Icons.brightness_2,
+                                  color: textColor,
+                                ),
+                          onPressed: () {
+                            setState(() {
+                              if (isDark == false) {
+                                setState(() {
+                                  isDark = true;
+                                });
+                              } else {
+                                setState(() {
+                                  isDark = false;
+                                });
+                              }
+                            });
+                          },
+                        ).box.roundedFull.shadowMd.color(color).make(),
+                      ].hStack(alignment: MainAxisAlignment.spaceBetween).p8(),
+                      [
+                        'Week : 1 / 20'.text.semiBold.color(textColor).make(),
+                        const Spacer(),
+                        'Day 4'.text.semiBold.color(textColor).make(),
+                      ].hStack().px8().box.p12.color(color.withOpacity(0.8)).make().py16(),
+                      [
+                        FadeAnimatedTextKit(
+                          onTap: () {},
+                          text: headingList.isEmpty || headingList == null ? ["Welcome To Lurnify"] : headingList,
+                          textStyle: TextStyle(color: textColor),
+                          textAlign: TextAlign.center,
+                          alignment: AlignmentDirectional.center,
+                          repeatForever: true,
+                          // or Alignment.topLeft
+                          duration: const Duration(seconds: 3),
+                        ).wFull(context),
+                      ].hStack(),
+                      const HeightBox(10).hHalf(context),
+                      [
+                        FadeAnimatedTextKit(
+                          onTap: () {},
+                          text: const ["Remaining 64 Days", "Remaining 10 Weeks"],
+                          textStyle: TextStyle(color: textColor, fontSize: Vx.dp16),
+                          textAlign: TextAlign.center,
+                          alignment: AlignmentDirectional.center,
+                          repeatForever: true,
+                          // or Alignment.topLeft
+                          duration: const Duration(seconds: 5),
+                        ).wFull(context),
+                      ].hStack().box.py12.color(color.withOpacity(0.8)).make(),
+                    ].vStack(),
+                  ),
+                ].zStack();
+              } else {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+            },
+          ),
+          bottomNavigationBar: CustomButton(
+            btnClr: color,
+            buttonText: "END",
+            color: Vx.red500,
+            fntWgt: FontWeight.w600,
+            fntSize: Vx.dp20,
+            brdRds: 0,
+            verpad: const EdgeInsets.symmetric(vertical: 5),
+            onPressed: () {
+              endSession();
+            },
+          ),
+        ),
+      ),
+    );
   }
 
   Future questionAlertBox(context) {

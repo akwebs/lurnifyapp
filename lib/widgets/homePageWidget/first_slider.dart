@@ -32,11 +32,12 @@ class _FirstSliderState extends State<FirstSlider> {
   Widget build(BuildContext context) {
     return VxSwiper.builder(
       itemCount: 4,
-      aspectRatio: 16 / 7,
+      aspectRatio: context.isMobile ? 16 / 7 : 19 / 9,
       enlargeCenterPage: true,
-      viewportFraction: context.isMobile ? 0.9 : 0.45,
+      viewportFraction: 0.9,
       autoPlay: true,
-      enableInfiniteScroll: false,
+      autoPlayInterval: const Duration(seconds: 6),
+      enableInfiniteScroll: true,
       itemBuilder: (context, index) {
         return VxTwoRow(
           left: (VxTwoColumn(

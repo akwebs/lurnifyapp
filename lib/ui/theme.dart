@@ -36,7 +36,7 @@ class AppTheme {
         ),
       ),
       colorScheme: const ColorScheme(
-        primary: _lightPrimaryColor,
+        primary: _lightSeconderyColor,
         primaryVariant: _lightPrimaryVariantColor,
         secondary: _lightSeconderyColor,
         onPrimary: _lightOnPrimaryColor,
@@ -76,6 +76,9 @@ class AppTheme {
             borderRadius: BorderRadius.circular(10),
           )),
         ),
+      ),
+      timePickerTheme: const TimePickerThemeData(
+        helpTextStyle: TextStyle(color: _lightPrimaryVariantColor),
       ),
       canvasColor: _lightPrimaryColor,
       radioTheme: RadioThemeData(
@@ -140,7 +143,7 @@ class AppTheme {
         ),
       ),
       colorScheme: const ColorScheme(
-        primary: _darkPrimaryColor,
+        primary: _darkSeconderyColor,
         primaryVariant: _darkPrimaryVariantColor,
         secondary: _darkSeconderyColor,
         onPrimary: _darkOnPrimaryColor,

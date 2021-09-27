@@ -43,22 +43,22 @@ class _SelfStudySectionState extends State<SelfStudySection> {
         title: const Text("Self Study Section"),
         centerTitle: true,
         elevation: 0,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.info),
-            onPressed: () {
-              // _pace(context);
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.sync),
-            onPressed: () {
-              Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => Recent("2"),
-              ));
-            },
-          ),
-        ],
+        // actions: [
+        //   IconButton(
+        //     icon: const Icon(Icons.info),
+        //     onPressed: () {
+        //       _pace();
+        //     },
+        //   ),
+        //   // IconButton(
+        //   //   icon: const Icon(Icons.sync),
+        //   //   onPressed: () {
+        //   //     Navigator.of(context).push(MaterialPageRoute(
+        //   //       builder: (context) => Recent("2"),
+        //   //     ));
+        //   //   },
+        //   // ),
+        // ],
       ),
       body: FutureBuilder(
         future: _getCourseDate(),
@@ -85,28 +85,40 @@ class _SelfStudySectionState extends State<SelfStudySection> {
               ].vStack(),
             );
           } else {
-            return Center(
-              child: SizedBox(
-                height: 150,
-                width: 150,
-                child: Lottie.asset(
-                  'assets/lottie/56446-walk.json',
-                ),
-              ),
-            );
+            return const Center(child: CircularProgressIndicator());
           }
         },
       ),
-      bottomNavigationBar: CustomButton(
-        brdRds: 0,
-        buttonText: 'Start Study',
-        verpad: const EdgeInsets.symmetric(vertical: 5),
+      floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => Recent("1"),
-          ));
+          _pace();
         },
+        child: const Icon(Icons.info),
+        foregroundColor: Vx.white,
       ),
+      bottomNavigationBar: [
+        CustomButton(
+          brdRds: 0,
+          buttonText: 'Sync Study',
+          verpad: const EdgeInsets.symmetric(vertical: 5),
+          onPressed: () {
+            Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => Recent("2"),
+            ));
+          },
+        ).expand(),
+        1.widthBox,
+        CustomButton(
+          brdRds: 0,
+          buttonText: 'Start Study',
+          verpad: const EdgeInsets.symmetric(vertical: 5),
+          onPressed: () {
+            Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => Recent("1"),
+            ));
+          },
+        ).expand(),
+      ].hStack(),
     );
   }
 
@@ -163,5 +175,14 @@ class _SelfStudySectionState extends State<SelfStudySection> {
           .wFull(context)
           .py4(),
     ].vStack().wFull(context);
+  }
+
+  _pace() async {
+    showCupertinoModalPopup(
+        barrierColor: Vx.black.withOpacity(0.7),
+        context: context,
+        builder: (builder) {
+          return pace(context).p12().card.makeCentered().px20();
+        });
   }
 }

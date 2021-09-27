@@ -4,16 +4,20 @@ import 'dart:math';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
+import 'package:flutter_spinning_wheel/flutter_spinning_wheel.dart';
 import 'package:lurnify/config/data.dart';
 import 'package:lurnify/helper/db_helper.dart';
-import 'package:lurnify/widgets/componants/custom_button.dart';
+import 'package:velocity_x/velocity_x.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 
 class SpinnerClass extends StatefulWidget {
   final _spinData;
-  SpinnerClass(this._spinData);
+
+  const SpinnerClass(this._spinData, {Key key}) : super(key: key);
+
   @override
+  // ignore: no_logic_in_create_state
   _SpinnerClassState createState() => _SpinnerClassState(_spinData);
 }
 
@@ -21,126 +25,105 @@ class _SpinnerClassState extends State<SpinnerClass> {
   final _spinData;
   _SpinnerClassState(this._spinData);
   int _selected = 0;
+  double _generateRandomAngle() => Random().nextDouble() * pi * 2;
+  double _generateRandomVelocity() => (Random().nextDouble() * 6000) + 2000;
+  final StreamController _dividerController = StreamController<int>();
+
+  final _wheelNotifier = StreamController<double>();
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            margin: EdgeInsets.symmetric(horizontal: 20),
-            decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10)),
-            child: Column(
-              children: [
-                Container(
-                  width: double.infinity,
-                  padding: EdgeInsets.all(20),
-                  height: MediaQuery.of(context).size.height * 0.4,
-                  child: FortuneWheel(
-                    indicators: [
-                      FortuneIndicator(
-                          child: Image.asset(
-                            'assets/icons/spineer.png',
-                            fit: BoxFit.contain,
-                            height: 60,
-                          ),
-                          alignment: Alignment.center)
-                    ],
-                    physics: CircularPanPhysics(
-                      duration: Duration(seconds: 1),
-                      curve: Curves.decelerate,
-                    ),
-                    duration: Duration(seconds: 10),
-                    animateFirst: false,
-                    selected: _selected,
-                    onAnimationEnd: () {
-                      _updateDailyTask();
-                    },
-                    items: List.generate(
-                      _spinData.length,
-                      (index) {
-                        return FortuneItem(
-                            style: FortuneItemStyle(
-                                color: AppColors.tileIconColors[index],
-                                textStyle: TextStyle(
-                                  color: Colors.white,
-                                ),
-                                textAlign: TextAlign.center),
-                            child: Text(_spinData[index]['taskName']));
-                      },
-                    ),
-                  ),
-                ),
-                Container(
-                  width: double.infinity,
-                  padding: EdgeInsets.fromLTRB(20, 20, 20, 5),
-                  height: MediaQuery.of(context).size.height * 0.15,
-                  child: Center(
-                    child: CustomButton(
-                      verpad: EdgeInsets.symmetric(
-                        vertical: 5,
-                        horizontal: 40,
-                      ),
-                      brdRds: 30,
-                      btnClr: Colors.green,
-                      buttonText: 'SPIN',
-                      onPressed: () {
-                        try {
-                          print(_selected);
-                          var _random = new Random();
-                          setState(() {
-                            _selected = _random.nextInt(6);
-                            print(_selected);
-                          });
-                        } catch (e) {
-                          print(e);
-                        }
-                      },
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
+    return [
+      IconButton(
+        onPressed: () {
+          context.pop();
+        },
+        icon: const Icon(Icons.close),
       ),
-    );
+      [
+        "W 4".text.xl.make(),
+        "Challange of day 3".text.make(),
+        SpinningWheel(
+          Image.asset('assets/images/spinner_01.png'),
+          secondaryImage: Image.asset('assets/icons/spineer.png', fit: BoxFit.contain),
+          secondaryImageHeight: 60,
+          secondaryImageWidth: 60,
+          width: 260,
+          height: 260,
+          initialSpinAngle: _generateRandomAngle(),
+          spinResistance: 0.2,
+          dividers: 6,
+          //shouldStartOrStop: _wheelNotifier.stream,
+          onUpdate: _dividerController.add,
+          onEnd: _dividerController.add,
+        ).p12().centered().pOnly(bottom: 20).onTap(() {
+          _wheelNotifier.sink.add(_generateRandomVelocity());
+        }),
+        'How to paly'.text.make(),
+        VxBox(
+          child: const Divider(
+            height: 10,
+            thickness: 1,
+            indent: 0,
+            endIndent: 20,
+          ),
+        ).make().py8(),
+        'Terms & Conditions'.text.make().pOnly(bottom: 20),
+        50.heightBox,
+      ].vStack(crossAlignment: CrossAxisAlignment.start).px8().py12(),
+    ].zStack(alignment: Alignment.topRight);
+    // return FortuneWheel(
+    //   indicators: [
+    //     FortuneIndicator(
+    //         child: Image.asset(
+    //           'assets/icons/spineer.png',
+    //           fit: BoxFit.contain,
+    //           height: 60,
+    //         ).onTap(() {
+    //           try {
+    //             print(_selected);
+    //             var _random = Random();
+    //             setState(() {
+    //               _selected = _random.nextInt(6);
+    //               print(_selected);
+    //             });
+    //           } catch (e) {
+    //             print(e);
+    //           }
+    //         }),
+    //         alignment: Alignment.center)
+    //   ],
+    //   physics: CircularPanPhysics(
+    //     duration: const Duration(seconds: 1),
+    //     curve: Curves.decelerate,
+    //   ),
+
+    //   duration: const Duration(seconds: 10),
+    //   animateFirst: false,
+    //   selected: _selected,
+    //   onAnimationEnd: () {
+    //     _updateDailyTask();
+    //   },
+    //   items: List.generate(
+    //     _spinData.length,
+    //     (index) {
+    //       return FortuneItem(
+    //           style: FortuneItemStyle(
+    //               color: AppColors.tileIconColors[index],
+    //               textStyle: const TextStyle(
+    //                 color: Colors.white,
+    //               ),
+    //               textAlign: TextAlign.center),
+    //           child: Text(_spinData[index]['taskName']));
+    //     },
+    //   ),
+    // );
   }
-// FortuneWheel(
-//   indicators: [
-//     FortuneIndicator(
-//         child: Image.asset(
-//           'assets/icons/spineer.png',
-//           fit: BoxFit.contain,
-//           height: 60,
-//         ),
-//         alignment: Alignment.center)
-//   ],
-//   physics: CircularPanPhysics(
-//     duration: Duration(seconds: 1),
-//     curve: Curves.decelerate,
-//   ),
-//   duration: Duration(seconds: 10),
-//   animateFirst: false,
-//   selected: _selected,
-//   onAnimationEnd: () {
-//     _updateDailyTask();
-//   },
-//   items: List.generate(
-//     _spinData.length,
-//     (index) {
-//       return FortuneItem(
-//           style: FortuneItemStyle(
-//               color: AppColors.tileIconColors[index],
-//               textStyle: TextStyle(
-//                 color: Colors.white,
-//               ),
-//               textAlign: TextAlign.center),
-//           child: Text(_spinData[index]['taskName']));
-//     },
-//   ),
-// ),
 
   _updateDailyTask() async {
     try {
@@ -154,7 +137,7 @@ class _SpinnerClassState extends State<SpinnerClass> {
       // http.Response response = await http.post(
       //   Uri.encodeFull(url),
       // );
-      DBHelper dbHelper = new DBHelper();
+      DBHelper dbHelper = DBHelper();
       Database database = await dbHelper.database;
       String sql = "select sno from daily_task_completion "
           "where registerSno='${sp.getString("studentSno")}' and spinDate='${DateTime.now().toString().split(" ")[0]}' ";

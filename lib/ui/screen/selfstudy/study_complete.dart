@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:velocity_x/velocity_x.dart';
 import '../../../helper/db_helper.dart';
 import '../../../helper/dime_repo.dart';
 import '../../../helper/reward_repo.dart';
@@ -72,7 +74,7 @@ class _StudyCompleteState extends State<StudyComplete> {
 
   get fullWidth => Responsive.getPercent(100, ResponsiveSize.WIDTH, context);
   Future _getTotalSecondByDate() async {
-    try{
+    try {
       // SharedPreferences sp = await SharedPreferences.getInstance();
       // var url = baseUrl +
       //     "getTotalSecondByDate?date=" +
@@ -103,18 +105,18 @@ class _StudyCompleteState extends State<StudyComplete> {
         reward = a['studyTime'] ?? '0';
       }
       double totalDimeEarn = int.parse(reward) * (int.parse(second ?? "0") / 60);
-      totalDimeEarns = totalDimeEarn.toStringAsFixed(2) ?? "0";
+      totalDimeEarns = totalDimeEarn.toStringAsFixed(0) ?? "0";
       if (totalDimeEarns == null) {
         totalDimeEarns = "0";
       }
       await getLeftStudyHour(sum);
-    }catch(e){
+    } catch (e) {
       print(e);
     }
   }
 
   Future getLeftStudyHour(double sum) async {
-    try{
+    try {
       SharedPreferences sp = await SharedPreferences.getInstance();
       PaceRepo paceRepo = PaceRepo();
       List<Map<String, dynamic>> pace = await paceRepo.getPace();
@@ -125,13 +127,13 @@ class _StudyCompleteState extends State<StudyComplete> {
       double tStudyHr = double.parse(totalStudyHr) ?? 0;
 
       totalStudyHour = sp.getDouble("totalStudyHour");
-      double totalStudyHourInSeconds = tStudyHr*3600;
+      double totalStudyHourInSeconds = tStudyHr * 3600;
       double totalLefSecond = totalStudyHourInSeconds - int.parse(second ?? "0") - sum;
       String twoDigits(int n) => n.toString().padLeft(2, "0");
       String twoDigitMinutes = twoDigits(Duration(seconds: totalLefSecond.toInt()).inMinutes.remainder(60));
       String twoDigitSeconds = twoDigits(Duration(seconds: totalLefSecond.toInt()).inSeconds.remainder(60));
       leftStudyHour = "${twoDigits(Duration(seconds: totalLefSecond.toInt()).inHours)}:$twoDigitMinutes:$twoDigitSeconds";
-    }catch(e){
+    } catch (e) {
       print(e);
     }
   }
@@ -146,7 +148,8 @@ class _StudyCompleteState extends State<StudyComplete> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Study Complete"),
+        elevation: 0,
+        title: const Text("Study Session Reporting"),
         centerTitle: true,
       ),
       body: WillPopScope(
@@ -166,9 +169,6 @@ class _StudyCompleteState extends State<StudyComplete> {
                         completionNotice(),
                         completionTask(),
                         continueAfter(),
-                        SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.1,
-                        ),
                       ],
                     ),
                   ),
@@ -204,353 +204,238 @@ class _StudyCompleteState extends State<StudyComplete> {
   }
 
   Widget completionNotice() {
-    return Container(
-      width: fullWidth,
-      height: Responsive.getPercent(20, ResponsiveSize.HEIGHT, context),
-      padding: EdgeInsets.all(5),
-      child: Card(
-        clipBehavior: Clip.antiAlias,
-        elevation: 5,
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Flexible(
-              flex: 3,
-              child: Container(
-                padding: EdgeInsets.all(5),
-                width: fullWidth,
-                color: firstColor,
-                child: Text(
-                  "Congratulation!",
-                  style: TextStyle(color: whiteColor, fontWeight: FontWeight.w500, fontSize: 24),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            ),
-            Spacer(),
-            Flexible(
-              flex: 1,
-              child: Text(
-                "You have earned $totalDimeEarns Dimes ",
-              ),
-            ),
-            Flexible(
-              flex: 1,
-              child: Text(
-                leftStudyHour.length < 1 ? "0" : leftStudyHour,
-              ),
-            ),
-            Flexible(
-              flex: 1,
-              child: Text(
-                "to complete today's study time",
-              ),
-            ),
-            Spacer(),
-          ],
-        ),
-      ),
-    );
+    return [
+      "Congratulations!".text.semiBold.xl2.center.white.make().px12().box.shadowMd.roundedSM.p8.color(Vx.green500).make(),
+      [
+        [
+          "Earned ".text.make(),
+          "$totalDimeEarns ".text.green500.semiBold.xl4.make(),
+          Image.asset(
+            'assets/images/sss/dime.png',
+            height: 25,
+            width: 25,
+            fit: BoxFit.contain,
+          ),
+        ].hStack().p4(),
+        10.heightBox,
+        [
+          VxTwoColumn(top: '4h:20m'.text.wider.center.semiBold.xl4.make(), bottom: 'Studied Today'.text.center.sm.make()).centered().expand(),
+          const VerticalDivider(
+            thickness: 1,
+            width: 1,
+          ).h10(context),
+          VxTwoColumn(top: '4h:20m'.text.wider.center.semiBold.xl4.make(), bottom: 'Studied Today'.text.center.sm.make()).centered().expand(),
+        ].hStack().wFull(context),
+        // Text(
+        //   leftStudyHour.isEmpty ? "0" : leftStudyHour,
+        // ).text.xl4.semiBold.color(Vx.red600).make(),
+        "to complete today's study time".text.make().p8(),
+      ].vStack().p8(),
+    ].vStack().card.elevation(10).p4.make().wFull(context);
   }
 
   Widget completionTask() {
-    return Container(
-      width: fullWidth,
-      padding: EdgeInsets.all(5),
-      child: Card(
-        clipBehavior: Clip.antiAlias,
-        elevation: 5,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Container(
-              padding: EdgeInsets.symmetric(vertical: 5),
-              width: MediaQuery.of(context).size.width,
-              decoration: BoxDecoration(
-                color: firstColor,
-                borderRadius: BorderRadius.only(topLeft: Radius.circular(5), topRight: Radius.circular(5)),
-              ),
-              child: Text(
-                "Topic-1",
-                style: TextStyle(color: whiteColor, fontWeight: FontWeight.w600, fontSize: 24),
-                textAlign: TextAlign.center,
-              ),
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-              child: Card(
-                elevation: 5,
-                child: SwitchListTile(
-                  contentPadding: EdgeInsets.only(left: 4, right: 4),
-                  title: Text(
-                    _isStudyCompleted ? 'Completed ?' : 'Studying ?',
-                    style: TextStyle(fontSize: 18),
-                  ),
-                  // subtitle: Text(
-                  //   'or Studying ?',
-                  //   style: TextStyle(fontSize: 14),
-                  // ),
-                  secondary: IconButton(
-                    icon: Icon(
-                      Icons.comment,
-                      color: firstColor,
-                    ),
-                    onPressed: () {
-                      remarkBox();
-                    },
-                  ),
-                  value: _isStudyCompleted,
-                  activeColor: firstColor,
-                  onChanged: (complete) {
-                    setState(() {
-                      _isStudyCompleted = complete;
-                    });
-                  },
-                ),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.all(10),
-              child: Card(
-                elevation: 5,
-                child: Container(
-                  padding: EdgeInsets.all(5),
-                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(10)),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                          padding: EdgeInsets.only(left: 10, top: 10),
-                          child: Text(
-                            "Studied : ",
-                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
-                          )),
-                      Container(
-                        padding: EdgeInsets.symmetric(horizontal: 10),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Text(
-                              "Th",
-                              style: TextStyle(fontSize: 13, fontWeight: FontWeight.w800),
-                            ),
-                            Container(
-                              width: MediaQuery.of(context).size.width * 0.62,
-                              child: SliderTheme(
-                                data: SliderTheme.of(context).copyWith(
-                                  activeTrackColor: firstColor,
-                                  inactiveTrackColor: firstColor,
-                                  trackShape: RoundedRectSliderTrackShape(),
-                                  trackHeight: 4.0,
-                                  thumbShape: RoundSliderThumbShape(enabledThumbRadius: 12.0),
-                                  thumbColor: firstColor,
-                                  overlayColor: firstColor.withAlpha(80),
-                                  overlayShape: RoundSliderOverlayShape(overlayRadius: 28.0),
-                                  tickMarkShape: RoundSliderTickMarkShape(),
-                                  activeTickMarkColor: firstColor,
-                                  inactiveTickMarkColor: firstColor,
-                                  valueIndicatorShape: PaddleSliderValueIndicatorShape(),
-                                  valueIndicatorColor: firstColor,
-                                  valueIndicatorTextStyle: TextStyle(
-                                    color: whiteColor,
-                                  ),
-                                ),
-                                child: Slider(
-                                  value: theoryOrNum,
-                                  min: 0,
-                                  max: 100,
-                                  divisions: 20,
-                                  label: theoryOrNum.round().toString(),
-                                  onChanged: (value) {
-                                    setState(
-                                      () {
-                                        theoryOrNum = value;
-                                      },
-                                    );
-                                  },
-                                ),
-                              ),
-                            ),
-                            Text(
-                              "Num",
-                              style: TextStyle(fontSize: 13, fontWeight: FontWeight.w800),
-                              textAlign: TextAlign.start,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.all(10),
-              child: Card(
-                elevation: 5,
-                child: Container(
-                  padding: EdgeInsets.all(5),
-                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(10)),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                          padding: EdgeInsets.only(left: 10, top: 10),
-                          child: Text(
-                            "Effectiveness Of Study : ",
-                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
-                          )),
-                      Container(
-                        padding: EdgeInsets.symmetric(horizontal: 10),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Text(
-                              "0%",
-                              style: TextStyle(fontSize: 13, fontWeight: FontWeight.w800),
-                            ),
-                            Container(
-                              width: MediaQuery.of(context).size.width * 0.62,
-                              child: SliderTheme(
-                                data: SliderTheme.of(context).copyWith(
-                                  activeTrackColor: firstColor,
-                                  inactiveTrackColor: firstColor,
-                                  trackShape: RoundedRectSliderTrackShape(),
-                                  trackHeight: 4.0,
-                                  thumbShape: RoundSliderThumbShape(enabledThumbRadius: 12.0),
-                                  thumbColor: firstColor,
-                                  overlayColor: firstColor.withAlpha(80),
-                                  overlayShape: RoundSliderOverlayShape(overlayRadius: 28.0),
-                                  tickMarkShape: RoundSliderTickMarkShape(),
-                                  activeTickMarkColor: firstColor,
-                                  inactiveTickMarkColor: firstColor,
-                                  valueIndicatorShape: PaddleSliderValueIndicatorShape(),
-                                  valueIndicatorColor: firstColor,
-                                  valueIndicatorTextStyle: TextStyle(
-                                    color: whiteColor,
-                                  ),
-                                ),
-                                child: Slider(
-                                  value: effectivenessOfStudy,
-                                  min: 0,
-                                  max: 100,
-                                  divisions: 20,
-                                  label: effectivenessOfStudy.round().toString(),
-                                  onChanged: (value) {
-                                    setState(
-                                      () {
-                                        effectivenessOfStudy = value;
-                                      },
-                                    );
-                                  },
-                                ),
-                              ),
-                            ),
-                            Text(
-                              "100%",
-                              style: TextStyle(fontSize: 13, fontWeight: FontWeight.w800),
-                              textAlign: TextAlign.start,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-          ],
+    return [
+      // IconButton(
+      //     icon: Icon(
+      //       Icons.comment,
+      //       color: firstColor,
+      //     ),
+      //     onPressed: () {
+      //       remarkBox();
+      //     },
+      //   ),
+      "Topic Details".text.semiBold.lg.center.make().box.p8.color(Vx.purple200).make().wFull(context),
+      10.heightBox,
+      SwitchListTile(
+        contentPadding: const EdgeInsets.only(left: 12, right: 12),
+        title: Text(
+          _isStudyCompleted ? 'Completed' : 'Studying',
+          style: const TextStyle(fontSize: 18),
         ),
+        subtitle: Text(
+          _isStudyCompleted ? 'Studying ?' : 'Completed ?',
+        ),
+        value: _isStudyCompleted,
+        activeColor: firstColor,
+        onChanged: (complete) {
+          setState(() {
+            _isStudyCompleted = complete;
+          });
+        },
       ),
-    );
+      10.heightBox,
+      [
+        [
+          "Effectiveness Of Study : ".text.make(),
+          const Spacer(),
+          const Icon(
+            Icons.info_outline_rounded,
+            size: Vx.dp20,
+          ).onTap(() {
+            _info('How effective you studied according to understanding the concept and topic.');
+          }),
+        ].hStack(),
+        [
+          "0%".text.make(),
+          SizedBox(
+            width: MediaQuery.of(context).size.width * 0.62,
+            child: SliderTheme(
+              data: SliderTheme.of(context).copyWith(
+                activeTrackColor: firstColor,
+                inactiveTrackColor: firstColor.withOpacity(0.7),
+                trackShape: const RoundedRectSliderTrackShape(),
+                trackHeight: 3.0,
+                thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 8.0),
+                thumbColor: firstColor,
+                overlayColor: firstColor.withAlpha(80),
+                overlayShape: const RoundSliderOverlayShape(overlayRadius: 28.0),
+                tickMarkShape: const RoundSliderTickMarkShape(),
+                activeTickMarkColor: firstColor,
+                inactiveTickMarkColor: firstColor,
+                valueIndicatorShape: const PaddleSliderValueIndicatorShape(),
+                valueIndicatorColor: firstColor,
+                valueIndicatorTextStyle: TextStyle(
+                  color: whiteColor,
+                ),
+              ),
+              child: Slider(
+                value: effectivenessOfStudy,
+                min: 0,
+                max: 100,
+                divisions: 10,
+                label: effectivenessOfStudy.round().toString(),
+                onChanged: (value) {
+                  setState(
+                    () {
+                      effectivenessOfStudy = value;
+                    },
+                  );
+                },
+              ),
+            ),
+          ),
+          "100%".text.make(),
+        ].hStack(alignment: MainAxisAlignment.spaceBetween).wFull(context),
+      ].vStack().px16(),
+      10.heightBox,
+      [
+        [
+          "Studied : ".text.make(),
+          const Spacer(),
+          const Icon(
+            Icons.info_outline_rounded,
+            size: Vx.dp20,
+          ).onTap(() {
+            _info('How effective you studied according to understanding the concept and topic.');
+          }),
+        ].hStack(),
+        [
+          "Th".text.make(),
+          SizedBox(
+            width: MediaQuery.of(context).size.width * 0.62,
+            child: SliderTheme(
+              data: SliderTheme.of(context).copyWith(
+                activeTrackColor: firstColor,
+                inactiveTrackColor: firstColor.withOpacity(0.7),
+                trackShape: const RoundedRectSliderTrackShape(),
+                trackHeight: 3.0,
+                thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 8.0),
+                thumbColor: firstColor,
+                overlayColor: firstColor.withAlpha(80),
+                overlayShape: const RoundSliderOverlayShape(overlayRadius: 28.0),
+                tickMarkShape: const RoundSliderTickMarkShape(),
+                activeTickMarkColor: firstColor,
+                inactiveTickMarkColor: firstColor,
+                valueIndicatorShape: const PaddleSliderValueIndicatorShape(),
+                valueIndicatorColor: firstColor,
+                valueIndicatorTextStyle: TextStyle(
+                  color: whiteColor,
+                ),
+              ),
+              child: Slider(
+                value: theoryOrNum,
+                min: 0,
+                max: 100,
+                divisions: 10,
+                label: theoryOrNum.round().toString(),
+                onChanged: (value) {
+                  setState(
+                    () {
+                      theoryOrNum = value;
+                    },
+                  );
+                },
+              ),
+            ),
+          ),
+          "Num".text.make(),
+        ].hStack(alignment: MainAxisAlignment.spaceBetween).wFull(context),
+      ].vStack().px16(),
+      VxBox().color(Vx.purple200).make().h2(context).wFull(context)
+    ].vStack().card.elevation(10).p8.make().py4();
+  }
+
+  _info(String message) async {
+    showCupertinoModalBottomSheet(
+        barrierColor: Vx.black.withOpacity(0.7),
+        context: context,
+        builder: (builder) {
+          return message.text.lg.make().p12().card.elevation(0).make().p8();
+        });
   }
 
   Widget continueAfter() {
-    return Padding(
-      padding: EdgeInsets.all(5),
-      child: Card(
-        elevation: 5,
-        clipBehavior: Clip.antiAlias,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Container(
-              padding: EdgeInsets.symmetric(vertical: 5),
-              width: MediaQuery.of(context).size.width,
-              decoration: BoxDecoration(
-                color: firstColor,
-                borderRadius: BorderRadius.only(topLeft: Radius.circular(5), topRight: Radius.circular(5)),
-              ),
-              child: Text(
-                "Continue Study After:",
-                style: TextStyle(color: whiteColor, fontSize: 24),
-                textAlign: TextAlign.center,
-              ),
+    TimeOfDay _time = const TimeOfDay(hour: 7, minute: 15);
+
+    void _selectTime() async {
+      final TimeOfDay newTime = await showTimePicker(
+        context: context,
+        initialTime: _time,
+      );
+      if (newTime != null) {
+        setState(() {
+          _time = newTime;
+          startStudyAfter = newTime.toString();
+        });
+      }
+    }
+
+    return [
+      "Continue Study After".text.semiBold.lg.center.make().box.p8.color(Vx.purple200).make().wFull(context),
+      [
+        "Select Time".text.xl.semiBold.make().p8().card.make().onInkTap(
+              _selectTime,
             ),
-            SizedBox(
-              height: 20,
-            ),
-            Card(
-              elevation: 5,
-              child: Container(
-                  width: MediaQuery.of(context).size.width - 50,
-                  padding: EdgeInsets.all(10),
-                  child: Column(
-                    children: [
-                      Text(
-                        "I will start my study at ",
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-//                      Text("$printHr Hours $printMin mins", style: TextStyle(
-//                          fontSize: 14,
-//                          fontWeight: FontWeight.w600,
-//                          color: Colors.purple),),
-                      Text(
-                        startStudyAfter,
-                        style: TextStyle(
-                          fontSize: 18,
-                        ),
-                      ),
-                    ],
-                  )),
-            ),
-            Padding(
-              padding: EdgeInsets.all(10),
-              child: Container(
-                padding: EdgeInsets.only(left: 10),
-                height: MediaQuery.of(context).copyWith().size.height / 6,
-                child: CupertinoTimerPicker(
-                  mode: CupertinoTimerPickerMode.hm,
-                  alignment: Alignment.center,
-                  onTimerDurationChanged: (Duration changedtimer) {
-                    setState(
-                      () {
-                        // ignore: unused_local_variable
-                        var formatter = DateFormat("hh:mm a");
-                        startStudyAfter = _printDuration(changedtimer);
-                      },
-                    );
-                  },
-                ),
-              ),
-            ),
-            SizedBox(
-              height: 20,
-            ),
-          ],
-        ),
-      ),
-    );
+        Text(
+          'I will start my study at : ${_time.format(context)}',
+        ).text.make(),
+      ].vStack().p8(),
+      // Padding(
+      //   padding: EdgeInsets.all(10),
+      //   child: Container(
+      //     padding: EdgeInsets.only(left: 10),
+      //     height: MediaQuery.of(context).copyWith().size.height / 6,
+      //     child: CupertinoTimerPicker(
+      //       mode: CupertinoTimerPickerMode.hm,
+      //       alignment: Alignment.center,
+      //       onTimerDurationChanged: (Duration changedtimer) {
+      //         setState(
+      //           () {
+      //             // ignore: unused_local_variable
+      //             var formatter = DateFormat("hh:mm a");
+      //             startStudyAfter = _printDuration(changedtimer);
+      //           },
+      //         );
+      //       },
+      //     ),
+      //   ),
+      // ),
+      // SizedBox(
+      //   height: 20,
+      // ),
+      VxBox().color(Vx.purple200).make().h2(context).wFull(context)
+    ].vStack().card.elevation(10).p8.make().py12().wFull(context);
   }
 
   void _submitDone() async {
@@ -814,12 +699,12 @@ class _StudyCompleteState extends State<StudyComplete> {
                       height: 10,
                     ),
                     CustomButton(
-                      brdRds: 10,
+                      brdRds: 5,
                       buttonText: 'Add Remark',
                       onPressed: () {
                         _addRemark();
                       },
-                      verpad: EdgeInsets.symmetric(vertical: 10),
+                      verpad: EdgeInsets.symmetric(vertical: 0),
                     ),
                     SizedBox(
                       height: 10,
