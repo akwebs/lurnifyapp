@@ -25,7 +25,7 @@ class _SpinnerClassState extends State<SpinnerClass> {
   final _spinData;
   _SpinnerClassState(this._spinData);
   int _selected = 0;
-  double _generateRandomAngle() => Random().nextDouble() * pi * 2;
+  double _generateAngle() => pi * 2;
   double _generateRandomVelocity() => (Random().nextDouble() * 6000) + 2000;
   final StreamController _dividerController = StreamController<int>();
 
@@ -44,10 +44,12 @@ class _SpinnerClassState extends State<SpinnerClass> {
           context.pop();
         },
         icon: const Icon(Icons.close),
-      ),
+      ).card.circular.elevation(10).make(),
       [
-        "W 4".text.xl.make(),
-        "Challange of day 3".text.make(),
+        [
+          "W4".text.semiBold.xl.make(),
+          "Challange of day ".richText.withTextSpanChildren(['3'.textSpan.bold.make()]).make(),
+        ].vStack().wFull(context),
         SpinningWheel(
           Image.asset('assets/images/spinner_01.png'),
           secondaryImage: Image.asset('assets/icons/spineer.png', fit: BoxFit.contain),
@@ -55,13 +57,23 @@ class _SpinnerClassState extends State<SpinnerClass> {
           secondaryImageWidth: 60,
           width: 260,
           height: 260,
-          initialSpinAngle: _generateRandomAngle(),
+          initialSpinAngle: _generateAngle(),
           spinResistance: 0.2,
           dividers: 6,
-          //shouldStartOrStop: _wheelNotifier.stream,
+          shouldStartOrStop: _wheelNotifier.stream,
           onUpdate: _dividerController.add,
           onEnd: _dividerController.add,
         ).p12().centered().pOnly(bottom: 20).onTap(() {
+          try {
+            print(_selected);
+            var _random = Random();
+            setState(() {
+              _selected = _random.nextInt(6);
+              print(_selected);
+            });
+          } catch (e) {
+            print(e);
+          }
           _wheelNotifier.sink.add(_generateRandomVelocity());
         }),
         'How to paly'.text.make(),
@@ -85,16 +97,16 @@ class _SpinnerClassState extends State<SpinnerClass> {
     //           fit: BoxFit.contain,
     //           height: 60,
     //         ).onTap(() {
-    //           try {
-    //             print(_selected);
-    //             var _random = Random();
-    //             setState(() {
-    //               _selected = _random.nextInt(6);
-    //               print(_selected);
-    //             });
-    //           } catch (e) {
-    //             print(e);
-    //           }
+    // try {
+    //   print(_selected);
+    //   var _random = Random();
+    //   setState(() {
+    //     _selected = _random.nextInt(6);
+    //     print(_selected);
+    //   });
+    // } catch (e) {
+    //   print(e);
+    // }
     //         }),
     //         alignment: Alignment.center)
     //   ],

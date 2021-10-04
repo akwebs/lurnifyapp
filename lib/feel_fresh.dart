@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:velocity_x/velocity_x.dart';
 
 class FeelFresh extends StatefulWidget {
-  FeelFresh({Key key}) : super(key: key);
+  const FeelFresh({Key key}) : super(key: key);
 
   @override
   _FeelFreshState createState() => _FeelFreshState();

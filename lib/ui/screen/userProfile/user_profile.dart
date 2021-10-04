@@ -33,7 +33,7 @@ class _UserProfileState extends State<UserProfile> {
   List<Map<String, dynamic>> _streaks = [];
 
   _getData() async {
-    DBHelper dbHelper = new DBHelper();
+    DBHelper dbHelper = DBHelper();
     Database db = await dbHelper.database;
     db.transaction((txn) async {
       String sql = "select count(sno) as completedUnits from completed_units";
@@ -89,7 +89,7 @@ class _UserProfileState extends State<UserProfile> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'User Profile',
         ),
         elevation: 0,
@@ -107,11 +107,11 @@ class _UserProfileState extends State<UserProfile> {
                     padding: const EdgeInsets.all(10.0),
                     child: Column(
                       children: [
-                        Text(
+                        const Text(
                           "Aman Sharma",
                           style: TextStyle(fontSize: 30, fontWeight: FontWeight.w600),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 7,
                         ),
                         Text(
@@ -127,12 +127,12 @@ class _UserProfileState extends State<UserProfile> {
                       aspectRatio: 4 / 2,
                       child: Stack(
                         children: [
-                          Align(
+                          const Align(
                             alignment: Alignment.center,
                             child: _ProgressBar(
                               progressValue: 40,
                               task: Padding(
-                                padding: const EdgeInsets.only(bottom: 10),
+                                padding: EdgeInsets.only(bottom: 10),
                                 child: CircleAvatar(
                                   radius: 60,
                                   backgroundImage: AssetImage('assets/images/anshul.png'),
@@ -154,65 +154,20 @@ class _UserProfileState extends State<UserProfile> {
                       borderRadius: BorderRadius.circular(50),
                       onTap: () {
                         Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => SocialGroup(),
+                          builder: (context) => const SocialGroup(),
                         ));
                       },
                       child: Container(
                         clipBehavior: Clip.hardEdge,
-                        padding: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                        padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
                         width: MediaQuery.of(context).size.width * 4 / 10,
                         child: Stack(
                           alignment: Alignment.center,
                           children: [
-                            Align(
-                              alignment: Alignment.lerp(Alignment.centerLeft, Alignment.centerRight, 0.0),
-                              child: Container(
-                                child: CircleAvatar(radius: 15, backgroundImage: AssetImage('assets/images/anshul.png')),
-                                decoration: new BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  border: new Border.all(
-                                    color: Colors.deepPurple,
-                                    width: 2.0,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Align(
-                                alignment: Alignment.lerp(Alignment.centerLeft, Alignment.centerRight, 0.15),
-                                child: Container(
-                                  child: CircleAvatar(radius: 15, backgroundImage: AssetImage('assets/images/anshul.png')),
-                                  decoration: new BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    border: new Border.all(
-                                      color: Colors.deepPurple,
-                                      width: 2.0,
-                                    ),
-                                  ),
-                                )),
-                            Align(
-                                alignment: Alignment.lerp(Alignment.centerLeft, Alignment.centerRight, 0.3),
-                                child: Container(
-                                  child: CircleAvatar(radius: 15, backgroundImage: AssetImage('assets/images/anshul.png')),
-                                  decoration: new BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    border: new Border.all(
-                                      color: Colors.deepPurple,
-                                      width: 2.0,
-                                    ),
-                                  ),
-                                )),
-                            Align(
-                                alignment: Alignment.lerp(Alignment.centerLeft, Alignment.centerRight, 0.45),
-                                child: Container(
-                                  child: CircleAvatar(radius: 15, backgroundImage: AssetImage('assets/images/anshul.png')),
-                                  decoration: new BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    border: new Border.all(
-                                      color: Colors.deepPurple,
-                                      width: 2.0,
-                                    ),
-                                  ),
-                                )),
+                            const Profiles(position: 0.0, img: 'assets/images/anshul.png'),
+                            const Profiles(position: 0.15, img: 'assets/images/anshul.png'),
+                            const Profiles(position: 0.30, img: 'assets/images/anshul.png'),
+                            const Profiles(position: 0.45, img: 'assets/images/anshul.png'),
                             Align(
                                 alignment: Alignment.lerp(Alignment.centerLeft, Alignment.centerRight, 0.60),
                                 child: Container(
@@ -220,24 +175,14 @@ class _UserProfileState extends State<UserProfile> {
                                     foregroundColor: whiteColor,
                                     backgroundColor: firstColor,
                                     radius: 15,
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          '20',
-                                          style: TextStyle(fontSize: 12),
-                                        ),
-                                        Icon(
-                                          Icons.add,
-                                          size: 10,
-                                        ),
-                                      ],
+                                    child: const Text(
+                                      '20+',
+                                      style: TextStyle(fontSize: 12),
                                     ),
                                   ),
-                                  decoration: new BoxDecoration(
+                                  decoration: BoxDecoration(
                                     shape: BoxShape.circle,
-                                    border: new Border.all(
+                                    border: Border.all(
                                       color: Colors.deepPurple,
                                       width: 2.0,
                                     ),
@@ -245,16 +190,16 @@ class _UserProfileState extends State<UserProfile> {
                                 )),
                             Align(
                               alignment: Alignment.lerp(Alignment.centerLeft, Alignment.centerRight, 1.0),
-                              child: Icon(
+                              child: const Icon(
                                 Icons.arrow_forward_ios_rounded,
                                 size: 18,
                               ),
                             )
                           ],
                         ),
-                        decoration: new BoxDecoration(
+                        decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(50),
-                          border: new Border.all(width: 0.5, color: Colors.grey.withOpacity(0.5)),
+                          border: Border.all(width: 0.5, color: Colors.grey.withOpacity(0.5)),
                         ),
                       ),
                     ),
@@ -266,12 +211,12 @@ class _UserProfileState extends State<UserProfile> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Divider(
+                        const Divider(
                           height: 10,
                           thickness: 0.5,
                         ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                        const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 10),
                           child: Text(
                             'Progress Summary',
                             style: TextStyle(fontWeight: FontWeight.w600),
@@ -280,7 +225,7 @@ class _UserProfileState extends State<UserProfile> {
                         InkWell(
                           onTap: () {
                             Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => MyProgress(),
+                              builder: (context) => const MyProgress(),
                             ));
                           },
                           child: Padding(
@@ -381,7 +326,7 @@ class _UserProfileState extends State<UserProfile> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
+                                  children: const [
                                     Text(
                                       '2 Days',
                                       style: TextStyle(color: Colors.deepOrangeAccent, fontWeight: FontWeight.w600, fontSize: 18),
@@ -420,7 +365,7 @@ class _UserProfileState extends State<UserProfile> {
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
+                              children: const [
                                 Text('Edit Profile'),
                                 Icon(Icons.edit),
                               ],
@@ -479,8 +424,8 @@ class _UserProfileState extends State<UserProfile> {
               backgroundColor: Color.fromARGB(30, 128, 112, 254),
               circularStrokeCap: CircularStrokeCap.round,
               linearGradient: LinearGradient(
-                colors: <Color>[Colors.deepPurpleAccent, Colors.deepPurple],
-                stops: <double>[0.25, 0.75],
+                colors: const <Color>[Colors.deepPurpleAccent, Colors.deepPurple],
+                stops: const <double>[0.25, 0.75],
               ),
             ),
           );
@@ -490,7 +435,32 @@ class _UserProfileState extends State<UserProfile> {
   }
 }
 
+class Profiles extends StatelessWidget {
+  final double position;
+  final String img;
+  const Profiles({Key key, @required this.position, @required this.img}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment.lerp(Alignment.centerLeft, Alignment.centerRight, position),
+      child: Container(
+        child: CircleAvatar(radius: 15, backgroundImage: AssetImage(img)),
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          border: Border.all(
+            color: Colors.deepPurple,
+            width: 2.0,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class UserProfileEdit extends StatefulWidget {
+  const UserProfileEdit({Key key}) : super(key: key);
+
   @override
   _UserProfileEditState createState() => _UserProfileEditState();
 }
@@ -958,9 +928,9 @@ class _UserProfileEditState extends State<UserProfileEdit> {
                     ),
                   ),
                 ),
-                decoration: new BoxDecoration(
+                decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  border: new Border.all(
+                  border: Border.all(
                     color: Colors.deepPurple,
                     width: 3.0,
                   ),

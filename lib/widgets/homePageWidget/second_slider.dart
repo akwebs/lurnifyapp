@@ -36,7 +36,7 @@ class _SecondSliderState extends State<SecondSlider> {
           .py4()
           .px8(),
       VxSwiper.builder(
-        enableInfiniteScroll: false,
+        enableInfiniteScroll: widget.recentData.length <= 2 ? false : true,
         viewportFraction: context.isMobile ? 0.55 : 0.4,
         itemCount: widget.recentData.length,
         aspectRatio: 7 / 3,

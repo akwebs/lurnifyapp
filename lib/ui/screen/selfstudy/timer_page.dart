@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_typing_uninitialized_variables
+// ignore_for_file: prefer_typing_uninitialized_variables, avoid_print
 
 import 'dart:async';
 import 'dart:ui';
@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lurnify/ui/constant/constant.dart';
+import 'package:percent_indicator/percent_indicator.dart';
 import '../../../widgets/componants/custom_button.dart';
 import '../../../helper/db_helper.dart';
 import '../../../helper/instruction_repo.dart';
@@ -105,7 +106,7 @@ class _TimerPageState extends State<TimerPage> {
             .post(
               Uri.encodeFull(url3),
             )
-            .timeout(Duration(seconds: 1800));
+            .timeout(const Duration(seconds: 1800));
         print('request done');
         testMain = (jsonDecode(response2.body) as List).map((e) => TestMain.fromJson(e)).toList();
 
@@ -280,12 +281,20 @@ class _TimerPageState extends State<TimerPage> {
                 return [
                   VxBox(
                     child: [
-                      "Studied $alreadyStudied Min".text.xl.semiBold.color(firstColor).make(),
-                      10.heightBox,
-                      _pressDuration.text.semiBold.xl5.color(textColor).make(),
-                      10.heightBox,
-                      remainingMessage.text.semiBold.color(Vx.red500).make(),
-                    ].vStack().box.shadowMd.roundedFull.p64.color(color.withOpacity(0.8)).make().centered(),
+                      [
+                        "Studied $alreadyStudied Min".text.xl.semiBold.color(firstColor).make(),
+                        10.heightBox,
+                        _pressDuration.text.semiBold.xl5.color(textColor).make(),
+                        10.heightBox,
+                        remainingMessage.text.semiBold.color(Vx.red500).make(),
+                      ].vStack().box.shadowMd.roundedFull.p64.color(color.withOpacity(0.8)).make(),
+                      // CircularPercentIndicator(
+                      //   radius: 260,
+                      //   percent: 1.0,
+                      //   progressColor: Vx.randomColor,
+                      //   lineWidth: 5,
+                      // )
+                    ].zStack(alignment: Alignment.center).centered(),
                   ).bgImage(DecorationImage(image: AssetImage(bgImg), fit: BoxFit.cover)).make().whFull(context),
                   SafeArea(
                     child: [

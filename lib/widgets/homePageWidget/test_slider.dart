@@ -48,7 +48,7 @@ class _TestSliderState extends State<TestSlider> {
             const Icon(Icons.arrow_forward).box.p12.alignBottomRight.make(),
           ]))
               .box
-              .withGradient(AppSlider.sliderGradient[index])
+              .withGradient(randomGradient(index))
               .make()
               .onInkTap(() {
                 // Navigator.of(context).pushReplacement(MaterialPageRoute(

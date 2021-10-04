@@ -40,58 +40,63 @@ class _FirstSliderState extends State<FirstSlider> {
       enableInfiniteScroll: true,
       itemBuilder: (context, index) {
         return VxTwoRow(
-          left: (VxTwoColumn(
-                  top: VxTwoRow(left: '0'.text.medium.white.xl6.makeCentered(), right: (index + 1).text.medium.white.xl6.makeCentered()).p8().expand(flex: 4),
-                  bottom: (VxTwoColumn(
-                    top: (selfStudyPercent == 1.0)
-                        ? 'Complete'.text.white.make()
-                        : (selfStudyPercent == 0.0)
-                            ? 'Start'.text.white.make()
-                            : 'Progress'.text.white.make(),
-                    bottom: LinearPercentIndicator(
-                      padding: const EdgeInsets.symmetric(horizontal: 0),
-                      percent: (index == 0)
-                          ? selfStudyPercent > 1
-                              ? selfStudyPercent = 1
-                              : selfStudyPercent
-                          : (index == 1)
-                              ? testPercent > 1
-                                  ? testPercent = 1
-                                  : testPercent
-                              : 0.5,
-                      backgroundColor: Colors.grey,
-                      progressColor: Colors.white,
-                    ),
-                  ).p8())))
-              .box
-              .roundedSM
-              .withGradient(AppSlider.gradient[index])
-              .make()
-              .p8()
-              .expand(flex: 5),
-          right: VxTwoColumn(
-            top: ('Self Study'.text.xl2.make()).box.alignBottomLeft.make().expand(),
-            bottom: ('You are studying...'.text.make()).box.alignTopLeft.make().expand(),
-          ).p8().expand(flex: 6),
-        ).card.elevation(5).roundedSM.make().p4().onInkTap(() {
-          if (index == 0) {
-            Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => Recent('1'),
-            ));
-          } else if (index == 1) {
-            Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => RankBoosterHome(),
-            ));
-          } else if (index == 3) {
-            Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => DareToDo(),
-            ));
-          } else {
-            Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => const UserProfile(),
-            ));
-          }
-        });
+                left: (VxTwoColumn(
+                        top: VxTwoRow(left: '0'.text.medium.white.xl6.makeCentered(), right: (index + 1).text.medium.white.xl6.makeCentered()).p8().expand(flex: 4),
+                        bottom: (VxTwoColumn(
+                          top: (selfStudyPercent == 1.0)
+                              ? 'Complete'.text.white.make()
+                              : (selfStudyPercent == 0.0)
+                                  ? 'Start'.text.white.make()
+                                  : 'Progress'.text.white.make(),
+                          bottom: LinearPercentIndicator(
+                            padding: const EdgeInsets.symmetric(horizontal: 0),
+                            percent: (index == 0)
+                                ? selfStudyPercent > 1
+                                    ? selfStudyPercent = 1
+                                    : selfStudyPercent
+                                : (index == 1)
+                                    ? testPercent > 1
+                                        ? testPercent = 1
+                                        : testPercent
+                                    : 0.5,
+                            backgroundColor: Colors.grey,
+                            progressColor: Colors.white,
+                          ),
+                        ).p8())))
+                    .box
+                    .roundedSM
+                    .withGradient(AppSlider.gradient[index])
+                    .make()
+                    .p8()
+                    .expand(flex: 5),
+                right: VxTwoColumn(
+                  top: ('Self Study'.text.xl2.make()).box.alignBottomLeft.make().expand(),
+                  bottom: ('You are studying...'.text.make()).box.alignTopLeft.make().expand(),
+                ).p8().expand(flex: 6))
+            .onInkTap(() {
+              if (index == 0) {
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => Recent('1'),
+                ));
+              } else if (index == 1) {
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => const RankBoosterHome(),
+                ));
+              } else if (index == 3) {
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => DareToDo(),
+                ));
+              } else {
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => const UserProfile(),
+                ));
+              }
+            })
+            .card
+            .elevation(5)
+            .roundedSM
+            .make()
+            .p4();
       },
     );
   }

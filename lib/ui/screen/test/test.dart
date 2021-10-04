@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_typing_uninitialized_variables
+
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math' as math;
@@ -8,14 +10,17 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter/services.dart';
 import 'package:lurnify/ui/constant/constant.dart';
 import 'package:lurnify/ui/screen/test/test_summary.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:lurnify/widgets/componants/custom_button.dart';
+import 'package:velocity_x/velocity_x.dart';
+// import 'package:shared_preferences/shared_preferences.dart';
 
 class Test extends StatefulWidget {
   final Map<String, dynamic> testData;
   final String testType;
   final sno, course, subject, unit, chapter;
-  Test(this.testData, this.testType, this.sno, this.course, this.subject, this.unit, this.chapter);
+  const Test(this.testData, this.testType, this.sno, this.course, this.subject, this.unit, this.chapter, {Key key}) : super(key: key);
   @override
+  // ignore: no_logic_in_create_state
   _TestState createState() => _TestState(testData, testType, sno, course, subject, unit, chapter);
 }
 
@@ -33,16 +38,16 @@ class _TestState extends State<Test> with TickerProviderStateMixin {
   int _noOFQuestions;
   bool _isFirstQuestion = true;
   bool _isLastQuestion = false;
-  PageController _controller = PageController(viewportFraction: 1, keepPage: true);
-  PageController _controllerList = PageController(viewportFraction: 0.083, keepPage: true);
+  final PageController _controller = PageController(viewportFraction: 1, keepPage: true);
+  final PageController _controllerList = PageController(viewportFraction: 0.083, keepPage: true);
   AnimationController _controllerFloat;
-  Map _answerMap = Map();
-  Map _bookmarkMap = Map();
+  final Map _answerMap = Map();
+  final Map _bookmarkMap = Map();
   String _toolBarName = "";
   String _testName = "";
   List _testQuestions = [];
   int _totalSecond = 0;
-  Map<String, int> _questionTiming = Map();
+  final Map<String, int> _questionTiming = Map();
   static const List<IconData> icons = const [
     Icons.check_circle_outline,
     Icons.info_outline,
@@ -59,6 +64,7 @@ class _TestState extends State<Test> with TickerProviderStateMixin {
     }
     return Future.value(true);
   }
+
   // Future _getTestData() async {
   //   SharedPreferences sp = await SharedPreferences.getInstance();
   //   var url = baseUrl + "getTestByTopic?topicSno="+sno+"&registerSno="+sp.getString("studentSno");
@@ -77,7 +83,19 @@ class _TestState extends State<Test> with TickerProviderStateMixin {
   //   });
   //
   // }
-
+  final message = const [
+    SnackBar(
+      content: Text('This is first Question!'),
+      duration: Duration(seconds: 1),
+      behavior: SnackBarBehavior.floating,
+    ),
+    SnackBar(
+      content: Text('This is last Question!'),
+      duration: Duration(seconds: 1),
+      behavior: SnackBarBehavior.floating,
+      elevation: 1000,
+    ),
+  ];
   // Future _getRankBoosterTestData()async{
   //   _testQuestions=list[0]['test'];
   //   setState(() {
@@ -88,8 +106,8 @@ class _TestState extends State<Test> with TickerProviderStateMixin {
   // }
 
   void startTimer() {
-    const oneSec =  Duration(seconds: 1);
-    _timer =  Timer.periodic(
+    const oneSec = Duration(seconds: 1);
+    _timer = Timer.periodic(
       oneSec,
       (Timer timer) => setState(
         () {
@@ -147,7 +165,7 @@ class _TestState extends State<Test> with TickerProviderStateMixin {
       _noOFQuestions = _testQuestions.length;
     }
     startTimer();
-    _controllerFloat = new AnimationController(
+    _controllerFloat = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 300),
     );
@@ -162,69 +180,168 @@ class _TestState extends State<Test> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    double height = context.screenHeight;
     return Scaffold(
-      appBar: AppBar(
-        iconTheme: IconThemeData(color: whiteColor),
-        title: Text(
-          _toolBarName == null ? "no tool bar" : _toolBarName,
-          style: TextStyle(color: whiteColor),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(height * 0.1),
+        child: AppBar(
+          title: DropdownButtonHideUnderline(
+            child: DropdownButton<String>(
+              value: _testName,
+              iconEnabledColor: firstColor,
+              isDense: true,
+              style: TextStyle(
+                color: firstColor,
+                fontWeight: FontWeight.w600,
+              ),
+              items: <String>[_testName].map((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+              onChanged: (value) {
+                setState(() {
+                  _testName = value;
+                });
+              },
+            ),
+          ).px8(),
+          centerTitle: true,
+          elevation: 0,
+          actions: [_FORMATTED_TEST_DURATION.text.lg.semiBold.align(TextAlign.end).makeCentered().px8()],
+          // bottom: PreferredSize(
+          //   child: questionsNoList().px8(),
+          //   preferredSize: Size.fromHeight(height * 0.1),
+          // ),
         ),
-        brightness: Brightness.dark,
-        centerTitle: true,
-        backgroundColor: firstColor,
       ),
-      body: WillPopScope(
-        onWillPop: _onWillPop,
-        child: _testQuestions.isEmpty
-            ? Container(
-                alignment: Alignment.center,
-                child: Text(
-                  "No Question",
-                  style: TextStyle(
-                    fontSize: 40,
-                    fontWeight: FontWeight.w600,
+      drawer: Drawer(
+        child: SafeArea(
+          child: GridView.builder(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              childAspectRatio: 1,
+              crossAxisCount: 8,
+              mainAxisExtent: 30,
+              crossAxisSpacing: 5,
+              mainAxisSpacing: 5,
+            ),
+            controller: _controllerList,
+            padding: const EdgeInsets.all(5),
+            scrollDirection: Axis.vertical,
+            itemCount: _noOFQuestions,
+            physics: const BouncingScrollPhysics(),
+            itemBuilder: (context, i) {
+              return Padding(
+                padding: const EdgeInsets.only(left: 5, top: 5),
+                child: GestureDetector(
+                  onTap: () {
+                    _controller.animateToPage(i, curve: Curves.decelerate, duration: Duration(milliseconds: 300));
+                  },
+                  child: Container(
+                    height: 25,
+                    width: 25,
+                    decoration: BoxDecoration(
+                      color: _answerMap[_testQuestions[i]['sno']] == null
+                          ? _bookmarkMap.containsKey(_testQuestions[i]['sno'])
+                              ? Colors.blue
+                              : Colors.white
+                          : _bookmarkMap.containsKey(_testQuestions[i]['sno'])
+                              ? Colors.blue
+                              : Colors.green,
+                      border: Border.all(color: Colors.black54),
+                      borderRadius: BorderRadius.circular(3),
+                    ),
+                    child: Center(
+                        child: Text(
+                      (i + 1).toString(),
+                      style: TextStyle(color: Colors.black87),
+                    )),
                   ),
                 ),
-              )
-            : SingleChildScrollView(
-                child: Column(
-                  children: [
-                    headingRow(),
-                    questionRow(),
-                  ],
-                ),
-              ),
+              );
+            },
+          ).p8(),
+        ),
       ),
-      bottomNavigationBar: buttonRow(),
-      floatingActionButton: new Column(
+      body: SafeArea(
+        child: WillPopScope(
+          onWillPop: _onWillPop,
+          child: _testQuestions.isEmpty
+              ? Center(
+                  child: "No Question".text.xl.make(),
+                )
+              : questionRow(),
+        ),
+      ),
+      bottomNavigationBar: [
+        PreferredSize(
+          child: questionsNoList().px8(),
+          preferredSize: Size.fromHeight(height * 0.1),
+        ),
+        [
+          CustomButton(
+            brdRds: 0,
+            buttonText: 'Previous',
+            verpad: const EdgeInsets.symmetric(vertical: 5),
+            onPressed: () {
+              if (_isFirstQuestion) {
+                ScaffoldMessenger.of(context).showSnackBar(message[0]);
+              } else {
+                _controller.animateToPage(_index - 1, curve: Curves.decelerate, duration: Duration(milliseconds: 300));
+                if (_index > 10) {
+                  _controllerList.animateToPage(_index - 1, curve: Curves.decelerate, duration: Duration(milliseconds: 300));
+                }
+              }
+            },
+          ).expand(),
+          1.widthBox,
+          CustomButton(
+            brdRds: 0,
+            buttonText: 'Next',
+            verpad: const EdgeInsets.symmetric(vertical: 5),
+            onPressed: () {
+              if (_isLastQuestion) {
+                ScaffoldMessenger.of(context).showSnackBar(message[1]);
+              } else {
+                _controller.animateToPage(_index + 1, curve: Curves.decelerate, duration: Duration(milliseconds: 300));
+                if (_index > 10) {
+                  _controllerList.animateToPage(_index - 1, curve: Curves.decelerate, duration: Duration(milliseconds: 300));
+                }
+              }
+            },
+          ).expand(),
+        ].hStack(),
+      ].vStack(),
+      floatingActionButton: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.end,
-        children: new List.generate(icons.length, (int index) {
-          Widget child = new Container(
+        children: List.generate(icons.length, (int index) {
+          Widget child = Container(
             height: 70.0,
 //            width: 110.0,
             alignment: FractionalOffset.topCenter,
-            child: new ScaleTransition(
-                scale: new CurvedAnimation(
+            child: ScaleTransition(
+                scale: CurvedAnimation(
                   parent: _controllerFloat,
-                  curve: new Interval(0.0, 1.0 - index / icons.length / 2.0, curve: Curves.fastOutSlowIn),
+                  curve: Interval(0.0, 1.0 - index / icons.length / 2.0, curve: Curves.fastOutSlowIn),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Container(
-                      padding: EdgeInsets.all(5),
+                      padding: const EdgeInsets.all(5),
                       decoration: BoxDecoration(color: Colors.black54, borderRadius: BorderRadius.circular(5)),
                       child: Text(
                         iconsText[index],
-                        style: TextStyle(color: Colors.white),
+                        style: const TextStyle(color: Colors.white),
                       ),
                     ),
                     FloatingActionButton(
                       backgroundColor: firstColor,
                       mini: true,
                       heroTag: null,
-                      child: new Icon(icons[index], color: Colors.white),
+                      child: Icon(icons[index], color: Colors.white),
                       onPressed: () {
                         _floatingButtonClick(index);
                       },
@@ -235,16 +352,16 @@ class _TestState extends State<Test> with TickerProviderStateMixin {
           return child;
         }).toList()
           ..add(
-            new FloatingActionButton(
+            FloatingActionButton(
               heroTag: null,
               backgroundColor: firstColor,
-              child: new AnimatedBuilder(
+              child: AnimatedBuilder(
                 animation: _controllerFloat,
                 builder: (BuildContext context, Widget child) {
-                  return new Transform(
-                    transform: new Matrix4.rotationZ(_controllerFloat.value * 0.5 * math.pi),
+                  return Transform(
+                    transform: Matrix4.rotationZ(_controllerFloat.value * 0.5 * math.pi),
                     alignment: FractionalOffset.center,
-                    child: new Icon(_controllerFloat.isDismissed ? Icons.add : Icons.close),
+                    child: Icon(_controllerFloat.isDismissed ? Icons.add : Icons.close),
                   );
                 },
               ),
@@ -262,302 +379,179 @@ class _TestState extends State<Test> with TickerProviderStateMixin {
     );
   }
 
-  Widget headingRow() {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.deepPurple[50],
-      ),
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(5.0),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  width: MediaQuery.of(context).size.width * 5 / 10,
-                  padding: EdgeInsets.all(5),
-                  decoration: BoxDecoration(border: Border.all(color: firstColor), borderRadius: BorderRadius.circular(5)),
-                  margin: EdgeInsets.only(left: 10),
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton<String>(
-                      value: _testName,
-                      iconEnabledColor: firstColor,
-                      isDense: true,
-                      style: TextStyle(
-                        color: firstColor,
-                        fontWeight: FontWeight.w600,
-                      ),
-                      items: <String>[_testName].map((String value) {
-                        return new DropdownMenuItem<String>(
-                          value: value,
-                          child: new Text(value),
-                        );
-                      }).toList(),
-                      onChanged: (value) {
-                        setState(() {
-                          _testName = value;
-                        });
-                      },
-                    ),
-                  ),
-                ),
-                Spacer(),
-                Container(
-                  padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(50),
-                    color: firstColor,
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.access_time_rounded,
-                        size: 15,
-                      ),
-                      SizedBox(
-                        width: 3,
-                      ),
-                      Text(
-                        _FORMATTED_TEST_DURATION,
-                        style: TextStyle(
-                          color: whiteColor,
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          questionsNoList(),
-        ],
-      ),
-    );
-  }
-
   Widget questionRow() {
-    return Container(
-      height: MediaQuery.of(context).size.height * 6.8 / 10,
-      width: MediaQuery.of(context).size.width,
-      padding: EdgeInsets.all(1),
-      child: PageView.builder(
-        physics: BouncingScrollPhysics(),
-        controller: _controller,
-        scrollDirection: Axis.horizontal,
-        itemCount: _noOFQuestions,
-        onPageChanged: (i) {
-          _currentPageIndex = i;
-          HapticFeedback.selectionClick();
-          if (i > 10) {
-            _controllerList.animateToPage(i, curve: Curves.decelerate, duration: Duration(milliseconds: 300));
+    double height = context.screenHeight;
+    return PageView.builder(
+      physics: BouncingScrollPhysics(),
+      controller: _controller,
+      scrollDirection: Axis.horizontal,
+      itemCount: _noOFQuestions,
+      onPageChanged: (i) {
+        _currentPageIndex = i;
+        HapticFeedback.selectionClick();
+        if (i > 10) {
+          _controllerList.animateToPage(i, curve: Curves.decelerate, duration: Duration(milliseconds: 300));
+        }
+        setState(() {
+          _index = i;
+          if (i == 0) {
+            _isFirstQuestion = true;
+          } else if (i == _noOFQuestions - 1) {
+            _isLastQuestion = true;
+          } else {
+            _isFirstQuestion = false;
+            _isLastQuestion = false;
           }
-          setState(() {
-            _index = i;
-            if (i == 0) {
-              _isFirstQuestion = true;
-            } else if (i == _noOFQuestions - 1) {
-              _isLastQuestion = true;
-            } else {
-              _isFirstQuestion = false;
-              _isLastQuestion = false;
-            }
-            //-------------------//
-          });
-        },
-        itemBuilder: (context, i) {
-          return Transform.scale(
-            scale: i == _index ? 1 : 0.9999,
-            transformHitTests: true,
-            child: Padding(
-              padding: EdgeInsets.all(5),
-              child: Card(
-                color: whiteColor,
-                elevation: 10,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Container(
-                            height: 25,
-                            width: 25,
-                            decoration: BoxDecoration(color: firstColor, border: Border.all(color: firstColor)),
-                            child: Center(
-                                child: Text(
-                              (i + 1).toString(),
-                              style: TextStyle(color: whiteColor, fontSize: 14, fontWeight: FontWeight.w500),
-                            )),
-                          ),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Container(
-                            padding: EdgeInsets.all(4),
-                            decoration: BoxDecoration(
-                              color: Colors.green,
-                              shape: BoxShape.circle,
-                            ),
-                            child: Center(
-                              child: Icon(
-                                Icons.check,
-                                size: 14,
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            width: 3,
-                          ),
-                          Text(
-                            "4",
-                            style: TextStyle(color: Colors.black54, fontWeight: FontWeight.w600),
-                          ),
-                          SizedBox(
-                            width: 5,
-                          ),
-                          Container(
-                            padding: EdgeInsets.all(7),
-                            decoration: BoxDecoration(
-                              color: Colors.red,
-                              shape: BoxShape.circle,
-                            ),
-                            child: Center(
-                                child: Text(
-                              'X',
-                              style: TextStyle(color: whiteColor, fontSize: 14, fontWeight: FontWeight.w500),
-                            )),
-                          ),
-                          SizedBox(
-                            width: 3,
-                          ),
-                          Text(
-                            "1",
-                            style: TextStyle(color: Colors.black54, fontWeight: FontWeight.w600),
-                          ),
-                          Spacer(),
-                          Text(
-                            "Review Later",
-                            style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w600),
-                          ),
-                          SizedBox(
-                            height: 25,
-                            width: 25,
-                            child: Checkbox(
-                              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                              activeColor: firstColor,
-                              checkColor: whiteColor,
-                              onChanged: (value) {
-                                setState(() {
-                                  if (_bookmarkMap[_testQuestions[i]['sno']] == "true") {
-                                    reviewLater = false;
+          //-------------------//
+        });
+      },
+      itemBuilder: (context, i) {
+        return Transform.scale(
+          scale: i == _index ? 1 : 0.9999,
+          transformHitTests: true,
+          child: Padding(
+            padding: EdgeInsets.all(5),
+            child: Card(
+              color: whiteColor,
+              elevation: 10,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        (i + 1).text.white.lg.makeCentered().box.color(firstColor).make().h(25).w(25),
+                        10.widthBox,
+                        [
+                          const Icon(
+                            Icons.check,
+                            color: Vx.white,
+                            size: 15,
+                          ).box.color(Vx.green600).roundedFull.make().h(25).w(25),
+                          '4'.text.lg.black.makeCentered().box.make().h(25).w(25),
+                        ].hStack(),
+                        10.widthBox,
+                        [
+                          const Icon(
+                            Icons.close,
+                            color: Vx.white,
+                            size: 15,
+                          ).box.color(Vx.red600).roundedFull.make().h(25).w(25),
+                          '1'.text.lg.black.makeCentered().box.make().h(25).w(25),
+                        ].hStack(),
+                        const Spacer(),
+                        "Review Later".text.lg.semiBold.black.make(),
+                        SizedBox(
+                          height: 25,
+                          width: 25,
+                          child: Checkbox(
+                            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            activeColor: firstColor,
+                            checkColor: whiteColor,
+                            onChanged: (value) {
+                              setState(() {
+                                if (_bookmarkMap[_testQuestions[i]['sno']] == "true") {
+                                  reviewLater = false;
 //                                  _bookmarkMap.update(_testData[i]['sno'], (value) => "false",ifAbsent: () => "false",);
-                                    _bookmarkMap.remove(_testQuestions[i]['sno']);
-                                  } else {
-                                    reviewLater = true;
-                                    _bookmarkMap.update(
-                                      _testQuestions[i]['sno'],
-                                      (value) => "true",
-                                      ifAbsent: () => "true",
-                                    );
-                                  }
-                                  //
-                                });
-                              },
-                              value: _bookmarkMap[_testQuestions[i]['sno']] == "true" ? true : false,
-                            ),
-                          ),
-                        ],
-                      ),
-                      Container(
-                        height: MediaQuery.of(context).size.height * 4.5 / 10,
-                        child: SingleChildScrollView(
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Image.memory(base64.decode(_testQuestions[i]['encodedImage'] == null ? "" : _testQuestions[i]['encodedImage']), gaplessPlayback: true),
-                              )
-                            ],
+                                  _bookmarkMap.remove(_testQuestions[i]['sno']);
+                                } else {
+                                  reviewLater = true;
+                                  _bookmarkMap.update(
+                                    _testQuestions[i]['sno'],
+                                    (value) => "true",
+                                    ifAbsent: () => "true",
+                                  );
+                                }
+                                //
+                              });
+                            },
+                            value: _bookmarkMap[_testQuestions[i]['sno']] == "true" ? true : false,
                           ),
                         ),
+                      ],
+                    ),
+                    const Divider(
+                      color: Vx.gray400,
+                      height: 20,
+                      thickness: 0.5,
+                    ),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: Image.memory(base64.decode(_testQuestions[i]['encodedImage'] ?? ""), gaplessPlayback: true),
                       ),
-                      Expanded(
-                        child: Center(
-                          child: ListView.builder(
-                            itemCount: int.parse(_testQuestions[i]['noOfOptions']),
-                            scrollDirection: Axis.horizontal,
-                            shrinkWrap: true,
-                            primary: false,
-                            itemBuilder: (context, j) {
-                              return GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    _answerMap.update(
-                                      _testQuestions[i]['sno'],
-                                      (value) => j + 1,
-                                      ifAbsent: () => j + 1,
-                                    );
-                                  });
-                                },
-                                child: Container(
-                                  width: MediaQuery.of(context).size.width * 2 / 10,
-                                  child: Column(
-                                    children: [
-                                      Container(
-                                        padding: EdgeInsets.all(10),
-                                        decoration: BoxDecoration(
-                                          border: Border.all(color: _answerMap[_testQuestions[i]['sno']] != j + 1 ? Colors.transparent : Colors.green),
-                                          shape: BoxShape.circle,
-                                        ),
-                                        child: Container(
-                                          child: CircleAvatar(
-                                            radius: 30,
-                                            backgroundColor: _answerMap[_testQuestions[i]['sno']] != j + 1 ? Colors.white : Colors.green,
-                                            child: Text(
-                                              (j + 1).toString(),
-                                              style: TextStyle(
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.bold,
-                                                color: _answerMap[_testQuestions[i]['sno']] != j + 1 ? firstColor : whiteColor,
-                                              ),
-                                            ),
-                                          ),
-                                          decoration: new BoxDecoration(
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: Colors.black.withOpacity(0.2),
-                                                offset: const Offset(
-                                                  0.0,
-                                                  5.0,
-                                                ),
-                                                blurRadius: 8.0,
-                                              )
-                                            ],
-                                            shape: BoxShape.circle,
+                    ),
+                    SizedBox(
+                      height: height * 0.2,
+                      child: ListView.builder(
+                        itemCount: int.parse(_testQuestions[i]['noOfOptions']),
+                        scrollDirection: Axis.horizontal,
+                        shrinkWrap: true,
+                        primary: false,
+                        itemBuilder: (context, j) {
+                          return GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                _answerMap.update(
+                                  _testQuestions[i]['sno'],
+                                  (value) => j + 1,
+                                  ifAbsent: () => j + 1,
+                                );
+                              });
+                            },
+                            child: SizedBox(
+                              width: MediaQuery.of(context).size.width * 2 / 10,
+                              child: Column(
+                                children: [
+                                  Container(
+                                    padding: EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                      border: Border.all(color: _answerMap[_testQuestions[i]['sno']] != j + 1 ? Colors.transparent : Colors.green),
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Container(
+                                      child: CircleAvatar(
+                                        radius: 30,
+                                        backgroundColor: _answerMap[_testQuestions[i]['sno']] != j + 1 ? Colors.white : Colors.green,
+                                        child: Text(
+                                          (j + 1).toString(),
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold,
+                                            color: _answerMap[_testQuestions[i]['sno']] != j + 1 ? firstColor : whiteColor,
                                           ),
                                         ),
                                       ),
-//                                    Divider(height: 1,color: _answerMap[_testData[i]['sno']]!=j+1?Colors.grey:Colors.green,thickness: 3,)
-                                    ],
+                                      decoration: BoxDecoration(
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.black.withOpacity(0.2),
+                                            offset: const Offset(
+                                              0.0,
+                                              5.0,
+                                            ),
+                                            blurRadius: 8.0,
+                                          )
+                                        ],
+                                        shape: BoxShape.circle,
+                                      ),
+                                    ),
                                   ),
-                                ),
-                              );
-                            },
-                          ),
-                        ),
+//                                    Divider(height: 1,color: _answerMap[_testData[i]['sno']]!=j+1?Colors.grey:Colors.green,thickness: 3,)
+                                ],
+                              ),
+                            ),
+                          );
+                        },
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 
@@ -603,200 +597,43 @@ class _TestState extends State<Test> with TickerProviderStateMixin {
   // }
 
   Widget questionsNoList() {
-    return Container(
-      height: MediaQuery.of(context).size.height * 0.5 / 10,
-      width: MediaQuery.of(context).size.width,
-      child: ListView.builder(
-        controller: _controllerList,
-        padding: EdgeInsets.all(5),
-        scrollDirection: Axis.horizontal,
-        itemCount: _noOFQuestions,
-        physics: BouncingScrollPhysics(),
-        itemBuilder: (context, i) {
-          return Padding(
-            padding: EdgeInsets.only(left: 5, top: 5),
-            child: GestureDetector(
-              onTap: () {
-                _controller.animateToPage(i, curve: Curves.decelerate, duration: Duration(milliseconds: 300));
-              },
-              child: Container(
-                height: 25,
-                width: 25,
-                decoration: BoxDecoration(
-                  color: _answerMap[_testQuestions[i]['sno']] == null
-                      ? _bookmarkMap.containsKey(_testQuestions[i]['sno'])
-                          ? Colors.blue
-                          : Colors.white
-                      : _bookmarkMap.containsKey(_testQuestions[i]['sno'])
-                          ? Colors.blue
-                          : Colors.green,
-                  border: Border.all(color: Colors.black54),
-                  borderRadius: BorderRadius.circular(3),
-                ),
-                child: Center(
-                    child: Text(
-                  (i + 1).toString(),
-                  style: TextStyle(color: Colors.black87),
-                )),
+    return ListView.builder(
+      controller: _controllerList,
+      padding: const EdgeInsets.all(5),
+      scrollDirection: Axis.horizontal,
+      itemCount: _noOFQuestions,
+      physics: const BouncingScrollPhysics(),
+      itemBuilder: (context, i) {
+        return Padding(
+          padding: const EdgeInsets.only(left: 5, top: 5),
+          child: GestureDetector(
+            onTap: () {
+              _controller.animateToPage(i, curve: Curves.decelerate, duration: Duration(milliseconds: 300));
+            },
+            child: Container(
+              height: 25,
+              width: 25,
+              decoration: BoxDecoration(
+                color: _answerMap[_testQuestions[i]['sno']] == null
+                    ? _bookmarkMap.containsKey(_testQuestions[i]['sno'])
+                        ? Colors.blue
+                        : Colors.white
+                    : _bookmarkMap.containsKey(_testQuestions[i]['sno'])
+                        ? Colors.blue
+                        : Colors.green,
+                border: Border.all(color: Colors.black54),
+                borderRadius: BorderRadius.circular(3),
               ),
+              child: Center(
+                  child: Text(
+                (i + 1).toString(),
+                style: TextStyle(color: Colors.black87),
+              )),
             ),
-          );
-        },
-      ),
-    );
-  }
-
-  Widget buttonRow() {
-    return Row(
-      children: [
-        Flexible(
-          flex: 1,
-          child: RaisedButton(
-            clipBehavior: Clip.antiAlias,
-            autofocus: false,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(0),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.arrow_back,
-                  color: Colors.white,
-                  size: 16,
-                ),
-                Text(
-                  "Previous",
-                  style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 0.8),
-                ),
-              ],
-            ),
-            onPressed: () {
-              if (_isFirstQuestion) {
-              } else {
-                _controller.animateToPage(_index - 1, curve: Curves.decelerate, duration: Duration(milliseconds: 300));
-                if (_index > 10) {
-                  _controllerList.animateToPage(_index - 1, curve: Curves.decelerate, duration: Duration(milliseconds: 300));
-                }
-              }
-            },
-            padding: EdgeInsets.symmetric(vertical: 15),
-            color: firstColor,
           ),
-        ),
-        // child: GestureDetector(
-        //   onTap: () {
-        //     if (_isFirstQuestion) {
-        //     } else {
-        //       _controller.animateToPage(_index - 1,
-        //           curve: Curves.decelerate,
-        //           duration: Duration(milliseconds: 300));
-        //       _controllerList.animateToPage(_index - 1,
-        //           curve: Curves.decelerate,
-        //           duration: Duration(milliseconds: 300));
-        //     }
-        //   },
-        //   child: Container(
-        //     decoration: BoxDecoration(
-        //         color: _isFirstQuestion
-        //             ? firstColor.withOpacity(0.6)
-        //             : firstColor),
-        //     child: Center(
-        //       child: Row(
-        //         mainAxisAlignment: MainAxisAlignment.center,
-        //         children: [
-        //           Icon(
-        //             Icons.arrow_back,
-        //             color: Colors.white,
-        //           ),
-        //           Text(
-        //             "Previous",
-        //             style: TextStyle(
-        //                 color: Colors.white,
-        //                 fontSize: 16,
-        //                 fontWeight: FontWeight.bold,
-        //                 letterSpacing: 0.8),
-        //           ),
-        //         ],
-        //       ),
-        //     ),
-        //   ),
-        // ),
-        Flexible(
-          flex: 1,
-          child: RaisedButton(
-            clipBehavior: Clip.antiAlias,
-            autofocus: false,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.zero),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  "Next",
-                  style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 0.8),
-                ),
-                Icon(
-                  Icons.arrow_forward,
-                  color: Colors.white,
-                  size: 16,
-                ),
-              ],
-            ),
-            onPressed: () {
-              if (_isLastQuestion) {
-              } else {
-                _controller.animateToPage(_index + 1, curve: Curves.decelerate, duration: Duration(milliseconds: 300));
-                if (_index > 10) {
-                  _controllerList.animateToPage(_index - 1, curve: Curves.decelerate, duration: Duration(milliseconds: 300));
-                }
-              }
-            },
-            padding: EdgeInsets.symmetric(vertical: 15),
-            color: firstColor,
-          ),
-          // child: GestureDetector(
-          //   onTap: () {
-          //     if (_isLastQuestion) {
-          //     } else {
-          //       _controller.animateToPage(_index + 1,
-          //           curve: Curves.decelerate,
-          //           duration: Duration(milliseconds: 300));
-          //       _controllerList.animateToPage(_index + 1,
-          //           curve: Curves.decelerate,
-          //           duration: Duration(milliseconds: 300));
-          //     }
-          //   },
-          //   child: Container(
-          //     decoration: BoxDecoration(
-          //         color: _isLastQuestion
-          //             ? firstColor.withOpacity(0.6)
-          //             : firstColor),
-          //     child: Center(
-          //       child: Row(
-          //         mainAxisAlignment: MainAxisAlignment.center,
-          //         children: [
-          //           Text("Next",
-          //               style: TextStyle(
-          //                   color: Colors.white,
-          //                   fontSize: 16,
-          //                   fontWeight: FontWeight.bold,
-          //                   letterSpacing: 0.8)),
-          //           Icon(
-          //             Icons.arrow_forward,
-          //             color: Colors.white,
-          //           ),
-          //         ],
-          //       ),
-          //     ),
-          //   ),
-          // ),
-        ),
-      ],
-    );
+        );
+      },
+    ).h(40).box.make();
   }
 
   _floatingButtonClick(int index) async {
@@ -807,6 +644,11 @@ class _TestState extends State<Test> with TickerProviderStateMixin {
           builder: (context) => TestSummary(_testQuestions, _answerMap, _bookmarkMap, _FORMATTED_TEST_DURATION, sno, testType, course, subject, unit, chapter, _totalSecond, _questionTiming),
         ),
       );
+      // Navigator.of(context).push(
+      //   MaterialPageRoute(
+      //     builder: (context) => TestSummary(_testQuestions, _answerMap, _bookmarkMap, _FORMATTED_TEST_DURATION, sno, testType, course, subject, unit, chapter, _totalSecond, _questionTiming),
+      //   ),
+      // );
     }
   }
 

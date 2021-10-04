@@ -159,18 +159,16 @@ class _StudyCompleteState extends State<StudyComplete> {
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
               return Material(
-                child: Container(
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.vertical,
-                    physics: ScrollPhysics(),
-                    child: Column(
-                      children: <Widget>[
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.vertical,
+                  physics: const ScrollPhysics(),
+                  child: Column(
+                    children: <Widget>[
 //                SizedBox(height: 8,),
-                        completionNotice(),
-                        completionTask(),
-                        continueAfter(),
-                      ],
-                    ),
+                      completionNotice(),
+                      completionTask(),
+                      continueAfter(),
+                    ],
                   ),
                 ),
               );
@@ -231,7 +229,7 @@ class _StudyCompleteState extends State<StudyComplete> {
         // ).text.xl4.semiBold.color(Vx.red600).make(),
         "to complete today's study time".text.make().p8(),
       ].vStack().p8(),
-    ].vStack().card.elevation(10).p4.make().wFull(context);
+    ].vStack().p4().wFull(context);
   }
 
   Widget completionTask() {

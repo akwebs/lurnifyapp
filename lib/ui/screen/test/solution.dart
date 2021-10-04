@@ -11,7 +11,7 @@ class Solution extends StatefulWidget {
   final List _testData;
   final _FORMATTED_TEST_DURATION;
 
-  const Solution(this._answerMap, this._bookmarkMap, this._testData,this._FORMATTED_TEST_DURATION,{Key key}) : super(key: key);
+  const Solution(this._answerMap, this._bookmarkMap, this._testData, this._FORMATTED_TEST_DURATION, {Key key}) : super(key: key);
 
   @override
   _SolutionState createState() =>
@@ -55,7 +55,7 @@ class _SolutionState extends State<Solution> {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Column(
-        children: [headingRow(), questionRow(), _questionNoRow(), _buttonRow()],
+        children: [headingRow(), questionRow(), _questionNoRow()],
       ),
     );
   }
@@ -329,66 +329,66 @@ class _SolutionState extends State<Solution> {
     );
   }
 
-  Widget _buttonRow() {
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height * 0.6 / 10,
-      child: Row(
-        children: [
-          Expanded(
-            child: GestureDetector(
-              onTap: () {
-//                _controller.animateToPage(_index-1, curve: Curves.decelerate, duration: Duration(milliseconds: 300));
-//                _controllerList.animateToPage(_index-1, curve: Curves.decelerate, duration: Duration(milliseconds: 300));
-              },
-              child: Container(
-                decoration: BoxDecoration(
-//                    color: _isFirstQuestion?Colors.orange.withOpacity(0.6):Colors.deepPurpleAccent
-                    color: Colors.orange),
-                child: Center(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-//                      Icon(Icons.arrow_back,color: Colors.white,),
-                      Text(
-                        "Silly",
-                        style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 0.8),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-          Container(
-            width: 1,
-          ),
-          Expanded(
-            child: GestureDetector(
-              onTap: () {
-//                _controller.animateToPage(_index+1, curve: Curves.decelerate, duration: Duration(milliseconds: 300));
-//                _controllerList.animateToPage(_index+1, curve: Curves.decelerate, duration: Duration(milliseconds: 300));
-              },
-              child: Container(
-                decoration: BoxDecoration(
-//                    color: _isLastQuestion?Colors.orangeAccent.withOpacity(0.6):Colors.deepPurpleAccent
-                    color: Colors.orange),
-                child: Center(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text("Conceptual", style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 0.8)),
-//                      Icon(Icons.arrow_forward,color: Colors.white,),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+//   Widget _buttonRow() {
+//     return Container(
+//       width: MediaQuery.of(context).size.width,
+//       height: MediaQuery.of(context).size.height * 0.6 / 10,
+//       child: Row(
+//         children: [
+//           Expanded(
+//             child: GestureDetector(
+//               onTap: () {
+// //                _controller.animateToPage(_index-1, curve: Curves.decelerate, duration: Duration(milliseconds: 300));
+// //                _controllerList.animateToPage(_index-1, curve: Curves.decelerate, duration: Duration(milliseconds: 300));
+//               },
+//               child: Container(
+//                 decoration: BoxDecoration(
+// //                    color: _isFirstQuestion?Colors.orange.withOpacity(0.6):Colors.deepPurpleAccent
+//                     color: Colors.orange),
+//                 child: Center(
+//                   child: Row(
+//                     mainAxisAlignment: MainAxisAlignment.center,
+//                     children: [
+// //                      Icon(Icons.arrow_back,color: Colors.white,),
+//                       Text(
+//                         "Silly",
+//                         style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 0.8),
+//                       ),
+//                     ],
+//                   ),
+//                 ),
+//               ),
+//             ),
+//           ),
+//           Container(
+//             width: 1,
+//           ),
+//           Expanded(
+//             child: GestureDetector(
+//               onTap: () {
+// //                _controller.animateToPage(_index+1, curve: Curves.decelerate, duration: Duration(milliseconds: 300));
+// //                _controllerList.animateToPage(_index+1, curve: Curves.decelerate, duration: Duration(milliseconds: 300));
+//               },
+//               child: Container(
+//                 decoration: BoxDecoration(
+// //                    color: _isLastQuestion?Colors.orangeAccent.withOpacity(0.6):Colors.deepPurpleAccent
+//                     color: Colors.orange),
+//                 child: Center(
+//                   child: Row(
+//                     mainAxisAlignment: MainAxisAlignment.center,
+//                     children: [
+//                       Text("Conceptual", style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 0.8)),
+// //                      Icon(Icons.arrow_forward,color: Colors.white,),
+//                     ],
+//                   ),
+//                 ),
+//               ),
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
 
   Widget _questionNoRow() {
     return Container(

@@ -31,10 +31,10 @@ class AppTiles extends StatelessWidget {
               ).box.roundedFull.border(color: AppColors.tileIconColors[index].withOpacity(0.2), width: 1).makeCentered())
                   .expand(flex: 2),
               bottom: (Text(AppTile.tileText[index]).text.sm.center.make().p2().box.alignTopCenter.make()).expand(),
-            ),
-          ).elevation(5).make().onInkTap(() {
-            Navigator.of(context).pushNamedAndRemoveUntil(pageKey[index], (route) => true);
-          });
+            ).onInkTap(() {
+              Navigator.of(context).pushNamedAndRemoveUntil(pageKey[index], (route) => true);
+            }),
+          ).elevation(5).make();
         },
       ),
     ].vStack().card.make();

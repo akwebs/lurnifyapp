@@ -18,6 +18,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:velocity_x/velocity_x.dart';
 
 class InstructionPage extends StatefulWidget {
   final String course, subject, unit, chapter, sno;
@@ -92,7 +93,7 @@ class _InstructionPageState extends State<InstructionPage> {
       RewardRepo rewardRepo = RewardRepo();
       List<Map<String, dynamic>> reward = await rewardRepo.getReward();
       for (var a in reward) {
-        String tAttempt=a['testAttempt'] ?? '0';
+        String tAttempt = a['testAttempt'] ?? '0';
         _testAttempt = int.parse(tAttempt);
       }
       // if (responseBody['testAttempt'] != null) {
@@ -214,14 +215,8 @@ class _InstructionPageState extends State<InstructionPage> {
               ),
             );
           } else {
-            return Center(
-              child: SizedBox(
-                height: 150,
-                width: 150,
-                child: Lottie.asset(
-                  'assets/lottie/56446-walk.json',
-                ),
-              ),
+            return const Center(
+              child: CircularProgressIndicator(),
             );
           }
         },

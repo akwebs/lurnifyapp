@@ -40,7 +40,7 @@ class AppColors {
     Colors.deepOrange[400],
     Colors.blue[400],
   ];
-  static List<BoxShadow> neumorpShadow = [BoxShadow(color: Colors.black26.withOpacity(.1), offset: Offset(1, 1), blurRadius: 5)];
+  static List<BoxShadow> neumorpShadow = [BoxShadow(color: Colors.black26.withOpacity(.1), offset: const Offset(1, 1), blurRadius: 5)];
 }
 
 class AppSlider {

@@ -9,8 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smooth_star_rating/smooth_star_rating.dart';
 
 class RankBoosterHome extends StatefulWidget {
-
-   RankBoosterHome({this.sno});
+  const RankBoosterHome({Key key, this.sno}) : super(key: key);
   final int sno;
   @override
   _RankBoosterHomeState createState() => _RankBoosterHomeState();
@@ -30,7 +29,7 @@ Color _randomColor(int i) {
 class _RankBoosterHomeState extends State<RankBoosterHome> {
   var _data;
   List<Map<String, dynamic>> _dueTests = [];
-  ScrollController _scrollController=  ScrollController();
+  final ScrollController _scrollController = ScrollController();
 
   Future _search() async {
     try {
@@ -45,14 +44,14 @@ class _RankBoosterHomeState extends State<RankBoosterHome> {
       // setState(() {
       //   _dueTests = responseData;
       // });
-      DueTopicTestRepo dueTopicTestRepo = new DueTopicTestRepo();
+      DueTopicTestRepo dueTopicTestRepo = DueTopicTestRepo();
       _dueTests = await dueTopicTestRepo.getDueTopicTestByStatusAndRegister('INCOMPLETE', sp.getString("studentSno"), '0');
-      double idx=0;
-      if(_dueTests.isNotEmpty){
+      double idx = 0;
+      if (_dueTests.isNotEmpty) {
         for (var element in _dueTests) {
-          if(element['dueTopicTestSno']==widget.sno){
+          if (element['dueTopicTestSno'] == widget.sno) {
             _scrollController.jumpTo(idx);
-          }else{
+          } else {
             idx++;
           }
         }
@@ -73,7 +72,7 @@ class _RankBoosterHomeState extends State<RankBoosterHome> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(60),
+        preferredSize: const Size.fromHeight(60),
         child: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
@@ -85,7 +84,7 @@ class _RankBoosterHomeState extends State<RankBoosterHome> {
           child: AppBar(
             elevation: 0,
             backgroundColor: Colors.transparent,
-            title: Text(
+            title: const Text(
               'List of due tests',
             ),
             centerTitle: true,
@@ -119,28 +118,22 @@ class _RankBoosterHomeState extends State<RankBoosterHome> {
                               padding: const EdgeInsets.all(4.0),
                             ),
                             _dueTests.isEmpty
-                                ? Container(
-                                    child: Center(
-                                      child: Text('Please Select Options to Get Topics to Revise'),
-                                    ),
+                                ? const Center(
+                                    child: Text('There are no any Due Test(s).'),
                                   )
-                                : Container(),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            ListView.builder(
-                              controller: _scrollController,
-                              itemCount: _dueTests.length,
-                              shrinkWrap: true,
-                              primary: false,
-                              scrollDirection: Axis.vertical,
-                              itemBuilder: (context, i) {
-                                return Padding(
-                                  padding: const EdgeInsets.only(bottom: 10),
-                                  child: _cards(i, _dueTests),
-                                );
-                              },
-                            ),
+                                : ListView.builder(
+                                    controller: _scrollController,
+                                    itemCount: _dueTests.length,
+                                    shrinkWrap: true,
+                                    primary: false,
+                                    scrollDirection: Axis.vertical,
+                                    itemBuilder: (context, i) {
+                                      return Padding(
+                                        padding: const EdgeInsets.only(bottom: 10),
+                                        child: _cards(i, _dueTests),
+                                      );
+                                    },
+                                  ),
                           ],
                         ),
                       ),
@@ -150,7 +143,7 @@ class _RankBoosterHomeState extends State<RankBoosterHome> {
               ),
             );
           } else {
-            return Center(
+            return const Center(
               child: CircularProgressIndicator(),
             );
           }
@@ -159,7 +152,7 @@ class _RankBoosterHomeState extends State<RankBoosterHome> {
       bottomNavigationBar: CustomButton(
         brdRds: 0,
         buttonText: 'Create Your Own Test',
-        verpad: EdgeInsets.symmetric(vertical: 15),
+        verpad: const EdgeInsets.symmetric(vertical: 5),
         onPressed: () => Navigator.push(
             context,
             MaterialPageRoute(
@@ -179,7 +172,7 @@ class _RankBoosterHomeState extends State<RankBoosterHome> {
         ));
       },
       child: Card(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5), side: BorderSide(width: 1, color: dueTests[i]['dueTopicTestSno']==widget.sno?firstColor:Colors.transparent)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5), side: BorderSide(width: 1, color: dueTests[i]['dueTopicTestSno'] == widget.sno ? firstColor : Colors.transparent)),
         elevation: 5,
         clipBehavior: Clip.antiAlias,
         child: Column(
@@ -187,7 +180,7 @@ class _RankBoosterHomeState extends State<RankBoosterHome> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Container(
-              padding:const EdgeInsets.all(5),
+              padding: const EdgeInsets.all(5),
               child: Column(
                 children: [
                   Row(
@@ -209,7 +202,7 @@ class _RankBoosterHomeState extends State<RankBoosterHome> {
                       Expanded(
                         child: Text(
                           dueTests[i]['topicName'],
-                          style:const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                          style: const TextStyle(fontSize: 14, color: Colors.black, fontWeight: FontWeight.w600),
                           textAlign: TextAlign.center,
                         ),
                       ),
@@ -226,7 +219,7 @@ class _RankBoosterHomeState extends State<RankBoosterHome> {
               decoration: BoxDecoration(color: _randomColor(i), border: Border(bottom: BorderSide(width: 0.5, color: firstColor))),
             ),
             Padding(
-              padding:const EdgeInsets.all(8),
+              padding: const EdgeInsets.all(8),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -244,7 +237,7 @@ class _RankBoosterHomeState extends State<RankBoosterHome> {
                     flex: 3,
                     child: Text(
                       '${dueTests[i]['subjectName']} > ${dueTests[i]['unitName']} > ${dueTests[i]['chapterName']} ',
-                      style:const TextStyle(
+                      style: const TextStyle(
                         fontSize: 12,
                       ),
                     ),
@@ -253,7 +246,7 @@ class _RankBoosterHomeState extends State<RankBoosterHome> {
               ),
             ),
             Padding(
-              padding:const EdgeInsets.all(8),
+              padding: const EdgeInsets.all(8),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -271,7 +264,7 @@ class _RankBoosterHomeState extends State<RankBoosterHome> {
                     flex: 3,
                     child: Text(
                       dueTests[i]['subtopic'],
-                      style:const TextStyle(
+                      style: const TextStyle(
                         fontSize: 12,
                       ),
                     ),
@@ -304,7 +297,7 @@ class _RankBoosterHomeState extends State<RankBoosterHome> {
                       child: _topicInfo(
                         i,
                         'Test Score',
-                        dueTests[i]['lastTestScore']==null?'-':dueTests[i]['lastTestScore'].toString() + "%",
+                        dueTests[i]['lastTestScore'] == null ? '-' : dueTests[i]['lastTestScore'].toString() + "%",
                       ),
                       decoration: BoxDecoration(
                         border: Border(right: BorderSide(width: 0.5, color: Colors.grey[500])),
@@ -340,15 +333,17 @@ Column _topicInfo(int i, String heading, String detail) {
     children: [
       Text(
         heading,
-        style: TextStyle(
+        style: const TextStyle(
           fontSize: 12,
+          color: Colors.black,
         ),
       ),
-      SizedBox(height: 10),
+      const SizedBox(height: 10),
       Text(
         detail,
-        style: TextStyle(
+        style: const TextStyle(
           fontSize: 14,
+          color: Colors.black,
           fontWeight: FontWeight.w600,
         ),
       ),

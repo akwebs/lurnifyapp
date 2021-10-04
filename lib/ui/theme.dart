@@ -5,6 +5,7 @@ class AppTheme {
   AppTheme._();
 
   static const Color _iconColor = Colors.deepPurple;
+  static const Color _iconDarkColor = Colors.white;
   static final Color _lightNavigationColor = Colors.black45;
   static final Color _darkNavigationColor = Colors.white70;
 
@@ -190,7 +191,7 @@ class AppTheme {
       ),
       unselectedWidgetColor: _darkSeconderyColor,
       iconTheme: const IconThemeData(
-        color: _iconColor,
+        color: _iconDarkColor,
       ),
       textTheme: _darkTextTheme,
       floatingActionButtonTheme: const FloatingActionButtonThemeData(

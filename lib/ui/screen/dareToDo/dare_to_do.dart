@@ -195,8 +195,9 @@ class _DareToDoState extends State<DareToDo> {
                           labelColor: Colors.white,
                           unselectedLabelColor: Colors.deepPurpleAccent,
                           indicatorSize: TabBarIndicatorSize.tab,
-                          indicator: BoxDecoration(gradient: LinearGradient(colors: [Colors.deepPurpleAccent, Colors.deepPurple]), borderRadius: BorderRadius.circular(50), color: Colors.redAccent),
-                          tabs: [
+                          indicator:
+                              BoxDecoration(gradient: LinearGradient(colors: const [Colors.deepPurpleAccent, Colors.deepPurple]), borderRadius: BorderRadius.circular(50), color: Colors.redAccent),
+                          tabs: const [
                             Tab(
                               child: Align(
                                 alignment: Alignment.center,

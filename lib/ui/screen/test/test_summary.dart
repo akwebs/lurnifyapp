@@ -9,7 +9,9 @@ import 'package:lurnify/helper/due_topic_test_repo.dart';
 import 'package:lurnify/model/topic_test_result.dart';
 import 'package:lurnify/ui/constant/ApiConstant.dart';
 import 'package:lurnify/ui/screen/test/test_result.dart';
+import 'package:lurnify/widgets/componants/custom_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:velocity_x/velocity_x.dart';
 
 class TestSummary extends StatefulWidget {
   final Map _answerMap, _bookmarkMap;
@@ -32,7 +34,7 @@ class _TestSummaryState extends State<TestSummary> {
   final sno, course, subject, unit, chapter;
   String _FORMATTED_TEST_DURATION, testType;
   final int totalSecond;
-
+  DateTime _currentBackPressTime;
   _TestSummaryState(this._testData, this._answerMap, this._bookmarkMap, this._FORMATTED_TEST_DURATION, this.sno, this.testType, this.course, this.subject, this.unit, this.chapter, this.totalSecond);
 
   String totalNoOFQuestions = "0";
@@ -42,6 +44,15 @@ class _TestSummaryState extends State<TestSummary> {
   int _correctQuestion = 0;
   int _wrongAnswer = 0;
   int _resultNumber = 0;
+  Future<bool> _onWillPop() {
+    DateTime now = DateTime.now();
+    if (_currentBackPressTime == null || now.difference(_currentBackPressTime) > Duration(seconds: 2)) {
+      _currentBackPressTime = now;
+      Fluttertoast.showToast(msg: 'Press BACK again to exit Test', toastLength: Toast.LENGTH_SHORT);
+      return Future.value(false);
+    }
+    return Future.value(true);
+  }
 
   // ignore: missing_return
   Future getTestSummary() {
@@ -59,113 +70,135 @@ class _TestSummaryState extends State<TestSummary> {
 
   @override
   Widget build(BuildContext context) {
+    double height = context.screenHeight;
     return Scaffold(
-        appBar: AppBar(
-          title: Text("Summary"),
-        ),
-        body: FutureBuilder(
-          future: getTestSummary(),
-          builder: (BuildContext context, AsyncSnapshot snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(
-                child: SizedBox(
-                  height: 150,
-                  width: 150,
-                  child: Lottie.asset(
-                    'assets/lottie/56446-walk.json',
+      appBar: AppBar(
+        title: const Text("Summary"),
+        elevation: 0,
+        centerTitle: true,
+      ),
+      body: FutureBuilder(
+        future: getTestSummary(),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          } else {
+            return WillPopScope(
+                onWillPop: _onWillPop,
+                child: [
+                  PreferredSize(
+                    preferredSize: const Size.fromHeight(20),
+                    child: [
+                      "Remaining Time".text.make().p8(),
+                      _FORMATTED_TEST_DURATION.text.semiBold.xl5.makeCentered().py4().h16(context),
+                    ].vStack(crossAlignment: CrossAxisAlignment.start).p8().wFull(context),
                   ),
-                ),
-              );
-            } else {
-              return Container(
-                padding: EdgeInsets.all(30),
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      Container(
-                        padding: EdgeInsets.all(15),
-                        decoration: BoxDecoration(color: Colors.amberAccent),
-                        child: Center(
-                          child: Text(
-                            "Remaining Time ($_FORMATTED_TEST_DURATION)",
-                            style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Container(
-                        padding: EdgeInsets.all(15),
-                        decoration: BoxDecoration(color: Colors.black38),
-                        child: Center(
-                          child: Text(
-                            "All Questions ($totalNoOFQuestions)",
-                            style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Container(
-                        padding: EdgeInsets.all(15),
-                        decoration: BoxDecoration(color: Colors.green),
-                        child: Center(
-                          child: Text(
-                            "Answered ($totalNoOFAnsweredQuestions)",
-                            style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Container(
-                        padding: EdgeInsets.all(15),
-                        decoration: BoxDecoration(color: Colors.red),
-                        child: Center(
-                          child: Text(
-                            "Unanswered ($totalUnanswered)",
-                            style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Container(
-                        padding: EdgeInsets.all(15),
-                        decoration: BoxDecoration(color: Colors.blue),
-                        child: Center(
-                          child: Text(
-                            "Review Later ($totalReviewLater)",
-                            style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      // ignore: deprecated_member_use
-                      RaisedButton(
-                        color: Colors.deepPurpleAccent,
-                        splashColor: Colors.black87,
-                        child: Text(
-                          "Submit",
-                          style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w600),
-                        ),
-                        onPressed: () {
-                          _testSubmit();
-                        },
-                      )
-                    ],
-                  ),
-                ),
-              );
-            }
-          },
-        ));
+                  [
+                    // [
+                    //   "Remaining Time".text.make().py8(),
+                    //   _FORMATTED_TEST_DURATION.text.semiBold.xl3.make().py4(),
+                    // ]
+                    //     .vStack()
+                    //     .p8()
+                    //     .box
+                    //     .withDecoration(
+                    //       const BoxDecoration(
+                    //         border: Border(top: BorderSide(color: Vx.purple300, width: 5)),
+                    //       ),
+                    //     )
+                    //     .make()
+                    //     .card
+                    //     .make()
+                    //     .wFull(context),
+                    [
+                      [
+                        "All Questions".text.make().py8(),
+                        totalNoOFQuestions.text.semiBold.xl3.make().py4(),
+                      ]
+                          .vStack()
+                          .p8()
+                          .box
+                          .withDecoration(
+                            const BoxDecoration(
+                              border: Border(top: BorderSide(color: Vx.yellow500, width: 5)),
+                            ),
+                          )
+                          .make()
+                          .card
+                          .elevation(10)
+                          .make()
+                          .expand(),
+                      [
+                        "Answered".text.make().py8(),
+                        totalNoOFAnsweredQuestions.text.semiBold.xl3.make().py4(),
+                      ]
+                          .vStack()
+                          .p8()
+                          .box
+                          .withDecoration(
+                            const BoxDecoration(
+                              border: Border(top: BorderSide(color: Vx.green300, width: 5)),
+                            ),
+                          )
+                          .make()
+                          .card
+                          .elevation(10)
+                          .make()
+                          .expand(),
+                    ].hStack().p8(),
+                    20.heightBox,
+                    [
+                      [
+                        "Unanswered".text.make().py8(),
+                        totalUnanswered.text.semiBold.xl3.make().py4(),
+                      ]
+                          .vStack()
+                          .p8()
+                          .box
+                          .withDecoration(
+                            const BoxDecoration(
+                              border: Border(top: BorderSide(color: Vx.red300, width: 5)),
+                            ),
+                          )
+                          .make()
+                          .card
+                          .elevation(10)
+                          .make()
+                          .expand(),
+                      [
+                        "Review Later".text.make().py8(),
+                        totalReviewLater.text.semiBold.xl3.make().py4(),
+                      ]
+                          .vStack()
+                          .p8()
+                          .box
+                          .withDecoration(
+                            const BoxDecoration(
+                              border: Border(top: BorderSide(color: Vx.blue300, width: 5)),
+                            ),
+                          )
+                          .make()
+                          .card
+                          .elevation(10)
+                          .make()
+                          .expand(),
+                    ].hStack().p8()
+                  ].vStack()
+                ].vStack().scrollVertical());
+          }
+        },
+      ),
+      bottomNavigationBar: CustomButton(
+        brdRds: 0,
+        buttonText: "Submit",
+        verpad: const EdgeInsets.symmetric(vertical: 5),
+        onPressed: () {
+          _testSubmit();
+        },
+      ),
+    );
   }
 
   Future _testSubmit() async {
